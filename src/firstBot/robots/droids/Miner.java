@@ -14,7 +14,6 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private HashSet<MapLocation> checkedLocations = new HashSet<>();
     private MapLocation target;
-    private Direction exploreDirection;
     private int targetType = 0;
     //0 = null/gold, 1 = lead
 
@@ -24,7 +23,7 @@ public class Miner extends Droid{
 
     @Override
     public void init() throws GameActionException {
-        exploreDirection = Constants.DIRECTIONS[(int)(Math.random()*8)];
+        initDirection = Constants.DIRECTIONS[(int)(Math.random()*8)];
     }
 
     @Override
@@ -72,7 +71,7 @@ public class Miner extends Droid{
         } else if(target == null){
             if(gold.isEmpty()){
                 if(lead.isEmpty()){
-                    explore(exploreDirection);
+                    explore();
                 }else{
                     target = getMax(lead);
                     if(target == null) targetType = 1;
