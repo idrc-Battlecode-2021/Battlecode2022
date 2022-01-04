@@ -31,6 +31,7 @@ public class Miner extends Droid{
     @Override
     public void run() throws GameActionException {
         // update shared array
+        MapLocation prev = myLocation;
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(0, rc.readSharedArray(0)+1);
         }
@@ -78,7 +79,7 @@ public class Miner extends Droid{
         } else if(target == null){
             explore();
         }
-        viewResources(false);
+        if(!prev.equals(myLocation)) viewResources(false);
     }
 
     public void viewResources(boolean start) throws GameActionException {
