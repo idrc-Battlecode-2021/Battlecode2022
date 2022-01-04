@@ -12,6 +12,6 @@ public abstract class Droid extends Robot {
     }
 
     public void explore(){
-        
+
     }
 }
