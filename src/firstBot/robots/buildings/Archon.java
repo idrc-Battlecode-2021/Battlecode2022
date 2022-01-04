@@ -3,7 +3,13 @@ package firstBot.robots.buildings;
 import battlecode.common.*;
 
 public class Archon extends Building{
-    int miners, builders, sages, soldiers, labs, watchtowers;
+    int minerCount;
+    int builderCount;
+    int sageCount;
+    int soldierCount;
+    int labCount;
+    int watchtowersCount;
+
     int minerIndex = 0; //spawning miners
     int archonOrder = 0;
     /* Shared array indices
@@ -34,14 +40,7 @@ public class Archon extends Building{
 
     @Override
     public void run() throws GameActionException {
-        miners = rc.readSharedArray(0);
-        builders = rc.readSharedArray(1);
-        sages = rc.readSharedArray(2);
-        soldiers = rc.readSharedArray(3);
-        labs = rc.readSharedArray(4);
-        watchtowers = rc.readSharedArray(5);
-
-        if (miners<5){
+        if (minerCount<5){
             if (rc.getTeamLeadAmount(rc.getTeam())>=50){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
@@ -52,10 +51,11 @@ public class Archon extends Building{
                     minerIndex = (minerIndex+i)%8;
                     rc.buildRobot(RobotType.MINER,directions[(minerIndex+i)%8]);
                     minerIndex++;
+                    minerCount++;
                 }
             }
         }
-        else if (builders<1){
+        else if (builderCount<1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=40){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -64,25 +64,28 @@ public class Archon extends Building{
                 }
                 if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
                     rc.buildRobot(RobotType.BUILDER,directions[i]);
+                    builderCount++;
                 }
             }
         }
-        else if (watchtowers<2){
+        else if (watchtowerCount<2){
             if (rc.getTeamLeadAmount(rc.getTeam())>=180){
                 int power = (int)Math.pow(2,archonOrder*2); // power corresponding to this Archon's bits
                 int currentValue = rc.readSharedArray(6); 
                 int previousBuildCommand = (currentValue % (power*4))/power; // previous two-bit build command
                 int buildCommand = currentValue - previousBuildCommand + power * 2; // subtract previous command and add new command
                 rc.writeSharedArray(6, buildCommand);
+                watchtowerCount++;
             }
         }
-        else if (labs<1){
+        else if (labCount<1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=800){
                 int power = (int)Math.pow(2,archonOrder*2); 
                 int currentValue = rc.readSharedArray(6);
                 int previousBuildCommand = (currentValue % (power*4))/power;
                 int buildCommand = currentValue - previousBuildCommand + power;
                 rc.writeSharedArray(6, buildCommand);
+                labCount++;
             }
         }
     }
