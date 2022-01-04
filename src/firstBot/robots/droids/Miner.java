@@ -3,6 +3,7 @@ package firstBot.robots.droids;
 import battlecode.common.*;
 import firstBot.util.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -11,6 +12,7 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private HashSet<MapLocation> checkedLocations = new HashSet<>();
     private MapLocation target, exploreTarget;
+    private ArrayList<Integer> listW, listH; //location generators for exploration
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
@@ -21,14 +23,21 @@ public class Miner extends Droid{
     @Override
     public void init() throws GameActionException {
         target = null;
-        exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+        listW = new ArrayList<>(rc.getMapWidth());
+        listH = new ArrayList<>(rc.getMapHeight());
+        explorationCoordsGeneratorW();
+
+        explorationCoordsGeneratorH();
+        exploreTarget = explorationTargetGenerator();
         explore();
         viewResources(true);
+
     }
 
     @Override
     public void run() throws GameActionException {
         // update shared array
+        System.out.println(exploreTarget);
         MapLocation prev = myLocation;
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(0, rc.readSharedArray(0)+1);
@@ -139,10 +148,31 @@ public class Miner extends Droid{
     public void explore() throws GameActionException {
         //TODO: Make ExploreTargets not Repeat or be close to previous locations
         if(exploreTarget == null || targetType != 0 || myLocation.equals(exploreTarget)){
-            exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+            exploreTarget = explorationTargetGenerator();
             targetType = 0;
         }
         intermediateMove(exploreTarget);
+    }
+
+    public void explorationCoordsGeneratorW(){
+        for(int i=rc.getMapWidth(); --i>=0;){
+            listW.add(i);
+        }
+    }
+    public void explorationCoordsGeneratorH(){
+        for(int i=rc.getMapHeight(); --i>=0;){
+            listH.add(i);
+        }
+    }
+    public MapLocation explorationTargetGenerator(){
+        if(listW.size() == 0){
+            explorationCoordsGeneratorW();
+        }
+        if(listH.size() == 0){
+            explorationCoordsGeneratorH();
+        }
+        return new MapLocation(listW.remove((int)(listW.size()*Math.random())),listH.remove((int)(listH.size()*Math.random())));
+
     }
 
 
