@@ -25,6 +25,7 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         target = null;
         exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+        viewResources(true);
     }
 
     @Override
@@ -77,15 +78,21 @@ public class Miner extends Droid{
         } else if(target == null){
             explore();
         }
-        viewResources();
+        viewResources(false);
     }
 
-    public void viewResources() throws GameActionException {
+    public void viewResources(boolean start) throws GameActionException {
         //TODO: Method currently doesn't consider if a previously checked location still has resources
         //TODO: Could also check rubble amount
         MapLocation current = rc.getLocation();
-        for(int[] offsets : Constants.VIEWABLE_TILES_20){
-            MapLocation loc = new MapLocation(current.x+offsets[0], current.y+offsets[1]);
+        int[][] vision = null;
+        if(start){
+            vision = Constants.VIEWABLE_TILES_20;
+        }else{
+            vision = Constants.OUTTER_TILIES_20;
+        }
+        for(int i=vision.length; --i>= 0;){
+            MapLocation loc = new MapLocation(current.x+vision[i][0], current.y+vision[i][1]);
             if(!checkedLocations.contains(loc)){
                 checkedLocations.add(loc);
                 if(rc.onTheMap(loc)){
