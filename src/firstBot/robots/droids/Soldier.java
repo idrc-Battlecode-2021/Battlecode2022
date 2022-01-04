@@ -15,6 +15,9 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
-
+        // update shared array
+        if (rc.getRoundNum()%3==2){
+            rc.writeSharedArray(3, rc.readSharedArray(3)+1);
+        }
     }
 }

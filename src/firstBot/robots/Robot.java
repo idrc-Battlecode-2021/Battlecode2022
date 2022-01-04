@@ -78,7 +78,6 @@ public abstract class Robot {
         }
     }
 
-
     //TODO: Old Movement Methods, Update to use BFS
     public static Direction selectDirection(int x, int y){
         if(x == 0){

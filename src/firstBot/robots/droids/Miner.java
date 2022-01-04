@@ -29,6 +29,10 @@ public class Miner extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        // update shared array
+        if (rc.getRoundNum()%3==2){
+            rc.writeSharedArray(0, rc.readSharedArray(0)+1);
+        }
         //TODO: Optimize branching
         if(target != null){
             System.out.println(target);
