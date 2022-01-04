@@ -115,10 +115,11 @@ public class Miner extends Droid{
     }
 
     public MapLocation getMax(HashMap<MapLocation,Integer> map) throws GameActionException { //location with Max amount of resources
-        //Currently choosing amount over location, may want to change.
+        //Currently choosing closest Location over Amount, may want to change.
         MapLocation loc = null;
         while(loc == null && !map.isEmpty()){
-            loc = map.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
+            loc = map.entrySet().stream().max((entry1, entry2) -> (Math.abs(entry1.getKey().x-myLocation.x)+Math.abs(entry1.getKey().y-myLocation.y)) <
+                    ((Math.abs(entry2.getKey().x-myLocation.x)+Math.abs(entry2.getKey().y-myLocation.y))) ? 1 : -1).get().getKey();
             if(rc.canSenseLocation(loc)){
                 if(rc.senseGold(loc) == 0 && rc.senseLead(loc) == 0){
                     map.remove(loc);
