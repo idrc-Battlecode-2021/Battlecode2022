@@ -13,9 +13,9 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private HashSet<MapLocation> checkedLocations = new HashSet<>();
-    private MapLocation target;
+    private MapLocation target, exploreTarget;
     private int targetType = 0;
-    //0 = null/gold, 1 = lead
+    //0 = exploreTarget, 1 = lead, 2 = null/gold
 
     public Miner(RobotController rc) {
         super(rc);
@@ -23,7 +23,7 @@ public class Miner extends Droid{
 
     @Override
     public void init() throws GameActionException {
-        initDirection = Constants.DIRECTIONS[(int)(Math.random()*8)];
+        exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Miner extends Droid{
             if(targetType == 1){
                 if(!gold.isEmpty()){
                     target = getMax(gold);
-                    targetType = 0;
+                    targetType = 2;
                     run();
                     return;
                 }
@@ -42,7 +42,7 @@ public class Miner extends Droid{
                         lead.remove(target);
                         if(lead.isEmpty()) target = null;
                         else target = getMax(lead);
-                        if(target == null)targetType = 0;
+                        if(target == null)targetType = 2;
                         else targetType = 1;
                         run();
                         return;
@@ -55,12 +55,12 @@ public class Miner extends Droid{
                     gold.remove(target);
                     if(!gold.isEmpty()){
                         target = getMax(gold);
-                        targetType = 0;
+                        targetType = 2;
                     }
                     if(target == null){
                         if(lead.isEmpty()) target = null;
                         else target = getMax(lead);
-                        if(target == null) targetType = 0;
+                        if(target == null) targetType = 2;
                         else targetType = 1;
                     }
                     run();
@@ -71,17 +71,21 @@ public class Miner extends Droid{
         } else if(target == null){
             if(gold.isEmpty()){
                 if(lead.isEmpty()){
+                    if(targetType != 0){
+                        exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+                        targetType = 0;
+                    }
                     explore();
                 }else{
                     target = getMax(lead);
                     if(target == null) targetType = 1;
-                    else targetType = 0;
+                    else targetType = 2;
                     run();
                     return;
                 }
             }else{
                 target = getMax(gold);
-                targetType = 0;
+                targetType = 2;
                 run();
                 return;
             }
@@ -120,6 +124,10 @@ public class Miner extends Droid{
             }
         }
         return loc;
+    }
+
+    public void explore(){
+        move(exploreTarget);
     }
 
 

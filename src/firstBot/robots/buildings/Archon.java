@@ -8,7 +8,7 @@ public class Archon extends Building{
     int sageCount;
     int soldierCount;
     int labCount;
-    int watchtowersCount;
+    int watchtowerCount;
 
     int minerIndex = 0; //spawning miners
     int archonOrder = 0;
