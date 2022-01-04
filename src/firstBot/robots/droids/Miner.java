@@ -1,5 +1,6 @@
 package firstBot.robots.droids;
 
+import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -13,6 +14,7 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private HashSet<MapLocation> checkedLocations = new HashSet<>();
     private MapLocation target;
+    private Direction exploreDirection;
     private int targetType = 0;
     //0 = null/gold, 1 = lead
 
@@ -22,7 +24,7 @@ public class Miner extends Droid{
 
     @Override
     public void init() throws GameActionException {
-
+        exploreDirection = Constants.DIRECTIONS[(int)(Math.random()*8)];
     }
 
     @Override
@@ -70,7 +72,7 @@ public class Miner extends Droid{
         } else if(target == null){
             if(gold.isEmpty()){
                 if(lead.isEmpty()){
-                    explore();
+                    explore(exploreDirection);
                 }else{
                     target = getMax(lead);
                     if(target == null) targetType = 1;
@@ -90,6 +92,7 @@ public class Miner extends Droid{
 
     public void viewResources() throws GameActionException {
         //TODO: Method currently doesn't consider if a previously checked location still has resources
+        //TODO: Could also check rubble amount
         MapLocation current = rc.getLocation();
         for(int[] offsets : Constants.VIEWABLE_TILES_20){
             MapLocation loc = new MapLocation(current.x+offsets[0], current.y+offsets[1]);
@@ -104,11 +107,9 @@ public class Miner extends Droid{
             }
         }
     }
-    public void explore() {
-
-    }
 
     public MapLocation getMax(HashMap<MapLocation,Integer> map) throws GameActionException { //location with Max amount of resources
+        //Currently choosing amount over location, may want to change.
         MapLocation loc = null;
         while(loc == null && !map.isEmpty()){
             loc = map.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();

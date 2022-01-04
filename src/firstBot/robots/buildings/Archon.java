@@ -70,19 +70,19 @@ public class Archon extends Building{
         else if (watchtowers<2){
             if (rc.getTeamLeadAmount(rc.getTeam())>=180){
                 int power = (int)Math.pow(2,archonOrder*2); // power corresponding to this Archon's bits
-                int currentValue = rc.readSharedArray(59); 
+                int currentValue = rc.readSharedArray(6); 
                 int previousBuildCommand = (currentValue % (power*4))/power; // previous two-bit build command
                 int buildCommand = currentValue - previousBuildCommand + power * 2; // subtract previous command and add new command
-                rc.writeSharedArray(59, buildCommand);
+                rc.writeSharedArray(6, buildCommand);
             }
         }
         else if (labs<1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=800){
                 int power = (int)Math.pow(2,archonOrder*2); 
-                int currentValue = rc.readSharedArray(59);
+                int currentValue = rc.readSharedArray(6);
                 int previousBuildCommand = (currentValue % (power*4))/power;
                 int buildCommand = currentValue - previousBuildCommand + power;
-                rc.writeSharedArray(59, buildCommand);
+                rc.writeSharedArray(6, buildCommand);
             }
         }
     }

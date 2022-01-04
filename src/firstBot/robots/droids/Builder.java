@@ -27,6 +27,7 @@ public class Builder extends Droid{
     public void run() throws GameActionException {
         int toBuild = read();
         build(toBuild);
+
     }
     public int read() throws GameActionException{
         int build = rc.readSharedArray(6);
