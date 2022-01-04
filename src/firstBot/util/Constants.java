@@ -12,4 +12,5 @@ public class Constants {
             {4, -1}, {4, 0}, {4, 1}, {4, 2}};
     public static Direction[] DIRECTIONS = {Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST,
             Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST,};
+    public static int[][] DIRECTION_OFFSETS = {{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};
 }
