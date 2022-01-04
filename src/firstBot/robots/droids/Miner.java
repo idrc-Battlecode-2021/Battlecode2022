@@ -1,9 +1,6 @@
 package firstBot.robots.droids;
 
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
+import battlecode.common.*;
 import firstBot.util.Constants;
 
 import java.util.HashMap;
@@ -25,6 +22,7 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         target = null;
         exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+        explore();
         viewResources(true);
     }
 
@@ -40,43 +38,50 @@ public class Miner extends Droid{
             System.out.println(target);
             if(targetType == 1){
                 if(!gold.isEmpty()){
-                    target = getMax(gold);
-                    targetType = 2;
-                    run();
-                    return;
+                    MapLocation temp = getMax(gold);
+                    if(temp != null){
+                        targetType = 2;
+                        target = temp;
+                    }
                 }
-                else{
-                    if(rc.canSenseLocation(target) && rc.senseLead(target) == 0){
-                        lead.remove(target);
-                        if(lead.isEmpty()) target = null;
-                        else target = getMax(lead);
-                        if(target == null)targetType = 2;
-                        else targetType = 1;
-                        run();
-                        return;
-
-                    }else if(rc.canMineLead(target))rc.mineLead(target);
+                if(targetType == 1 && rc.canSenseLocation(target) && rc.senseLead(target) == 0){
+                    lead.remove(target);
+                    if(lead.isEmpty()) target = null;
+                    else target = getMax(lead);
+                    if(target == null)targetType = 2;
+                    else targetType = 1;
+                }
+                if(target != null){
+                    if(rc.canMineLead(target))rc.mineLead(target);
                     else intermediateMove(target);
                 }
-            }else if(targetType == 2){
+            }
+            if(target != null && targetType == 2){
                 if(rc.canSenseLocation(target) && rc.senseGold(target) == 0){
                     gold.remove(target);
-                    if(!gold.isEmpty()){
+                    if(gold.isEmpty()) target = null;
+                    else{
                         target = getMax(gold);
                         targetType = 2;
                     }
-                    if(target == null){
-                        if(lead.isEmpty()) target = null;
+                    if(target == null) {
+                        if (lead.isEmpty()) target = null;
                         else target = getMax(lead);
-                        if(target == null) targetType = 2;
-                        else targetType = 1;
+                        if (target == null) targetType = 2;
+                        else {
+                            targetType = 1;
+                            run();
+                            return;
+                        }
                     }
-                    run();
-                    return;
-                } else if (rc.canMineGold(target)) rc.mineGold(target);
-                else intermediateMove(target);
+                }
+                if(target != null && targetType == 2){
+                    if (rc.canMineGold(target)) rc.mineGold(target);
+                    else intermediateMove(target);
+                }
             }
-        } else if(target == null){
+        }
+        if(rc.getMovementCooldownTurns() == 0 && target == null){
             explore();
         }
         if(!prev.equals(myLocation)) viewResources(false);
@@ -118,7 +123,8 @@ public class Miner extends Droid{
         //Currently choosing closest Location over Amount, may want to change.
         MapLocation loc = null;
         while(loc == null && !map.isEmpty()){
-            loc = map.entrySet().stream().max((entry1, entry2) -> (Math.abs(entry1.getKey().x-myLocation.x)+Math.abs(entry1.getKey().y-myLocation.y)) <
+            loc = map.entrySet().stream().max((entry1, entry2) ->
+                    (Math.abs(entry1.getKey().x-myLocation.x)+Math.abs(entry1.getKey().y-myLocation.y)) <
                     ((Math.abs(entry2.getKey().x-myLocation.x)+Math.abs(entry2.getKey().y-myLocation.y))) ? 1 : -1).get().getKey();
             if(rc.canSenseLocation(loc)){
                 if(rc.senseGold(loc) == 0 && rc.senseLead(loc) == 0){
