@@ -1,9 +1,13 @@
 package firstBot.robots.droids;
 
 import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
 
 public class Sage extends Droid {
+    private MapLocation target;
+    
     public Sage(RobotController rc) {
         super(rc);
     }
@@ -19,5 +23,19 @@ public class Sage extends Droid {
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(2, rc.readSharedArray(2)+1);
         }
+        target = null;
+        RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
+        if(nearbyBots.length >= 1){
+            target = nearbyBots[nearbyBots.length-1].getLocation();
+            for(int i=nearbyBots.length-1;--i>=0;){
+                MapLocation temp = nearbyBots[i].getLocation();
+                if(movementTileDistance(target,myLocation) > movementTileDistance(temp,myLocation)) target = temp;
+            }
+        }
+        if(target != null){
+            intermediateMove(target);
+            if(rc.canAttack(target))rc.attack(target);
+        }
+        else tryMoveMultipleNew();
     }
 }

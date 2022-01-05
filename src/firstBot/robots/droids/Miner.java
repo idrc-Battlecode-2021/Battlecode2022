@@ -3,16 +3,13 @@ package firstBot.robots.droids;
 import battlecode.common.*;
 import firstBot.util.Constants;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
-    private HashSet<MapLocation> checkedLocations = new HashSet<>();
     private MapLocation target, exploreTarget;
-    private ArrayList<Integer> listW, listH; //location generators for exploration
+    private int exploreDirIndex;
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
@@ -23,21 +20,15 @@ public class Miner extends Droid{
     @Override
     public void init() throws GameActionException {
         target = null;
-        listW = new ArrayList<>(rc.getMapWidth());
-        listH = new ArrayList<>(rc.getMapHeight());
-        explorationCoordsGeneratorW();
-
-        explorationCoordsGeneratorH();
-        exploreTarget = explorationTargetGenerator();
+        //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+        exploreDirIndex = (int)(8*Math.random());
         explore();
-        viewResources(true);
-
+        viewResources(false);
     }
 
     @Override
     public void run() throws GameActionException {
         // update shared array
-        System.out.println(exploreTarget);
         MapLocation prev = myLocation;
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(0, rc.readSharedArray(0)+1);
@@ -46,27 +37,27 @@ public class Miner extends Droid{
         if(target != null){
             System.out.println(target);
             if(targetType == 1){
-                if(!gold.isEmpty()){
+                if(!gold.isEmpty()){ //prioritize gold over Lead
                     MapLocation temp = getMax(gold);
                     if(temp != null){
                         targetType = 2;
                         target = temp;
                     }
                 }
-                if(targetType == 1 && rc.canSenseLocation(target) && rc.senseLead(target) == 0){
-                    lead.remove(target);
+                if(targetType == 1 && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
+                    lead.remove(target); //checks if there is any lead left
                     if(lead.isEmpty()) target = null;
                     else target = getMax(lead);
                     if(target == null)targetType = 2;
                     else targetType = 1;
                 }
-                if(target != null){
+                if(target != null){ //actions
+                    intermediateMove(target);
                     if(rc.canMineLead(target))rc.mineLead(target);
-                    else intermediateMove(target);
                 }
             }
             if(target != null && targetType == 2){
-                if(rc.canSenseLocation(target) && rc.senseGold(target) == 0){
+                if(rc.canSenseLocation(target) && rc.senseGold(target) < 2){ //checks if there is any gold left
                     gold.remove(target);
                     if(gold.isEmpty()) target = null;
                     else{
@@ -84,9 +75,9 @@ public class Miner extends Droid{
                         }
                     }
                 }
-                if(target != null && targetType == 2){
+                if(target != null && targetType == 2){ //actions
+                    intermediateMove(target);
                     if (rc.canMineGold(target)) rc.mineGold(target);
-                    else intermediateMove(target);
                 }
             }
         }
@@ -99,24 +90,23 @@ public class Miner extends Droid{
     public void viewResources(boolean start) throws GameActionException {
         //TODO: Method currently doesn't consider if a previously checked location still has resources
         //TODO: Could also check rubble amount
+        //Maybe change so that the closest location above the threshold is chosen as the target rather than
         MapLocation current = rc.getLocation();
         int[][] vision = null;
         if(start){
-            vision = Constants.VIEWABLE_TILES_20;
+            vision = Constants.VIEWABLE_TILES_20; //Maybe change to use rc.allLocationsWithinRadius(myLocation,20);
         }else{
-            vision = Constants.OUTTER_TILIES_20;
+            vision = Constants.OUTER_TILES_20; //
         }
         for(int i=vision.length; --i>= 0;){
             MapLocation loc = new MapLocation(current.x+vision[i][0], current.y+vision[i][1]);
-            if(!checkedLocations.contains(loc)){
-                checkedLocations.add(loc);
-                if(rc.onTheMap(loc)){
-                    int amount = rc.senseGold(loc);
-                    if(amount > 0) gold.put(loc,amount);
-                    amount = rc.senseLead(loc);
-                    if(amount > 0) lead.put(loc,amount);
-                }
+            if(rc.onTheMap(loc)){
+                int amount = rc.senseGold(loc);
+                if(amount > 6) gold.put(loc,amount);
+                amount = rc.senseLead(loc);
+                if(amount > 6) lead.put(loc,amount);
             }
+            
         }
         if(!gold.isEmpty()){
             target = getMax(gold);
@@ -133,8 +123,8 @@ public class Miner extends Droid{
         MapLocation loc = null;
         while(loc == null && !map.isEmpty()){
             loc = map.entrySet().stream().max((entry1, entry2) ->
-                    (Math.abs(entry1.getKey().x-myLocation.x)+Math.abs(entry1.getKey().y-myLocation.y)) <
-                    ((Math.abs(entry2.getKey().x-myLocation.x)+Math.abs(entry2.getKey().y-myLocation.y))) ? 1 : -1).get().getKey();
+                    movementTileDistance(entry1.getKey(),myLocation) <
+                    movementTileDistance(entry2.getKey(),myLocation) && entry1.getValue() > 1 ? 1 : -1).get().getKey();
             if(rc.canSenseLocation(loc)){
                 if(rc.senseGold(loc) == 0 && rc.senseLead(loc) == 0){
                     map.remove(loc);
@@ -147,33 +137,17 @@ public class Miner extends Droid{
 
     public void explore() throws GameActionException {
         //TODO: Make ExploreTargets not Repeat or be close to previous locations
-        if(exploreTarget == null || targetType != 0 || myLocation.equals(exploreTarget)){
-            exploreTarget = explorationTargetGenerator();
+        /*if(exploreTarget == null || targetType != 0 || myLocation.equals(exploreTarget)){
+            //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+            exploreDirIndex = (int)(8*Math.random());
             targetType = 0;
-        }
-        intermediateMove(exploreTarget);
-    }
-
-    public void explorationCoordsGeneratorW(){
-        for(int i=rc.getMapWidth(); --i>=0;){
-            listW.add(i);
-        }
-    }
-    public void explorationCoordsGeneratorH(){
-        for(int i=rc.getMapHeight(); --i>=0;){
-            listH.add(i);
-        }
-    }
-    public MapLocation explorationTargetGenerator(){
-        if(listW.size() == 0){
-            explorationCoordsGeneratorW();
-        }
-        if(listH.size() == 0){
-            explorationCoordsGeneratorH();
-        }
-        return new MapLocation(listW.remove((int)(listW.size()*Math.random())),listH.remove((int)(listH.size()*Math.random())));
+        }*/
+        //intermediateMove(exploreTarget);
+        //priorityMove(exploreDirIndex);
+        tryMoveMultipleNew();
 
     }
+
 
 
 }

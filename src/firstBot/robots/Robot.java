@@ -11,15 +11,24 @@ public abstract class Robot {
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
+    protected int[][] internalMap;
+    // 0 = new space, 1 = traveled space
 
     public Robot(RobotController rc){
         this.rc = rc;
         myTeam = rc.getTeam();
         myLocation = rc.getLocation();
+        internalMap = new int[rc.getMapWidth()][rc.getMapHeight()];
+        internalMap[myLocation.x][myLocation.y] = 1;
     }
 
     public abstract void init() throws GameActionException;
     public abstract void run() throws GameActionException;
+    
+    public static int movementTileDistance(MapLocation a, MapLocation b){
+        return Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
+    }
+    public static int movementXYDistance(MapLocation a, MapLocation b){return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);}
 
     public Direction getDirection(int x, int y){
         if(x <= -1){
@@ -171,6 +180,32 @@ public abstract class Robot {
             }
         }
     }
+    public void priorityMove(int dirIndex) throws GameActionException {
+        Direction[] directions = Constants.DIRECTIONS;
+        MapLocation loc1 = rc.adjacentLocation(directions[dirIndex]);
+        while(!rc.onTheMap(loc1)){
+            dirIndex = (dirIndex+4)%8;
+            loc1 = rc.adjacentLocation(directions[dirIndex]);
+        }
+        int rub1 = rc.senseRubble(loc1), rub2 = 101, rub3 = 101;
+        MapLocation loc2 = rc.adjacentLocation(directions[(dirIndex+1)%8]),
+                loc3 = rc.adjacentLocation(directions[(dirIndex+7)%8]);
+        if(rc.onTheMap(loc2)){
+            rub2 = rc.senseRubble(loc2);
+        }
+        if(rc.onTheMap(loc3)){
+            rub3 = rc.senseRubble(loc3);
+        }
+        if(rub1 <= rub2 && rub1 <= rub3){
+            tryMoveMultiple(directions[dirIndex]);
+        }else if(rub2 <= rub3){
+            tryMoveMultiple(directions[(dirIndex+1)%8]);
+        }else{
+            tryMoveMultiple(directions[(dirIndex+7)%8]);
+        }
+
+    }
+
     public void updateDirection(Direction d){
         initDirection = d;
         directions =  new Direction[]{
