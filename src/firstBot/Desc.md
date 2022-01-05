@@ -13,6 +13,9 @@ Spawn phases in order of priority:
 - watchtowers whenever there's enough lead
 - repair nearby troops if none of the above
 
+#### Changelog
+- 1/5/2022 - decrease initial lab count 3 -> 2, added more spawn phases for more even spawning throughout all archons
+
 ### Labs
 ### Watchtowers
 ## Droids
