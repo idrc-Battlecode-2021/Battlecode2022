@@ -87,7 +87,7 @@ public abstract class Robot {
         }
     }
 
-    //TODO: Old Movement Methods, Update to use BFS
+
     public static Direction selectDirection(int x, int y){
         if(x == 0){
             if(y > 0){
@@ -115,6 +115,37 @@ public abstract class Robot {
         return Direction.CENTER;
     }
 
+    public void move(MapLocation target) throws GameActionException {
+        Direction dir = selectDirection(target.x-myLocation.x,target.y-myLocation.y);
+        switch(dir){
+            case EAST:
+
+            case WEST:
+
+            case NORTH:
+
+            case SOUTH:
+
+            case NORTHEAST:
+
+            case NORTHWEST:
+
+            case SOUTHEAST:
+
+            case SOUTHWEST:
+
+        }
+    }
+
+    //May not be needed
+    public MapLocation closestPointinVision(MapLocation target){
+        int vX = target.x-myLocation.x, vY = target.y-myLocation.y;
+        double magV = Math.sqrt(vX*vX + vY*vY);
+        int radius = rc.getType().visionRadiusSquared;
+        return new MapLocation((int)(myLocation.x+vX/magV*radius),(int)(myLocation.x+vX/magV*radius));
+    }
+
+    //TODO: Old Movement Methods, Update to use basic path finding
     public void intermediateMove(MapLocation target) throws GameActionException {
         int x = target.x-myLocation.x, y = target.y-myLocation.y;
         if (x == y) {
