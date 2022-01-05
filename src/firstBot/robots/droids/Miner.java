@@ -59,7 +59,7 @@ public class Miner extends Droid{
                 }
             }
             if(target != null && targetType == 2){
-                if(rc.canSenseLocation(target) && rc.senseGold(target) < 2){ //checks if there is any gold left
+                if(rc.canSenseLocation(target) && rc.senseGold(target) == 0){ //checks if there is any gold left
                     gold.remove(target);
                     if(gold.isEmpty()) target = null;
                     else{
@@ -105,7 +105,7 @@ public class Miner extends Droid{
             if(rc.onTheMap(loc)){
                 if(!gold.containsKey(loc)){
                     int amount = rc.senseGold(loc);
-                    if(amount > 6){
+                    if(amount > 0){
                         gold.put(loc,amount);
                         break; //stops at first new resource seen, change later
                     }
@@ -139,7 +139,7 @@ public class Miner extends Droid{
                     movementTileDistance(entry1.getKey(),myLocation) <
                     movementTileDistance(entry2.getKey(),myLocation) && entry1.getValue() > 1 ? 1 : -1).get().getKey();
             if(rc.canSenseLocation(loc)){
-                if(rc.senseGold(loc) == 0 && rc.senseLead(loc) == 0){
+                if(rc.senseGold(loc) == 0 && rc.senseLead(loc) < 2){
                     map.remove(loc);
                     loc = null;
                 }
