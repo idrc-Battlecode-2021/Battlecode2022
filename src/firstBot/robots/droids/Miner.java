@@ -23,19 +23,19 @@ public class Miner extends Droid{
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         exploreDirIndex = (int)(8*Math.random());
         explore();
-        viewResources(false);
+        viewResources(true);
     }
 
     @Override
     public void run() throws GameActionException {
         // update shared array
+        rc.setIndicatorString(lead.size()+"");
         MapLocation prev = myLocation;
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(0, rc.readSharedArray(0)+1);
         }
         //TODO: Optimize branching
         if(target != null){
-            System.out.println(target);
             if(targetType == 1){
                 if(!gold.isEmpty()){ //prioritize gold over Lead
                     MapLocation temp = getMax(gold);
@@ -53,7 +53,9 @@ public class Miner extends Droid{
                 }
                 if(target != null){ //actions
                     intermediateMove(target);
-                    if(rc.canMineLead(target))rc.mineLead(target);
+                    if(rc.canMineLead(target)){
+                        rc.mineLead(target);
+                    }
                 }
             }
             if(target != null && targetType == 2){
@@ -94,17 +96,28 @@ public class Miner extends Droid{
         MapLocation current = rc.getLocation();
         int[][] vision = null;
         if(start){
-            vision = Constants.VIEWABLE_TILES_20; //Maybe change to use rc.allLocationsWithinRadius(myLocation,20);
+            vision = Constants.VIEWABLE_TILES_20; //vision starts at closest tiles
         }else{
-            vision = Constants.OUTER_TILES_20; //
+            vision = Constants.OUTER_TILES_20;
         }
         for(int i=vision.length; --i>= 0;){
             MapLocation loc = new MapLocation(current.x+vision[i][0], current.y+vision[i][1]);
             if(rc.onTheMap(loc)){
-                int amount = rc.senseGold(loc);
-                if(amount > 6) gold.put(loc,amount);
-                amount = rc.senseLead(loc);
-                if(amount > 6) lead.put(loc,amount);
+                if(!gold.containsKey(loc)){
+                    int amount = rc.senseGold(loc);
+                    if(amount > 6){
+                        gold.put(loc,amount);
+                        break; //stops at first new resource seen, change later
+                    }
+
+                }
+                if(!lead.containsKey(loc)){
+                    int amount = rc.senseLead(loc);
+                    if(amount > 6){
+                        lead.put(loc,amount);
+                        break; //stops at first new resource seen, change later
+                    }
+                }
             }
             
         }

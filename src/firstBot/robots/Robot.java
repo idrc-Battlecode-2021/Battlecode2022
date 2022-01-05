@@ -118,6 +118,7 @@ public abstract class Robot {
     public void intermediateMove(MapLocation target) throws GameActionException {
         int x = target.x-myLocation.x, y = target.y-myLocation.y;
         if (x == y) {
+            if(x == 0) return;
             tryMoveMultiple(selectDirection(x, y));
         } else if (y == 0) {
             double pass1 = 101, pass2 = 101, pass3 = rc.senseRubble(rc.adjacentLocation(selectDirection(x, 0)));
