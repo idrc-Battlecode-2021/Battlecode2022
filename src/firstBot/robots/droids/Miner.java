@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
-    private MapLocation target, exploreTarget;
+    private MapLocation target;
     private int exploreDirIndex;
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
@@ -21,7 +21,7 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
-        exploreDirIndex = (int)(8*Math.random());
+        //exploreDirIndex = (int)(8*Math.random());
         explore();
         viewResources(true);
     }
@@ -148,18 +148,19 @@ public class Miner extends Droid{
         return loc;
     }
 
-    public void explore() throws GameActionException {
-        //TODO: Make ExploreTargets not Repeat or be close to previous locations
-        /*if(exploreTarget == null || targetType != 0 || myLocation.equals(exploreTarget)){
-            //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
-            exploreDirIndex = (int)(8*Math.random());
-            targetType = 0;
-        }*/
-        //intermediateMove(exploreTarget);
-        //priorityMove(exploreDirIndex);
-        tryMoveMultipleNew();
-
-    }
+//    @Override
+//    public void explore() throws GameActionException {
+//        //TODO: Make ExploreTargets not Repeat or be close to previous locations
+//        /*if(exploreTarget == null || targetType != 0 || myLocation.equals(exploreTarget)){
+//            //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
+//            exploreDirIndex = (int)(8*Math.random());
+//            targetType = 0;
+//        }*/
+//        //intermediateMove(exploreTarget);
+//        //priorityMove(exploreDirIndex);
+//        tryMoveMultipleNew();
+//
+//    }
 
 
 
