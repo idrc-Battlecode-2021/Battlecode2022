@@ -1,16 +1,14 @@
 package firstBot.robots.droids;
 
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
-import battlecode.common.RobotController;
+import battlecode.common.*;
 import firstBot.robots.Robot;
 import firstBot.util.Constants;
 
 public abstract class Droid extends Robot {
-    
+    MapLocation exploreTarget;
     public Droid(RobotController rc) {
         super(rc);
-
+        exploreTarget = myLocation;
     }
 
     public boolean priorityMoveNew() throws GameActionException {
@@ -98,6 +96,21 @@ public abstract class Droid extends Robot {
         }
 
         return offsets;
+    }
+
+    //Calculate location to go based on locations of sensed friendly bots
+    public MapLocation newLocation(){
+        int x = exploreTarget.x-myLocation.x, y = exploreTarget.y-myLocation.y;
+        RobotInfo[] sensedBots = rc.senseNearbyRobots(20,myTeam);
+        for(int i = sensedBots.length; --i>=0;){
+            x += sensedBots[i].location.x-myLocation.x;
+            y += sensedBots[i].location.y-myLocation.y;
+        }
+        return new MapLocation(x+myLocation.x,y+myLocation.y);
+    }
+    public void explore() throws GameActionException {
+        newLocation();
+        intermediateMove(exploreTarget);
     }
 
 }
