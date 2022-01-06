@@ -18,9 +18,9 @@ Spawn phases in order of priority:
 - 1/6/2022 - work on watchtower lattice.
 ### Labs
 ### Watchtowers
-- work on lattice stuff (did not work)
 ## Droids
 ### Builders
+- work on lattice stuff
 ### Miners
 ### Sages
 ### Soldiers
