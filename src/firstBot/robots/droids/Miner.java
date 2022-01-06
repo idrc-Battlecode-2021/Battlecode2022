@@ -96,9 +96,9 @@ public class Miner extends Droid{
         MapLocation current = rc.getLocation();
         int[][] vision = null;
         if(start){
-            vision = Constants.VIEWABLE_TILES_20; //vision starts at closest tiles
+            vision = Constants.Droids.VIEWABLE_TILES_20; //vision starts at closest tiles
         }else{
-            vision = Constants.OUTER_TILES_20;
+            vision = Constants.Droids.OUTER_TILES_20;
         }
         for(int i=vision.length; --i>= 0;){
             MapLocation loc = new MapLocation(current.x+vision[i][0], current.y+vision[i][1]);
