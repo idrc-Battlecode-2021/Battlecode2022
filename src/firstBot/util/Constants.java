@@ -3,7 +3,7 @@ package firstBot.util;
 import battlecode.common.Direction;
 
 public class Constants {
-    public static class Droids{
+    public static final class Droids{
         public static final int[][] VIEWABLE_TILES_20 = {{0, 0}, {0, 1}, {0, -1}, {0, 2}, {0, -2}, {0, 3}, {0, -3}, {0, 4},
                 {0, -4}, {1, 0}, {-1, 0}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 2}, {-1, -2}, {1, -2}, {-1, 2}, {1, 3},
                 {-1, -3}, {1, -3}, {-1, 3}, {1, 4}, {-1, -4}, {1, -4}, {-1, 4}, {2, 0}, {-2, 0}, {2, 1}, {-2, -1}, {2, -1},
@@ -32,4 +32,5 @@ public class Constants {
             Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST,};
     public static final Direction[] COMPOSITE_DIRECTIONS = {Direction.NORTHEAST,Direction.NORTHWEST, Direction.SOUTHWEST,
             Direction.SOUTHEAST};
+    public static final Direction[] BASIC_DIRECTIONS = {Direction.NORTH,Direction.EAST,Direction.SOUTH,Direction.WEST};
 }

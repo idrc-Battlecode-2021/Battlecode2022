@@ -131,7 +131,7 @@ public class Builder extends Droid{
         // find square with least rubble.
         Direction k = null;
         int minR=1000;
-        for(Direction d : Direction.allDirections()){
+        for(Direction d : Constants.BASIC_DIRECTIONS){
             if(rc.canBuildRobot(r,d)){
                 if (rc.senseRubble(rc.getLocation().add(d))<minR){
                     k=d; minR=rc.senseRubble(rc.getLocation().add(d));
