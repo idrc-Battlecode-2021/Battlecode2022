@@ -15,9 +15,10 @@ Spawn phases in order of priority:
 
 #### Changelog
 - 1/5/2022 - decrease initial lab count 3 -> 2, added more spawn phases for more even spawning throughout all archons
-
+- 1/6/2022 - work on watchtower lattice.
 ### Labs
 ### Watchtowers
+- work on lattice stuff (did not work)
 ## Droids
 ### Builders
 ### Miners
