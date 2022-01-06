@@ -125,16 +125,24 @@ public class Builder extends Droid{
         if (id ==0){
             return false;
         }
-        else if (id == 1){
+        else if (id == 1) {
             r = RobotType.LABORATORY;
         }
+        // find square with least rubble.
+        Direction k = null;
+        int minR=1000;
         for(Direction d : Direction.allDirections()){
             if(rc.canBuildRobot(r,d)){
-                rc.buildRobot(r, d);
-                if (r == RobotType.WATCHTOWER) addTowers();
-                else addLabs();
-                return true;
+                if (rc.senseRubble(rc.getLocation().add(d))<minR){
+                    k=d; minR=rc.senseRubble(rc.getLocation().add(d));
+                }
             }
+        }
+        if (k!=null) {
+            rc.buildRobot(r, k);
+            if (r == RobotType.WATCHTOWER) addTowers();
+            else addLabs();
+            return true;
         }
         return false;
     }
