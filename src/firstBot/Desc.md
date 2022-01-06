@@ -15,12 +15,20 @@ Spawn phases in order of priority:
 
 #### Changelog
 - 1/5/2022 - decrease initial lab count 3 -> 2, added more spawn phases for more even spawning throughout all archons
-- 1/6/2022 - work on watchtower lattice.
+
 ### Labs
 ### Watchtowers
 ## Droids
+### TODO
+- Create a Better Exploration Method
+- Create a Better Pathfinding algorithm
 ### Builders
 - work on lattice stuff
+#### Changelog
+- 1/6/2022 - work on watchtower lattice.
 ### Miners
+#### TODO
+- Optimize resource locator
+- Further Optimize Bytecode Usage
 ### Sages
 ### Soldiers
