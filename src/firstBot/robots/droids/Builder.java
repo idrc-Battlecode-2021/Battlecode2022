@@ -2,6 +2,10 @@ package firstBot.robots.droids;
 
 import battlecode.common.*;
 import firstBot.util.Constants;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 public class Builder extends Droid{
     private int startingBit;
@@ -124,7 +128,8 @@ public class Builder extends Droid{
         if (prevBuilder) return false;
         if(myLocation.x%2 == myLocation.y%2){
             boolean notMoved = true;
-            Direction[] basic = Constants.BASIC_DIRECTIONS;
+            List<Direction> basic = Arrays.asList(Constants.BASIC_DIRECTIONS);
+            Collections.shuffle(basic);
             for(Direction d: basic){
                 if(rc.canMove(d)){
                     rc.move(d);
