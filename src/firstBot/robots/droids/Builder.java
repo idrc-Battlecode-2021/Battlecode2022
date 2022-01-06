@@ -67,6 +67,7 @@ public class Builder extends Droid{
              Direction d = Constants.DIRECTIONS[randint];
              if(rc.canMove(d)){
                  rc.move(d);
+                 myLocation = rc.getLocation();
             }
          }
 
@@ -132,7 +133,7 @@ public class Builder extends Droid{
                     break;
                 }
             }
-            if(notMoved)return false;
+            if(notMoved || myLocation.x%2 == myLocation.y%2)return false;
         }
         RobotType r = RobotType.WATCHTOWER;
         if (id ==0){
