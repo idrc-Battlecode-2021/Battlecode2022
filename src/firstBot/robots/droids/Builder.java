@@ -122,18 +122,12 @@ public class Builder extends Droid{
     public boolean build(int id) throws GameActionException{
         if (prevBuilder) return false;
         if(myLocation.x%2 == myLocation.y%2){
-            Direction temp = null;
             boolean notMoved = true;
-            for(int i = -1; i <= 1; i++){
-                temp = selectDirection(myLocation.x+i,myLocation.y);
-                if(rc.canMove(temp)){
-                    rc.move(temp);
-                    notMoved = false;
-                    break;
-                }
-                temp = selectDirection(myLocation.x,myLocation.y+i);
-                if(rc.canMove(temp)){
-                    rc.move(temp);
+            Direction[] basic = Constants.BASIC_DIRECTIONS;
+            for(Direction d: basic){
+                if(rc.canMove(d)){
+                    rc.move(d);
+                    myLocation = rc.getLocation();
                     notMoved = false;
                     break;
                 }
