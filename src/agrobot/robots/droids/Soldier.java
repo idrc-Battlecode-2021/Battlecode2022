@@ -1,21 +1,31 @@
 package agrobot.robots.droids;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
+import agrobot.robots.Robot;
+import battlecode.common.*;
 
 import java.util.Map;
 
 public class Soldier extends Droid{
     private MapLocation target;
+    private MapLocation archonLoc;
+    private MapLocation [] corners = new MapLocation[4];
+    private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     public Soldier(RobotController rc) {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
-        
+        RobotInfo [] r = rc.senseNearbyRobots();
+        for (RobotInfo ro : r){
+            if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
+                archonLoc = ro.getLocation();
+            }
+        }
+        corners[0]=new MapLocation (0,0);
+        corners[1]=new MapLocation(0,rc.getMapHeight());
+        corners[2]=new MapLocation(rc.getMapWidth(),0);
+        corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
     }
 
     @Override
@@ -47,30 +57,26 @@ public class Soldier extends Droid{
             }
             intermediateMove(target);
         }
-        else tryMoveMultipleNew();
-    }
-    public boolean hasMapLocation() throws GameActionException{
-        if (rc.readSharedArray(55)==0){
-            return false;
-        }
-        return true;
-    }
-    public MapLocation decode() throws GameActionException{
-        int loc = rc.readSharedArray(55);
-        int x = loc/64;
-        int y = loc%64;
-        return new MapLocation(x, y);
-    }
-    public void broadcast() throws GameActionException{
-        RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
-        int num_enemies =enemies.length;
+        else{
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared);
+            for (MapLocation m : all){
+                for (MapLocation c: corners){
+                    if (m==c){
+                        Direction d = rc.getLocation().directionTo(c);
+                        tryMoveMultiple(d);
+                    }
+                }
+            }
 
-        if (num_enemies>5){
-            MapLocation m = rc.getLocation();
-            int x = m.x, y=m.y;
-            int k=x*64+y;
-            rc.writeSharedArray(55,k);
+            if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+                Direction d = rc.getLocation().directionTo(center);
+                tryMoveMultiple(d);
+            }
+            else{
+                tryMoveMultipleNew();
+            }
         }
 
     }
+
 }

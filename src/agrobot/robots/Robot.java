@@ -268,4 +268,38 @@ public abstract class Robot {
         }
         return false;
     }
+    public boolean hasMapLocation() throws GameActionException{
+        if (rc.readSharedArray(55)==0){
+            return false;
+        }
+        return true;
+    }
+    public MapLocation decode() throws GameActionException{
+        int loc = rc.readSharedArray(55);
+        int x = (loc/64)%64;
+        int y = loc%64;
+        return new MapLocation(x, y);
+    }
+    public void broadcast() throws GameActionException{
+        RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
+        int num_enemies =enemies.length;
+        int k=0;
+        boolean seesArchon = false;
+        for (RobotInfo r:enemies){
+            if (r.getType()== RobotType.ARCHON){
+                seesArchon=true;
+                k=4096+64*r.getLocation().x+r.getLocation().y;
+            }
+        }
+        if (num_enemies>5 && !seesArchon){
+            MapLocation m = rc.getLocation();
+            int x = m.x, y=m.y;
+            k=x*64+y;
+            rc.writeSharedArray(55,k);
+        }
+        if (seesArchon){
+            rc.writeSharedArray(55, k);
+        }
+
+    }
 }

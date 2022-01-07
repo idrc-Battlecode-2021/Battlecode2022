@@ -54,29 +54,4 @@ public class Sage extends Droid {
             }
         }
     }
-    public boolean hasMapLocation() throws GameActionException {
-        if (rc.readSharedArray(55) == 0) {
-            return false;
-        }
-        return true;
-    }
-
-    public MapLocation decode() throws GameActionException {
-        int loc = rc.readSharedArray(55);
-        int x = loc / 64;
-        int y = loc % 64;
-        return new MapLocation(x, y);
-    }
-
-    public void broadcast() throws GameActionException {
-        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
-        int num_enemies = enemies.length;
-
-        if (num_enemies > 5) {
-            MapLocation m = rc.getLocation();
-            int x = m.x, y = m.y;
-            int k = x * 64 + y;
-            rc.writeSharedArray(55, k);
-        }
-    }
 }
