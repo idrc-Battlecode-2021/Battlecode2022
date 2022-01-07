@@ -16,8 +16,9 @@ public class Watchtower extends Building {
 
     @Override
     public void init() throws GameActionException {
-        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro: r) {
+            rc.setIndicatorString("searching for archon");
             if (ro.getType() == RobotType.ARCHON) {
                 archon = ro.getLocation();
             }
@@ -27,6 +28,8 @@ public class Watchtower extends Building {
         }
         else if (rc.readSharedArray(5)+rc.readSharedArray(6)+
                 rc.readSharedArray(7)+rc.readSharedArray(8)>8){
+            
+            rc.setIndicatorString("not defensive");
             isDefensive=false;
         }
     }

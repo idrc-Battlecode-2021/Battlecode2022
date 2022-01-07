@@ -22,7 +22,7 @@ public class Miner extends Droid{
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         //exploreDirIndex = (int)(8*Math.random());
-        explore();
+        tryMoveMultipleNew();
         viewResources(true);
     }
 
@@ -83,7 +83,7 @@ public class Miner extends Droid{
             }
         }
         if(rc.getMovementCooldownTurns() == 0 && target == null){
-            explore();
+            tryMoveMultipleNew();
         }
         if(!prev.equals(myLocation)) viewResources(false);
     }
@@ -98,6 +98,12 @@ public class Miner extends Droid{
             gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));
         }
         for(int i = nearbyLead.length; --i>=0;){
+            if(rc.canSenseRobotAtLocation(nearbyLead[i])){
+                RobotInfo robot = rc.senseRobotAtLocation(nearbyLead[i]);
+                if(robot.getTeam() != myTeam || robot.getType == myType){
+                    continue;
+                }
+            }
             int amount = rc.senseLead(nearbyLead[i]);
             if(amount > 5){
                 lead.put(nearbyLead[i],amount);

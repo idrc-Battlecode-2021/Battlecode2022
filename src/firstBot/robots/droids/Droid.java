@@ -23,8 +23,8 @@ public abstract class Droid extends Robot {
         if(rc.canMove(initDirection)){
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0){
+            if(xVal >= 0 && xVal < mapWidth && yVal >= 0 && yVal < mapHeight &&
+                    internalMap[xVal][yVal] == -1){
                 dir = initDirection;
                 rubble = rc.senseRubble(rc.adjacentLocation(initDirection));
             }
@@ -35,7 +35,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0){
+                    internalMap[xVal][yVal] == -1){
                 rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateLeft()));
                 if(rubble2 < rubble){
                     dir = initDirection.rotateLeft();
@@ -47,7 +47,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0){
+                    internalMap[xVal][yVal] == -1){
                 rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateRight()));
                 if(rubble2 < rubble){
                     dir = initDirection.rotateLeft();
@@ -72,9 +72,9 @@ public abstract class Droid extends Robot {
             int[] offsets = getDirectionOffsets(d);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0 && rc.canMove(d)){
+                    internalMap[xVal][yVal] == -1 && rc.canMove(d)){
                 if(tryMoveMultiple(d)){
-                    internalMap[myLocation.x][myLocation.y] = 1;
+                    internalMap[myLocation.x][myLocation.y] = rc.senseRubble(myLocation);
                     return true;
                 }
             }
@@ -113,7 +113,6 @@ public abstract class Droid extends Robot {
         MapLocation temp2 = new MapLocation(myLocation.x-4,myLocation.y);
         if(!rc.onTheMap(temp1) && selectDirection(myLocation.x+4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y) ||
             !rc.onTheMap(temp2) && selectDirection(myLocation.x-4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y)){
-
             x = -x;
         }
         temp1 = new MapLocation(myLocation.x,myLocation.y+4);
@@ -121,6 +120,30 @@ public abstract class Droid extends Robot {
         if(!rc.onTheMap(temp1) && selectDirection(myLocation.x,myLocation.y+4) == selectDirection(myLocation.x,myLocation.y+y) ||
             !rc.onTheMap(temp2) && selectDirection(myLocation.x,myLocation.y-4) == selectDirection(myLocation.x,myLocation.y-y)){
             y = -y;
+        }
+        if(y == 0){
+            if(myLocation.y == 0){
+                y += 4;
+            }else if(myLocation.y == mapHeight-1){
+                y -=4;
+            }
+        }
+        if(x == 0){
+            if(myLocation.x == 0){
+                x += 4;
+            }else if(myLocation.x == mapWidth-1){
+                x -=4;
+            }
+        }
+        if(myLocation.x + x >= mapWidth){
+            x = mapWidth-1-myLocation.x;
+        }else if(myLocation.x + x < 0){
+            x = 0-myLocation.x;
+        }
+        if(myLocation.y + y >= mapHeight){
+            y = mapHeight-1-myLocation.y;
+        }else if(myLocation.y + y < 0){
+            y = 0-myLocation.y;
         }
         exploreTarget = new MapLocation(x+myLocation.x,y+myLocation.y);
     }

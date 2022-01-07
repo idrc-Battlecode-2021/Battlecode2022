@@ -48,16 +48,23 @@ public class Builder extends Droid{
         if (numTowers>2){
             isDefensive=false;
         }
+        /*
+        if (finishPrototype!=null){
+            rc.setIndicatorString(finishPrototype+" "+rc.canSenseRobotAtLocation(finishPrototype));
+        }
+        */
+        
         if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){ //repairs prototypes
             RobotInfo prototype = rc.senseRobotAtLocation(finishPrototype);
             if (prototype.getHealth()==prototype.getType().health){
+                rc.setIndicatorString("weird");
                 finishPrototype=null;
             }
             else{
                 if(rc.canRepair(finishPrototype)){
                     rc.repair(finishPrototype);
-                    return;
                 }
+                return;
             }
         }
         int toBuild = read();
@@ -84,18 +91,18 @@ public class Builder extends Droid{
             }
         else if (nearPrototype){
             rc.repair(prototypeLoc);
-         }
+            }
         else if (isDefensive){
             intermediateMove(archonLoc);
         }
-         else{
-             int randint = rand.nextInt(8);
-             Direction d = Constants.DIRECTIONS[randint];
-             if(rc.canMove(d)){
-                 rc.move(d);
-                 myLocation = rc.getLocation();
+            else{
+                int randint = rand.nextInt(8);
+                Direction d = Constants.DIRECTIONS[randint];
+                if(rc.canMove(d)){
+                    rc.move(d);
+                    myLocation = rc.getLocation();
+                }
             }
-         }
 
      }
     public boolean canHeal() throws GameActionException{
@@ -183,6 +190,7 @@ public class Builder extends Droid{
         if (k!=null) {
             rc.buildRobot(r, k);
             finishPrototype = rc.getLocation().add(k);
+            rc.setIndicatorString("prototype");
             if (r == RobotType.WATCHTOWER) addTowers();
             else addLabs();
             return true;

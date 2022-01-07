@@ -4,29 +4,35 @@ import battlecode.common.*;
 import firstBot.util.Constants;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Map;
 
 public abstract class Robot {
     protected RobotController rc;
     protected Team myTeam;
     protected RobotType myType;
     protected MapLocation myLocation;
+    protected int mapWidth,mapHeight;
 
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
     protected int[][] internalMap;
-    // 0 = new space, 1 = traveled space
+    // -1 = unknown, otherwise amount of rubble
 
     public Robot(RobotController rc){
         this.rc = rc;
         myTeam = rc.getTeam();
         myLocation = rc.getLocation();
         myType = rc.getType();
-        internalMap = new int[rc.getMapWidth()][rc.getMapHeight()];
-        //internalMap[myLocation.x][myLocation.y] = 1;
+        
+        mapWidth = rc.getMapWidth();
+        mapHeight = rc.getMapHeight();
+        internalMap = new int[mapWidth][mapHeight];
+        for(int i = 0; i < mapWidth; i++){
+            for(int j = 0; j < mapHeight; j++){
+                internalMap[i][j] = -1;
+            }
+        }
+        //updateInternalMap();
     }
 
     public abstract void init() throws GameActionException;
@@ -249,6 +255,7 @@ public abstract class Robot {
             if(rc.canMove(d)){
                 rc.move(d);
                 myLocation = rc.getLocation();
+                updateInternalMap();
                 return true;
             }
         }
@@ -298,7 +305,7 @@ public abstract class Robot {
     
     private void pathfind(MapLocation target) throws GameActionException{
         //dijkstra for unknown square
-        Queue<MapLocation> queue = new LinkedList<MapLocation>();
+        ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
         HashMap<MapLocation, Integer> dists = new HashMap<>();
 		queue.add(myLocation);
 		dists.put(myLocation, 0);
@@ -340,4 +347,6 @@ public abstract class Robot {
         //note to self: add test to see if target is in internal map already or in sight already
         //note to self: use internal map to find closest known square to target? instead of current
     }
+    
+    private void updateInternalMap(){}
 }
