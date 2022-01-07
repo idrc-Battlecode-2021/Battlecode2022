@@ -12,8 +12,6 @@ public class Builder extends Droid{
     private int archon;
     private Random rand = new Random();
     private MapLocation archonLoc;
-    private boolean prevBuilder = false;
-    private int prevTowers=10;
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
         int archonID=0;
@@ -114,7 +112,7 @@ public class Builder extends Droid{
     public void addTowers() throws GameActionException{
         int index = archon + 5;
         rc.writeSharedArray(index, rc.readSharedArray(index)+1);
-        prevTowers=rc.readSharedArray(index)+1;
+
         int power = (int)Math.pow(2,startingBit);
         int buildCommand = rc.readSharedArray(58) - 2 * power;
         rc.writeSharedArray(58, buildCommand);
@@ -125,7 +123,6 @@ public class Builder extends Droid{
         rc.writeSharedArray(58, rc.readSharedArray(58) - (int)Math.pow(2,startingBit));
     }
     public boolean build(int id) throws GameActionException{
-        if (prevBuilder) return false;
         if(myLocation.x%2 == myLocation.y%2){
             boolean notMoved = true;
             List<Direction> basic = Arrays.asList(Constants.BASIC_DIRECTIONS);

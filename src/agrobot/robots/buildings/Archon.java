@@ -167,16 +167,19 @@ public class Archon extends Building{
             }
         }
         else if (soldierCount<soldierBuild) {
-
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
-            Direction directions[] = Direction.allDirections();
-            int i=0;
-            while (!rc.canBuildRobot(RobotType.SOLDIER,directions[i]) && i<8){
-                i++;
-            }
-            if (rc.canBuildRobot(RobotType.SOLDIER,directions[i])){
-                rc.buildRobot(RobotType.SOLDIER,directions[i]);
-                soldierCount++;
+                Direction directions[] = Direction.allDirections();
+                int i=0;
+                while (!rc.canBuildRobot(RobotType.SOLDIER,directions[i]) && i<8){
+                    i++;
+                }
+                if (rc.canBuildRobot(RobotType.SOLDIER,directions[i])){
+                    rc.buildRobot(RobotType.SOLDIER,directions[i]);
+                    soldierCount++;
+                    if (soldierCount == soldierBuild) {
+                        rc.writeSharedArray(57, rc.readSharedArray(57) + power);
+                        spawnPhase++;
+                    }
             }
         }
         }
@@ -193,8 +196,10 @@ public class Archon extends Building{
                 }
             }
             else if (labCount<labBuild){
+                rc.setIndicatorString("Building labs + watchtowers");
                 if (buildType%3==0){
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
+                        rc.setIndicatorString("Building labs");
                         //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                         int temp = (int)Math.pow(2,archonOrder*2);
                         int currentValue = rc.readSharedArray(58);
@@ -210,6 +215,7 @@ public class Archon extends Building{
                 }
                 else{
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
+                        rc.setIndicatorString("Building watchtowers");
                         int temp = (int)Math.pow(2,archonOrder*2); // power corresponding to this Archon's bits
                         int currentValue = rc.readSharedArray(58); 
                         int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command

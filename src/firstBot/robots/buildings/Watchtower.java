@@ -34,9 +34,10 @@ public class Watchtower extends Building {
     //TODO: fix targeting
     @Override
     public void run() throws GameActionException {
+        broadcast();
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
         for (RobotInfo r : enemies) {
-            if (r.getType() == RobotType.SAGE) {
+            if (r.getType() == RobotType.SAGE || r.getType()==RobotType.ARCHON) {
                 if (rc.canAttack(r.getLocation())) {
                     rc.attack(r.getLocation());
                 }
@@ -45,76 +46,39 @@ public class Watchtower extends Building {
         if (enemies.length > 0 && rc.canAttack(enemies[0].getLocation())) {
             rc.attack(enemies[0].getLocation());
         }
-        int counter = -1;
-        for (MapLocation j : latticePositions) {
-            counter = counter + 1;
-            if (rc.getLocation() == j) {
-                inPosition = true;
-                rc.writeSharedArray(56, rc.readSharedArray(56) + (int) Math.pow(2, counter));
-            }
-            // Lattice Formation
-            // 7 x 2 formation
-            // 0 - (0,3)
-            // 1 - (6,3)
-            // 2 - (-6,3)
-            // 3 - (12,3)
-            // 4 - (-12,3)
-            // 5 - (-18,3)
-            // 6 - (18,3)
-            // 7 - row 2 (x, -3)
-
-            if (isDefensive) {
-                if (archon == null) {
-                    for (RobotInfo r : rc.senseNearbyRobots()) {
-                        if (r.getType() == RobotType.ARCHON && r.getTeam() == rc.getTeam()) {
-                            archon = r.getLocation();
-                        }
-                    }
-                } else {
-                    if (rc.getLocation().isWithinDistanceSquared(archon, 20)) {
-                        if (rc.getMode() == RobotMode.PORTABLE && rc.canTransform()) {
-                            rc.transform();
-                        }
-                    } else intermediateMove(archon);
+        if (hasMapLocation()){
+            if (rc.getMode()==RobotMode.TURRET){
+                if(rc.canTransform()){
+                    rc.transform();
                 }
-            } else {
-                if (rc.getMode() == RobotMode.TURRET) {
-                    if (rc.canTransform()) {
+            }
+            if (attackArchon()){
+                if (rc.getLocation().isWithinDistanceSquared(decode(),rc.getType().actionRadiusSquared)){
+                    if(rc.getMode() == RobotMode.PORTABLE && rc.canTransform()){
                         rc.transform();
                     }
                 }
-                if (inPosition) {
-                    if (rc.getMode() != RobotMode.TURRET) {
-                        if (rc.canTransform()) {
-                            rc.transform();
-                        }
-                    }
-                }
-                if (!inPosition) {
-                    int locations = rc.readSharedArray(56);
-                    String bstring = Integer.toBinaryString(locations);
-                    bstring = "00000000000000".substring(bstring.length()) + bstring;
-                    int[] enc = new int[bstring.length()];
-                    for (int i = 0; i < bstring.length(); i++) {
-                        enc[i] = Character.getNumericValue(bstring.charAt(i));
-                    }
-                    MapLocation target = null;
-                    for (int i = 0; i < enc.length; i++) {
-                        if (enc[i] == 0) {
-                            target = latticePositions[i];
-                        }
-                    }
-                    if (target != null) intermediateMove(target);
-                    int counter1 = -1;
-                    for (MapLocation ii : latticePositions) {
-                        counter1 = counter1 + 1;
-                        if (rc.getLocation() == ii) {
-                            inPosition = true;
-                            rc.writeSharedArray(56, rc.readSharedArray(56) + (int) Math.pow(2, counter1));
-                        }
-                    }
+                else{
+                    intermediateMove(decode());
                 }
             }
+            else if(rc.getLocation().isWithinDistanceSquared(decode(), 5)){
+                if(rc.canTransform() && rc.getMode() == RobotMode.PORTABLE) {
+                    rc.transform();
+                }
+            }
+            else{
+                intermediateMove(decode());
+            }
         }
+
+    }
+    public boolean attackArchon() throws GameActionException{
+        if (hasMapLocation()){
+            if (rc.readSharedArray(55)/4096>0){
+                return true;
+            }
+        }
+        return false;
     }
 }

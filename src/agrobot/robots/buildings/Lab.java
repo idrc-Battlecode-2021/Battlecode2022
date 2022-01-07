@@ -14,18 +14,16 @@ public class Lab extends Building{
 
     @Override
     public void init() throws GameActionException {
-		//readConstraints();
-        rc.setIndicatorString(Boolean.toString(canMakeGold()));
-		if (rc.canTransmute()){
+		readConstraints();
+        if (canMakeGold()){
             rc.transmute();
         }
     }
 
     @Override
     public void run() throws GameActionException {
-		//readConstraints();
-        rc.setIndicatorString(Boolean.toString(canMakeGold()));
-		if (rc.canTransmute()){
+		readConstraints();
+        if (canMakeGold()){
             rc.transmute();
         }
     }
