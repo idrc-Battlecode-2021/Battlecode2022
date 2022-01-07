@@ -34,6 +34,35 @@ public class Miner extends Droid{
             rc.writeSharedArray(0, rc.readSharedArray(0)+1);
         }
         //TODO: Optimize branching
+        miningBlock:{
+            if(target != null){
+                leadBlock:{
+                    if(targetType == 1){
+                        if(!gold.isEmpty()){ //prioritize gold over Lead
+                            MapLocation temp = getMax(gold);
+                            if(temp != null){
+                                targetType = 2;
+                                target = temp;
+                                break leadBlock;
+                            }
+                        }else{
+                            if(myLocation.equals(target) && rc.senseLead(target) > 1 && rc.canMineLead(target)){
+                                rc.mineLead(target);
+                            }else if(rc.canSenseRobotAtLocation(target)){
+                              RobotInfo robot = rc.senseRobotAtLocation(target);
+                              if(robot.getTeam() != myTeam || robot.getType() == myType){
+                                  
+                              }
+                            }
+                        }
+                    }
+                }
+                if(targetType == 2){
+
+                }
+            }
+        }
+
         if(target != null){
             if(targetType == 1){
                 if(!gold.isEmpty()){ //prioritize gold over Lead
@@ -100,7 +129,7 @@ public class Miner extends Droid{
         for(int i = nearbyLead.length; --i>=0;){
             if(rc.canSenseRobotAtLocation(nearbyLead[i])){
                 RobotInfo robot = rc.senseRobotAtLocation(nearbyLead[i]);
-                if(robot.getTeam() != myTeam || robot.getType == myType){
+                if(robot.getTeam() != myTeam || robot.getType() == myType){
                     continue;
                 }
             }
