@@ -99,15 +99,29 @@ public abstract class Droid extends Robot {
     }
 
     //Calculate location to go based on locations of sensed friendly bots
-    public MapLocation newLocation(){
-        int x = exploreTarget.x-myLocation.x, y = exploreTarget.y-myLocation.y;
-        RobotInfo[] sensedBots = rc.senseNearbyRobots(20,myTeam);
-        for(int i = sensedBots.length; --i>=0;){
-            x += sensedBots[i].location.x-myLocation.x;
-            y += sensedBots[i].location.y-myLocation.y;
+    public void newLocation() throws GameActionException{
+            int x = exploreTarget.x-myLocation.x, y = exploreTarget.y-myLocation.y;
+            RobotInfo[] sensedBots = rc.senseNearbyRobots(20,myTeam);
+            for(int i = sensedBots.length; --i>=0;){
+                if(sensedBots[i].getType() == myType || sensedBots[i].getType() == RobotType.ARCHON) {
+                    x -= sensedBots[i].location.x-myLocation.x;
+                    y -= sensedBots[i].location.y-myLocation.y;
+                }
+            }
+            MapLocation temp1 = new MapLocation(myLocation.x+4,myLocation.y);
+            MapLocation temp2 = new MapLocation(myLocation.x-4,myLocation.y);
+            if(!rc.onTheMap(temp1) && selectDirection(myLocation.x+4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y) ||
+                !rc.onTheMap(temp2) && selectDirection(myLocation.x-4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y)){
+                x = -x;
+            }
+            temp1 = new MapLocation(myLocation.x,myLocation.y+4);
+            temp2 = new MapLocation(myLocation.x,myLocation.y-4);
+            if(!rc.onTheMap(temp1) && selectDirection(myLocation.x,myLocation.y+4) == selectDirection(myLocation.x,myLocation.y+y) ||
+                !rc.onTheMap(temp2) && selectDirection(myLocation.x,myLocation.y-4) == selectDirection(myLocation.x,myLocation.y-y)){
+                y = -y;
+            }
+            exploreTarget = new MapLocation(x+myLocation.x,y+myLocation.y);
         }
-        return new MapLocation(x+myLocation.x,y+myLocation.y);
-    }
     public void explore() throws GameActionException {
         newLocation();
         intermediateMove(exploreTarget);

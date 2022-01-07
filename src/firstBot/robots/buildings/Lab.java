@@ -13,6 +13,7 @@ public class Lab extends Building{
 
     @Override
     public void init() throws GameActionException {
+        parseAnomalies();
 		readConstraints();
 		if (canMakeGold()){
             rc.transmute();
@@ -21,6 +22,8 @@ public class Lab extends Building{
 
     @Override
     public void run() throws GameActionException {
+        avoidFury();
+        retransform();
 		readConstraints();
 		if (canMakeGold()){
             rc.transmute();

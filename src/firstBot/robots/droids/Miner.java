@@ -29,7 +29,6 @@ public class Miner extends Droid{
     @Override
     public void run() throws GameActionException {
         // update shared array
-        rc.setIndicatorString(lead.size()+"");
         MapLocation prev = myLocation;
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(0, rc.readSharedArray(0)+1);
@@ -93,33 +92,16 @@ public class Miner extends Droid{
         //TODO: Method currently doesn't consider if a previously checked location still has resources
         //TODO: Could also check rubble amount
         //Maybe change so that the closest location above the threshold is chosen as the target rather than
-        MapLocation current = rc.getLocation();
-        int[][] vision = null;
-        if(start){
-            vision = Constants.Droids.VIEWABLE_TILES_20; //vision starts at closest tiles
-        }else{
-            vision = Constants.Droids.OUTER_TILES_20;
+        MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
+            nearbyLead = rc.senseNearbyLocationsWithLead(20);
+        for(int i = nearbyGold.length; --i>=0;){
+            gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));
         }
-        for(int i=vision.length; --i>= 0;){
-            MapLocation loc = new MapLocation(current.x+vision[i][0], current.y+vision[i][1]);
-            if(rc.onTheMap(loc)){
-                if(!gold.containsKey(loc)){
-                    int amount = rc.senseGold(loc);
-                    if(amount > 0){
-                        gold.put(loc,amount);
-                        break; //stops at first new resource seen, change later
-                    }
-
-                }
-                if(!lead.containsKey(loc)){
-                    int amount = rc.senseLead(loc);
-                    if(amount > 6){
-                        lead.put(loc,amount);
-                        break; //stops at first new resource seen, change later
-                    }
-                }
+        for(int i = nearbyLead.length; --i>=0;){
+            int amount = rc.senseLead(nearbyLead[i]);
+            if(amount > 5){
+                lead.put(nearbyLead[i],amount);
             }
-            
         }
         if(!gold.isEmpty()){
             target = getMax(gold);
@@ -147,21 +129,5 @@ public class Miner extends Droid{
         }
         return loc;
     }
-
-//    @Override
-//    public void explore() throws GameActionException {
-//        //TODO: Make ExploreTargets not Repeat or be close to previous locations
-//        /*if(exploreTarget == null || targetType != 0 || myLocation.equals(exploreTarget)){
-//            //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
-//            exploreDirIndex = (int)(8*Math.random());
-//            targetType = 0;
-//        }*/
-//        //intermediateMove(exploreTarget);
-//        //priorityMove(exploreDirIndex);
-//        tryMoveMultipleNew();
-//
-//    }
-
-
 
 }

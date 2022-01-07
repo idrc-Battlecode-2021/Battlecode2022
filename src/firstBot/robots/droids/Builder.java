@@ -12,13 +12,17 @@ public class Builder extends Droid{
     private int archon;
     private Random rand = new Random();
     private MapLocation archonLoc;
+    private boolean isDefensive = true;
+    private MapLocation finishPrototype = null;
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
         int archonID=0;
-        for (RobotInfo R : rc.senseNearbyRobots()){
-            if (R.getType() == RobotType.ARCHON){
-                archonID=R.getID();
-                archonLoc=R.getLocation();
+        RobotInfo[] robots = rc.senseNearbyRobots();
+        for (int i = robots.length; --i>=0;){
+            if (robots[i].getType() == RobotType.ARCHON){
+                archonID=robots[i].getID();
+                archonLoc=robots[i].getLocation();
+                break;
             }
         }
         for(int i=63; i>59; i--){
@@ -35,28 +39,45 @@ public class Builder extends Droid{
     }
 
     @Override
-  public void run() throws GameActionException {
+    public void run() throws GameActionException {
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(1, rc.readSharedArray(1)+1);
+        }
+        int numTowers = rc.readSharedArray(archon+5);
+        if (numTowers>2){
+            isDefensive=false;
+        }
+        if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){ //repairs prototypes
+            RobotInfo prototype = rc.senseRobotAtLocation(finishPrototype);
+            if (prototype.getHealth()==prototype.getType().health){
+                finishPrototype=null;
+            }
+            else{
+                if(rc.canRepair(finishPrototype)){
+                    rc.repair(finishPrototype);
+                    return;
+                }
+            }
         }
         int toBuild = read();
         rc.setIndicatorString(Integer.toBinaryString(toBuild));
         boolean built = build(toBuild);
         boolean nearPrototype = false;
         MapLocation prototypeLoc = null;
-        for (RobotInfo r : rc.senseNearbyRobots()){
-            if (r.getMode() == RobotMode.PROTOTYPE){
-                if (rc.canRepair(r.getLocation())){
+        RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);
+        for (int i = robots.length; --i>=0;){
+            if (robots[i].getMode() == RobotMode.PROTOTYPE){
+                if (rc.canRepair(robots[i].getLocation())){
                     nearPrototype=true;
-                    prototypeLoc = r.getLocation();
+                    prototypeLoc = robots[i].getLocation();
                 }
             }
         }
         if (built){
-            for (RobotInfo r:rc.senseNearbyRobots()){
-                if (r.getMode()==RobotMode.PROTOTYPE){
-                    MapLocation target = r.getLocation();
+            for (int i = robots.length; --i>=0;){
+                if (robots[i].getMode()==RobotMode.PROTOTYPE){
+                    MapLocation target = robots[i].getLocation();
                     rc.writeSharedArray(59, archon*128+target.x*64+target.y);
                     }
                 }
@@ -64,6 +85,9 @@ public class Builder extends Droid{
         else if (nearPrototype){
             rc.repair(prototypeLoc);
          }
+        else if (isDefensive){
+            intermediateMove(archonLoc);
+        }
          else{
              int randint = rand.nextInt(8);
              Direction d = Constants.DIRECTIONS[randint];
@@ -147,15 +171,18 @@ public class Builder extends Droid{
         // find square with least rubble.
         Direction k = null;
         int minR=1000;
-        for(Direction d : Constants.BASIC_DIRECTIONS){
-            if(rc.canBuildRobot(r,d)){
-                if (rc.senseRubble(rc.getLocation().add(d))<minR){
-                    k=d; minR=rc.senseRubble(rc.getLocation().add(d));
+        Direction[] basic = Constants.BASIC_DIRECTIONS;
+        for(int i = basic.length; --i>=0;){
+            if(rc.canBuildRobot(r,basic[i])){
+                if (rc.senseRubble(myLocation.add(basic[i]))<minR){
+                    k=basic[i];
+                    minR=rc.senseRubble(myLocation.add(basic[i]));
                 }
             }
         }
         if (k!=null) {
             rc.buildRobot(r, k);
+            finishPrototype = rc.getLocation().add(k);
             if (r == RobotType.WATCHTOWER) addTowers();
             else addLabs();
             return true;

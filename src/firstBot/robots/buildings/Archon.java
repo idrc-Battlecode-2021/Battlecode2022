@@ -6,6 +6,7 @@ import battlecode.common.*;
 public class Archon extends Building{
     private static int minerCount, builderCount, sageCount, soldierCount, labCount, watchtowerCount;
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
+    private static int targetMinerCount; //target # of miners to build across all archons
 
     private static MapLocation myLocation;
     private static int minerBuild = 10; //miners to build
@@ -28,8 +29,23 @@ public class Archon extends Building{
         super(rc);
     }
 
+    public Direction[] closestDirections(Direction d){
+		return new Direction[]{
+							d,
+							d.rotateLeft(),
+							d.rotateRight(),
+							d.rotateLeft().rotateLeft(),
+							d.rotateRight().rotateRight(),
+							d.rotateLeft().rotateLeft().rotateLeft(),
+							d.rotateRight().rotateRight().rotateRight(),
+							d.opposite().rotateRight(),
+							d.opposite().rotateLeft()
+						};
+	}
+
     @Override
     public void init() throws GameActionException {
+        parseAnomalies();
         myLocation = rc.getLocation();
         // write Archon ID to shared array
         if (rc.getArchonCount()==1){
@@ -43,24 +59,28 @@ public class Archon extends Building{
         }
         power = (int)Math.pow(2,archonOrder*4);
         // Choose # of miners to build based on lead in surroundings
-        //int leadTiles = rc.senseNearbyLocationsWithLead(rc.getType().visionRadiusSquared);
+        int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
         
-        int leadTiles = 0;
-        for (int[] coord : Constants.VIEWABLE_TILES_34){
-            //TODO: update based on amount of lead instead of if it exists?
-            MapLocation observe = myLocation.translate(coord[0],coord[1]);
-            if (rc.onTheMap(observe) && rc.senseLead(observe)>0){
-                leadTiles++;
-            }
-        }
-        
-        minerBuild = Math.max(minerBuild, (int)(60*((double)leadTiles/Constants.VIEWABLE_TILES_34.length)));
+        minerBuild = Math.max(minerBuild, (int)(60*((double)leadTiles/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
         soldierBuild = minerBuild;
+        rc.writeSharedArray(0,rc.readSharedArray(0)+minerBuild*256);
     }
 
-    public boolean checkArchonPhase(int n) throws GameActionException {
+    public boolean canProceed(int n) throws GameActionException {
+        // First check if other archons are trying to defend
         // Check if all archons have passed phase n
         // 0 - spawn 1/3 of minerBuild, 1 - spawn 2/3 of minerBuild, etc.
+        int defenseStatus = rc.readSharedArray(56);
+        for (int i=0;i<16;i+=4){
+            if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
+                continue;
+            }
+            int temp = (int)Math.pow(2,i);
+            int thisDefense = (defenseStatus % (temp*16))/temp;
+            if (thisDefense > 0){
+                return false;
+            }
+        }
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
             if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
@@ -77,28 +97,50 @@ public class Archon extends Building{
      
     public void updateLabConstraints() throws GameActionException {
         //TODO: update constraints for lab based on current lead amounts and needs
-        int minLead = 500; //placeholder
+        int minLead = 300; //placeholder
         int maxRate = 20; //placeholder, 5 to 20
         rc.writeSharedArray(9, (maxRate-5)*4096+minLead); //minLead may need to be divided by a factor to fit in 12 bits if minLead is large
         
     }
     
     public boolean defense() throws GameActionException {
-        return false;
-        /*
-        //TODO: update constraints for lab based on current lead amounts and needs
-        int minLead = 500; //placeholder
-        int maxRate = 20; //placeholder, 5 to 20
-        rc.writeSharedArray(9, (maxRate-5)*4096+minLead); //minLead may need to be divided by a factor to fit in 12 bits if minLead is large
-        */
+        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
+        int current = rc.readSharedArray(56);
+        int myValue = (current % (power*16))/power;
+        if (enemies.length>0){
+            rc.writeSharedArray(56, current - myValue*power + power);
+        }
+        else{
+            rc.writeSharedArray(56, current - myValue*power);
+            return false;
+        }
+        if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+            Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
+            int i=0;
+            while (!rc.canBuildRobot(RobotType.SOLDIER,directions[i]) && i<8){
+                i++;
+            }
+            if (rc.canBuildRobot(RobotType.SOLDIER,directions[i])){
+                rc.buildRobot(RobotType.SOLDIER,directions[i]);
+            }
+        }
+        return true;
     }
     
     @Override
     public void run() throws GameActionException {
+        
+        if (defense()){
+            return;
+        }
+        avoidFury();
+        retransform();
         updateLabConstraints();
         // read total/global # of robots
         if (rc.getRoundNum()%3==0){
-            globalMinerCount = rc.readSharedArray(0);
+            int minerInfo = rc.readSharedArray(0);
+            globalMinerCount = minerInfo%256;
+            targetMinerCount = minerInfo/256;
             globalBuilderCount = rc.readSharedArray(1);
             globalSageCount = rc.readSharedArray(2);
             globalSoldierCount = rc.readSharedArray(3);
@@ -113,7 +155,8 @@ public class Archon extends Building{
                 right now only the 1st archon that moves always refreshes the array to save bytecode.
                 in the future program for the case where it gets destroyed and others are alive
             */
-            for (int i=0;i<4;i++){
+            rc.writeSharedArray(0, rc.readSharedArray(0)-globalMinerCount);
+            for (int i=1;i<4;i++){
                 rc.writeSharedArray(i, 0);
             }
         }
@@ -135,10 +178,10 @@ public class Archon extends Building{
         labCount = (rc.readSharedArray(4) % (power*16))/power;
         rc.setIndicatorString(labCount+"");
         //build robots
-        if (!checkArchonPhase(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
+        if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             return;
         }
-        if (minerCount<minerBuild){
+        if (minerCount<minerBuild || globalMinerCount<targetMinerCount*2/3){
             if (buildType % 3 == 0){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();

@@ -2,10 +2,16 @@ package firstBot.robots;
 
 import battlecode.common.*;
 import firstBot.util.Constants;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Map;
 
 public abstract class Robot {
     protected RobotController rc;
     protected Team myTeam;
+    protected RobotType myType;
     protected MapLocation myLocation;
 
     protected Direction initDirection;
@@ -18,8 +24,9 @@ public abstract class Robot {
         this.rc = rc;
         myTeam = rc.getTeam();
         myLocation = rc.getLocation();
+        myType = rc.getType();
         internalMap = new int[rc.getMapWidth()][rc.getMapHeight()];
-        internalMap[myLocation.x][myLocation.y] = 1;
+        //internalMap[myLocation.x][myLocation.y] = 1;
     }
 
     public abstract void init() throws GameActionException;
@@ -115,28 +122,6 @@ public abstract class Robot {
         return Direction.CENTER;
     }
 
-    public void move(MapLocation target) throws GameActionException {
-        Direction dir = selectDirection(target.x-myLocation.x,target.y-myLocation.y);
-        switch(dir){
-            case EAST:
-
-            case WEST:
-
-            case NORTH:
-
-            case SOUTH:
-
-            case NORTHEAST:
-
-            case NORTHWEST:
-
-            case SOUTHEAST:
-
-            case SOUTHWEST:
-
-        }
-    }
-
     //May not be needed
     public MapLocation closestPointinVision(MapLocation target){
         int vX = target.x-myLocation.x, vY = target.y-myLocation.y;
@@ -146,6 +131,7 @@ public abstract class Robot {
     }
 
     //TODO: Old Movement Methods, Update to use basic path finding
+    //Greedy pathfinding against adjacent tiles
     public void intermediateMove(MapLocation target) throws GameActionException {
         int x = target.x-myLocation.x, y = target.y-myLocation.y;
         if (x == y) {
@@ -300,14 +286,58 @@ public abstract class Robot {
         if (seesArchon){
             rc.writeSharedArray(55, k);
         }
-
+    }
+    public boolean attackArchon() throws GameActionException{
+        if (hasMapLocation()){
+            if (rc.readSharedArray(55)/4096>0){
+                return true;
+            }
+        }
+        return false;
     }
     
-    public void pathfind(MapLocation target) throws GameActionException{
+    private void pathfind(MapLocation target) throws GameActionException{
+        //dijkstra for unknown square
+        Queue<MapLocation> queue = new LinkedList<MapLocation>();
+        HashMap<MapLocation, Integer> dists = new HashMap<>();
+		queue.add(myLocation);
+		dists.put(myLocation, 0);
+		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
+		for (int i = senseLocations.length; --i >= 0;){
+            queue.add(senseLocations[i]);
+            dists.put(senseLocations[i], Integer.MAX_VALUE);
+        }
+        while (queue.size() > 0){
+            MapLocation chosen = null;
+			int min= Integer.MAX_VALUE;
+            for(MapLocation m : queue){
+                if(dists.get(m) < min){
+                    min = dists.get(m);
+                    chosen = m;
+                }
+            }
+            
+           	queue.remove(chosen);
+            MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
+           	for (int i = temp.length; --i>=0;){
+               	int tot_rubble = dists.get(chosen) + rc.senseRubble(temp[i]);
+               	if (tot_rubble < dists.get(temp[i])){
+               		dists.put(temp[i], tot_rubble);
+               	}
+           	}
+           	
+        }
         
-    }
-    
-    private void djikstra(MapLocation target) throws GameActionException{
+        //dists now contains a dictionary of smallest distance to every square in sight
         
+        //if target in sight then pathfind
+        	
+        
+        
+        //next step is to pick a decent square in the direction of overall target to pathfind toward if target is not in sight
+        
+        //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
+        //note to self: add test to see if target is in internal map already or in sight already
+        //note to self: use internal map to find closest known square to target? instead of current
     }
 }

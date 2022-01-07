@@ -55,18 +55,18 @@ public class Soldier extends Droid{
             intermediateMove(target);
         }
         else{
-            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared);
-            for (MapLocation m : all){
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            for (int i = all.length; --i>=0;){
                 for (MapLocation c: corners){
-                    if (m==c){
-                        Direction d = rc.getLocation().directionTo(c);
+                    if (all[i]==c){
+                        Direction d = myLocation.directionTo(c);
                         tryMoveMultiple(d);
                     }
                 }
             }
 
             if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
-                Direction d = rc.getLocation().directionTo(center);
+                Direction d = myLocation.directionTo(center);
                 tryMoveMultiple(d);
             }
             else{

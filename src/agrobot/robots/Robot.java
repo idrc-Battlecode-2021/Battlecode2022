@@ -6,8 +6,8 @@ import agrobot.util.Constants;
 public abstract class Robot {
     protected RobotController rc;
     protected Team myTeam;
+    protected RobotType myType;
     protected MapLocation myLocation;
-
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -18,6 +18,7 @@ public abstract class Robot {
         this.rc = rc;
         myTeam = rc.getTeam();
         myLocation = rc.getLocation();
+        myType = rc.getType();
         internalMap = new int[rc.getMapWidth()][rc.getMapHeight()];
         internalMap[myLocation.x][myLocation.y] = 1;
     }

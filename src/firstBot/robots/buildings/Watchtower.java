@@ -8,53 +8,71 @@ import battlecode.common.MapLocation;
 import java.util.Map;
 
 public class Watchtower extends Building {
-    private boolean isDefensive = false;
+    private boolean isDefensive = true;
     private MapLocation archon = null;
-    private MapLocation latticeCenter = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
-    private boolean inPosition = false;
-    private MapLocation[] latticePositions = new MapLocation[14];
-
     public Watchtower(RobotController rc) {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
-        int[] dx = {0, 6, -6, 12, -12, 18, -18};
-        int[] dy = {3, -3};
-        int counter = -1;
-        for (int i : dx) {
-            counter = counter + 1;
-            for (int j : dy) {
-                latticePositions[counter] = latticeCenter.translate(i, j);
+        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        for (RobotInfo ro: r) {
+            if (ro.getType() == RobotType.ARCHON) {
+                archon = ro.getLocation();
             }
+        }
+        if (archon==null){
+            isDefensive=false;
+        }
+        else if (rc.readSharedArray(5)+rc.readSharedArray(6)+
+                rc.readSharedArray(7)+rc.readSharedArray(8)>8){
+            isDefensive=false;
         }
     }
-
-    //TODO: fix targeting
     @Override
     public void run() throws GameActionException {
-        broadcast();
-        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
-        for (RobotInfo r : enemies) {
-            if (r.getType() == RobotType.SAGE || r.getType()==RobotType.ARCHON) {
-                if (rc.canAttack(r.getLocation())) {
-                    rc.attack(r.getLocation());
+        avoidFury();
+        retransform();
+        if(isDefensive){
+            rc.setIndicatorString("Defensive");
+            if (rc.getLocation().distanceSquaredTo(archon)<2){
+                if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
+                    rc.transform();
+                }
+                else if (rc.canMove(rc.getLocation().directionTo(archon).opposite())){
+                    rc.move(rc.getLocation().directionTo(archon).opposite());
                 }
             }
-        }
-        if (enemies.length > 0 && rc.canAttack(enemies[0].getLocation())) {
-            rc.attack(enemies[0].getLocation());
-        }
-        if (hasMapLocation()){
-            if (rc.getMode()==RobotMode.TURRET){
-                if(rc.canTransform()){
+            else{
+                if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
                     rc.transform();
                 }
             }
-            if (attackArchon()){
-                if (rc.getLocation().isWithinDistanceSquared(decode(),rc.getType().actionRadiusSquared)){
-                    if(rc.getMode() == RobotMode.PORTABLE && rc.canTransform()){
+            if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
+            attackDefensive();
+        }
+        else{
+            broadcast();
+            attackDefensive();
+            if (hasMapLocation()){
+                if (rc.getMode()==RobotMode.TURRET){
+                    if(rc.canTransform()){
+                        rc.transform();
+                    }
+                }
+                if (attackArchon()){
+                    if (rc.getLocation().isWithinDistanceSquared(decode(),rc.getType().actionRadiusSquared)){
+                        if(rc.getMode() == RobotMode.PORTABLE && rc.canTransform()){
+                            rc.transform();
+                        }
+                    }
+                    else{
+                        intermediateMove(decode());
+                    }
+                }
+                else if(rc.getLocation().isWithinDistanceSquared(decode(), 5)){
+                    if(rc.canTransform() && rc.getMode() == RobotMode.PORTABLE) {
                         rc.transform();
                     }
                 }
@@ -62,23 +80,21 @@ public class Watchtower extends Building {
                     intermediateMove(decode());
                 }
             }
-            else if(rc.getLocation().isWithinDistanceSquared(decode(), 5)){
-                if(rc.canTransform() && rc.getMode() == RobotMode.PORTABLE) {
-                    rc.transform();
-                }
-            }
-            else{
-                intermediateMove(decode());
-            }
         }
 
     }
-    public boolean attackArchon() throws GameActionException{
-        if (hasMapLocation()){
-            if (rc.readSharedArray(55)/4096>0){
-                return true;
+
+    public void attackDefensive() throws GameActionException{
+        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+        for (int i = enemies.length; --i>=0;) {
+            if (enemies[i].getType() == RobotType.SAGE || enemies[i].getType()==RobotType.ARCHON) {
+                if (rc.canAttack(enemies[i].getLocation())) {
+                    rc.attack(enemies[i].getLocation());
+                }
             }
         }
-        return false;
+        if (enemies.length > 0 && rc.canAttack(enemies[0].getLocation())) {
+            rc.attack(enemies[0].getLocation());
+        }
     }
 }
