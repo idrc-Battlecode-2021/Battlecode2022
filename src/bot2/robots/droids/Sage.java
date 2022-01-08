@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD:src/bot2/robots/droids/Sage.java
 package bot2.robots.droids;
-=======
-package bot1.robots.droids;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/droids/Sage.java
-=======
-package bot2.robots.droids;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
@@ -16,11 +8,7 @@ import battlecode.common.AnomalyType;
 
 public class Sage extends Droid {
     private MapLocation target;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public Sage(RobotController rc) {
         super(rc);
     }
@@ -75,11 +63,7 @@ public class Sage extends Droid {
             intermediateMove(target);
         } else{
             rc.setIndicatorString("4");
-<<<<<<< HEAD
              tryMoveMultipleNew();
-=======
-            tryMoveMultipleNew();
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         }
     }
 }

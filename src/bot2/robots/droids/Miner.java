@@ -1,19 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD:src/bot2/robots/droids/Miner.java
-=======
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 package bot2.robots.droids;
 
 import battlecode.common.*;
 import bot2.util.Constants;
-<<<<<<< HEAD
-=======
-package bot1.robots.droids;
-
-import battlecode.common.*;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/droids/Miner.java
-=======
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import java.util.*;
 
@@ -60,11 +48,7 @@ public class Miner extends Droid{
         catch(Exception e){
             System.out.println(rc.getRoundNum()+" "+Integer.toBinaryString(rc.readSharedArray(0))+" "+Integer.toBinaryString(rc.readSharedArray(10)));
         }
-<<<<<<< HEAD
         
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         if(checkEnemy()){
             MapLocation[] local = rc.senseNearbyLocationsWithLead(2);
             for(int i = local.length; --i >= 0;){
@@ -216,11 +200,7 @@ public class Miner extends Droid{
         //TODO: Could also check rubble amount
         //Maybe change so that the closest location above the threshold is chosen as the target rather than
         MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
-<<<<<<< HEAD
             nearbyLead = rc.senseNearbyLocationsWithLead(20);
-=======
-                nearbyLead = rc.senseNearbyLocationsWithLead(20);
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         searchBlock:{
             for(int i = nearbyGold.length; --i>=0;){
                 gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));

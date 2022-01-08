@@ -1,21 +1,8 @@
-<<<<<<< HEAD
-<<<<<<< HEAD:src/bot2/robots/Robot.java
-=======
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 package bot2.robots;
 
 import battlecode.common.*;
 import bot2.util.Constants;
 
-<<<<<<< HEAD
-=======
-package bot1.robots;
-
-import battlecode.common.*;
-import bot1.util.Constants;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/Robot.java
-=======
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,11 +18,7 @@ public abstract class Robot {
     protected int mapWidth,mapHeight;
     protected int initialArchons;
     protected boolean archonWait = false;
-<<<<<<< HEAD
     protected RobotInfo [] enemyArchons;
-=======
-    //protected RobotInfo [] enemyArchons;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -47,7 +30,6 @@ public abstract class Robot {
         myTeam = rc.getTeam();
         myLocation = rc.getLocation();
         myType = rc.getType();
-<<<<<<< HEAD
         
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
@@ -58,13 +40,6 @@ public abstract class Robot {
         if (initial-end>1000){
             System.out.println("Map too big, "+(intial-end));
         }
-=======
-
-        mapWidth = rc.getMapWidth();
-        mapHeight = rc.getMapHeight();
-        initialArchons = rc.getArchonCount();
-        internalMap = new int[mapWidth][mapHeight];
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         //Too Much Bytecode, 5000
         /*for(int i = mapWidth; --i>=0;){
             for(int j = mapHeight; --j>=0;){
@@ -73,11 +48,7 @@ public abstract class Robot {
         }*/
         //updateInternalMap();
     }
-<<<<<<< HEAD
     
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public abstract void init() throws GameActionException;
     public abstract void run() throws GameActionException;
 
@@ -96,11 +67,7 @@ public abstract class Robot {
                 myArchonOrder=63-i;
             }
         }
-<<<<<<< HEAD
         
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     }
 
     public void detectArchon() throws GameActionException{
@@ -118,12 +85,7 @@ public abstract class Robot {
             }
         }
         int endingByteCode = Clock.getBytecodesLeft();
-<<<<<<< HEAD
         if (startingByteCode-endingByteCode>3000){
-=======
-        System.out.println(startingByteCode);
-        if (startingByteCode-endingByteCode>2000){
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             System.out.println("ruh roh");
         }
     }
@@ -132,11 +94,7 @@ public abstract class Robot {
     }
     public static int movementXYDistance(MapLocation a, MapLocation b){return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);}
 
-<<<<<<< HEAD
     
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public Direction getDirection(int x, int y){
         if(x <= -1){
             if(y <= -1){
@@ -247,11 +205,7 @@ public abstract class Robot {
                 return;
             }
             double pass1 = 101, pass2 = 101;
-<<<<<<< HEAD
 			double pass3 = rc.senseRubble(rc.adjacentLocation(primaryDir));
-=======
-            double pass3 = rc.senseRubble(rc.adjacentLocation(primaryDir));
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             Direction dir1 = selectDirection(x, 1), dir2 = selectDirection(x, -1);
             if (rc.onTheMap(rc.adjacentLocation(dir1))) {
                 pass1 = rc.senseRubble(rc.adjacentLocation(dir1));
@@ -326,11 +280,7 @@ public abstract class Robot {
             loc1 = rc.adjacentLocation(directions[dirIndex]);
         }
         int rub1 = rc.senseRubble(loc1);
-<<<<<<< HEAD
 		int rub2 = 101, rub3 = 101;
-=======
-        int rub2 = 101, rub3 = 101;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         MapLocation loc2 = rc.adjacentLocation(directions[(dirIndex+1)%8]),
                 loc3 = rc.adjacentLocation(directions[(dirIndex+7)%8]);
         if(rc.onTheMap(loc2)){
@@ -432,7 +382,6 @@ public abstract class Robot {
         ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
         HashMap<MapLocation, Integer> dists = new HashMap<>(), movementCosts = new HashMap<>();
         //dist: base distance to target plus rubble penalty, movementCosts: the weighted graph
-<<<<<<< HEAD
 		queue.add(myLocation);
 		dists.put(myLocation, 0);
 		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, 15);
@@ -440,15 +389,6 @@ public abstract class Robot {
 
 		for (int i = senseLocations.length; --i >= 0;){
              //Not Tested but could result in less bytecode used at the cost of not checking all tiles
-=======
-        queue.add(myLocation);
-        dists.put(myLocation, 0);
-        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, 15);
-        //Set Radius squared to 15 to try and reduce bytecode
-
-        for (int i = senseLocations.length; --i >= 0;){
-            //Not Tested but could result in less bytecode used at the cost of not checking all tiles
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             int distance = movementTileDistance(senseLocations[i],target);
             if(distance < movementTileDistance(myLocation,target)){
                 queue.add(senseLocations[i]);
@@ -462,7 +402,6 @@ public abstract class Robot {
         }
         while (queue.size() > 0){
             MapLocation chosen = null;
-<<<<<<< HEAD
 			int min= Integer.MAX_VALUE;
 			for(int i = queue.size(); --i>=0;){
                 MapLocation temp = queue.get(i);
@@ -479,37 +418,14 @@ public abstract class Robot {
            	}
             MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
            	for (int i = temp.length; --i>=0;){
-=======
-            int min= Integer.MAX_VALUE;
-            for(int i = queue.size(); --i>=0;){
-                MapLocation temp = queue.get(i);
-                if(dists.get(temp) < min){
-                    min = dists.get(temp);
-                    chosen = temp;
-                }
-            }
-            queue.remove(chosen);
-            if(!movementCosts.containsKey(chosen)){
-                movementCosts.put(chosen,dists.get(chosen));
-                //May be more bytecode efficient if this was an if else where one uses chosen's movementCost value and the
-                //other uses chosen's dist value.
-            }
-            MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
-            for (int i = temp.length; --i>=0;){
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
                 if(dists.containsKey(temp[i])){
                     int tot_rubble = movementCosts.get(chosen) + turnPenalty(rc.senseRubble(temp[i]));
                     if (!movementCosts.containsKey(temp[i]) || tot_rubble < movementCosts.get(temp[i])){
                         movementCosts.put(temp[i], tot_rubble);
                     }
                 }
-<<<<<<< HEAD
            	}
            	
-=======
-            }
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         }
         //TODO: Optimize Code
         List<MapLocation> local = Arrays.asList(rc.getAllLocationsWithinRadiusSquared(myLocation,2));
@@ -541,11 +457,7 @@ public abstract class Robot {
                         }
                     }
                 }
-<<<<<<< HEAD
                 
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             }
             Direction dirTo = myLocation.directionTo(moveLoc);
             if(rc.canMove(dirTo)){
@@ -559,7 +471,6 @@ public abstract class Robot {
 
 
         //dists now contains a dictionary of smallest distance to every square in sight
-<<<<<<< HEAD
         
         //if target in sight then pathfind
         	
@@ -567,15 +478,6 @@ public abstract class Robot {
         
         //next step is to pick a decent square in the direction of overall target to pathfind toward if target is not in sight
         
-=======
-
-        //if target in sight then pathfind
-
-
-
-        //next step is to pick a decent square in the direction of overall target to pathfind toward if target is not in sight
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
         //note to self: add test to see if target is in internal map already or in sight already
         //note to self: use internal map to find closest known square to target? instead of current
@@ -714,10 +616,6 @@ public abstract class Robot {
             }
         }
     }
-<<<<<<< HEAD
     
-=======
-
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     private void updateInternalMap(){}
 }

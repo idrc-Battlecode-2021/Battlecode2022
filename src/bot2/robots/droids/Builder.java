@@ -1,20 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD:src/bot2/robots/droids/Builder.java
-=======
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 package bot2.robots.droids;
 
 import battlecode.common.*;
 import bot2.util.Constants;
-<<<<<<< HEAD
-=======
-package bot1.robots.droids;
-
-import battlecode.common.*;
-import bot1.util.Constants;
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/droids/Builder.java
-=======
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,7 +79,6 @@ public class Builder extends Droid{
                 if (robots[i].getMode()==RobotMode.PROTOTYPE){
                     MapLocation target = robots[i].getLocation();
                     rc.writeSharedArray(59, myArchonOrder*128+target.x*64+target.y);
-<<<<<<< HEAD
                     }
                 }
                 //System.out.println("After built: "+Clock.getBytecodesLeft());
@@ -102,17 +88,6 @@ public class Builder extends Droid{
             rc.repair(prototypeLoc);
             //System.out.println("After nearPrototype: "+Clock.getBytecodesLeft());
             }
-=======
-                }
-            }
-            //System.out.println("After built: "+Clock.getBytecodesLeft());
-        }
-
-        else if (nearPrototype){
-            rc.repair(prototypeLoc);
-            //System.out.println("After nearPrototype: "+Clock.getBytecodesLeft());
-        }
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         else if (isDefensive){
             intermediateMove(archonLoc);
             if (rc.getLocation().distanceSquaredTo(archonLoc)<=2){
@@ -123,7 +98,6 @@ public class Builder extends Droid{
             }
             //System.out.println("After isDefensive: "+Clock.getBytecodesLeft());
         }
-<<<<<<< HEAD
             else{
                 int randint = rand.nextInt(8);
                 Direction d = Constants.DIRECTIONS[randint];
@@ -135,19 +109,6 @@ public class Builder extends Droid{
             }
 
      }
-=======
-        else{
-            int randint = rand.nextInt(8);
-            Direction d = Constants.DIRECTIONS[randint];
-            if(rc.canMove(d)){
-                rc.move(d);
-                myLocation = rc.getLocation();
-            }
-            //System.out.println("After random: "+Clock.getBytecodesLeft());
-        }
-
-    }
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public boolean canHeal() throws GameActionException{
         if(rc.readSharedArray(59)==0){
             return false;

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # First Bot
-=======
-# Second Bot
->>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 ## Buildings
 ### Archons
