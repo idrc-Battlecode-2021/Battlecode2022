@@ -38,22 +38,7 @@ public class Watchtower extends Building {
         avoidFury();
         retransform();
         if(isDefensive){
-            /*
-            rc.setIndicatorString("Defensive");
-            if (rc.getLocation().distanceSquaredTo(archon)<2){
-                if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
-                    rc.transform();
-                }
-                else if (rc.canMove(rc.getLocation().directionTo(archon).opposite())){
-                    rc.move(rc.getLocation().directionTo(archon).opposite());
-                }
-            }
-            else{
-                if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
-                    rc.transform();
-                }
-            }
-            */
+
             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
             attackDefensive();
         }
@@ -85,9 +70,45 @@ public class Watchtower extends Building {
                     intermediateMove(decode());
                 }
             }
+            else{
+                int count =broadcastLattice();
+                joinLattice(count);
+            }
         }
 
     }
+    public void joinLattice(int count) throws GameActionException{
+        if (count>5){
+            return;
+        }
+        int loc = rc.readSharedArray(54);
+        int x = loc/64;
+        int y = loc%64;
+
+        MapLocation target = new MapLocation (x, y);
+        if (target != new MapLocation(0,0)){
+            if (rc.getLocation().distanceSquaredTo(target)<rc.getType().visionRadiusSquared){
+                        return;
+                    }
+                    intermediateMove(target);
+        }
+        }
+    public int broadcastLattice() throws GameActionException{
+        RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+        int count=0;
+        int length = friends.length;
+        for (int i=length; --i>0;){
+            if(friends[i].getType()==RobotType.WATCHTOWER) count=count+1;
+        }
+        if (count>5){
+            MapLocation m = rc.getLocation();
+            int x = m.x;
+            int y = m.y;
+            rc.writeSharedArray(54, 64*x+y);
+        }
+        return count;
+    }
+
 
     public void attackDefensive() throws GameActionException{
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());

@@ -50,7 +50,6 @@ public class Builder extends Droid{
         if (numTowers==2){
             isDefensive=false;
         }
-        //System.out.println("After update: "+Clock.getBytecodesLeft());
         if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){ //repairs prototypes
             RobotInfo prototype = rc.senseRobotAtLocation(finishPrototype);
             if (prototype.getHealth()==prototype.getType().health){
@@ -188,6 +187,7 @@ public class Builder extends Droid{
         Direction k = null;
         int minR=1000;
         Direction[] basic = Constants.BASIC_DIRECTIONS;
+
         for(int i = basic.length; --i>=0;){
             if(rc.canBuildRobot(r,basic[i])){
                 if (rc.senseRubble(myLocation.add(basic[i]))<minR){
@@ -195,6 +195,20 @@ public class Builder extends Droid{
                     minR=rc.senseRubble(myLocation.add(basic[i]));
                 }
             }
+        }
+        if(minR < rc.senseRubble(myLocation.add(k))){
+        if (rc.canMove(k)){
+            rc.move(k);
+            k=null;
+            for(int i = basic.length; --i>=0;){
+                if(rc.canBuildRobot(r,basic[i])){
+                    if (rc.senseRubble(myLocation.add(basic[i]))<minR){
+                        k=basic[i];
+                        minR=rc.senseRubble(myLocation.add(basic[i]));
+                    }
+                }
+            }
+        }
         }
         if (k!=null) {
             rc.buildRobot(r, k);

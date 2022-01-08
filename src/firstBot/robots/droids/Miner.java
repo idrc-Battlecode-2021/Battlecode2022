@@ -25,6 +25,7 @@ public class Miner extends Droid{
         //exploreDirIndex = (int)(8*Math.random());
         tryMoveMultipleNew();
         viewResources();
+        detectArchon();
     }
 
     @Override
@@ -33,7 +34,12 @@ public class Miner extends Droid{
         // update shared array
         MapLocation prev = myLocation;
         if (rc.getRoundNum()%3==2){
-            rc.writeSharedArray(0, rc.readSharedArray(0)+1);
+            if (myArchonOrder<=1){
+                rc.writeSharedArray(0, rc.readSharedArray(0)+(int)Math.pow(256,myArchonOrder));
+            }
+            else{
+                rc.writeSharedArray(10, rc.readSharedArray(10)+(int)Math.pow(256,myArchonOrder-2));
+            }
         }
         if(checkEnemy()){
             MapLocation[] local = rc.senseNearbyLocationsWithLead(2);

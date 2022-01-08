@@ -18,7 +18,7 @@ public class Archon extends Building{
     private static int minerIndex = 0; //spawning miners
     private static int soldierIndex = 0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
-    private static int power = 0; // power of 2 that corresponds witha archonOrder
+    private static int power = 0; // power of 16 that corresponds with archonOrder 
 
     private static int spawnPhase = 0;
 
@@ -57,13 +57,12 @@ public class Archon extends Building{
             }   
             rc.writeSharedArray(63-archonOrder,rc.getID());
         }
-        power = (int)Math.pow(2,archonOrder*4);
+        power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
         int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
         
         minerBuild = Math.max(minerBuild, (int)(60*((double)leadTiles/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
         soldierBuild = minerBuild;
-        rc.writeSharedArray(0,rc.readSharedArray(0)+minerBuild*256);
     }
 
     public boolean canProceed(int n) throws GameActionException {
@@ -138,9 +137,12 @@ public class Archon extends Building{
         updateLabConstraints();
         // read total/global # of robots
         if (rc.getRoundNum()%3==0){
-            int minerInfo = rc.readSharedArray(0);
-            globalMinerCount = minerInfo%256;
-            targetMinerCount = minerInfo/256;
+            if (archonOrder<=1){
+                minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,myArchonOrder)))/(int)Math.pow(256,myArchonOrder);
+            }
+            else{
+                minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,myArchonOrder-2)))/(int)Math.pow(256,myArchonOrder-2);
+            }
             globalBuilderCount = rc.readSharedArray(1);
             globalSageCount = rc.readSharedArray(2);
             globalSoldierCount = rc.readSharedArray(3);
@@ -150,12 +152,13 @@ public class Archon extends Building{
         }
 
         // reset total # of troops in shared array
-        if (archonOrder == 0 && rc.getRoundNum()%3==1){
-            /*
-                right now only the 1st archon that moves always refreshes the array to save bytecode.
-                in the future program for the case where it gets destroyed and others are alive
-            */
-            rc.writeSharedArray(0, rc.readSharedArray(0)-globalMinerCount);
+        if (rc.getRoundNum()%3==1){
+            if (archonOrder<=1){
+                rc.writeSharedArray(0, 0);
+            }
+            else{
+                rc.writeSharedArray(10, 0);
+            }
             for (int i=1;i<4;i++){
                 rc.writeSharedArray(i, 0);
             }
@@ -173,14 +176,14 @@ public class Archon extends Building{
         if (archonOrder==3){
             watchtowerCount = rc.readSharedArray(8);
         }
-
+        rc.setIndicatorString("Build: "+minerBuild+" Count:"+minerCount);
         // find individual lab count
         labCount = (rc.readSharedArray(4) % (power*16))/power;
         //build robots
         if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             return;
         }
-        if (minerCount<minerBuild || globalMinerCount<targetMinerCount*2/3){
+        if (minerCount<minerBuild){
             if (buildType % 3 == 0){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
@@ -209,7 +212,7 @@ public class Archon extends Building{
                         rc.buildRobot(RobotType.MINER,directions[minerIndex]);
                         buildType++;
                         minerIndex++;
-                        minerCount++;
+                        minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
                         if (minerCount == minerBuild/3){
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                             spawnPhase++;
@@ -261,7 +264,7 @@ public class Archon extends Building{
                 if (buildType%3==0){
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                         //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
-                        int temp = (int)Math.pow(2,archonOrder*2);
+                        int temp = (int)Math.pow(4,archonOrder);
                         int currentValue = rc.readSharedArray(58);
                         int previousBuildCommand = (currentValue % (temp*4))/temp;
                         int buildCommand = currentValue - previousBuildCommand * temp + temp;
@@ -278,7 +281,7 @@ public class Archon extends Building{
                 }
                 else{
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
-                        int temp = (int)Math.pow(2,archonOrder*2); // power corresponding to this Archon's bits
+                        int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                         int currentValue = rc.readSharedArray(58); 
                         int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
                         int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
@@ -289,7 +292,7 @@ public class Archon extends Building{
             }
             else{
                 if (buildType%2==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
-                    int temp = (int)Math.pow(2,archonOrder*2); // power corresponding to this Archon's bits
+                    int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                     int currentValue = rc.readSharedArray(58); 
                     int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
                     int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
