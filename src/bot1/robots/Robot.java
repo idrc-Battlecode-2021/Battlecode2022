@@ -10,6 +10,8 @@ public abstract class Robot {
     protected Team myTeam;
     protected RobotType myType;
     protected MapLocation myLocation;
+    protected int myArchonID;
+    protected int myArchonOrder;
     protected int mapWidth,mapHeight;
 
     protected Direction initDirection;
@@ -35,15 +37,30 @@ public abstract class Robot {
         }*/
         //updateInternalMap();
     }
-
+    
     public abstract void init() throws GameActionException;
     public abstract void run() throws GameActionException;
     
+    public void detectArchon() throws GameActionException{
+        RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam());
+        for (int i = robots.length; --i>=0;){
+            if (robots[i].getType() == RobotType.ARCHON){
+                myArchonID = robots[i].getID();
+                break;
+            }
+        }
+        for(int i=63; i>59; i--){
+            if (rc.readSharedArray(i)==myArchonID){
+                myArchonOrder=63-i;
+            }
+        }
+    }
     public static int movementTileDistance(MapLocation a, MapLocation b){
         return Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
     }
     public static int movementXYDistance(MapLocation a, MapLocation b){return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);}
 
+    
     public Direction getDirection(int x, int y){
         if(x <= -1){
             if(y <= -1){

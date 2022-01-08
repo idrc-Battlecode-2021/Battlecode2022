@@ -16,7 +16,6 @@ public class Watchtower extends Building {
     public void init() throws GameActionException {
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro: r) {
-            rc.setIndicatorString("searching for archon");
             if (ro.getType() == RobotType.ARCHON) {
                 archon = ro.getLocation();
             }
@@ -26,8 +25,6 @@ public class Watchtower extends Building {
         }
         else if (rc.readSharedArray(5)+rc.readSharedArray(6)+
                 rc.readSharedArray(7)+rc.readSharedArray(8)>8){
-            
-            rc.setIndicatorString("not defensive");
             isDefensive=false;
         }
     }
@@ -36,22 +33,8 @@ public class Watchtower extends Building {
         avoidFury();
         retransform();
         if(isDefensive){
-            /*
-            rc.setIndicatorString("Defensive");
-            if (rc.getLocation().distanceSquaredTo(archon)<2){
-                if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
-                    rc.transform();
-                }
-                else if (rc.canMove(rc.getLocation().directionTo(archon).opposite())){
-                    rc.move(rc.getLocation().directionTo(archon).opposite());
-                }
-            }
-            else{
-                if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
-                    rc.transform();
-                }
-            }
-            */
+            rc.setIndicatorString(isDefensive+" ");
+
             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
             attackDefensive();
         }
@@ -83,9 +66,46 @@ public class Watchtower extends Building {
                     intermediateMove(decode());
                 }
             }
+            else{
+                broadcastLattice();
+                joinLattice();
+            }
+            rc.setIndicatorString(rc.readSharedArray(54)+" ");
+            }
+
+    }
+    public void joinLattice() throws GameActionException{
+        int loc = rc.readSharedArray(54);
+        int x = loc/64;
+        int y = loc%64;
+
+        MapLocation target = new MapLocation (x, y);
+        if (target != new MapLocation(0,0)){
+            if (rc.getLocation().distanceSquaredTo(target)<rc.getType().visionRadiusSquared){
+                        return;
+                    }
+                    intermediateMove(target);
+        }
+        }
+    public void broadcastLattice() throws GameActionException{
+        RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+        int count=0;
+        int length = friends.length;
+        for (int i=length; --i>0;){
+            if(friends[i].getType()==RobotType.WATCHTOWER) count=count+1;
+        }
+        if (count>5){
+            MapLocation m = rc.getLocation();
+            int x = m.x;
+            int y = m.y;
+            rc.writeSharedArray(54, 64*x+y);
+        }
+        else if (rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent()).length >0){
+            rc.writeSharedArray(54, rc.getLocation().x*64+rc.getLocation().y);
         }
 
     }
+
 
     public void attackDefensive() throws GameActionException{
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
