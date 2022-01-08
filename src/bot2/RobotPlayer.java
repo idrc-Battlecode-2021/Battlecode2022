@@ -1,14 +1,14 @@
-package firstBot;
+package bot2;
 
 import battlecode.common.*;
-import firstBot.robots.Robot;
-import firstBot.robots.buildings.Archon;
-import firstBot.robots.buildings.Lab;
-import firstBot.robots.buildings.Watchtower;
-import firstBot.robots.droids.Builder;
-import firstBot.robots.droids.Miner;
-import firstBot.robots.droids.Sage;
-import firstBot.robots.droids.Soldier;
+import bot2.robots.Robot;
+import bot2.robots.buildings.Archon;
+import bot2.robots.buildings.Lab;
+import bot2.robots.buildings.Watchtower;
+import bot2.robots.droids.Builder;
+import bot2.robots.droids.Miner;
+import bot2.robots.droids.Sage;
+import bot2.robots.droids.Soldier;
 
 import java.util.Random;
 

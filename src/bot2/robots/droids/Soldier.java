@@ -1,4 +1,4 @@
-package firstBot.robots.droids;
+package bot2.robots.droids;
 
 import battlecode.common.*;
 
@@ -7,6 +7,7 @@ public class Soldier extends Droid{
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
+    private boolean defensive = false;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -24,10 +25,12 @@ public class Soldier extends Droid{
         corners[1]=new MapLocation(0,rc.getMapHeight());
         corners[2]=new MapLocation(rc.getMapWidth(),0);
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
+        defensive = isDefensive();
     }
 
     @Override
     public void run() throws GameActionException {
+
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
@@ -46,6 +49,14 @@ public class Soldier extends Droid{
         if(target != null){
             intermediateMove(target);
             if(rc.canAttack(target))rc.attack(target);
+        }
+        else if (defensive){
+            if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
+            }
+            else if (rc.getLocation().distanceSquaredTo(archonLoc)>20){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
+            }
         }
         else if (hasMapLocation()){
             MapLocation target = decode();
@@ -76,6 +87,21 @@ public class Soldier extends Droid{
             }
         }
 
+    }
+    public boolean isDefensive() throws GameActionException{
+        RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+        boolean justSpawned = false;
+        for (RobotInfo r: friends){
+            if(r.getType()==RobotType.ARCHON){
+                justSpawned = true;
+            }
+        }
+        if (enemies.length>0 && justSpawned){
+            return true;
+        }
+        
+        return false;
     }
 
 }

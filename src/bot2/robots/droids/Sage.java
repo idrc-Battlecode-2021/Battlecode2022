@@ -1,4 +1,4 @@
-package firstBot.robots.droids;
+package bot2.robots.droids;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;

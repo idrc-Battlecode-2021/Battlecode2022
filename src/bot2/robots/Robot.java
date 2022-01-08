@@ -1,9 +1,12 @@
-package firstBot.robots;
+package bot2.robots;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
+import bot2.util.Constants;
+
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Robot {
     protected RobotController rc;
@@ -13,14 +16,16 @@ public abstract class Robot {
     protected int myArchonID;
     protected int myArchonOrder;
     protected int mapWidth,mapHeight;
-
+    protected int initialArchons;
+    protected boolean archonWait = false;
+    protected RobotInfo [] enemyArchons;
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
     protected int[][] internalMap;
     // -1 = unknown, otherwise amount of rubble
 
-    public Robot(RobotController rc){
+    public Robot( RobotController rc){
         this.rc = rc;
         myTeam = rc.getTeam();
         myLocation = rc.getLocation();
@@ -28,7 +33,13 @@ public abstract class Robot {
         
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
+        initialArchons = rc.getArchonCount();
+        int initial = Clock.getBytecodesLeft();
         internalMap = new int[mapWidth][mapHeight];
+        int end = Clock.getBytecodesLeft();
+        if (initial-end>1000){
+            System.out.println("Map too big, "+(intial-end));
+        }
         //Too Much Bytecode, 5000
         /*for(int i = mapWidth; --i>=0;){
             for(int j = mapHeight; --j>=0;){
@@ -40,8 +51,27 @@ public abstract class Robot {
     
     public abstract void init() throws GameActionException;
     public abstract void run() throws GameActionException;
-    
+
+    public void reassignArchon() throws GameActionException{ //reassigns archon order if an archon has died
+        if (initialArchons==rc.getArchonCount()){
+            return;
+        }
+        if (!archonWait){ //wait 1 turn to let archons refresh array
+            archonWait = true;
+            return;
+        }
+        initialArchons = rc.getArchonCount();
+        archonWait = false;
+        for(int i=63; i>59; i--){
+            if (rc.readSharedArray(i)==myArchonID){
+                myArchonOrder=63-i;
+            }
+        }
+        
+    }
+
     public void detectArchon() throws GameActionException{
+        int startingByteCode = Clock.getBytecodesLeft();
         RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam());
         for (int i = robots.length; --i>=0;){
             if (robots[i].getType() == RobotType.ARCHON){
@@ -53,6 +83,10 @@ public abstract class Robot {
             if (rc.readSharedArray(i)==myArchonID){
                 myArchonOrder=63-i;
             }
+        }
+        int endingByteCode = Clock.getBytecodesLeft();
+        if (startingByteCode-endingByteCode>3000){
+            System.out.println("ruh roh");
         }
     }
     public static int movementTileDistance(MapLocation a, MapLocation b){
@@ -170,7 +204,8 @@ public abstract class Robot {
                 }
                 return;
             }
-            double pass1 = 101, pass2 = 101, pass3 = rc.senseRubble(rc.adjacentLocation(primaryDir));
+            double pass1 = 101, pass2 = 101;
+			double pass3 = rc.senseRubble(rc.adjacentLocation(primaryDir));
             Direction dir1 = selectDirection(x, 1), dir2 = selectDirection(x, -1);
             if (rc.onTheMap(rc.adjacentLocation(dir1))) {
                 pass1 = rc.senseRubble(rc.adjacentLocation(dir1));
@@ -244,7 +279,8 @@ public abstract class Robot {
             dirIndex = (dirIndex+4)%8;
             loc1 = rc.adjacentLocation(directions[dirIndex]);
         }
-        int rub1 = rc.senseRubble(loc1), rub2 = 101, rub3 = 101;
+        int rub1 = rc.senseRubble(loc1);
+		int rub2 = 101, rub3 = 101;
         MapLocation loc2 = rc.adjacentLocation(directions[(dirIndex+1)%8]),
                 loc3 = rc.adjacentLocation(directions[(dirIndex+7)%8]);
         if(rc.onTheMap(loc2)){
@@ -336,38 +372,104 @@ public abstract class Robot {
         }
         return false;
     }
-    private void pathfind(MapLocation target) throws GameActionException{
+
+    public int turnPenalty(int rubble){ //check if works
+        return (int) Math.ceil(Math.floor((1+rubble/(double)10)*myType.movementCooldown)/(double) 10);
+    }
+
+    protected void pathfind(MapLocation target) throws GameActionException{
         //dijkstra for unknown square
         ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
-        HashMap<MapLocation, Integer> dists = new HashMap<>();
+        HashMap<MapLocation, Integer> dists = new HashMap<>(), movementCosts = new HashMap<>();
+        //dist: base distance to target plus rubble penalty, movementCosts: the weighted graph
 		queue.add(myLocation);
 		dists.put(myLocation, 0);
-		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
+		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, 15);
+		//Set Radius squared to 15 to try and reduce bytecode
+
 		for (int i = senseLocations.length; --i >= 0;){
-            queue.add(senseLocations[i]);
-            dists.put(senseLocations[i], Integer.MAX_VALUE);
+             //Not Tested but could result in less bytecode used at the cost of not checking all tiles
+            int distance = movementTileDistance(senseLocations[i],target);
+            if(distance < movementTileDistance(myLocation,target)){
+                queue.add(senseLocations[i]);
+                dists.put(senseLocations[i],distance+turnPenalty(rc.senseRubble(senseLocations[i])));
+            }
+            //queue.add(senseLocations[i]);
+            //dists.put(senseLocations[i], movementTileDistance(senseLocations[i],target)+turnPenalty(rc.senseRubble(senseLocations[i])));
+            //could optimize distance based how many tiles a bot would need to traverse to get there rather than distance squared
+            //since distanceSquaredTo() favors cardinal directions vs intermediate directions
+
         }
         while (queue.size() > 0){
             MapLocation chosen = null;
 			int min= Integer.MAX_VALUE;
-            for(MapLocation m : queue){
-                if(dists.get(m) < min){
-                    min = dists.get(m);
-                    chosen = m;
+			for(int i = queue.size(); --i>=0;){
+                MapLocation temp = queue.get(i);
+			    if(dists.get(temp) < min){
+                    min = dists.get(temp);
+                    chosen = temp;
                 }
-            }
-            
+			}
            	queue.remove(chosen);
+           	if(!movementCosts.containsKey(chosen)){
+                movementCosts.put(chosen,dists.get(chosen));
+                //May be more bytecode efficient if this was an if else where one uses chosen's movementCost value and the 
+                //other uses chosen's dist value.
+           	}
             MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
            	for (int i = temp.length; --i>=0;){
-               	int tot_rubble = dists.get(chosen) + rc.senseRubble(temp[i]);
-               	if (tot_rubble < dists.get(temp[i])){
-               		dists.put(temp[i], tot_rubble);
-               	}
+                if(dists.containsKey(temp[i])){
+                    int tot_rubble = movementCosts.get(chosen) + turnPenalty(rc.senseRubble(temp[i]));
+                    if (!movementCosts.containsKey(temp[i]) || tot_rubble < movementCosts.get(temp[i])){
+                        movementCosts.put(temp[i], tot_rubble);
+                    }
+                }
            	}
            	
         }
-        
+        //TODO: Optimize Code
+        List<MapLocation> local = Arrays.asList(rc.getAllLocationsWithinRadiusSquared(myLocation,2));
+        boolean notMoved = true;
+        while(notMoved){
+            boolean inMovementCost = false;
+            int value = Integer.MAX_VALUE;
+            MapLocation moveLoc = null;
+            for(int i = local.size(); --i>=0;){
+                MapLocation tempLoc = local.get(i);
+                if(inMovementCost){
+                    if(movementCosts.containsKey(tempLoc)){
+                        int temp = movementCosts.get(tempLoc);
+                        if(value > temp){
+                            value = temp;
+                            moveLoc = tempLoc;
+                        }
+                    }
+                }else{
+                    if(movementCosts.containsKey(tempLoc)){
+                        value = movementCosts.get(tempLoc);
+                        moveLoc = tempLoc;
+                        inMovementCost = true;
+                    }else{
+                        int temp = dists.get(tempLoc);
+                        if(value > temp){
+                            value = temp;
+                            moveLoc = tempLoc;
+                        }
+                    }
+                }
+                
+            }
+            Direction dirTo = myLocation.directionTo(moveLoc);
+            if(rc.canMove(dirTo)){
+                rc.move(dirTo);
+                myLocation = rc.getLocation();
+                notMoved = false;
+            }else{
+                local.remove(moveLoc);
+            }
+        }
+
+
         //dists now contains a dictionary of smallest distance to every square in sight
         
         //if target in sight then pathfind

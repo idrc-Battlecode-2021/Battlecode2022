@@ -1,7 +1,7 @@
 package examplefuncsplayer2;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
+import bot2.util.Constants;
 
 import java.util.Random;
 

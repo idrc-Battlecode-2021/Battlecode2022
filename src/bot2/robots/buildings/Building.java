@@ -1,7 +1,7 @@
-package firstBot.robots.buildings;
+package bot2.robots.buildings;
 
 import battlecode.common.*;
-import firstBot.robots.Robot;
+import bot2.robots.Robot;
 
 import java.util.ArrayList;
 

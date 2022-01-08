@@ -1,7 +1,7 @@
-package firstBot.robots.droids;
+package bot2.robots.droids;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
+import bot2.util.Constants;
 
 import java.util.*;
 
@@ -30,18 +30,25 @@ public class Miner extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        reassignArchon();
         avoidCharge();
         // update shared array
         MapLocation prev = myLocation;
         rc.setIndicatorString(""+myArchonOrder);
-        if (rc.getRoundNum()%3==2){
-            if (myArchonOrder<=1){
-                rc.writeSharedArray(0, rc.readSharedArray(0)+(int)Math.pow(256,myArchonOrder));
-            }
-            else{
-                rc.writeSharedArray(10, rc.readSharedArray(10)+(int)Math.pow(256,myArchonOrder-2));
+        try{
+            if (rc.getRoundNum()%3==2){
+                if (myArchonOrder<=1){
+                    rc.writeSharedArray(0, rc.readSharedArray(0)+(int)Math.pow(256,myArchonOrder));
+                }
+                else{
+                    rc.writeSharedArray(10, rc.readSharedArray(10)+(int)Math.pow(256,myArchonOrder-2));
+                }
             }
         }
+        catch(Exception e){
+            System.out.println(rc.getRoundNum()+" "+Integer.toBinaryString(rc.readSharedArray(0))+" "+Integer.toBinaryString(rc.readSharedArray(10)));
+        }
+        
         if(checkEnemy()){
             MapLocation[] local = rc.senseNearbyLocationsWithLead(2);
             for(int i = local.length; --i >= 0;){
@@ -120,7 +127,7 @@ public class Miner extends Droid{
                                 }
                                 if(rc.senseLead(target) > 1 && rc.canMineLead(target)) rc.mineLead(target);
                             }intermediateMove(target);
-                            RobotInfo[] nearbyBots = rc.senseNearbyRobots(1,myTeam);
+                            RobotInfo[] nearbyBots = rc.senseNearbyRobots(1,myTeam); //Maybe change to 2
                             boolean nextToMiner = false;
                             for(int i = nearbyBots.length; --i >=0;){
                                 if(nearbyBots[i].getType() == myType && !nearbyBots[i].getLocation().equals(myLocation)){
@@ -129,7 +136,7 @@ public class Miner extends Droid{
                                 }
                             }
                             if(nextToMiner){
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1);
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2); //Maybe change to 1
                                 int amount = lead.get(target);
                                 for(int i = nearbyLead.length; --i>=0;) {
                                     if (rc.senseLead(nearbyLead[i]) > amount && !rc.canSenseRobotAtLocation(nearbyLead[i])) {
@@ -142,6 +149,13 @@ public class Miner extends Droid{
                                     myLocation = rc.getLocation();
                                 }
                                 lead.put(target,amount);
+                            }else if(rc.isActionReady()){
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
+                                for(int i = nearbyLead.length; --i>=0;) {
+                                    if (rc.senseLead(nearbyLead[i]) > 1 && rc.canMineLead(nearbyLead[i])){
+                                        rc.mineLead(nearbyLead[i]);
+                                    }
+                                }
                             }
 
                         }

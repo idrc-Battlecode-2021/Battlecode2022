@@ -1,4 +1,4 @@
-package firstBot.robots.buildings;
+package bot2.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
@@ -26,7 +26,7 @@ public class Watchtower extends Building {
             isDefensive=false;
         }
         else if (rc.readSharedArray(5)+rc.readSharedArray(6)+
-                rc.readSharedArray(7)+rc.readSharedArray(8)>8){
+                rc.readSharedArray(7)+rc.readSharedArray(8)>2*rc.getArchonCount()){
             isDefensive=false;
         }
     }
