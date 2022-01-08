@@ -1,7 +1,6 @@
 package examplefuncsplayer2;
 
 import battlecode.common.*;
-import bot2.util.Constants;
 
 import java.util.Random;
 
@@ -38,7 +37,9 @@ public strictfp class RobotPlayer {
      * we get the same sequence of numbers every time this code is run. This is very useful for debugging!
      */
     static final Random rng = new Random(6147);
-
+    static final Direction[] DIRECTIONS = {Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST,
+            Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST,};
+    
     /** Array containing all the possible movement directions. */
 
     /**
@@ -319,7 +320,7 @@ public strictfp class RobotPlayer {
     }
     public static boolean tryMoveMultiple(Direction dir, RobotController rc) throws GameActionException{ //tries to move in direction, followed by adjacent directions
         if(initDirection == null && (dir == null || dir.equals(Direction.CENTER))){
-            updateDirection(Constants.DIRECTIONS[(int) (Math.random()*8)]);
+            updateDirection(DIRECTIONS[(int) (Math.random()*8)]);
         }else if(dir != null && !dir.equals(Direction.CENTER)){
             updateDirection(dir);
         }
