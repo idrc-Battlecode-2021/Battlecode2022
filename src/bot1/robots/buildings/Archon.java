@@ -1,6 +1,5 @@
-package firstBot.robots.buildings;
+package bot1.robots.buildings;
 
-import firstBot.util.*;
 import battlecode.common.*;
 
 public class Archon extends Building{

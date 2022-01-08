@@ -1,11 +1,9 @@
-package firstBot.robots.buildings;
+package bot1.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 import battlecode.common.*;
 import battlecode.common.MapLocation;
-
-import java.util.Map;
 
 public class Watchtower extends Building {
     private boolean isDefensive = true;

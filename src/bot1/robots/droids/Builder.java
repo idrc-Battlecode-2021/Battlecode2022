@@ -1,7 +1,7 @@
-package firstBot.robots.droids;
+package bot1.robots.droids;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
+import bot1.util.Constants;
 
 import java.util.Arrays;
 import java.util.Collections;

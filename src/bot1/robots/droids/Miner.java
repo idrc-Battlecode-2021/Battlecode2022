@@ -1,7 +1,6 @@
-package firstBot.robots.droids;
+package bot1.robots.droids;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
 
 import java.util.*;
 

@@ -1,7 +1,7 @@
-package firstBot.robots;
+package bot1.robots;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
+import bot1.util.Constants;
 import java.util.HashMap;
 import java.util.ArrayList;
 

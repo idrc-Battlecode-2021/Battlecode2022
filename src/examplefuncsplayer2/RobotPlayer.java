@@ -1,7 +1,6 @@
 package examplefuncsplayer2;
 
 import battlecode.common.*;
-import firstBot.util.Constants;
 
 import java.util.Random;
 
@@ -23,6 +22,8 @@ public strictfp class RobotPlayer {
             Direction.WEST,
             Direction.NORTHWEST,
     };;
+    static final Direction[] DIRECTIONS = {Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST,
+            Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST,};
 
     /**
      * We will use this variable to count the number of turns this robot has been alive.
@@ -319,7 +320,7 @@ public strictfp class RobotPlayer {
     }
     public static boolean tryMoveMultiple(Direction dir, RobotController rc) throws GameActionException{ //tries to move in direction, followed by adjacent directions
         if(initDirection == null && (dir == null || dir.equals(Direction.CENTER))){
-            updateDirection(Constants.DIRECTIONS[(int) (Math.random()*8)]);
+            updateDirection(DIRECTIONS[(int) (Math.random()*8)]);
         }else if(dir != null && !dir.equals(Direction.CENTER)){
             updateDirection(dir);
         }
