@@ -23,7 +23,7 @@ public class Archon extends Building{
     private static int spawnPhase = 0;
 
     private static int buildType = 0;
-
+    private static boolean minerDone, builderDone, labDone;
 
     public Archon(RobotController rc) {
         super(rc);
@@ -70,12 +70,10 @@ public class Archon extends Building{
 
     public boolean canProceed(int n) throws GameActionException {
         // First check if other archons are trying to defend
-        // Check if all archons have passed phase n
-        // 0 - spawn 1/3 of minerBuild, 1 - spawn 2/3 of minerBuild, etc.
         int defenseStatus = rc.readSharedArray(56);
         for (int i=0;i<16;i+=4){
             if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
-                continue;
+                break;
             }
             int temp = (int)Math.pow(2,i);
             int thisDefense = (defenseStatus % (temp*16))/temp;
@@ -83,6 +81,31 @@ public class Archon extends Building{
                 return false;
             }
         }
+        // Check if other archons have built enough miners
+        int minerStatus;
+        for (int i=0;i<4;i++){
+            if (rc.readSharedArray(63-i)==0){ // don't check archons that don't exist
+                break;
+            }
+            if(i<=1){
+                minerStatus = rc.readSharedArray(0);
+            }
+            else{
+                minerStatus = rc.readSharedArray(10);
+            }
+            if (i%2==0){
+                if (minerStatus%256<minerCount){
+                    return false;
+                }
+            }
+            else{
+                if (minerStatus/256<minerCount){
+                    return false;
+                }
+            }
+        }
+        // Check if all archons have passed phase n
+        // 0 - spawn 1/3 of minerBuild, 1 - spawn 2/3 of minerBuild, etc.
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
             if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
@@ -131,7 +154,7 @@ public class Archon extends Building{
     
     @Override
     public void run() throws GameActionException {
-
+        minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
         if (defense()){
             return;
         }
@@ -179,10 +202,9 @@ public class Archon extends Building{
         if (archonOrder==3){
             watchtowerCount = rc.readSharedArray(8);
         }
-        rc.setIndicatorString("buildType: "+buildType+" builderCount: "+builderCount);
         // find individual lab count
         labCount = (rc.readSharedArray(4) % (power*16))/power;
-        //build robots
+        rc.setIndicatorString("minerCount: "+minerCount+" minerBuild: "+minerBuild);
         if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             return;
         }
@@ -216,6 +238,13 @@ public class Archon extends Building{
                         buildType++;
                         minerIndex++;
                         minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
+                        if (!minerDone && minerCount == minerBuild){
+                            minerDone = true;
+                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+                            spawnPhase++;
+                            buildType = 0;
+                        }
+                        /*
                         if (minerCount == minerBuild/3){
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                             spawnPhase++;
@@ -229,6 +258,7 @@ public class Archon extends Building{
                             spawnPhase++;
                             buildType = 0;
                         }
+                        */
                     }
                 }
             }
@@ -243,7 +273,8 @@ public class Archon extends Building{
                 if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
                     rc.buildRobot(RobotType.BUILDER,directions[i]);
                     builderCount++;
-                    if (builderCount == builderBuild){
+                    if (!builderDone && builderCount == builderBuild){
+                        builderDone = true;
                         rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                         spawnPhase++;
                     }
@@ -263,7 +294,14 @@ public class Archon extends Building{
                 }
             }
             else if (labCount<labBuild){
-                if (buildType%3==0){
+                int mod;
+                if (globalLabCount==0 || labCount>0){
+                    mod=0;
+                }
+                else{
+                    mod=2;
+                }
+                if (buildType%3==mod){
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                         //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                         int temp = (int)Math.pow(4,archonOrder);
@@ -272,11 +310,15 @@ public class Archon extends Building{
                         int buildCommand = currentValue - previousBuildCommand * temp + temp;
                         rc.writeSharedArray(58, buildCommand);
                         buildType++;
+                        /*
                         if (labCount+1==labBuild){
                             buildType = 0;
                         }
-                        if (buildType>0){
+                        */
+                        if (!labDone && labCount==labBuild && buildType==3){
+                            labDone = true;
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+                            buildType = 0;
                             spawnPhase++;
                         }
                     }
