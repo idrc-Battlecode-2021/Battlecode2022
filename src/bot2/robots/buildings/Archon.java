@@ -1,4 +1,12 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:src/bot2/robots/buildings/Archon.java
 package bot2.robots.buildings;
+=======
+package bot1.robots.buildings;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/buildings/Archon.java
+=======
+package bot2.robots.buildings;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import battlecode.common.*;
 import bot2.util.*;
@@ -17,11 +25,19 @@ public class Archon extends Building{
     private static int minerIndex = 0; //spawning miners
     private static int soldierIndex = 0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
+<<<<<<< HEAD
     private static int power = 0; // power of 16 that corresponds with archonOrder 
 
     private static String indicatorString = "";
 
     private static int spawnPhase = 0; 
+=======
+    private static int power = 0; // power of 16 that corresponds with archonOrder
+
+    private static String indicatorString = "";
+
+    private static int spawnPhase = 0;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     /*
     1 - finish building miners
     2 - finish building builders
@@ -40,6 +56,7 @@ public class Archon extends Building{
     }
 
     public Direction[] closestDirections(Direction d){
+<<<<<<< HEAD
 		return new Direction[]{
 							d,
 							d.rotateLeft(),
@@ -52,6 +69,20 @@ public class Archon extends Building{
 							d.opposite().rotateLeft()
 						};
 	}
+=======
+        return new Direction[]{
+                d,
+                d.rotateLeft(),
+                d.rotateRight(),
+                d.rotateLeft().rotateLeft(),
+                d.rotateRight().rotateRight(),
+                d.rotateLeft().rotateLeft().rotateLeft(),
+                d.rotateRight().rotateRight().rotateRight(),
+                d.opposite().rotateRight(),
+                d.opposite().rotateLeft()
+        };
+    }
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
     @Override
     public void init() throws GameActionException {
@@ -64,13 +95,21 @@ public class Archon extends Building{
         else {
             while(rc.readSharedArray(63-archonOrder)>0){
                 archonOrder++;
+<<<<<<< HEAD
             }   
+=======
+            }
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             rc.writeSharedArray(63-archonOrder,rc.getID());
         }
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
         int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         minerBuild = Math.max(minerBuild, (int)(60*((double)leadTiles/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
         soldierBuild = minerBuild;
         myArchonID = rc.getID();
@@ -93,7 +132,11 @@ public class Archon extends Building{
         }
         // Check if other archons have built enough miners
 
+<<<<<<< HEAD
         /* Doesn't work since archons may spawn different # of miners 
+=======
+        /* Doesn't work since archons may spawn different # of miners
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         int minerStatus;
         for (int i=0;i<4;i++){
             if (rc.readSharedArray(63-i)==0){ // don't check archons that don't exist
@@ -146,15 +189,25 @@ public class Archon extends Building{
         }
         return true;
     }
+<<<<<<< HEAD
      
+=======
+
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public void updateLabConstraints() throws GameActionException {
         //TODO: update constraints for lab based on current lead amounts and needs
         int minLead = 300; //placeholder
         int maxRate = 20; //placeholder, 5 to 20
         rc.writeSharedArray(9, (maxRate-5)*4096+minLead); //minLead may need to be divided by a factor to fit in 12 bits if minLead is large
+<<<<<<< HEAD
         
     }
     
+=======
+
+    }
+
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public boolean defense() throws GameActionException {
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
@@ -183,7 +236,11 @@ public class Archon extends Building{
         }
         return true;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
@@ -385,7 +442,11 @@ public class Archon extends Building{
                 else{
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead+proposedExpenses){
                         int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
+<<<<<<< HEAD
                         int currentValue = rc.readSharedArray(58); 
+=======
+                        int currentValue = rc.readSharedArray(58);
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
                         int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
                         int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
                         rc.writeSharedArray(58, buildCommand);
@@ -401,13 +462,21 @@ public class Archon extends Building{
                     spawnPhase++;
                     rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                 }
+<<<<<<< HEAD
                 
+=======
+
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             }
             else{
                 rc.setIndicatorString("done with lab");
                 if (wsBuildType%2==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead+proposedExpenses){
                     int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
+<<<<<<< HEAD
                     int currentValue = rc.readSharedArray(58); 
+=======
+                    int currentValue = rc.readSharedArray(58);
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
                     int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
                     int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
                     watchtowerCount++;
@@ -429,7 +498,11 @@ public class Archon extends Building{
                     }
                 }
                 else { //repair robots if can't build anything
+<<<<<<< HEAD
                     RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam()); 
+=======
+                    RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
                     int lowestHealth = 99999;
                     MapLocation location = null;
                     for (RobotInfo robot : robots){

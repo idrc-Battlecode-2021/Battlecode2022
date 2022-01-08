@@ -1,7 +1,20 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:src/bot2/robots/buildings/Building.java
+=======
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 package bot2.robots.buildings;
 
 import battlecode.common.*;
 import bot2.robots.Robot;
+<<<<<<< HEAD
+=======
+package bot1.robots.buildings;
+
+import battlecode.common.*;
+import bot1.robots.Robot;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/buildings/Building.java
+=======
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import java.util.ArrayList;
 

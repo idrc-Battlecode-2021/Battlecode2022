@@ -1,12 +1,23 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:src/bot2/robots/buildings/Watchtower.java
 package bot2.robots.buildings;
+=======
+package bot1.robots.buildings;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/buildings/Watchtower.java
+=======
+package bot2.robots.buildings;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 import battlecode.common.*;
 import battlecode.common.MapLocation;
 
+<<<<<<< HEAD
+=======
 import java.util.Map;
 
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 public class Watchtower extends Building {
     private boolean isDefensive = true;
     private MapLocation archon = null;
@@ -73,7 +84,11 @@ public class Watchtower extends Building {
                 joinLattice();
             }
             rc.setIndicatorString(rc.readSharedArray(54)+" ");
+<<<<<<< HEAD
             }
+=======
+        }
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
     }
     public void joinLattice() throws GameActionException{
@@ -84,11 +99,19 @@ public class Watchtower extends Building {
         MapLocation target = new MapLocation (x, y);
         if (target != new MapLocation(0,0)){
             if (rc.getLocation().distanceSquaredTo(target)<rc.getType().visionRadiusSquared){
+<<<<<<< HEAD
                         return;
                     }
                     intermediateMove(target);
         }
         }
+=======
+                return;
+            }
+            intermediateMove(target);
+        }
+    }
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
     public void broadcastLattice() throws GameActionException{
         RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         int count=0;

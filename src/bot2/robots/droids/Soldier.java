@@ -1,4 +1,12 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:src/bot2/robots/droids/Soldier.java
 package bot2.robots.droids;
+=======
+package bot1.robots.droids;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/droids/Soldier.java
+=======
+package bot2.robots.droids;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 
 import battlecode.common.*;
 
@@ -100,7 +108,11 @@ public class Soldier extends Droid{
         if (enemies.length>0 && justSpawned){
             return true;
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
         return false;
     }
 

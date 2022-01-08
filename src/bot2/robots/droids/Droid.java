@@ -1,9 +1,23 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:src/bot2/robots/droids/Droid.java
+=======
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 package bot2.robots.droids;
 
 import battlecode.common.*;
 import bot2.robots.Robot;
 import bot2.util.Constants;
 
+<<<<<<< HEAD
+=======
+package bot1.robots.droids;
+
+import battlecode.common.*;
+import bot1.robots.Robot;
+import bot1.util.Constants;
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89:src/bot1/robots/droids/Droid.java
+=======
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 import java.util.ArrayList;
 
 public abstract class Droid extends Robot {
@@ -117,13 +131,21 @@ public abstract class Droid extends Robot {
         MapLocation temp1 = new MapLocation(myLocation.x+4,myLocation.y);
         MapLocation temp2 = new MapLocation(myLocation.x-4,myLocation.y);
         if(!rc.onTheMap(temp1) && selectDirection(myLocation.x+4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y) ||
+<<<<<<< HEAD
             !rc.onTheMap(temp2) && selectDirection(myLocation.x-4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y)){
+=======
+                !rc.onTheMap(temp2) && selectDirection(myLocation.x-4,myLocation.y) == selectDirection(myLocation.x+x,myLocation.y)){
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             x = -x;
         }
         temp1 = new MapLocation(myLocation.x,myLocation.y+4);
         temp2 = new MapLocation(myLocation.x,myLocation.y-4);
         if(!rc.onTheMap(temp1) && selectDirection(myLocation.x,myLocation.y+4) == selectDirection(myLocation.x,myLocation.y+y) ||
+<<<<<<< HEAD
             !rc.onTheMap(temp2) && selectDirection(myLocation.x,myLocation.y-4) == selectDirection(myLocation.x,myLocation.y-y)){
+=======
+                !rc.onTheMap(temp2) && selectDirection(myLocation.x,myLocation.y-4) == selectDirection(myLocation.x,myLocation.y-y)){
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
             y = -y;
         }
         if(y == 0){
@@ -157,6 +179,7 @@ public abstract class Droid extends Robot {
         intermediateMove(exploreTarget);
     }
     public void parseAnomalies() {
+<<<<<<< HEAD
             for (AnomalyScheduleEntry a : anomaly) {
                 if (a.anomalyType == AnomalyType.CHARGE) {
                     relevantAnomalies.add(a);
@@ -175,10 +198,31 @@ public abstract class Droid extends Robot {
                     RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
                     for (RobotInfo r: friends){
                         switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
+=======
+        for (AnomalyScheduleEntry a : anomaly) {
+            if (a.anomalyType == AnomalyType.CHARGE) {
+                relevantAnomalies.add(a);
+            }
+        }
+    }
+    public void avoidCharge() throws GameActionException {
+        for (AnomalyScheduleEntry a: relevantAnomalies){
+            if (rc.getRoundNum()>a.roundNumber){
+                relevantAnomalies.remove(a);
+                break;
+            }
+            if(rc.getRoundNum()+10>a.roundNumber){
+                int x=0;
+                int y=0;
+                RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+                for (RobotInfo r: friends){
+                    switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
                         case NORTH:y+=1;break;
                         case NORTHEAST: y+=1; x+=1; break;
                         case NORTHWEST: y+=1; x-=1; break;
                         case SOUTH: y-=1; break;
+<<<<<<< HEAD
                        case EAST: x+=1; break;
                         case WEST: x-=1; break;
                         case SOUTHEAST: y-=1; x+=1; break;
@@ -190,4 +234,17 @@ public abstract class Droid extends Robot {
                 }
             }
         }
+=======
+                        case EAST: x+=1; break;
+                        case WEST: x-=1; break;
+                        case SOUTHEAST: y-=1; x+=1; break;
+                        case SOUTHWEST: y-=1; x-=1; break;
+                    }
+                }
+                Direction d = getDirection(x, y);
+                tryMoveMultiple(d);
+            }
+        }
+    }
+>>>>>>> b76914a947c4b5aa0f839bdeaa0adeb29ca5ff89
 }
