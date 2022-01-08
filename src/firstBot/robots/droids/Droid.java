@@ -1,8 +1,8 @@
-package bot1.robots.droids;
+package firstBot.robots.droids;
 
 import battlecode.common.*;
-import bot1.robots.Robot;
-import bot1.util.Constants;
+import firstBot.robots.Robot;
+import firstBot.util.Constants;
 import java.util.ArrayList;
 
 public abstract class Droid extends Robot {

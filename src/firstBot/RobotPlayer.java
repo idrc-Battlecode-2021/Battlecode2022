@@ -1,14 +1,16 @@
-package bot1;
+package firstBot;
 
 import battlecode.common.*;
-import bot1.robots.Robot;
-import bot1.robots.buildings.Archon;
-import bot1.robots.buildings.Lab;
-import bot1.robots.buildings.Watchtower;
-import bot1.robots.droids.Builder;
-import bot1.robots.droids.Miner;
-import bot1.robots.droids.Sage;
-import bot1.robots.droids.Soldier;
+import firstBot.robots.Robot;
+import firstBot.robots.buildings.Archon;
+import firstBot.robots.buildings.Lab;
+import firstBot.robots.buildings.Watchtower;
+import firstBot.robots.droids.Builder;
+import firstBot.robots.droids.Miner;
+import firstBot.robots.droids.Sage;
+import firstBot.robots.droids.Soldier;
+
+import java.util.Random;
 
 public strictfp class RobotPlayer {
     static RobotController rc;

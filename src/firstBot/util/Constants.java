@@ -1,4 +1,4 @@
-package bot1.util;
+package firstBot.util;
 
 import battlecode.common.Direction;
 

@@ -1,4 +1,4 @@
-package bot1.robots.buildings;
+package firstBot.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
