@@ -4,6 +4,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
+import battlecode.common.AnomalyType;
 
 public class Sage extends Droid {
     private MapLocation target;
@@ -14,11 +15,12 @@ public class Sage extends Droid {
 
     @Override
     public void init() throws GameActionException {
-        
+        parseAnomalies();
     }
 
     @Override
     public void run() throws GameActionException {
+        avoidCharge();
         // update shared array
         if (rc.getRoundNum() % 3 == 2) {
             rc.writeSharedArray(2, rc.readSharedArray(2) + 1);
@@ -35,9 +37,23 @@ public class Sage extends Droid {
             }
         }
         if (target != null) {
+            rc.setIndicatorString("1");
             intermediateMove(target);
             if (rc.canAttack(target)) rc.attack(target);
+        }
+        else if (attackArchon()){
+            rc.setIndicatorString(attackArchon()+" ");
+            MapLocation archonLoc = decode();
+            if (myLocation.distanceSquaredTo(archonLoc) < 20){
+                rc.setIndicatorString("7");
+                if(rc.canEnvision(AnomalyType.FURY)){
+                    rc.envision(AnomalyType.FURY);
+                }
+            }else{
+                intermediateMove(archonLoc);
+            }
         } else if (hasMapLocation()) {
+            rc.setIndicatorString("3");
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target) < 20) {
                 if (nearbyBots.length < 5) {
@@ -45,6 +61,9 @@ public class Sage extends Droid {
                 }
             }
             intermediateMove(target);
-        } else tryMoveMultipleNew();
+        } else{
+            rc.setIndicatorString("4");
+             tryMoveMultipleNew();
+        }
     }
 }

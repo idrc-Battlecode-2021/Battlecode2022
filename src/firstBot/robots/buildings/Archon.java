@@ -13,7 +13,7 @@ public class Archon extends Building{
     private static int soldierBuild = 10; //soldiers to build
     private static int builderBuild = 3; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
-    private static int labBuild = 2; //labs to build
+    private static final int labBuild = 2; //labs to build
 
     private static int minerIndex = 0; //spawning miners
     private static int soldierIndex = 0;
@@ -129,7 +129,7 @@ public class Archon extends Building{
     
     @Override
     public void run() throws GameActionException {
-        
+
         if (defense()){
             return;
         }
@@ -176,7 +176,6 @@ public class Archon extends Building{
 
         // find individual lab count
         labCount = (rc.readSharedArray(4) % (power*16))/power;
-        rc.setIndicatorString(labCount+"");
         //build robots
         if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             return;
@@ -228,7 +227,8 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (builderCount<builderBuild){
+        else if (builderCount<builderBuild || globalBuilderCount < builderBuild * rc.getArchonCount()){
+            rc.setIndicatorString("G: "+globalBuilderCount);
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -246,7 +246,7 @@ public class Archon extends Building{
             }
         }
         else {
-            if (rc.getTeamGoldAmount(rc.getTeam())>=RobotType.SAGE.buildCostGold){
+            if (globalSoldierCount+globalWatchtowerCount>40 && rc.getTeamGoldAmount(rc.getTeam())>=RobotType.SAGE.buildCostGold){
                 Direction[] directions = Direction.allDirections();
                 int i=0;
                 while (!rc.canBuildRobot(RobotType.SAGE,directions[i]) && i<8){

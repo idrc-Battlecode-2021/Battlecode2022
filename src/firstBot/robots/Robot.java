@@ -27,11 +27,12 @@ public abstract class Robot {
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
         internalMap = new int[mapWidth][mapHeight];
-        for(int i = 0; i < mapWidth; i++){
-            for(int j = 0; j < mapHeight; j++){
+        //Too Much Bytecode, 5000
+        /*for(int i = mapWidth; --i>=0;){
+            for(int j = mapHeight; --j>=0;){
                 internalMap[i][j] = -1;
             }
-        }
+        }*/
         //updateInternalMap();
     }
 
@@ -140,11 +141,19 @@ public abstract class Robot {
     //Greedy pathfinding against adjacent tiles
     public void intermediateMove(MapLocation target) throws GameActionException {
         int x = target.x-myLocation.x, y = target.y-myLocation.y;
+        Direction primaryDir = selectDirection(x,y);
         if (x == y) {
             if(x == 0) return;
-            tryMoveMultiple(selectDirection(x, y));
+            tryMoveMultiple(primaryDir);
         } else if (y == 0) {
-            double pass1 = 101, pass2 = 101, pass3 = rc.senseRubble(rc.adjacentLocation(selectDirection(x, 0)));
+            if(Math.abs(x) == 1){
+                if(rc.canMove(primaryDir)){
+                    rc.move(primaryDir);
+                    myLocation = rc.getLocation();
+                }
+                return;
+            }
+            double pass1 = 101, pass2 = 101, pass3 = rc.senseRubble(rc.adjacentLocation(primaryDir));
             Direction dir1 = selectDirection(x, 1), dir2 = selectDirection(x, -1);
             if (rc.onTheMap(rc.adjacentLocation(dir1))) {
                 pass1 = rc.senseRubble(rc.adjacentLocation(dir1));
@@ -159,9 +168,16 @@ public abstract class Robot {
                 tryMoveMultiple(dir1);
             }
         } else if (x == 0) {
+            if(Math.abs(y) == 1){
+                if(rc.canMove(primaryDir)){
+                    rc.move(primaryDir);
+                    myLocation = rc.getLocation();
+                }
+                return;
+            }
             double minRubble = 0;
             MapLocation move = null;
-            MapLocation d1 = rc.adjacentLocation(selectDirection(0, y));
+            MapLocation d1 = rc.adjacentLocation(primaryDir);
             MapLocation d2 = d1.subtract(Direction.EAST);
             MapLocation d3 = d1.subtract(Direction.WEST);
             if (rc.onTheMap(d1) && rc.senseRubble(d1) < minRubble) {
@@ -251,9 +267,9 @@ public abstract class Robot {
         }else if(dir != null && !dir.equals(Direction.CENTER)){
             updateDirection(dir);
         }
-        for(Direction d : directions){
-            if(rc.canMove(d)){
-                rc.move(d);
+        for(int i = 0; i < directions.length; i++){
+            if(rc.canMove(directions[i])){
+                rc.move(directions[i]);
                 myLocation = rc.getLocation();
                 updateInternalMap();
                 return true;
@@ -274,6 +290,7 @@ public abstract class Robot {
         return new MapLocation(x, y);
     }
     public void broadcast() throws GameActionException{
+        // broadcasts location of multiple enemies and enemy archon
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int num_enemies =enemies.length;
         int k=0;
@@ -302,7 +319,6 @@ public abstract class Robot {
         }
         return false;
     }
-    
     private void pathfind(MapLocation target) throws GameActionException{
         //dijkstra for unknown square
         ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
@@ -346,6 +362,140 @@ public abstract class Robot {
         //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
         //note to self: add test to see if target is in internal map already or in sight already
         //note to self: use internal map to find closest known square to target? instead of current
+    }
+
+    private void tryAttack(MapLocation Loc) throws GameActionException {
+        if (rc.canAttack(Loc)){
+            rc.attack(Loc);
+        }
+    }
+
+    private void selectPriorityTarget() throws GameActionException {
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
+        RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
+        int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
+        for (RobotInfo r : enemyRobots) {
+            if (r.getType() == RobotType.ARCHON) {
+                if (archon == null || archon.getHealth() > r.getHealth()) {
+                    archon = r;
+                    damages[0]=rc.getType().getDamage(rc.getLevel());
+                    for (RobotInfo robot: myRobots){
+                        if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                            damages[0]+=robot.getType().getDamage(robot.getLevel());
+                        }
+                    }
+                }
+            }
+            else if (r.getType() == RobotType.SAGE) {
+                if (sage == null || sage.getHealth() > r.getHealth()) {
+                    sage = r;
+                    damages[1]=rc.getType().getDamage(rc.getLevel());
+                    for (RobotInfo robot: myRobots){
+                        if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                            damages[1]+=robot.getType().getDamage(robot.getLevel());
+                        }
+                    }
+                }
+            }
+            else if (r.getType() == RobotType.LABORATORY) {
+                if (lab == null || lab.getHealth() > r.getHealth()) {
+                    lab = r;
+                    damages[2]=rc.getType().getDamage(rc.getLevel());
+                    for (RobotInfo robot: myRobots){
+                        if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                            damages[2]+=robot.getType().getDamage(robot.getLevel());
+                        }
+                    }
+                }
+            }
+            else if (r.getType() == RobotType.WATCHTOWER) {
+                if (watchtower == null || archon.getHealth() > r.getHealth()) {
+                    watchtower = r;
+                    damages[3]=rc.getType().getDamage(rc.getLevel());
+                    for (RobotInfo robot: myRobots){
+                        if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                            damages[3]+=robot.getType().getDamage(robot.getLevel());
+                        }
+                    }
+                }
+            }
+            else if (r.getType() == RobotType.SOLDIER) {
+                if (soldier == null || soldier.getHealth() > r.getHealth()) {
+                    soldier = r;
+                    damages[4]=rc.getType().getDamage(rc.getLevel());
+                    for (RobotInfo robot: myRobots){
+                        if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                            damages[4]+=robot.getType().getDamage(robot.getLevel());
+                        }
+                    }
+                }
+            }
+            else if (r.getType() == RobotType.MINER) {
+                if (miner == null || miner.getHealth() > r.getHealth()) {
+                    miner = r;
+                }
+            }
+            else if (r.getType() == RobotType.BUILDER) {
+                if (builder == null || builder.getHealth() > r.getHealth()) {
+                    builder = r;
+                }
+            }
+        }
+        int archonTurns = Integer.MAX_VALUE, sageTurns = Integer.MAX_VALUE, labTurns = Integer.MAX_VALUE,
+                watchtowerTurns = Integer.MAX_VALUE, soldierTurns = Integer.MAX_VALUE;
+        int[] turns = {archonTurns, sageTurns, labTurns, watchtowerTurns, soldierTurns};
+        MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
+        if (archon!=null){
+            archonTurns = archon.getHealth()/damages[0];
+        }
+        if (archon!=null){
+            sageTurns = sage.getHealth()/damages[1];
+        }
+        if (lab!=null){
+            labTurns = lab.getHealth()/damages[2];
+        }
+        if (watchtower!=null){
+            watchtowerTurns = watchtower.getHealth()/damages[3];
+        }
+        if (soldier!=null){
+            soldierTurns = soldier.getHealth()/damages[4];
+        }
+
+        if (archonTurns<=10){
+            tryAttack(archon.getLocation());
+        }
+        else if (labTurns<=5){
+            tryAttack(lab.getLocation());
+        }
+        else if (sageTurns<=5){
+            tryAttack(sage.getLocation());
+        }
+        else if (watchtowerTurns<=5){
+            tryAttack(watchtower.getLocation());
+        }
+        else if (soldierTurns<=5){
+            tryAttack(soldier.getLocation());
+        }
+        else{
+            int minIndex = -1;
+            for (int i=0;i<5;i++){
+                if (minIndex==-1 || turns[i]<turns[minIndex]){
+                    minIndex = i;
+                }
+            }
+            if (turns[minIndex]<Integer.MAX_VALUE){
+                tryAttack(locations[minIndex]);
+            }
+            else{
+                if (miner!=null){
+                    tryAttack(miner.getLocation());
+                }
+                else if (builder!=null){
+                    tryAttack(builder.getLocation());
+                }
+            }
+        }
     }
     
     private void updateInternalMap(){}

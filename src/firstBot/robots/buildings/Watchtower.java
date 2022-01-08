@@ -38,6 +38,7 @@ public class Watchtower extends Building {
         avoidFury();
         retransform();
         if(isDefensive){
+            /*
             rc.setIndicatorString("Defensive");
             if (rc.getLocation().distanceSquaredTo(archon)<2){
                 if(rc.getMode()==RobotMode.TURRET && rc.canTransform()){
@@ -52,6 +53,7 @@ public class Watchtower extends Building {
                     rc.transform();
                 }
             }
+            */
             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
             attackDefensive();
         }

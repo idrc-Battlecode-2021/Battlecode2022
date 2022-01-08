@@ -3,9 +3,13 @@ package firstBot.robots.droids;
 import battlecode.common.*;
 import firstBot.robots.Robot;
 import firstBot.util.Constants;
+import java.util.ArrayList;
 
 public abstract class Droid extends Robot {
     MapLocation exploreTarget;
+    private AnomalyScheduleEntry[] anomaly = rc.getAnomalySchedule();
+    private ArrayList<AnomalyScheduleEntry> relevantAnomalies = new ArrayList<AnomalyScheduleEntry>();
+
     public Droid(RobotController rc) {
         super(rc);
         exploreTarget = myLocation;
@@ -24,7 +28,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < mapWidth && yVal >= 0 && yVal < mapHeight &&
-                    internalMap[xVal][yVal] == -1){
+                    internalMap[xVal][yVal] == 0){
                 dir = initDirection;
                 rubble = rc.senseRubble(rc.adjacentLocation(initDirection));
             }
@@ -35,7 +39,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == -1){
+                    internalMap[xVal][yVal] == 0){
                 rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateLeft()));
                 if(rubble2 < rubble){
                     dir = initDirection.rotateLeft();
@@ -47,7 +51,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == -1){
+                    internalMap[xVal][yVal] == 0){
                 rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateRight()));
                 if(rubble2 < rubble){
                     dir = initDirection.rotateLeft();
@@ -72,9 +76,9 @@ public abstract class Droid extends Robot {
             int[] offsets = getDirectionOffsets(d);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == -1 && rc.canMove(d)){
+                    internalMap[xVal][yVal] == 0 && rc.canMove(d)){
                 if(tryMoveMultiple(d)){
-                    internalMap[myLocation.x][myLocation.y] = rc.senseRubble(myLocation);
+                    internalMap[myLocation.x][myLocation.y] = rc.senseRubble(myLocation)+1;
                     return true;
                 }
             }
@@ -151,5 +155,38 @@ public abstract class Droid extends Robot {
         newLocation();
         intermediateMove(exploreTarget);
     }
-
+    public void parseAnomalies() {
+            for (AnomalyScheduleEntry a : anomaly) {
+                if (a.anomalyType == AnomalyType.CHARGE) {
+                    relevantAnomalies.add(a);
+                }
+            }
+        }
+        public void avoidCharge() throws GameActionException {
+            for (AnomalyScheduleEntry a: relevantAnomalies){
+                if (rc.getRoundNum()>a.roundNumber){
+                    relevantAnomalies.remove(a);
+                    break;
+                }
+                if(rc.getRoundNum()+10>a.roundNumber){
+                    int x=0;
+                    int y=0;
+                    RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+                    for (RobotInfo r: friends){
+                        switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
+                        case NORTH:y+=1;break;
+                        case NORTHEAST: y+=1; x+=1; break;
+                        case NORTHWEST: y+=1; x-=1; break;
+                        case SOUTH: y-=1; break;
+                       case EAST: x+=1; break;
+                        case WEST: x-=1; break;
+                        case SOUTHEAST: y-=1; x+=1; break;
+                        case SOUTHWEST: y-=1; x-=1; break;
+                        }
+                    }
+                    Direction d = getDirection(x, y);
+                    tryMoveMultiple(d);
+                }
+            }
+        }
 }

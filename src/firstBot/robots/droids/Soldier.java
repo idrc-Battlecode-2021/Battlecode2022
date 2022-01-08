@@ -13,6 +13,7 @@ public class Soldier extends Droid{
 
     @Override
     public void init() throws GameActionException {
+        parseAnomalies();
         RobotInfo [] r = rc.senseNearbyRobots();
         for (RobotInfo ro : r){
             if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
@@ -27,6 +28,7 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);

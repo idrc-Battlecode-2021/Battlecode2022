@@ -35,29 +35,25 @@ public class Builder extends Droid{
 
     @Override
     public void init() throws GameActionException {
-
+        parseAnomalies();
+        //System.out.println("init: "+ Clock.getBytecodesLeft());
     }
 
     @Override
     public void run() throws GameActionException {
+        avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(1, rc.readSharedArray(1)+1);
         }
         int numTowers = rc.readSharedArray(archon+5);
-        if (numTowers>2){
+        if (numTowers==2){
             isDefensive=false;
         }
-        /*
-        if (finishPrototype!=null){
-            rc.setIndicatorString(finishPrototype+" "+rc.canSenseRobotAtLocation(finishPrototype));
-        }
-        */
-        
+        //System.out.println("After update: "+Clock.getBytecodesLeft());
         if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){ //repairs prototypes
             RobotInfo prototype = rc.senseRobotAtLocation(finishPrototype);
             if (prototype.getHealth()==prototype.getType().health){
-                rc.setIndicatorString("weird");
                 finishPrototype=null;
             }
             else{
@@ -67,6 +63,7 @@ public class Builder extends Droid{
                 return;
             }
         }
+        //System.out.println("After prototype: "+Clock.getBytecodesLeft());
         int toBuild = read();
         rc.setIndicatorString(Integer.toBinaryString(toBuild));
         boolean built = build(toBuild);
@@ -81,6 +78,7 @@ public class Builder extends Droid{
                 }
             }
         }
+        //System.out.println("After repair: "+Clock.getBytecodesLeft());
         if (built){
             for (int i = robots.length; --i>=0;){
                 if (robots[i].getMode()==RobotMode.PROTOTYPE){
@@ -88,12 +86,22 @@ public class Builder extends Droid{
                     rc.writeSharedArray(59, archon*128+target.x*64+target.y);
                     }
                 }
+                //System.out.println("After built: "+Clock.getBytecodesLeft());
             }
+            
         else if (nearPrototype){
             rc.repair(prototypeLoc);
+            //System.out.println("After nearPrototype: "+Clock.getBytecodesLeft());
             }
         else if (isDefensive){
             intermediateMove(archonLoc);
+            if (rc.getLocation().distanceSquaredTo(archonLoc)<=2){
+                intermediateMove(rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite()));
+            }
+            else{
+                intermediateMove(archonLoc);
+            }
+            //System.out.println("After isDefensive: "+Clock.getBytecodesLeft());
         }
             else{
                 int randint = rand.nextInt(8);
@@ -102,6 +110,7 @@ public class Builder extends Droid{
                     rc.move(d);
                     myLocation = rc.getLocation();
                 }
+                //System.out.println("After random: "+Clock.getBytecodesLeft());
             }
 
      }
