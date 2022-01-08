@@ -53,10 +53,11 @@ public strictfp class RobotPlayer {
 
         // Hello world! Standard output is very useful for debugging.
         // Everything you say here will be directly viewable in your terminal when you run a match!
-        System.out.println("I'm a " + rc.getType() + " and I just got created! I have health " + rc.getHealth());
+        //System.out.println("I'm a " + rc.getType() + " and I just got created! I have health " + rc.getHealth());
 
         // You can also use indicators to save debug notes in replays.
         rc.setIndicatorString("Hello world!");
+        myLocation = rc.getLocation();
 
         while (true) {
             // This code runs during the entire lifespan of the robot, which is why it is in an infinite
@@ -64,7 +65,7 @@ public strictfp class RobotPlayer {
             // loop, we call Clock.yield(), signifying that we've done everything we want to do.
 
             turnCount += 1;  // We have now been alive for one more turn!
-            System.out.println("Age: " + turnCount + "; Location: " + rc.getLocation());
+            //System.out.println("Age: " + turnCount + "; Location: " + rc.getLocation());
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode.
             try {
@@ -75,23 +76,24 @@ public strictfp class RobotPlayer {
                 switch (rc.getType()) {
                     case ARCHON:     runArchon(rc);  break;
                     case MINER:      runMiner(rc);   break;
+                    case SAGE:
                     case SOLDIER:    runSoldier(rc); break;
                     case LABORATORY: // Examplefuncsplayer doesn't use any of these robot types below.
                     case WATCHTOWER: // You might want to give them a try!
                     case BUILDER:
-                    case SAGE:       break;
+                        break;
                 }
             } catch (GameActionException e) {
                 // Oh no! It looks like we did something illegal in the Battlecode world. You should
                 // handle GameActionExceptions judiciously, in case unexpected events occur in the game
                 // world. Remember, uncaught exceptions cause your robot to explode!
-                System.out.println(rc.getType() + " Exception");
+                //System.out.println(rc.getType() + " Exception");
                 e.printStackTrace();
 
             } catch (Exception e) {
                 // Oh no! It looks like our code tried to do something bad. This isn't a
                 // GameActionException, so it's more likely to be a bug in our code.
-                System.out.println(rc.getType() + " Exception");
+                //System.out.println(rc.getType() + " Exception");
                 e.printStackTrace();
 
             } finally {
@@ -111,18 +113,30 @@ public strictfp class RobotPlayer {
      */
     static void runArchon(RobotController rc) throws GameActionException {
         // Pick a direction to build in.
-        Direction dir = directions[rng.nextInt(directions.length)];
-        if (rng.nextBoolean()) {
-            // Let's try to build a miner.
-            rc.setIndicatorString("Trying to build a miner");
-            if (rc.canBuildRobot(RobotType.MINER, dir)) {
-                rc.buildRobot(RobotType.MINER, dir);
+        Direction dir = null;
+        for(int i = directions.length; --i>=0;){
+            MapLocation adj = rc.adjacentLocation(directions[i]);
+            if(!rc.canSenseRobotAtLocation(adj) && rc.onTheMap(adj)){
+                dir = directions[i];
+                break;
             }
-        } else {
-            // Let's try to build a soldier.
-            rc.setIndicatorString("Trying to build a soldier");
-            if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
-                rc.buildRobot(RobotType.SOLDIER, dir);
+        }
+        if(dir == null)return;
+        if(rc.canBuildRobot(RobotType.SAGE,dir)){
+            rc.buildRobot(RobotType.SAGE,dir);
+        }else{
+            if (rng.nextBoolean()) {
+                // Let's try to build a miner.
+                rc.setIndicatorString("Trying to build a miner");
+                if (rc.canBuildRobot(RobotType.MINER, dir)) {
+                    rc.buildRobot(RobotType.MINER, dir);
+                }
+            } else {
+                // Let's try to build a soldier.
+                rc.setIndicatorString("Trying to build a soldier");
+                if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
+                    rc.buildRobot(RobotType.SOLDIER, dir);
+                }
             }
         }
     }
@@ -155,7 +169,7 @@ public strictfp class RobotPlayer {
         Direction dir = directions[rng.nextInt(directions.length)];
         if (rc.canMove(dir)) {
             rc.move(dir);
-            System.out.println("I moved!");
+            //System.out.printn("I moved!");
 
         }
         for (int dx = -1; dx <= 1; dx++) {
@@ -205,7 +219,7 @@ public strictfp class RobotPlayer {
             Direction dir = directions[rng.nextInt(directions.length)];
             if (rc.canMove(dir)) {
                 rc.move(dir);
-                System.out.println("I moved!");
+                //System.out.println("I moved!");
             }
         }
 
