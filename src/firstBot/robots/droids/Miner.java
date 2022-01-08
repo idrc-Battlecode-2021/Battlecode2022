@@ -33,6 +33,7 @@ public class Miner extends Droid{
         avoidCharge();
         // update shared array
         MapLocation prev = myLocation;
+        rc.setIndicatorString(""+myArchonOrder);
         if (rc.getRoundNum()%3==2){
             if (myArchonOrder<=1){
                 rc.writeSharedArray(0, rc.readSharedArray(0)+(int)Math.pow(256,myArchonOrder));

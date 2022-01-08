@@ -42,7 +42,7 @@ public abstract class Robot {
     public abstract void run() throws GameActionException;
     
     public void detectArchon() throws GameActionException{
-        RobotInfo[] robots = rc.senseNearbyRobots();
+        RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam());
         for (int i = robots.length; --i>=0;){
             if (robots[i].getType() == RobotType.ARCHON){
                 myArchonID = robots[i].getID();

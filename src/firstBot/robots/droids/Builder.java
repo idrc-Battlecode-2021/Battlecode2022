@@ -44,7 +44,7 @@ public class Builder extends Droid{
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
-            rc.writeSharedArray(1, rc.readSharedArray(1)+1);
+            rc.writeSharedArray(1, rc.readSharedArray(1)+(int)Math.pow(16,archon));
         }
         int numTowers = rc.readSharedArray(archon+5);
         if (numTowers==2){
@@ -196,19 +196,21 @@ public class Builder extends Droid{
                 }
             }
         }
-        if(minR < rc.senseRubble(myLocation.add(k))){
-        if (rc.canMove(k)){
-            rc.move(k);
-            k=null;
-            for(int i = basic.length; --i>=0;){
-                if(rc.canBuildRobot(r,basic[i])){
-                    if (rc.senseRubble(myLocation.add(basic[i]))<minR){
-                        k=basic[i];
-                        minR=rc.senseRubble(myLocation.add(basic[i]));
+        if (k!=null){
+            if(minR < rc.senseRubble(myLocation.add(k))){
+                if (rc.canMove(k)){
+                    rc.move(k);
+                    k=null;
+                    for(int i = basic.length; --i>=0;){
+                        if(rc.canBuildRobot(r,basic[i])){
+                            if (rc.senseRubble(myLocation.add(basic[i]))<minR){
+                                k=basic[i];
+                                minR=rc.senseRubble(myLocation.add(basic[i]));
+                            }
+                        }
                     }
                 }
             }
-        }
         }
         if (k!=null) {
             rc.buildRobot(r, k);

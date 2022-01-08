@@ -18,7 +18,6 @@ public class Watchtower extends Building {
     public void init() throws GameActionException {
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro: r) {
-            rc.setIndicatorString("searching for archon");
             if (ro.getType() == RobotType.ARCHON) {
                 archon = ro.getLocation();
             }
@@ -28,8 +27,6 @@ public class Watchtower extends Building {
         }
         else if (rc.readSharedArray(5)+rc.readSharedArray(6)+
                 rc.readSharedArray(7)+rc.readSharedArray(8)>8){
-            
-            rc.setIndicatorString("not defensive");
             isDefensive=false;
         }
     }
@@ -38,6 +35,7 @@ public class Watchtower extends Building {
         avoidFury();
         retransform();
         if(isDefensive){
+            rc.setIndicatorString(isDefensive+" ");
 
             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
             attackDefensive();
@@ -71,16 +69,14 @@ public class Watchtower extends Building {
                 }
             }
             else{
-                int count =broadcastLattice();
-                joinLattice(count);
+                broadcastLattice();
+                joinLattice();
             }
-        }
+            rc.setIndicatorString(rc.readSharedArray(54)+" ");
+            }
 
     }
-    public void joinLattice(int count) throws GameActionException{
-        if (count>5){
-            return;
-        }
+    public void joinLattice() throws GameActionException{
         int loc = rc.readSharedArray(54);
         int x = loc/64;
         int y = loc%64;
@@ -93,7 +89,7 @@ public class Watchtower extends Building {
                     intermediateMove(target);
         }
         }
-    public int broadcastLattice() throws GameActionException{
+    public void broadcastLattice() throws GameActionException{
         RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         int count=0;
         int length = friends.length;
@@ -106,7 +102,10 @@ public class Watchtower extends Building {
             int y = m.y;
             rc.writeSharedArray(54, 64*x+y);
         }
-        return count;
+        else if (rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent()).length >0){
+            rc.writeSharedArray(54, rc.getLocation().x*64+rc.getLocation().y);
+        }
+
     }
 
 
