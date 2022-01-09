@@ -123,7 +123,7 @@ public class Archon extends Building{
         // Check if all archons have passed phase n, phases on top of file
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){continue;}
+            if (rc.readSharedArray(63-i/4)==0){break;}
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
             if (thisPhase < n){return false;}
@@ -196,8 +196,8 @@ public class Archon extends Building{
             i++;
         }
         if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
-            rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
             soldierIndex = (soldierIndex+i)%8;
+            rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
             soldierIndex++;
             soldierCount++;
             if (incrementBuildType){
