@@ -32,6 +32,7 @@ public class Miner extends Droid {
             int k = x*64+y;
             rc.writeSharedArray(47,k);
         }
+        rc.setIndicatorString(rc.readSharedArray(47)+"");
         broadcast();
         reassignArchon();
         avoidCharge();
