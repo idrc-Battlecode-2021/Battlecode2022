@@ -13,3 +13,7 @@ When miners find a deposit
 - 33: minerFound 3
 - 34: minerFound 4
 - All other ids the same
+
+#Bugs
+- Miners get stuck in corners
+- Sometimes Miners don't go to lead deposits
