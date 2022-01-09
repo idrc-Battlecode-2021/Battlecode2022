@@ -57,7 +57,7 @@ public abstract class Robot {
         initialArchons = rc.getArchonCount();
         archonWait = false;
         for(int i=63; i>59; i--){
-            if (rc.readSharedArray(i)==myArchonID){
+            if (rc.readSharedArray(i)==myArchonID+1){
                 myArchonOrder=63-i;
             }
         }
@@ -65,7 +65,7 @@ public abstract class Robot {
     }
 
     public void detectArchon() throws GameActionException{
-        int startingByteCode = Clock.getBytecodesLeft();
+        // detect and assign archon ID at spawn
         RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam());
         for (int i = robots.length; --i>=0;){
             if (robots[i].getType() == RobotType.ARCHON){
@@ -74,14 +74,10 @@ public abstract class Robot {
             }
         }
         for(int i=63; i>59; i--){
-            if (rc.readSharedArray(i)==myArchonID){
+            if (rc.readSharedArray(i)==myArchonID+1){
                 myArchonOrder=63-i;
                 break;
             }
-        }
-        int endingByteCode = Clock.getBytecodesLeft();
-        if (startingByteCode-endingByteCode>3000){
-            System.out.println("ruh roh");
         }
     }
     public static int movementTileDistance(MapLocation a, MapLocation b){
@@ -372,76 +368,50 @@ public abstract class Robot {
         return (int) Math.ceil(Math.floor((1+rubble/(double)10)*myType.movementCooldown)/(double) 10);
     }
 
-    protected void pathFind(MapLocation target) throws GameActionException{
+    private void pathfind(MapLocation target) throws GameActionException{
         //dijkstra for unknown square
         ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
-        HashMap<MapLocation, Integer> dists = new HashMap<>(), movementCosts = new HashMap<>();
-        //dist: base distance to target plus rubble penalty, movementCosts: the weighted graph
-		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, 4);
-		//Set Radius squared to 15 to try and reduce bytecode
-        System.out.println(2+" "+Clock.getBytecodesLeft());
-		for (int i = senseLocations.length; --i >= 0;){
-		    //Not Tested but could result in less bytecode used at the cost of not checking all tiles
-            int distance = movementTileDistance(senseLocations[i],target);
-            if(distance < movementTileDistance(myLocation,target)){
-                queue.add(senseLocations[i]);
-                dists.put(senseLocations[i],distance+turnPenalty(rc.senseRubble(senseLocations[i])));
-            }
-            //queue.add(senseLocations[i]);
-            //dists.put(senseLocations[i], movementTileDistance(senseLocations[i],target)+turnPenalty(rc.senseRubble(senseLocations[i])));
-
+        HashMap<MapLocation, Integer> dists = new HashMap<>();
+        queue.add(myLocation);
+        dists.put(myLocation, 0);
+        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
+        for (int i = senseLocations.length; --i >= 0;){
+            queue.add(senseLocations[i]);
+            dists.put(senseLocations[i], Integer.MAX_VALUE);
         }
-        System.out.println(3+" "+Clock.getBytecodesLeft());
         while (queue.size() > 0){
             MapLocation chosen = null;
-			int min= Integer.MAX_VALUE;
-			for(int i = queue.size(); --i>=0;){
-                MapLocation temp = queue.get(i);
-			    if(dists.get(temp) < min){
-                    min = dists.get(temp);
-                    chosen = temp;
+            int min= Integer.MAX_VALUE;
+            for(MapLocation m : queue){
+                if(dists.get(m) < min){
+                    min = dists.get(m);
+                    chosen = m;
                 }
-			}
-           	queue.remove(chosen);
-           	if(!movementCosts.containsKey(chosen)){
-                movementCosts.put(chosen,dists.get(chosen));
-                //May be more bytecode efficient if this was an if else where one uses chosen's movementCost value and the 
-                //other uses chosen's dist value.
-           	}
-            MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
-           	for (int i = temp.length; --i>=0;){
-                if(dists.containsKey(temp[i])){
-                    int tot_rubble = movementCosts.get(chosen) + turnPenalty(rc.senseRubble(temp[i]));
-                    if (!movementCosts.containsKey(temp[i]) || tot_rubble < movementCosts.get(temp[i])){
-                        movementCosts.put(temp[i], tot_rubble);
-                    }
-                }
-           	}
-           	
-        }
-        MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
-        Arrays.sort(local,(MapLocation o1, MapLocation o2) -> movementCosts.get(o2)-movementCosts.get(o1));
-        for(int i = local.length; --i>=0;){
-            Direction dirTo = myLocation.directionTo(local[i]);
-            if(rc.canMove(dirTo)){
-                rc.move(dirTo);
-                myLocation = rc.getLocation();
-                break;
             }
+            
+            queue.remove(chosen);
+            MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
+            for (int i = temp.length; --i>=0;){
+                int tot_rubble = dists.get(chosen) + rc.senseRubble(temp[i]);
+                if (tot_rubble < dists.get(temp[i])){
+                    dists.put(temp[i], tot_rubble);
+                }
+            }
+            
         }
-
+        
         //dists now contains a dictionary of smallest distance to every square in sight
         
         //if target in sight then pathfind
-        	
+            
         
         
         //next step is to pick a decent square in the direction of overall target to pathfind toward if target is not in sight
-        
-        //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
-        //note to self: add test to see if target is in internal map already or in sight already
-        //note to self: use internal map to find closest known square to target? instead of current
-    }
+            
+            //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
+            //note to self: add test to see if target is in internal map already or in sight already
+            //note to self: use internal map to find closest known square to target? instead of current
+        }
 
     private void tryAttack(MapLocation Loc) throws GameActionException {
         if (rc.canAttack(Loc)){

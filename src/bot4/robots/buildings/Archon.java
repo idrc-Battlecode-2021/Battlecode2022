@@ -1,4 +1,4 @@
-package bot3.robots.buildings;
+package bot4.robots.buildings;
 
 import battlecode.common.*;
 

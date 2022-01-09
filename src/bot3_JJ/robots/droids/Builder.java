@@ -30,6 +30,7 @@ public class Builder extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        broadcast();
         reassignArchon();
         //System.out.println(Clock.getBytecodesLeft());
         startingBit = 2*myArchonOrder;
