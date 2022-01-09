@@ -76,6 +76,7 @@ public abstract class Robot {
         for(int i=63; i>59; i--){
             if (rc.readSharedArray(i)==myArchonID){
                 myArchonOrder=63-i;
+                break;
             }
         }
         int endingByteCode = Clock.getBytecodesLeft();
