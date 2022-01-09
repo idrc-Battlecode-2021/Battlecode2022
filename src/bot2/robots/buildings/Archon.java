@@ -169,7 +169,7 @@ public class Archon extends Building{
             }
         }
         catch(Exception e){
-            System.out.println("round: "+rc.getRoundNum()+" "+Integer.toBinaryString(rc.readSharedArray(56)));
+            System.out.println(Integer.toBinaryString(rc.readSharedArray(56)));
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
@@ -187,20 +187,26 @@ public class Archon extends Building{
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
-        if (rc.getArchonCount()<initialArchons){ // change all the things in the shared array when an archon dies
+        if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
             // update spawnphase array (57)
             int i=0;
-            while (rc.readSharedArray(63-i)>0){
+            // check if the archon IDs have been deleted (i.e. if another archon has already updated the IDs)
+            while (rc.readSharedArray(63-i)>0 && i<=initialArchons-1){
                 i++;
             }
-            if (i==initialArchons){
-                for(int j=0;j<initialArchons;j++){
+            if (i==initialArchons){ //this is the first archon to update after one died
+                //resets the archon IDs
+                for(int j=0;j<4;j++){
                     rc.writeSharedArray(63-j, 0);
                 }
                 archonOrder = 0;
+                //reset relevant arrays
                 rc.writeSharedArray(63,rc.getID());
+                rc.writeSharedArray(56,0);
+                rc.writeSharedArray(11,0);
             }
             else{
+                //set appropriate archonOrder
                 archonOrder = i;
                 rc.writeSharedArray(63-archonOrder,rc.getID());
             }

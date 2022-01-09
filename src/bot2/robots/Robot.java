@@ -386,13 +386,13 @@ public abstract class Robot {
         System.out.println(2+" "+Clock.getBytecodesLeft());
 		for (int i = senseLocations.length; --i >= 0;){
 		    //Not Tested but could result in less bytecode used at the cost of not checking all tiles
-            /*int distance = movementTileDistance(senseLocations[i],target);
+            int distance = movementTileDistance(senseLocations[i],target);
             if(distance < movementTileDistance(myLocation,target)){
                 queue.add(senseLocations[i]);
                 dists.put(senseLocations[i],distance+turnPenalty(rc.senseRubble(senseLocations[i])));
-            }*/
-            queue.add(senseLocations[i]);
-            dists.put(senseLocations[i], movementTileDistance(senseLocations[i],target)+turnPenalty(rc.senseRubble(senseLocations[i])));
+            }
+            //queue.add(senseLocations[i]);
+            //dists.put(senseLocations[i], movementTileDistance(senseLocations[i],target)+turnPenalty(rc.senseRubble(senseLocations[i])));
 
         }
         System.out.println(3+" "+Clock.getBytecodesLeft());

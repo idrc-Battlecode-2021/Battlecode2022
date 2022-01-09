@@ -1,5 +1,5 @@
 # First Bot
-
+- This version has builder issues
 ## Buildings
 ### Archons
 #### Spawning
