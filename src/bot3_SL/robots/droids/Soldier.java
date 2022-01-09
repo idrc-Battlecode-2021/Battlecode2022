@@ -34,7 +34,7 @@ public class Soldier extends Droid{
     @Override
     public void run() throws GameActionException {
         checkSymmetry();
-        readSymmetry();
+        MapLocation enemyArchon = readSymmetry();
         rc.setIndicatorString(myArchonOrder+"");
         avoidCharge();
         // update shared array
@@ -73,25 +73,30 @@ public class Soldier extends Droid{
             intermediateMove(target);
         }
         else{
-            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
-            for (int i = all.length; --i>=0;){
-                for (MapLocation c: corners){
-                    if (all[i]==c){
-                        Direction d = myLocation.directionTo(c);
-                        tryMoveMultiple(d);
+            if(enemyArchon !=null){
+                intermediateMove(enemyArchon);
+            }
+            else{
+                MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+                for (int i = all.length; --i>=0;){
+                    for (MapLocation c: corners){
+                        if (all[i]==c){
+                            Direction d = myLocation.directionTo(c);
+                            tryMoveMultiple(d);
+                        }
+                    }
+                }
+                if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+                    Direction d = myLocation.directionTo(center);
+                    tryMoveMultiple(d);
+                }
+                else{
+                    if(!tryMoveMultipleNew()){
+                        tryMoveMultiple(initDirection);
                     }
                 }
             }
 
-            if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
-                Direction d = myLocation.directionTo(center);
-                tryMoveMultiple(d);
-            }
-            else{
-                if(!tryMoveMultipleNew()){
-                    tryMoveMultiple(initDirection);
-                }
-            }
         }
 
     }

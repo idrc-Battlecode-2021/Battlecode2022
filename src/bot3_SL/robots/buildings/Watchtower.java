@@ -33,7 +33,7 @@ public class Watchtower extends Building {
     @Override
     public void run() throws GameActionException {
         checkSymmetry();
-        readSymmetry();
+        MapLocation archonTarget = readSymmetry();
         avoidFury();
         retransform();
         if(isDefensive){
@@ -71,8 +71,14 @@ public class Watchtower extends Building {
                 }
             }
             else{
-                broadcastLattice();
-                joinLattice();
+                if (archonTarget!=null){
+                    intermediateMove(archonTarget);
+                }
+                else{
+                    broadcastLattice();
+                    joinLattice();
+                }
+
             }
             rc.setIndicatorString(rc.readSharedArray(54)+" ");
             }

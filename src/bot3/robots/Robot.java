@@ -370,54 +370,83 @@ public abstract class Robot {
     }
 
     private void pathfind(MapLocation target) throws GameActionException{
-        if(myLocation.distanceSquaredTo(target) > rc.getType().visionRadiusSquared){
-	        //dijkstra for unknown square
-	        ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
-	        HashMap<MapLocation, Integer> dists = new HashMap<>();
-	        HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //paths[node] = previous node for shortest path to said node
-	        queue.add(myLocation);
-	        dists.put(myLocation, 0);
-	        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
-	        for (int i = senseLocations.length; --i >= 0;){
-	            queue.add(senseLocations[i]);
-	            dists.put(senseLocations[i], Integer.MAX_VALUE);
-	        }
-	        while (queue.size() > 0){
-	            MapLocation chosen = null;
-	            int min= Integer.MAX_VALUE;
-	            for(MapLocation m : queue){
-	                if(dists.get(m) < min){
-	                    min = dists.get(m);
-	                    chosen = m;
-	                }
-	            }
-	            
-	            queue.remove(chosen);
-	            MapLocation[] adjacents = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
-	            for (int i = adjacents.length; --i>=0;){
-	                int tot_rubble = dists.get(chosen) + rc.senseRubble(adjacents[i]);
-	                if (tot_rubble < dists.get(adjacents[i])){
-	                    dists.put(adjacents[i], tot_rubble);
-	                    paths.put(adjacents[i], chosen);
-	                }
-	            }
-	            
-	        }
-	        
-	        
-	        
-	        MapLocation intermediateTarget = pickSquaresInDirection(myLocation.directionTo(target), rc.getType().visionRadiusSquared);
-			myPath.add(intermediateTarget);
-			while(!intermediateTarget.equals(myLocation)){
-                myPath.add(0,paths.get(intermediateTarget));
-            }
-            
-	    }
-	    
-	    else {
-            
+        //if already has path to follow, selects farthest intermediate target from path that is in vision to optimize path
+        
+        if(myPath.size() > 0){
+        	for(int index = myPath.size()-1; index > -1; index--){
+                MapLocation tempLocation = myPath.get(index);
+            	if (myLocation.isWithinDistanceSquared(tempLocation, rc.getType().visionRadiusSquared)){
+                	target = tempLocation; //path towards intermediate target
+                	myPath.subList(0,index).clear(); //remove old path to intermediate target, will be replaced with new path
+                	break;
+            	}
+        	}
         }
         
+        //dijkstra to find best path
+        
+        ArrayList<MapLocation> queue = new ArrayList<MapLocation>(); //list of maplocations to check
+        HashMap<MapLocation, Integer> dists = new HashMap<>(); //hashmap containing maplocations and associated total rubble cost for each map location
+        HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //hashmap containing maplocations and their parent maplocation (previous maplocation on optimal path)
+        //paths[node] = previous node for shortest path to said node
+        queue.add(myLocation);
+        dists.put(myLocation, 0);
+        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
+        for (int i = senseLocations.length; --i >= 0;){
+            queue.add(senseLocations[i]);
+            dists.put(senseLocations[i], Integer.MAX_VALUE);
+        }
+        while (queue.size() > 0){
+            MapLocation chosen = null;
+            int min= Integer.MAX_VALUE;
+            for(MapLocation m : queue){
+                if(dists.get(m) < min){
+                    min = dists.get(m);
+                    chosen = m;
+                }
+            }
+
+            queue.remove(chosen);
+            MapLocation[] adjacents = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
+            for (int i = adjacents.length; --i>=0;){
+                int additional_rubble = adjacents[i].isAdjacentTo(myLocation) && rc.canSenseRobotAtLocation(adjacents[i]) ? 101 : rc.senseRubble(adjacents[i]);
+                int tot_rubble = dists.get(chosen) + additional_rubble;
+                if (tot_rubble < dists.get(adjacents[i])){
+                    dists.put(adjacents[i], tot_rubble);
+                    paths.put(adjacents[i], chosen);
+                }
+            }
+
+        }
+
+
+	    if(myLocation.distanceSquaredTo(target) > rc.getType().visionRadiusSquared){
+            //pick intermediate target with low rubble score to path to as intermediate target if target not in vision
+	        MapLocation intermediateTarget = pickSquaresInDirection(myLocation.directionTo(target), rc.getType().visionRadiusSquared);
+			while(!intermediateTarget.equals(myLocation)){
+                myPath.add(0,intermediateTarget);
+                intermediateTarget = paths.get(intermediateTarget);
+            }
+
+	    }
+
+	    else {
+            //generate path directly to target if in vision
+            myPath.add(target);
+			while(!target.equals(myLocation)){
+                myPath.add(0,paths.get(target));
+                target = paths.get(target);
+            }
+        }
+        Direction moveDir = myLocation.directionTo(paths.get(0));
+        if(rc.canMove(moveDir)){
+            rc.move(moveDir);
+            myPath.remove(0);
+        }
+        
+        
+        //old notes:
+
         //dists now contains a dictionary of smallest distance to every square in sight
         
         //if target in sight then pathfind
@@ -715,7 +744,7 @@ public abstract class Robot {
                         }
 
                 }
-            	break;	
+            	break;
         }
         return null;
         

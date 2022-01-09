@@ -170,6 +170,30 @@ public class Archon extends Building{
         return true;
     }
     
+    public void buildSoldier() throws GameActionException { 
+        // NOT substitute for soldier code in run(), only used when surplus of lead is achieved
+        Direction directions[] = Direction.allDirections();
+        int i=0;
+        while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
+            i++;
+        }
+        if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
+            soldierIndex = (soldierIndex+i)%8;
+            rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
+            soldierCount++;
+        }
+    }
+
+    public void buildWatchtower() throws GameActionException {
+        // NOT substitute for watchtower code in run(), only used when surplus of lead is achieved
+        int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
+        int currentValue = rc.readSharedArray(58); 
+        int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
+        int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
+        watchtowerCount++;
+        rc.writeSharedArray(58, buildCommand);
+    }
+
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
@@ -406,6 +430,9 @@ public class Archon extends Building{
                     }
                     //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
+                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.SOLDIER.buildCostLead){
+                        buildSoldier();
+                    }
                 }
                 else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
@@ -427,9 +454,11 @@ public class Archon extends Building{
                         rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
                         soldierCount++;
                     }
+                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead){
+                        buildWatchtower();
+                    }
                 }
                 else if (wsBuildType%mod==2 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
-
                     Direction directions[] = Direction.allDirections();
                     int i=0;
                     while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
@@ -448,6 +477,9 @@ public class Archon extends Building{
                         wsBuildType++;
                         rc.buildRobot(RobotType.MINER,directions[minerIndex]);
                         minerCount++;
+                    }
+                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead){
+                        buildWatchtower();
                     }
                 }
                 else { //repair robots if can't build anything

@@ -132,40 +132,39 @@ public class Miner extends Droid{
                                 }
                                 if(rc.senseLead(target) > 1 && rc.canMineLead(target)) rc.mineLead(target);
                             }
-                            intermediateMove(target);
-                            RobotInfo[] nearbyBots = rc.senseNearbyRobots(1,myTeam); //Maybe change to 2
-                            boolean nextToMiner = false;
-                            for(int i = nearbyBots.length; --i >=0;){
-                                if(nearbyBots[i].getType() == myType && !nearbyBots[i].getLocation().equals(myLocation)){
-                                    nextToMiner = true;
-                                    break;
-                                }
-                            }
-                            if(nextToMiner){
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 2
-                                int amount = lead.get(target);
-                                int start= (int)(nearbyLead.length*Math.random());
-                                for(int i = start; i< start+nearbyLead.length; i++) {
-                                    int j = i%nearbyLead.length;
-                                    MapLocation[] nextTo = rc.getAllLocationsWithinRadiusSquared(nearbyLead[j],1);
-                                    boolean none = false;
-                                    for(int k = nextTo.length; --k >=0;){
-                                        if(rc.canSenseRobotAtLocation(nextTo[k])){
-                                            none = true;
-                                            break;
-                                        }
+                            intermediateMove(target);                            
+                            if(myLocation.equals(target)){
+                                RobotInfo[] nearbyBots = rc.senseNearbyRobots(1,myTeam); //Maybe change to 2
+                                boolean nextToMiner = false;
+                                for (int i = nearbyBots.length; --i >= 0; ) {
+                                    if (nearbyBots[i].getType() == myType && !nearbyBots[i].getLocation().equals(myLocation)) {
+                                        nextToMiner = true;
+                                        break;
                                     }
-                                    if (none) {
+                                }
+                                if (nextToMiner) {
+                                    MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 2
+                                    int amount = lead.get(target);
+                                    int start = (int) (nearbyLead.length * Math.random());
+                                    loop1: for (int i = start; i < start + nearbyLead.length; i++) {
+                                        int j = i % nearbyLead.length;
+                                        MapLocation[] nextTo = rc.getAllLocationsWithinRadiusSquared(nearbyLead[j], 1);
+                                        boolean none = false;
+                                        for (int k = nextTo.length; --k >= 0; ) {
+                                            if (rc.canSenseRobotAtLocation(nextTo[k])) {
+                                                continue loop1;
+                                            }
+                                        }
                                         target = nearbyLead[j];
                                         amount = rc.senseLead(nearbyLead[j]);
                                         break;
                                     }
+                                    if (!myLocation.equals(target) && rc.canMove(myLocation.directionTo(target))) {
+                                        rc.move(myLocation.directionTo(target));
+                                        myLocation = rc.getLocation();
+                                    }
+                                    lead.put(target, amount);
                                 }
-                                if(!myLocation.equals(target) && rc.canMove(myLocation.directionTo(target))){
-                                    rc.move(myLocation.directionTo(target));
-                                    myLocation = rc.getLocation();
-                                }
-                                lead.put(target,amount);
                             }
                             boolean mine = true;
                             while(rc.isActionReady() && mine){

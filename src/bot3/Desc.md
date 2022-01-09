@@ -1,7 +1,7 @@
-# Third Botame
-- minhe beginning, getal 06ers capped at t ni 0334
+# Third Bot
 
-## Buildings### Archons
+## Buildings
+### Archons
 #### Spawning
 - miners spawn in lategame
 - 1 lab globally instead of 1 lab each
@@ -9,7 +9,10 @@
 - minimum miners to maintain may change based on # of lead deposits around archon
 
 #### Changelog
-
+- 1/9/22
+-- even spawning
+-- fixes archonID ug
+-- builds watchtowers, etc. in surplus
 
 ### Labs
 ### Watchtowers

@@ -20,7 +20,6 @@ public abstract class Robot {
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
-    protected ArrayList <MapLocation> enemyLocs = new ArrayList<>();
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -551,18 +550,19 @@ public abstract class Robot {
     
     private void updateInternalMap(){}
 
-    public void readSymmetry() throws GameActionException{
+    public MapLocation readSymmetry() throws GameActionException{
         int n = rc.readSharedArray(48);
         if (n==0){
-            return;
+            return null;
         }
         int y=n%64;
         int x = (n/64)%64;
         if (n>4096){
             enemyArchons.remove(new MapLocation(x,y));
-            return;
+            return null;
         }
-        
+        return new MapLocation(x,y);
+
     }
     public void checkSymmetry() throws GameActionException{
         for (MapLocation m: enemyArchons){
