@@ -551,10 +551,10 @@ public abstract class Robot {
         int n = rc.readSharedArray(48);
         String k = Integer.toBinaryString(n);
         String pad = "";
-
-        pad ="000000000000";
+        while (pad.length() <enemyArchons.size()){
+            pad=pad+"0";
+        }
         k=pad.substring(k.length())+k;
-
         System.out.println(k+" "+ enemyArchons.size());
         for (int i=0; i<k.length(); i++){
             if (k.charAt(i)=='0'){
@@ -573,8 +573,10 @@ public abstract class Robot {
                 }
                 int n = rc.readSharedArray(48);
                 String k = Integer.toBinaryString(n);
-                String pad ="000000000000";//.substring(0,enemyArchons.size());
-
+                String pad ="";//.substring(0,enemyArchons.size());
+                while (pad.length() <enemyArchons.size()){
+                    pad=pad+"0";
+                }
                 k=pad.substring(k.length())+k;
                 System.out.println(k);
                 System.out.println(i);
@@ -625,16 +627,13 @@ public abstract class Robot {
             int y = m.y;
             if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
                 enemyArchons.add(new MapLocation(2*centerX -x, y));
-                System.out.println("Xreflect" + m + " " + new MapLocation(2*centerX-x,y));
+
             }
             if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
                 enemyArchons.add(new MapLocation( x, 2*centerY-y));
-                System.out.println("Yreflect" + m + " " + new MapLocation(x,2*centerY-y));
-            }
+                }
             if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
                 enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
-                System.out.println("rotate" + m + " " + new MapLocation(2*centerX-x,2*centerY-y));
-
             }
        }
         System.out.println(enemyArchons);

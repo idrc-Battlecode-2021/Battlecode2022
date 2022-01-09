@@ -60,7 +60,10 @@ public class Soldier extends Droid{
         else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
-                if (nearbyBots.length <5){
+               	MapLocation[] leadDeposits = rc.senseNearbyLocationsWithLead(20);
+                if (leadDe){}
+
+                else if (nearbyBots.length <5){
                     rc.writeSharedArray(55,0);
                 }
             }
@@ -71,7 +74,7 @@ public class Soldier extends Droid{
             for (int i = all.length; --i>=0;){
                 for (MapLocation c: corners){
                     if (all[i]==c){
-                        Direction d = myLocation.directionTo(c);
+                        Direction d = myLocation.directionTo(c).opposite();
                         tryMoveMultiple(d);
                     }
                 }
