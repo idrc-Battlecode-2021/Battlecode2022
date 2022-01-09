@@ -15,15 +15,15 @@ public class Builder extends Droid{
     private MapLocation finishPrototype = null;
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
-        int archonID=0;
-        detectArchon();
-        archonLoc = rc.senseRobot(myArchonID).getLocation();
-        startingBit = 2*myArchonOrder;
     }
 
     @Override
     public void init() throws GameActionException {
         parseAnomalies();
+        int archonID=0;
+        detectArchon();
+        archonLoc = rc.senseRobot(myArchonID).getLocation();
+        startingBit = 2*myArchonOrder;
         //System.out.println("init: "+ Clock.getBytecodesLeft());
     }
 

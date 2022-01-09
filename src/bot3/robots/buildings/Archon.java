@@ -96,11 +96,11 @@ public class Archon extends Building{
         // Check if all archons have passed phase n, phases on top of file
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){continue;}
+            if (rc.readSharedArray(63-i/4)==0){break;}
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
             if (thisPhase < n){
-                indicatorString += "phase too low: ";
+                indicatorString += " phase too low ";
                 return false;
             }
         }
@@ -306,7 +306,7 @@ public class Archon extends Building{
             }
         }
         else if (builderCount<builderBuild){
-            indicatorString = "builders";
+            indicatorString += " archon: "+archonOrder+" array 1 "+Integer.toBinaryString(rc.readSharedArray(1));
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -314,8 +314,9 @@ public class Archon extends Building{
                     i++;
                 }
                 if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
-                    rc.buildRobot(RobotType.BUILDER,directions[i]);
                     builderCount++;
+                    rc.buildRobot(RobotType.BUILDER,directions[i]);
+                    indicatorString+=" builders "+builderCount;
                     if (!builderDone && builderCount == builderBuild){
                         builderDone = true;
                         rc.writeSharedArray(57, rc.readSharedArray(57)+power);
@@ -326,7 +327,7 @@ public class Archon extends Building{
         }
         else {
             if (globalLabCount<labBuild){
-                indicatorString = "labs";
+                indicatorString += "labs";
                 int mod = 2;
                 if (lwBuildType%3==mod){
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){

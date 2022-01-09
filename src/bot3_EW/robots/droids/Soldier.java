@@ -58,6 +58,23 @@ public class Soldier extends Droid{
                 tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
             }
         }
+        else if (hasMapLocation(47)){ 
+            MapLocation target = decode(47);
+            if (rc.getLocation().distanceSquaredTo(target)<20){
+        		RobotInfo[] nearbySoldiers = rc.senseNearbyRobots(20,rc.getTeam());
+        		int count = 0;
+        		for(RobotInfo r : nearbySoldiers){
+                    if(r.getType().equals(RobotType.SOLDIER)){
+                        count++;
+                    }
+                }
+                defensive = true;
+                archonLoc = target;
+                rc.writeSharedArray(47,0);
+
+            }
+            intermediateMove(target);
+        }
         else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){

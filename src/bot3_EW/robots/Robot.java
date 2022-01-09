@@ -330,8 +330,20 @@ public abstract class Robot {
         }
         return true;
     }
+    public boolean hasMapLocation(int index) throws GameActionException{
+        if (rc.readSharedArray(index)==0){
+            return false;
+        }
+        return true;
+    }
     public MapLocation decode() throws GameActionException{
         int loc = rc.readSharedArray(55);
+        int x = (loc/64)%64;
+        int y = loc%64;
+        return new MapLocation(x, y);
+    }
+    public MapLocation decode(int index) throws GameActionException{
+        int loc = rc.readSharedArray(index);
         int x = (loc/64)%64;
         int y = loc%64;
         return new MapLocation(x, y);

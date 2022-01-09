@@ -29,6 +29,26 @@ public class Miner extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        RobotInfo[] nearbySoldiers = rc.senseNearbyRobots(20,rc.getTeam());
+		MapLocation[] nLead = rc.senseNearbyLocationsWithLead(2);
+		int count = 0;
+		int count2 = 0;
+		for(RobotInfo r : nearbySoldiers){
+            if(r.getType().equals(RobotType.SOLDIER)){
+                count++;
+            }
+            if(r.getType().equals(RobotType.SOLDIER)){
+                count2++;
+            }
+        }
+        double ratio = 1;
+        if (target != null && (count + count2*1.5) * ratio < nLead.length){
+            MapLocation m = target;
+            int x = m.x, y=m.y;
+            int k = x*64+y;
+            rc.writeSharedArray(47,k);
+        }
+        rc.setIndicatorString(rc.readSharedArray(47)+"");
         broadcast();
         reassignArchon();
         avoidCharge();

@@ -33,7 +33,7 @@ public class Watchtower extends Building {
         avoidFury();
         retransform();
         if(isDefensive){
-            rc.setIndicatorString(isDefensive+" ");
+            rc.setIndicatorString(Integer.toBinaryString(rc.readSharedArray(57)));
             if (rc.getLocation().isWithinDistanceSquared(archon,2)){
                 if (rc.getMode()!=RobotMode.PORTABLE){
                     if (rc.canTransform()){
