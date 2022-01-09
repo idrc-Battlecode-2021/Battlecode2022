@@ -15,6 +15,7 @@ public class Watchtower extends Building {
     @Override
     public void init() throws GameActionException {
         readArchonLocs();
+        possibleArchonLocs();
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro: r) {
             if (ro.getType() == RobotType.ARCHON) {

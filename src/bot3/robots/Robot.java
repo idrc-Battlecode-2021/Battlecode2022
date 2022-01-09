@@ -421,10 +421,10 @@ public abstract class Robot {
             //note to self: use internal map to find closest known square to target? instead of current
     }
     
-    private MapLocation[] pickSquaresInDirection(Direction d, int dist, int num){
+    private MapLocation[] pickSquaresInDirection(double angle, int dist){
         switch(dist){
             case 20:
-            	
+
             case 34:	
         }
         return null;

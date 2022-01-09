@@ -23,6 +23,7 @@ public abstract class Robot {
     protected ArrayList <MapLocation> yReflect = new ArrayList<MapLocation>();
     protected ArrayList <MapLocation> rotate = new ArrayList<MapLocation>();
     protected ArrayList <MapLocation> myArchons = new ArrayList<>();
+    protected int symmetry = 0;
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -553,27 +554,21 @@ public abstract class Robot {
     
     private void updateInternalMap(){}
 
-    private void targetArchons() throws GameActionException{
-        storeEnemyArchons();
-        if (enemyArchons.size()>0){
-            MapLocation target = enemyArchons.get(0);
-            intermediateMove(target);
-        }
-    }
-    private void storeEnemyArchons() throws GameActionException{
-        for (RobotInfo r: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
-            if (r.getType()==RobotType.ARCHON){
-                int x = r.getLocation().x, y=r.getLocation().y;
-                if(!enemyArchons.contains(new MapLocation(x,y))){
-                    enemyArchons.add(new MapLocation(x,y));
-                    rc.writeSharedArray(52, 64*x+y);
+
+    public void checkSymmetry() throws GameActionException{
+        boolean close = false;
+        if (symmetry==0){
+            for (MapLocation m: xReflect){
+                if (rc.canSenseLocation(m)){
+                    if (rc.canSenseRobotAtLocation(m)){
+                        RobotInfo r = rc.senseRobotAtLocation(m);
+                        if (r.getTeam()==myTeam.opponent() && r.getType()==RobotType.ARCHON){
+                            symmetry = 1;
+                            rc.writeSharedArray(48,1);
+                        }
+                    }
                 }
             }
-        }
-        int n = rc.readSharedArray(51);
-        int x = n/64, y=n%64;
-        if (enemyArchons.contains(new MapLocation(x,y))){
-            enemyArchons.remove(new MapLocation(x,y));
         }
     }
     public void readArchonLocs() throws GameActionException{
@@ -606,10 +601,6 @@ public abstract class Robot {
         }
     }
     public void possibleArchonLocs() throws GameActionException{
-        // Get Archon Positions
-        // Get Map Size
-        // Reflect each archon position over x and over y
-        // Rotate 180 degrees
         MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         int centerX = center.x, centerY=center.y;
         ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();

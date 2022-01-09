@@ -15,6 +15,7 @@ public class Soldier extends Droid{
     @Override
     public void init() throws GameActionException {
         readArchonLocs();
+        possibleArchonLocs();
         parseAnomalies();
         RobotInfo [] r = rc.senseNearbyRobots();
         for (RobotInfo ro : r){

@@ -149,7 +149,7 @@ public class Builder extends Droid{
     public void addTowers() throws GameActionException{
         //System.out.println("Subtracting 180 from "+rc.readSharedArray(11));
         try{
-            rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.WATCHTOWER.buildCostLead);
+            //rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.WATCHTOWER.buildCostLead);
             int index = myArchonOrder + 5;
             rc.writeSharedArray(index, rc.readSharedArray(index)+1);
 
@@ -158,13 +158,13 @@ public class Builder extends Droid{
             rc.writeSharedArray(58, buildCommand);
         }
         catch (GameActionException e) {
-            System.out.println(rc.readSharedArray(11)+" "+RobotType.WATCHTOWER.buildCostLead);
+            //System.out.println(rc.readSharedArray(11)+" "+RobotType.WATCHTOWER.buildCostLead);
         }
 
     }
     public void addLabs() throws GameActionException{
         //System.out.println("Subtracting 800 from "+rc.readSharedArray(11));
-        rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.LABORATORY.buildCostLead);
+        //rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.LABORATORY.buildCostLead);
         int labCount = rc.readSharedArray(4);
         rc.writeSharedArray(4, labCount + (int)Math.pow(2,myArchonOrder*4));
         rc.writeSharedArray(58, rc.readSharedArray(58) - (int)Math.pow(2,startingBit));
