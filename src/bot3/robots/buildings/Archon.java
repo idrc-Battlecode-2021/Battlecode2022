@@ -11,7 +11,7 @@ public class Archon extends Building{
     private static int soldierBuild = 10; //soldiers to build
     private static int builderBuild = 3; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
-    private static int labBuild = 1; //labs to build
+    private static int labBuild = 0; //labs to build
 
     private static int minerIndex = 0; //spawning miners
     private static int soldierIndex = 0;
@@ -221,11 +221,20 @@ public class Archon extends Building{
     public void run() throws GameActionException {
         indicatorString = "";
         checkArchonsAlive();
+        if (minerCount>=minerBuild && spawnPhase==0){ 
+            spawnPhase++;
+            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+        }
+        if (builderCount>=builderBuild && spawnPhase==1){ 
+            spawnPhase++;
+            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+        }
         if (globalLabCount==labBuild && spawnPhase==2){ // if the global # of labs have been built
             spawnPhase++;
             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
         }
-        indicatorString +="spawnPhase: "+spawnPhase;
+        indicatorString+=" archon: "+archonOrder;
+        indicatorString +=" spawnPhase: "+spawnPhase;
         //minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
         if (defense()){indicatorString+="defense"; rc.setIndicatorString(indicatorString);return;}
         avoidFury();
@@ -251,7 +260,8 @@ public class Archon extends Building{
         }
         if (minerCount<minerBuild){
             indicatorString += "miners";
-            if (!minerDone && msBuildType % 4 == 0){
+            //TODO: make archons spawn in direction of deposits
+            if (!minerDone && msBuildType % 4 == 3){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
                     int i=0;

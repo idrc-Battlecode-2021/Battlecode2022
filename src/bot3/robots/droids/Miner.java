@@ -28,6 +28,7 @@ public class Miner extends Droid {
     public void run() throws GameActionException {
         broadcast();
         reassignArchon();
+        rc.setIndicatorString("archon: "+myArchonOrder);
         avoidCharge();
         // update shared array
         MapLocation prev = myLocation;

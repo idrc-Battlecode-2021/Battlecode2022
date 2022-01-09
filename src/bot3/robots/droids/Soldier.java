@@ -30,7 +30,8 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
-        rc.setIndicatorString(myArchonOrder+"");
+        reassignArchon();
+        rc.setIndicatorString("archon: "+myArchonOrder);
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){

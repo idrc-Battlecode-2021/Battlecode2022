@@ -189,14 +189,14 @@ public class Archon extends Building{
                 }
                 archonOrder = 0;
                 //reset relevant arrays
-                rc.writeSharedArray(63,rc.getID());
+                rc.writeSharedArray(63,rc.getID()+1);
                 rc.writeSharedArray(56,0);
                 rc.writeSharedArray(11,0);
             }
             else{
                 //set appropriate archonOrder
                 archonOrder = i;
-                rc.writeSharedArray(63-archonOrder,rc.getID());
+                rc.writeSharedArray(63-archonOrder,rc.getID()+1);
             }
             power = (int)Math.pow(16,archonOrder);
             //System.out.println("Reassigning archonOrder "+archonOrder);
