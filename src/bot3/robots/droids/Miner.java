@@ -26,6 +26,13 @@ public class Miner extends Droid {
 
     @Override
     public void run() throws GameActionException {
+        if (target != null &&){
+            
+            MapLocation m = rc.getLocation();
+            int x = m.x, y=m.y;
+            int k = x*64+y;
+            rc.writeSharedArray(47,k);
+        }
         broadcast();
         reassignArchon();
         avoidCharge();
@@ -136,7 +143,7 @@ public class Miner extends Droid {
                                 RobotInfo[] nearbyBots = rc.senseNearbyRobots(2, myTeam); //Maybe change to 2
                                 boolean nextToMiner = false;
                                 for (int i = nearbyBots.length; --i >= 0; ) {
-                                    if (nearbyBots[i].getType() == myType && !nearbyBots[i].getLocation().equals(myLocation)) {
+                                    if (nearbyBots[i].getType() == myType && nearbyBots[i].getID() != rc.getID()) {
                                         nextToMiner = true;
                                         break;
                                     }

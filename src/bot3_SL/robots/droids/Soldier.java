@@ -77,29 +77,29 @@ public class Soldier extends Droid{
             if(enemyArchon !=null){
                 intermediateMove(enemyArchon);
             }
-            else{
+            else if (enemyArchons.size()>0) {
                 intermediateMove(enemyArchons.get(0));
-               /*
-                MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
-                for (int i = all.length; --i>=0;){
-                    for (MapLocation c: corners){
-                        if (all[i]==c){
-                            Direction d = myLocation.directionTo(c);
-                            tryMoveMultiple(d);
-                        }
+            }
+            else{
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            for (int i = all.length; --i>=0;){
+                for (MapLocation c: corners){
+                    if (all[i]==c){
+                        Direction d = myLocation.directionTo(c);
+                        tryMoveMultiple(d);
                     }
                 }
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
-                    Direction d = myLocation.directionTo(center);
-                    tryMoveMultiple(d);
+            }
+            if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+                Direction d = myLocation.directionTo(center);
+                tryMoveMultiple(d);
+            }
+            else{
+                if(!tryMoveMultipleNew()){
+                    tryMoveMultiple(initDirection);
                 }
-                else{
-                    if(!tryMoveMultipleNew()){
-                        tryMoveMultiple(initDirection);
-                    }
-                }
+            }
 
-                */
             }
 
         }

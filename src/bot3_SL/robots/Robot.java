@@ -547,48 +547,38 @@ public abstract class Robot {
     
     private void updateInternalMap(){}
 
-    public MapLocation readSymmetry() throws GameActionException{
+    public MapLocation readSymmetry() throws GameActionException {
         int n = rc.readSharedArray(48);
-        String k = Integer.toBinaryString(n);
-        String pad = "";
-        while (pad.length() <enemyArchons.size()){
-            pad=pad+"0";
+        if (n == 0) {
+            return null;
         }
-        k=pad.substring(k.length())+k;
-        System.out.println(k+" "+ enemyArchons.size());
-        for (int i=0; i<k.length(); i++){
-            if (k.charAt(i)=='0'){
-                return enemyArchons.get(i);
-            }
+        int y = n % 64;
+        int x = (n / 64) % 64;
+        if (n > 4096) {
+            enemyArchons.remove(new MapLocation(x, y));
+            return null;
         }
-        return null;
+        return new MapLocation(x, y);
     }
-    public void checkSymmetry() throws GameActionException{
-        for (int i=0; i<enemyArchons.size(); i++){
-            if (rc.canSenseLocation(enemyArchons.get(i))){
-                for (RobotInfo ro: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
-                    if(ro.getType()==RobotType.ARCHON){
+    public void checkSymmetry() throws GameActionException {
+        for (MapLocation m : enemyArchons) {
+            if (rc.canSenseLocation(m)) {
+                for (int i = 0; i < enemyArchons.size(); i++) {
+                    if (rc.canSenseLocation(enemyArchons.get(i))) {
+                        for (RobotInfo ro : rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())) {
+                            if (ro.getType() == RobotType.ARCHON) {
+                                rc.writeSharedArray(48, m.x * 64 + m.y);
+                                return;
+                            }
+                        }
+                        rc.writeSharedArray(48, 4096 + m.x * 64 + m.y);
                         return;
                     }
                 }
-                int n = rc.readSharedArray(48);
-                String k = Integer.toBinaryString(n);
-                String pad ="";//.substring(0,enemyArchons.size());
-                while (pad.length() <enemyArchons.size()){
-                    pad=pad+"0";
-                }
-                k=pad.substring(k.length())+k;
-                System.out.println(k);
-                System.out.println(i);
-                if(k.charAt(i)=='1'){
-                    return;
-                }
-                rc.writeSharedArray(48, n+(int)Math.pow(2,i));
-                return;
             }
         }
     }
-    public void readArchonLocs() throws GameActionException{
+     public void readArchonLocs() throws GameActionException{
         int n1 = rc.readSharedArray(49);
         int x1=n1%16;
         int y1=(n1/16)%16;

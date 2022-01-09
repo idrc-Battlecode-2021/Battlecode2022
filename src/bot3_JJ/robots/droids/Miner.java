@@ -141,7 +141,7 @@ public class Miner extends Droid{
                                 RobotInfo[] nearbyBots = rc.senseNearbyRobots(2,myTeam);
                                 boolean nextToMiner = false;
                                 for (int i = nearbyBots.length; --i >= 0; ) {
-                                    if (nearbyBots[i].getType() == myType && !nearbyBots[i].getLocation().equals(myLocation)) {
+                                    if (nearbyBots[i].getType() == myType && nearbyBots[i].getID() != rc.getID()) {
                                         nextToMiner = true;
                                         break;
                                     }

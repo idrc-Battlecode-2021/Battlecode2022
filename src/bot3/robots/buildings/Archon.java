@@ -82,7 +82,7 @@ public class Archon extends Building{
     }
 
     // Checks if this archon can proceed onto the next spawning phase
-
+    /*
     public boolean canProceed(int n) throws GameActionException {
         // First check if other archons are trying to defend
         int defenseStatus = rc.readSharedArray(56);
@@ -96,33 +96,6 @@ public class Archon extends Building{
                 return false;
             }
         }
-        // Check if other archons have built enough miners
-        /* Doesn't work since archons may spawn different # of miners 
-        int minerStatus;
-        for (int i=0;i<4;i++){
-            if (rc.readSharedArray(63-i)==0){ // don't check archons that don't exist
-                break;
-            }
-            if(i<=1){
-                minerStatus = rc.readSharedArray(0);
-            }
-            else{
-                minerStatus = rc.readSharedArray(10);
-            }
-            if (i%2==0){
-                if (minerStatus%256<minerCount){
-                    return false;
-                }
-            }
-            else{
-                if (minerStatus/256<minerCount){
-                    return false;
-                }
-            }
-        }
-        */
-        // Check if all archons have passed phase n
-        // 0 - spawn 1/3 of minerBuild, 1 - spawn 2/3 of minerBuild, etc.
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
             if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
@@ -136,7 +109,8 @@ public class Archon extends Building{
         }
         return true;
     }
-    /*
+    */
+    
     public boolean canProceed(int n) throws GameActionException {
         // First check if other archons are trying to defend
         int defenseStatus = rc.readSharedArray(56);
@@ -149,15 +123,14 @@ public class Archon extends Building{
         // Check if all archons have passed phase n, phases on top of file
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;}
-
+            if (rc.readSharedArray(63-i/4)==0){continue;}
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
             if (thisPhase < n){return false;}
         }
         return true;
     }
-    */
+    
      
     public void updateLabConstraints() throws GameActionException {
         //TODO: update constraints for lab based on current lead amounts and needs
@@ -172,17 +145,12 @@ public class Archon extends Building{
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
-        try{
-            if (enemies.length>0){
-                rc.writeSharedArray(56, current - myValue*power + power);
-            }
-            else{
-                rc.writeSharedArray(56, current - myValue*power);
-                return false;
-            }
+        if (enemies.length>0){
+            rc.writeSharedArray(56, current - myValue*power + power);
         }
-        catch(Exception e){
-            System.out.println(Integer.toBinaryString(rc.readSharedArray(56)));
+        else{
+            rc.writeSharedArray(56, current - myValue*power);
+            return false;
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
