@@ -68,7 +68,7 @@ public class Soldier extends Droid{
                 }
                 defensive = true;
                 archonLoc = target;
-                if(count > 5) rc.writeSharedArray(47,0);
+                rc.writeSharedArray(47,0);
 
             }
             intermediateMove(target);
