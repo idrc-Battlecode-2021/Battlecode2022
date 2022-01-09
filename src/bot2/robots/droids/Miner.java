@@ -23,7 +23,9 @@ public class Miner extends Droid{
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         //exploreDirIndex = (int)(8*Math.random());
-        tryMoveMultipleNew();
+        if(!tryMoveMultipleNew()){
+            tryMoveMultiple(initDirection);
+        }
         viewResources();
         detectArchon();
     }
@@ -189,7 +191,9 @@ public class Miner extends Droid{
                 }
             }
             if(rc.getMovementCooldownTurns() == 0 && target == null){
-                tryMoveMultipleNew();
+                if(!tryMoveMultipleNew()){
+                   tryMoveMultiple(initDirection);
+                }
                 if(!prev.equals(myLocation)) viewResources();
             }
         }
@@ -291,18 +295,21 @@ public class Miner extends Droid{
         if(robots.length > 0){
             int xMove = 0, yMove = 0;
             for (RobotInfo robot : robots){
-                if (!(robot.getType()== RobotType.MINER || robot.getType()== RobotType.BUILDER)){ //detected enemy muckraker, maybe use flags to communicate locations?
-                    //attempting to account for multiple muckrakers
-                    switch (myLocation.directionTo(robot.getLocation())){
-                        case EAST:      xMove--;                break;
-                        case WEST:      xMove++;                break;
-                        case NORTH:                 yMove--;    break;
-                        case SOUTH:                 yMove++;    break;
-                        case NORTHEAST: xMove--;    yMove--;    break;
-                        case NORTHWEST: xMove++;    yMove--;    break;
-                        case SOUTHEAST: xMove--;    yMove++;    break;
-                        case SOUTHWEST: xMove++;    yMove++;    break;
-                    }
+                switch(robot.getType()){
+                    case SAGE:
+                    case ARCHON:
+                    case SOLDIER:
+                    case WATCHTOWER:
+                        switch (myLocation.directionTo(robot.getLocation())){
+                            case EAST:      xMove--;                break;
+                            case WEST:      xMove++;                break;
+                            case NORTH:                 yMove--;    break;
+                            case SOUTH:                 yMove++;    break;
+                            case NORTHEAST: xMove--;    yMove--;    break;
+                            case NORTHWEST: xMove++;    yMove--;    break;
+                            case SOUTHEAST: xMove--;    yMove++;    break;
+                            case SOUTHWEST: xMove++;    yMove++;    break;
+                        }
                 }
             }
             if(xMove != 0 || yMove != 0){

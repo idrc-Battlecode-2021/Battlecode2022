@@ -63,7 +63,9 @@ public class Sage extends Droid {
             intermediateMove(target);
         } else{
             rc.setIndicatorString("4");
-             tryMoveMultipleNew();
+            if(!tryMoveMultipleNew()){
+                tryMoveMultiple(initDirection);
+            }
         }
     }
 }

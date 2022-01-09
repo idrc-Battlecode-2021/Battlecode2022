@@ -187,6 +187,7 @@ public class Archon extends Building{
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
+        rc.setIndicatorString("spawn phase: "+spawnPhase);
         if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
             // update spawnphase array (57)
             int i=0;
@@ -231,7 +232,7 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
-            rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
+            //rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
             globalSageCount = rc.readSharedArray(2);
             globalSoldierCount = rc.readSharedArray(3);
             globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);
@@ -355,8 +356,8 @@ public class Archon extends Building{
                     sageCount++;
                 }
             }
-            else if (labCount<labBuild){
-                rc.setIndicatorString("buildType: "+lwBuildType);
+            else if (lwBuildType<labBuild*3){
+                //rc.setIndicatorString("buildType: "+lwBuildType);
                 int mod;
                 if (globalLabCount==0 || labCount>0){
                     mod=0;
@@ -404,14 +405,10 @@ public class Archon extends Building{
                     spawnPhase++;
                     rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                 }
-                if (lwBuildType==6){
-                    spawnPhase++;
-                    rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-                }
                 
             }
             else{
-                rc.setIndicatorString("done with lab");
+                //rc.setIndicatorString("done with lab");
                 if (wsBuildType%2==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead+proposedExpenses){
                     int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                     int currentValue = rc.readSharedArray(58); 

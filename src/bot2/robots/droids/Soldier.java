@@ -83,7 +83,9 @@ public class Soldier extends Droid{
                 tryMoveMultiple(d);
             }
             else{
-                tryMoveMultipleNew();
+                if(!tryMoveMultipleNew()){
+                    tryMoveMultiple(initDirection);
+                }
             }
         }
 
