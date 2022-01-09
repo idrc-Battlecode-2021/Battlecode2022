@@ -1,5 +1,5 @@
-# Third Botame
-- minhe beginning, getal 06ers capped at t ni 0334
+# Third Bot Variant
+- When 1 miner finds a deposit, another is built
 
 # IDs
 - Archon ID's are all +1
