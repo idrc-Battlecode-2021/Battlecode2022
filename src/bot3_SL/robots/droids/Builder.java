@@ -1,7 +1,7 @@
 package bot3_SL.robots.droids;
 
 import battlecode.common.*;
-import bot4.util.Constants;
+import bot3_SL.util.Constants;
 
 import java.util.Arrays;
 import java.util.Collections;

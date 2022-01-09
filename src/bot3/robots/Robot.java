@@ -411,7 +411,12 @@ public abstract class Robot {
 			while(!intermediateTarget.equals(myLocation)){
                 myPath.add(0,paths.get(intermediateTarget));
             }
+            
 	    }
+	    
+	    else {
+            
+        }
         
         //dists now contains a dictionary of smallest distance to every square in sight
         
