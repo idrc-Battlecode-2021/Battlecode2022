@@ -7,7 +7,7 @@ public class Archon extends Building{
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
 
-    private static int minerBuild = 5; //miners to build
+    private static int minerBuild = 7; //miners to build
     private static int soldierBuild = 15; //soldiers to build
     private static int soldierBuild2 = 25;
     private static int builderBuild = 4; //builders to build
@@ -71,9 +71,9 @@ public class Archon extends Building{
         rc.writeSharedArray(63-archonOrder,rc.getID()+1);
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
-        int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
+        //int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
         
-        minerBuild = Math.min(30,Math.max(minerBuild, (int)(60*((double)leadTiles/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length))));
+        //minerBuild = Math.min(30,Math.max(minerBuild, (int)(60*((double)leadTiles/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length))));
         soldierBuild = minerBuild;
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
@@ -222,7 +222,7 @@ public class Archon extends Building{
             else{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
-            minerFoundCount = Math.max(rc.readSharedArray(31+archonOrder)-3,0);
+            minerFoundCount = Math.max(rc.readSharedArray(31+archonOrder)-minerBuild+2,0);
             minerCount -= minerFoundCount;
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             //rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
@@ -364,7 +364,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                 rc.writeSharedArray(58, buildCommand);
             }
-            if ((rc.getTeamLeadAmount(rc.getTeam()) > 1000*rc.getArchonCount() || soldierCount < soldierBuild2) && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+            if ((rc.getTeamLeadAmount(rc.getTeam()) > 1000*rc.getArchonCount()) && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                 rc.setIndicatorString("build soldier");
                 Direction directions[] = Direction.allDirections();
                 int i=0;
