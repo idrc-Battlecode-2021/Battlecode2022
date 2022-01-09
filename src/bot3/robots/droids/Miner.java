@@ -154,15 +154,15 @@ public class Miner extends Droid {
                                                 continue loop1;
                                             }
                                         }
-                                        target = nearbyLead[j];
-                                        amount = rc.senseLead(nearbyLead[j]);
-                                        break;
+                                        Direction dirTo = myLocation.directionTo(nearbyLead[j]);
+                                        if (!myLocation.equals(nearbyLead[j]) && rc.canMove(dirTo)){
+                                            rc.move(dirTo);
+                                            myLocation = rc.getLocation();
+                                            target = nearbyLead[j];
+                                            lead.put(target, rc.senseLead(nearbyLead[j]));
+                                            break loop1;
+                                        }
                                     }
-                                    if (!myLocation.equals(target) && rc.canMove(myLocation.directionTo(target))) {
-                                        rc.move(myLocation.directionTo(target));
-                                        myLocation = rc.getLocation();
-                                    }
-                                    lead.put(target, amount);
                                 }
                             }
                             boolean mine = true;

@@ -172,6 +172,35 @@ public class Archon extends Building{
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
+        try{
+            if (enemies.length>0){
+                rc.writeSharedArray(56, current - myValue*power + power);
+            }
+            else{
+                rc.writeSharedArray(56, current - myValue*power);
+                return false;
+            }
+        }
+        catch(Exception e){
+            System.out.println(Integer.toBinaryString(rc.readSharedArray(56)));
+        }
+        if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+            Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
+            int i=0;
+            while (!rc.canBuildRobot(RobotType.SOLDIER,directions[i]) && i<8){
+                i++;
+            }
+            if (rc.canBuildRobot(RobotType.SOLDIER,directions[i])){
+                rc.buildRobot(RobotType.SOLDIER,directions[i]);
+            }
+        }
+        return true;
+    }
+    /*
+    public boolean defense() throws GameActionException {
+        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
+        int current = rc.readSharedArray(56);
+        int myValue = (current % (power*16))/power;
         if (enemies.length>0) rc.writeSharedArray(56, current - myValue*power + power);
         else{
             rc.writeSharedArray(56, current - myValue*power);
@@ -189,6 +218,7 @@ public class Archon extends Building{
         }
         return true;
     }
+    */
 
     // When surplus is achieved, don't increment buildType, otherwise increment
     public void buildSoldier(boolean incrementBuildType) throws GameActionException {

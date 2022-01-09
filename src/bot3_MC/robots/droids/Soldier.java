@@ -61,7 +61,17 @@ public class Soldier extends Droid{
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
                	MapLocation[] leadDeposits = rc.senseNearbyLocationsWithLead(20);
-                if (leadDe){}
+        		RobotInfo[] nearbySoldiers = rc.senseNearbyRobots(20,rc.getTeam());
+        		int count = 0;
+        		for(RobotInfo r : nearbySoldiers){
+                    if r.getType()
+                }
+                if (leadDeposits.length > 3){
+                    defensive = true;
+                    archonLoc = target;
+                    
+                    	rc.writeSharedArray(55,0);
+                }
 
                 else if (nearbyBots.length <5){
                     rc.writeSharedArray(55,0);
