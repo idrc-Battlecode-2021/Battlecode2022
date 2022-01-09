@@ -11,8 +11,8 @@
 #### Changelog
 - 1/9/22
 -- even spawning
--- fixes archonID ug
--- builds watchtowers, etc. in surplus
+-- fixes archonID bug
+-- builds watchtowers, soldiers. in surplus (testing)
 
 ### Labs
 ### Watchtowers

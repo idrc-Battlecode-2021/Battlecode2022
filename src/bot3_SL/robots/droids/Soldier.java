@@ -35,6 +35,7 @@ public class Soldier extends Droid{
     public void run() throws GameActionException {
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
+        System.out.println(enemyArchons);
         rc.setIndicatorString(myArchonOrder+"");
         avoidCharge();
         // update shared array

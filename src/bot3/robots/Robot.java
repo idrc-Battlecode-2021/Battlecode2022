@@ -389,14 +389,16 @@ public abstract class Robot {
         HashMap<MapLocation, Integer> dists = new HashMap<>(); //hashmap containing maplocations and associated total rubble cost for each map location
         HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //hashmap containing maplocations and their parent maplocation (previous maplocation on optimal path)
         //paths[node] = previous node for shortest path to said node
-        queue.add(myLocation);
-        dists.put(myLocation, 0);
-        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
+        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared); //calculate path from all locations in sight
         for (int i = senseLocations.length; --i >= 0;){
-            queue.add(senseLocations[i]);
-            dists.put(senseLocations[i], Integer.MAX_VALUE);
+            queue.add(senseLocations[i]); //add other locations
+            dists.put(senseLocations[i], Integer.MAX_VALUE); //infinity, this way we don't check nodes not connected to known nodes
         }
+        dists.put(myLocation, 0); //add current location to dist map with rubble of 0 (make sure you check myLocation first)
+
+		//start updating dists with actual shortest path rubble values
         while (queue.size() > 0){
+            //pick nearest square not checked yet
             MapLocation chosen = null;
             int min= Integer.MAX_VALUE;
             for(MapLocation m : queue){
@@ -406,7 +408,7 @@ public abstract class Robot {
                 }
             }
 
-            queue.remove(chosen);
+            queue.remove(chosen); //remove it from queue to be checked
             MapLocation[] adjacents = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
             for (int i = adjacents.length; --i>=0;){
                 int additional_rubble = adjacents[i].isAdjacentTo(myLocation) && rc.canSenseRobotAtLocation(adjacents[i]) ? 101 : rc.senseRubble(adjacents[i]);

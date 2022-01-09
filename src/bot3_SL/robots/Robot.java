@@ -615,9 +615,15 @@ public abstract class Robot {
         for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
-            enemyArchons.add(new MapLocation(2*centerX -x, y));
-            enemyArchons.add(new MapLocation(x, 2*centerY-y));
-            enemyArchons.add(new MapLocation(2*centerX-x, 2*centerY-y));
+            if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
+                enemyArchons.add(new MapLocation(2*centerX -x, y));
+            }
+            if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
+                enemyArchons.add(new MapLocation( x, 2*centerY-y));
+            }
+            if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
+                enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
+            }
         }
     }
 }
