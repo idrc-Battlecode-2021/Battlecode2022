@@ -192,7 +192,7 @@ public class Archon extends Building{
         }
     }
 
-    // update troop count from shared array
+    // update troop count variables from shared array
     public void updateTroopCount() throws GameActionException{
         if (rc.getRoundNum()%3==0){
             if (archonOrder<=1){

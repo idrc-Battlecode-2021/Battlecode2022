@@ -37,10 +37,26 @@ public class Watchtower extends Building {
             MapLocation archonLoc = rc.senseRobot(myArchonID).getLocation();
             if (rc.getLocation().isWithinDistanceSquared(archonLoc,2)){
                 if (rc.getMode()!=RobotMode.PORTABLE){
-                    rc.transform();
+                    if (rc.canTransform()){
+                        rc.transform();
+                    }
                 }
                 else{
-                    intermediateMove(rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite()));
+                   MapLocation away =  rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite());
+                    if (rc.onTheMap(away)){
+                        intermediateMove(away);
+                    }
+                    else{
+                        Direction direction = rc.getLocation().directionTo(archonLoc);
+                        away = (archonLoc.add(direction)).add(direction);
+                        if (rc.onTheMap(away)){
+                            intermediateMove(away);
+                        }
+                        else{
+                            if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
+                            attackDefensive();
+                        }
+                    }
                 }
             }
             else{
