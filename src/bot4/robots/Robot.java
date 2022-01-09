@@ -610,12 +610,11 @@ public abstract class Robot {
         // Get Map Size
         // Reflect each archon position over x and over y
         // Rotate 180 degrees
-        MapLocation [] myArchonLocs = new MapLocation[4];
         MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         int centerX = center.x, centerY=center.y;
         ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
         //(2,36) --> (57, 23)
-        for (MapLocation m: myArchonLocs){
+        for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
             xReflect.add(new MapLocation(2*centerX -x, y));

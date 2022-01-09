@@ -373,7 +373,7 @@ public abstract class Robot {
 	        //dijkstra for unknown square
 	        ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
 	        HashMap<MapLocation, Integer> dists = new HashMap<>();
-	        HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //paths[node] = previous
+	        HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //paths[node] = previous node for shortest path to said node
 	        queue.add(myLocation);
 	        dists.put(myLocation, 0);
 	        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
@@ -419,7 +419,17 @@ public abstract class Robot {
             //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
             //note to self: add test to see if target is in internal map already or in sight already
             //note to self: use internal map to find closest known square to target? instead of current
+    }
+    
+    private MapLocation[] pickSquaresInDirection(Direction d, int dist, int num){
+        switch(dist){
+            case 20:
+            	
+            case 34:	
         }
+        return null;
+        
+    }
 
     private void tryAttack(MapLocation Loc) throws GameActionException {
         if (rc.canAttack(Loc)){

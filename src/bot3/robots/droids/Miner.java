@@ -8,7 +8,6 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private MapLocation target;
-    private int exploreDirIndex;
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
@@ -20,8 +19,6 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         parseAnomalies();
         target = null;
-        //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
-        //exploreDirIndex = (int)(8*Math.random());
         //tryMoveMultipleNew();
         viewResources();
         detectArchon();
@@ -242,6 +239,7 @@ public class Miner extends Droid{
             }
             for(int i = nearbyLead.length; --i>=0;){
                 RobotInfo robot;
+                MapLocation[] nearbyTiles = rc.	getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
                 if(rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
                     if(robot.getTeam() == myTeam && robot.getType() == myType){
                         continue;
