@@ -250,6 +250,7 @@ public abstract class Droid extends Robot {
             }
         }
         public void avoidCharge() throws GameActionException {
+            if(relevantAnomalies.isEmpty())return;
             AnomalyScheduleEntry a = relevantAnomalies.get(0);
             if (rc.getRoundNum()>a.roundNumber){
                 relevantAnomalies.remove(a);

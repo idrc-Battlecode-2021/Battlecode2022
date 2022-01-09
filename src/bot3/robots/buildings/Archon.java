@@ -255,11 +255,24 @@ public class Archon extends Building{
         //rc.setIndicatorString("minerCount: "+minerCount+" minerBuild: "+minerBuild);
         if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             indicatorString += "can't proceed, spawn phase: "+spawnPhase;
-            //rc.setIndicatorString(indicatorString);
+            rc.setIndicatorString(indicatorString);
             return;
         }
-        int proposedExpenses = rc.readSharedArray(11);
+        int proposedExpenses = Math.min(rc.readSharedArray(11),180);
+        /*;
+        if (rc.getTeamLeadAmount(rc.getTeam())>=1000+proposedExpenses){
+            //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
+            int temp = (int)Math.pow(4,archonOrder);
+            int currentValue = rc.readSharedArray(58);
+            int previousBuildCommand = (currentValue % (temp*4))/temp;
+            int buildCommand = currentValue - previousBuildCommand * temp + temp;
+            rc.writeSharedArray(58, buildCommand);
+            rc.writeSharedArray(11, proposedExpenses+RobotType.LABORATORY.buildCostLead);
+            //lwBuildType++
+        ;
+        else */
         if (minerCount<minerBuild){
+            //rc.setIndicatorString("phase 1");
             if (!minerDone && msBuildType % 4 == 0){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
@@ -316,6 +329,7 @@ public class Archon extends Building{
             }
         }
         else if (builderCount<builderBuild){
+            //rc.setIndicatorString("builder phase");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -335,6 +349,7 @@ public class Archon extends Building{
             }
         }
         else {
+            //rc.setIndicatorString("lab");
             /*
             if (globalSoldierCount+globalWatchtowerCount>40 && rc.getTeamGoldAmount(rc.getTeam())>=RobotType.SAGE.buildCostGold){
                 Direction[] directions = Direction.allDirections();
@@ -375,6 +390,7 @@ public class Archon extends Building{
                 }
             }
             else{
+                //rc.setIndicatorString("late game");
                 //rc.setIndicatorString("done with lab");
                 int mod;
                 if (minerCount>=60){
@@ -383,7 +399,10 @@ public class Archon extends Building{
                 else{
                     mod=3;
                 }
-                if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead+proposedExpenses){
+                rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
+                System.out.println("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
+                if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
+                    rc.setIndicatorString("build watchtower");
                     int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                     int currentValue = rc.readSharedArray(58); 
                     int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
@@ -394,6 +413,7 @@ public class Archon extends Building{
                     rc.writeSharedArray(58, buildCommand);
                 }
                 else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+                    rc.setIndicatorString("build soldier");
                     Direction directions[] = Direction.allDirections();
                     int i=0;
                     while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
@@ -407,6 +427,7 @@ public class Archon extends Building{
                     }
                 }
                 else if (wsBuildType%mod==2 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
+
                     Direction directions[] = Direction.allDirections();
                     int i=0;
                     while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
