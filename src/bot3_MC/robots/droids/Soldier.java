@@ -64,13 +64,14 @@ public class Soldier extends Droid{
         		RobotInfo[] nearbySoldiers = rc.senseNearbyRobots(20,rc.getTeam());
         		int count = 0;
         		for(RobotInfo r : nearbySoldiers){
-                    if r.getType()
+                    if(r.getType().equals(RobotType.SOLDIER)){
+                        count++;
+                    }
                 }
                 if (leadDeposits.length > 3){
                     defensive = true;
                     archonLoc = target;
-                    
-                    	rc.writeSharedArray(55,0);
+                    if(count > 5) rc.writeSharedArray(55,0);
                 }
 
                 else if (nearbyBots.length <5){
