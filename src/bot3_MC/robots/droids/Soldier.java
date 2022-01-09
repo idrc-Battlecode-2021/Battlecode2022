@@ -59,7 +59,6 @@ public class Soldier extends Droid{
         } else if (hasMapLocation(47)){ 
             MapLocation target = decode(47);
             if (rc.getLocation().distanceSquaredTo(target)<20){
-            	MapLocation[] leadDeposits = rc.senseNearbyLocationsWithLead(20);
         		RobotInfo[] nearbySoldiers = rc.senseNearbyRobots(20,rc.getTeam());
         		int count = 0;
         		for(RobotInfo r : nearbySoldiers){
@@ -67,13 +66,9 @@ public class Soldier extends Droid{
                         count++;
                     }
                 }
-                if (leadDeposits.length > 3){
-                    defensive = true;
-                    archonLoc = target;
-                    if(count > 5) rc.writeSharedArray(47,0);
-                } else {
-
-                }
+                defensive = true;
+                archonLoc = target;
+                if(count > 5) rc.writeSharedArray(47,0);
 
             }
             intermediateMove(target);
