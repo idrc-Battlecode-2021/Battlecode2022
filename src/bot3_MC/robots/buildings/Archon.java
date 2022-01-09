@@ -1,4 +1,4 @@
-package bot3.robots.buildings;
+package bot3_MC.robots.buildings;
 
 import battlecode.common.*;
 
@@ -16,7 +16,7 @@ public class Archon extends Building{
     private static int minerIndex = 0; //spawning miners
     private static int soldierIndex = 0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
-    private static int power = 0; // power of 16 that corresponds with archonOrder
+    private static int power = 0; // power of 16 that corresponds with archonOrder 
 
     private static final int SURPLUS_THRESHOLD = 500;
 
@@ -81,24 +81,56 @@ public class Archon extends Building{
         labBuild = rc.getMapHeight()/40+1;
     }
 
-    // Checks if this archon can proceed onto the next spawning phase
     public boolean canProceed(int n) throws GameActionException {
         // First check if other archons are trying to defend
         int defenseStatus = rc.readSharedArray(56);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;} // don't check archons that don't exist
+            if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
+                break;
+            }
             int temp = (int)Math.pow(2,i);
             int thisDefense = (defenseStatus % (temp*16))/temp;
-            if (thisDefense > 0){return false;}
+            if (thisDefense > 0){
+                return false;
+            }
         }
-            // Check if all archons have passed phase n, phases on top of file
+        // Check if other archons have built enough miners
+        /* Doesn't work since archons may spawn different # of miners 
+        int minerStatus;
+        for (int i=0;i<4;i++){
+            if (rc.readSharedArray(63-i)==0){ // don't check archons that don't exist
+                break;
+            }
+            if(i<=1){
+                minerStatus = rc.readSharedArray(0);
+            }
+            else{
+                minerStatus = rc.readSharedArray(10);
+            }
+            if (i%2==0){
+                if (minerStatus%256<minerCount){
+                    return false;
+                }
+            }
+            else{
+                if (minerStatus/256<minerCount){
+                    return false;
+                }
+            }
+        }
+        */
+        // Check if all archons have passed phase n
+        // 0 - spawn 1/3 of minerBuild, 1 - spawn 2/3 of minerBuild, etc.
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;}
-
+            if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
+                continue;
+            }
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
-            if (thisPhase < n){return false;}
+            if (thisPhase < n){
+                return false;
+            }
         }
         return true;
     }
@@ -110,16 +142,22 @@ public class Archon extends Building{
         rc.writeSharedArray(9, (maxRate-5)*4096+minLead); //minLead may need to be divided by a factor to fit in 12 bits if minLead is large
         
     }
-
-    // if enemies are near archon, spawn soldiers and inform other archons
+    
     public boolean defense() throws GameActionException {
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
-        if (enemies.length>0) rc.writeSharedArray(56, current - myValue*power + power);
-        else{
-            rc.writeSharedArray(56, current - myValue*power);
-            return false;
+        try{
+            if (enemies.length>0){
+                rc.writeSharedArray(56, current - myValue*power + power);
+            }
+            else{
+                rc.writeSharedArray(56, current - myValue*power);
+                return false;
+            }
+        }
+        catch(Exception e){
+            System.out.println(Integer.toBinaryString(rc.readSharedArray(56)));
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
@@ -133,67 +171,74 @@ public class Archon extends Building{
         }
         return true;
     }
-
-    // When surplus is achieved, don't increment buildType, otherwise increment
-    public void buildSoldier(boolean incrementBuildType) throws GameActionException {
+    
+    public void buildSoldier() throws GameActionException { 
+        // NOT substitute for soldier code in run(), only used when surplus of lead is achieved
         Direction directions[] = Direction.allDirections();
         int i=0;
         while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
             i++;
         }
         if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
-            rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
             soldierIndex = (soldierIndex+i)%8;
-            soldierIndex++;
+            rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
             soldierCount++;
-            if (incrementBuildType){
-                msBuildType++;
-            }
         }
     }
 
-    // NOT substitute for build watchtower code in run(), only used when surplus of lead is achieved
     public void buildWatchtower() throws GameActionException {
-        int temp = (int)Math.pow(4,archonOrder);
-        int currentValue = rc.readSharedArray(58);
-        int previousBuildCommand = (currentValue % (temp * 4))/temp;
-        int buildCommand = currentValue - previousBuildCommand * temp + temp * 2;
+        // NOT substitute for watchtower code in run(), only used when surplus of lead is achieved
+        int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
+        int currentValue = rc.readSharedArray(58); 
+        int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
+        int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
         watchtowerCount++;
         rc.writeSharedArray(58, buildCommand);
     }
 
-    // Checks is all archons are alive; if not, refactor information in shared arrays
-    public void checkArchonsAlive() throws GameActionException{
-        if (rc.getArchonCount()<initialArchons){
-            // check if the archon IDs in the shared array have been deleted (i.e. if another archon has already updated the IDs)
+    @Override
+    public void run() throws GameActionException {
+        indicatorString = "";
+        if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
+            // update spawnphase array (57)
             int i=0;
+            // check if the archon IDs have been deleted (i.e. if another archon has already updated the IDs)
             while (rc.readSharedArray(63-i)>0 && i<=initialArchons-1){
                 i++;
             }
-            if (i==initialArchons){ //this is the first archon to update the array
+            if (i==initialArchons){ //this is the first archon to update after one died
                 //resets the archon IDs
                 for(int j=0;j<4;j++){
                     rc.writeSharedArray(63-j, 0);
                 }
                 archonOrder = 0;
                 //reset relevant arrays
-                rc.writeSharedArray(63,rc.getID()+1);
+                rc.writeSharedArray(63,rc.getID());
                 rc.writeSharedArray(56,0);
                 rc.writeSharedArray(11,0);
             }
             else{
                 //set appropriate archonOrder
                 archonOrder = i;
-                rc.writeSharedArray(63-archonOrder,rc.getID()+1);
+                rc.writeSharedArray(63-archonOrder,rc.getID());
             }
             power = (int)Math.pow(16,archonOrder);
             System.out.println("Reassigning archonOrder "+archonOrder);
             initialArchons = rc.getArchonCount();
         }
-    }
-
-    // update troop count from shared array
-    public void updateTroopCount() throws GameActionException{
+        if (globalLabCount==labBuild && spawnPhase==2){
+            spawnPhase++;
+            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+        }
+        //minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
+        if (defense()){
+            rc.setIndicatorString("defending");
+            return;
+        }
+        avoidFury();
+        retransform();
+        updateLabConstraints();
+        // read total/global # of robots
         if (rc.getRoundNum()%3==0){
             if (archonOrder<=1){
                 minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);
@@ -208,22 +253,6 @@ public class Archon extends Building{
             int lc = rc.readSharedArray(4);
             globalLabCount = lc % 16 + (lc % 256)/16 + (lc % 4096)/256 + lc / 4096;
         }
-    }
-
-    @Override
-    public void run() throws GameActionException {
-        indicatorString = "";
-        checkArchonsAlive();
-        if (globalLabCount==labBuild && spawnPhase==2){ // if the global # of labs have been built
-            spawnPhase++;
-            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-        }
-        //minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
-        if (defense()){rc.setIndicatorString("defending"); return;}
-        avoidFury();
-        retransform();
-        updateLabConstraints();
-        updateTroopCount();
 
         // reset total # of troops in shared array
         if (rc.getRoundNum()%3==1){
@@ -232,15 +261,26 @@ public class Archon extends Building{
                 rc.writeSharedArray(i, 0);
             }
         }
-
-        watchtowerCount = rc.readSharedArray(archonOrder+5);
+        // find individual watchtower count
+        if (archonOrder==0){
+            watchtowerCount = rc.readSharedArray(5);
+        }
+        if (archonOrder==1){
+            watchtowerCount = rc.readSharedArray(6);
+        }
+        if (archonOrder==2){
+            watchtowerCount = rc.readSharedArray(7);
+        }
+        if (archonOrder==3){
+            watchtowerCount = rc.readSharedArray(8);
+        }
+        // find individual lab count
         labCount = (rc.readSharedArray(4) % (power*16))/power;
-
-        if (!canProceed(spawnPhase)){
-            // shouldn't continue if other archons haven't caught up with spawning
+        if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             rc.setIndicatorString("can't proceed, spawn phase: "+spawnPhase);
             return;
         }
+        //int proposedExpenses = rc.readSharedArray(11);
         if (minerCount<minerBuild){
             indicatorString = "miners";
             if (!minerDone && msBuildType % 4 == 0){
@@ -393,7 +433,7 @@ public class Archon extends Building{
                     //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
                     if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.SOLDIER.buildCostLead+SURPLUS_THRESHOLD){
-                        buildSoldier(false);
+                        buildSoldier();
                     }
                 }
                 else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){

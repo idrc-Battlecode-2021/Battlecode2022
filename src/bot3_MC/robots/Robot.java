@@ -1,9 +1,12 @@
-package bot3_SL.robots;
+package bot3_MC.robots;
 
 import battlecode.common.*;
-import bot3_SL.util.Constants;
+import bot3_MC.util.Constants;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public abstract class Robot {
     protected RobotController rc;
@@ -16,12 +19,12 @@ public abstract class Robot {
     protected int initialArchons;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
-    protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
+    protected ArrayList<MapLocation> myPath = new ArrayList<>();
     // -1 = unknown, otherwise amount of rubble
 
     public Robot( RobotController rc){
@@ -367,17 +370,35 @@ public abstract class Robot {
     }
 
     private void pathfind(MapLocation target) throws GameActionException{
-        //dijkstra for unknown square
-        ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
-        HashMap<MapLocation, Integer> dists = new HashMap<>();
-        queue.add(myLocation);
-        dists.put(myLocation, 0);
-        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
-        for (int i = senseLocations.length; --i >= 0;){
-            queue.add(senseLocations[i]);
-            dists.put(senseLocations[i], Integer.MAX_VALUE);
+        //if already has path to follow, selects farthest intermediate target from path that is in vision to optimize path
+        
+        if(myPath.size() > 0){
+        	for(int index = myPath.size()-1; index > -1; index--){
+                MapLocation tempLocation = myPath.get(index);
+            	if (myLocation.isWithinDistanceSquared(tempLocation, rc.getType().visionRadiusSquared)){
+                	target = tempLocation; //path towards intermediate target
+                	myPath.subList(0,index).clear(); //remove old path to intermediate target, will be replaced with new path
+                	break;
+            	}
+        	}
         }
+        
+        //dijkstra to find best path
+        
+        ArrayList<MapLocation> queue = new ArrayList<MapLocation>(); //list of maplocations to check
+        HashMap<MapLocation, Integer> dists = new HashMap<>(); //hashmap containing maplocations and associated total rubble cost for each map location
+        HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //hashmap containing maplocations and their parent maplocation (previous maplocation on optimal path)
+        //paths[node] = previous node for shortest path to said node
+        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared); //calculate path from all locations in sight
+        for (int i = senseLocations.length; --i >= 0;){
+            queue.add(senseLocations[i]); //add other locations
+            dists.put(senseLocations[i], Integer.MAX_VALUE); //infinity, this way we don't check nodes not connected to known nodes
+        }
+        dists.put(myLocation, 0); //add current location to dist map with rubble of 0 (make sure you check myLocation first)
+
+		//start updating dists with actual shortest path rubble values
         while (queue.size() > 0){
+            //pick nearest square not checked yet
             MapLocation chosen = null;
             int min= Integer.MAX_VALUE;
             for(MapLocation m : queue){
@@ -386,18 +407,60 @@ public abstract class Robot {
                     chosen = m;
                 }
             }
-            
-            queue.remove(chosen);
-            MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
-            for (int i = temp.length; --i>=0;){
-                int tot_rubble = dists.get(chosen) + rc.senseRubble(temp[i]);
-                if (tot_rubble < dists.get(temp[i])){
-                    dists.put(temp[i], tot_rubble);
+
+            queue.remove(chosen); //remove it from queue to be checked
+
+            //update adjacent squares to chosen square with rubble values
+            MapLocation[] adjacents = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
+            for (int i = adjacents.length; --i>=0;){
+                if(myLocation.distanceSquaredTo(adjacents[i]) > rc.getType().visionRadiusSquared){
+                    continue;
+                }
+                int additional_rubble = adjacents[i].isAdjacentTo(myLocation) && rc.canSenseRobotAtLocation(adjacents[i]) ? 101 : rc.senseRubble(adjacents[i]);
+                //^ this is a hack to make squares with robots on them to be unpassable, otherwise will be actual rubble value
+                int tot_rubble = dists.get(chosen) + additional_rubble;
+                //total rubble of path including current adjacent square's additional rubble
+                //v only update distance in dist array if current path to the adjacent square is less than old distance
+                if (tot_rubble < dists.get(adjacents[i])){
+                    dists.put(adjacents[i], tot_rubble);
+                    paths.put(adjacents[i], chosen); //update paths with new path tree
                 }
             }
-            
+
         }
         
+        //paths now contains a tree with correct shortest path values to every square in sight
+
+	    if(myLocation.distanceSquaredTo(target) > rc.getType().visionRadiusSquared){
+            //pick intermediate target with low rubble score to path to as intermediate target if target not in vision
+	        MapLocation intermediateTarget = pickSquaresInDirection(myLocation.directionTo(target), rc.getType().visionRadiusSquared);
+			while(!intermediateTarget.equals(myLocation)){
+                myPath.add(0,intermediateTarget); //add in reverse order to avoid messing up old path values
+                intermediateTarget = paths.get(intermediateTarget);
+            }
+
+	    }
+
+	    else {
+            //generate path directly to target if in vision
+            myPath.add(target);
+			while(!target.equals(myLocation)){
+                myPath.add(0,paths.get(target)); //add in reverse order to avoid messing up old path values
+                target = paths.get(target);
+            }
+        }
+        
+        //finally moving based on path pogga
+        Direction moveDir = myLocation.directionTo(myPath.get(0));
+        if(rc.canMove(moveDir)){
+            rc.move(moveDir);
+            myLocation = rc.getLocation();
+            myPath.remove(0); //if the bot does move to the square, it will be removed from the path obviously
+        }
+        
+        
+        //old notes:
+
         //dists now contains a dictionary of smallest distance to every square in sight
         
         //if target in sight then pathfind
@@ -409,7 +472,297 @@ public abstract class Robot {
             //note to self: change to include internal map of rubble amounts to lower bytecode instead of resensing
             //note to self: add test to see if target is in internal map already or in sight already
             //note to self: use internal map to find closest known square to target? instead of current
+    }
+    
+    private MapLocation pickSquaresInDirection(Direction d, int dist) throws GameActionException{
+        MapLocation[] ml;
+        switch(dist){
+            case 20:
+				switch(d){
+                    case NORTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + 4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case EAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 4, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + -4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case WEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -4, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 3, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + 2),
+                            	new MapLocation(myLocation.x + 2, myLocation.y + 3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 3, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + -2),
+                            	new MapLocation(myLocation.x + 2, myLocation.y + -3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -3, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + -2),
+                            	new MapLocation(myLocation.x + -2, myLocation.y + -3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -3, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + 2),
+                            	new MapLocation(myLocation.x + -2, myLocation.y + 3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+
+                }
+            	break;
+            case 34:
+            	switch(d){
+                    case NORTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + 5),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + 5),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + 5)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case EAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 5, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + 5, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + 5, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + -5),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + -5),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + -5)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case WEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -5, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + -5, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + -5, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + 4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 4, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + -4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -4, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + -4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + 4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+
+                }
+            	break;
         }
+        return null;
+        
+    }
 
     private void tryAttack(MapLocation Loc) throws GameActionException {
         if (rc.canAttack(Loc)){
@@ -547,101 +900,27 @@ public abstract class Robot {
     
     private void updateInternalMap(){}
 
-    public MapLocation readSymmetry() throws GameActionException{
-        int n = rc.readSharedArray(48);
-        String k = Integer.toBinaryString(n);
-        String pad ="000000000000000000000".substring(0,enemyArchons.size());
-        k=pad.substring(k.length())+k;
-
-        System.out.println(k+" "+ enemyArchons.size());
-        for (int i=0; i<k.length(); i++){
-            if (k.charAt(i)=='0'){
-                return enemyArchons.get(i);
-            }
+    private void targetArchons() throws GameActionException{
+        storeEnemyArchons();
+        if (enemyArchons.size()>0){
+            MapLocation target = enemyArchons.get(0);
+            intermediateMove(target);
         }
-        return null;
     }
-    public void checkSymmetry() throws GameActionException{
-        for (int i=0; i<enemyArchons.size(); i++){
-            if (rc.canSenseLocation(enemyArchons.get(i))){
-                for (RobotInfo ro: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
-                    if(ro.getType()==RobotType.ARCHON){
-                        return;
-                    }
+    private void storeEnemyArchons() throws GameActionException{
+        for (RobotInfo r: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
+            if (r.getType()==RobotType.ARCHON){
+                int x = r.getLocation().x, y=r.getLocation().y;
+                if(!enemyArchons.contains(new MapLocation(x,y))){
+                    enemyArchons.add(new MapLocation(x,y));
+                    rc.writeSharedArray(52, 64*x+y);
                 }
-                int n = rc.readSharedArray(48);
-                String k = Integer.toBinaryString(n);
-                String pad ="000000000000";//.substring(0,enemyArchons.size());
-
-                k=pad.substring(k.length())+k;
-                
-                if(k.charAt(i)=='1'){
-                    return;
-                }
-                rc.writeSharedArray(48, n+(int)Math.pow(2,i));
-                return;
             }
         }
-    }
-    public void readArchonLocs() throws GameActionException{
-        int n1 = rc.readSharedArray(49);
-        int x1=n1%16;
-        int y1=(n1/16)%16;
-        int x2=(n1/256)%16;
-        int y2=(n1/4096)%16;
-        MapLocation m1 = new MapLocation (x1*4, y1*4);
-        MapLocation m2 = new MapLocation (x2*4, y2*4);
-        MapLocation bad = new MapLocation (0,0);
-        if (m1!=bad){
-            myArchons.add(m1);
-        }
-        if (m2!=bad){
-            myArchons.add(m2);
-        }
-        n1 = rc.readSharedArray(50);
-        x1=n1%16;
-        y1=(n1/16)%16;
-        x2=(n1/256)%16;
-        y2=(n1/4096)%16;
-        m1 = new MapLocation (x1*4, y1*4);
-        m2 = new MapLocation (x2*4, y2*4);
-        if (m1!=bad){
-            myArchons.add(m1);
-        }
-        if (m2!=bad){
-            myArchons.add(m2);
-        }
-        myArchons.removeAll(Collections.singleton(bad));
-    }
-    public void possibleArchonLocs() throws GameActionException{
-        MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-        int centerX = center.x, centerY=center.y;
-        ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
-        for (MapLocation m: myArchons){
-            int x = m.x;
-            int y = m.y;
-            if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
-                enemyArchons.add(new MapLocation(2*centerX -x, y));
-                System.out.println("Xreflect" + m + " " + new MapLocation(2*centerX-x,y));
-            }
-            if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
-                enemyArchons.add(new MapLocation( x, 2*centerY-y));
-                System.out.println("Yreflect" + m + " " + new MapLocation(x,2*centerY-y));
-            }
-            if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
-                enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
-                System.out.println("rotate" + m + " " + new MapLocation(2*centerX-x,2*centerY-y));
-
-            }
-       }
-        System.out.println(enemyArchons);
-        Set<MapLocation> s = new LinkedHashSet<MapLocation>();
-        s.addAll(enemyArchons);
-        enemyArchons.clear();
-        enemyArchons.addAll(s);
-        Collections.sort(enemyArchons);
-        for (MapLocation m: myArchons){
-            enemyArchons.remove(m);
+        int n = rc.readSharedArray(51);
+        int x = n/64, y=n%64;
+        if (enemyArchons.contains(new MapLocation(x,y))){
+            enemyArchons.remove(new MapLocation(x,y));
         }
     }
 }

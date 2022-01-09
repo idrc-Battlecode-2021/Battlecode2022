@@ -1,4 +1,4 @@
-package bot3_SL.robots.buildings;
+package bot3_MC.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
@@ -14,8 +14,6 @@ public class Watchtower extends Building {
 
     @Override
     public void init() throws GameActionException {
-        //readArchonLocs();
-        //possibleArchonLocs();
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro: r) {
             if (ro.getType() == RobotType.ARCHON) {
@@ -32,16 +30,23 @@ public class Watchtower extends Building {
     }
     @Override
     public void run() throws GameActionException {
-        //checkSymmetry();
-        MapLocation archonTarget=null;
-        //MapLocation archonTarget = readSymmetry();
         avoidFury();
         retransform();
         if(isDefensive){
             rc.setIndicatorString(isDefensive+" ");
-
-            if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
-            attackDefensive();
+            MapLocation archonLoc = rc.senseRobot(myArchonID).getLocation();
+            if (rc.getLocation().isWithinDistanceSquared(archonLoc,2)){
+                if (rc.getMode()!=RobotMode.PORTABLE){
+                    rc.transform();
+                }
+                else{
+                    intermediateMove(rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite()));
+                }
+            }
+            else{
+                if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
+                attackDefensive();
+            }
         }
         else{
             broadcast();
@@ -72,14 +77,8 @@ public class Watchtower extends Building {
                 }
             }
             else{
-                if (archonTarget!=null){
-                    intermediateMove(archonTarget);
-                }
-                else{
-                    broadcastLattice();
-                    joinLattice();
-                }
-
+                broadcastLattice();
+                joinLattice();
             }
             rc.setIndicatorString(rc.readSharedArray(54)+" ");
             }

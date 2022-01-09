@@ -1,22 +1,18 @@
-package bot3_SL.robots.droids;
+package bot3_MC.robots.droids;
 
 import battlecode.common.*;
-
 public class Soldier extends Droid{
     private MapLocation target;
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
+    private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private boolean defensive = false;
-    private MapLocation center;
     public Soldier(RobotController rc) {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
-        center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-        readArchonLocs();
-        possibleArchonLocs();
         parseAnomalies();
         RobotInfo [] r = rc.senseNearbyRobots();
         for (RobotInfo ro : r){
@@ -33,9 +29,6 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
-        checkSymmetry();
-        MapLocation enemyArchon = readSymmetry();
-        System.out.println(enemyArchons.size());
         rc.setIndicatorString(myArchonOrder+"");
         avoidCharge();
         // update shared array
@@ -74,34 +67,25 @@ public class Soldier extends Droid{
             intermediateMove(target);
         }
         else{
-            if(enemyArchon !=null){
-                intermediateMove(enemyArchon);
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            for (int i = all.length; --i>=0;){
+                for (MapLocation c: corners){
+                    if (all[i]==c){
+                        Direction d = myLocation.directionTo(c);
+                        tryMoveMultiple(d);
+                    }
+                }
+            }
+
+            if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+                Direction d = myLocation.directionTo(center);
+                tryMoveMultiple(d);
             }
             else{
-                intermediateMove(enemyArchons.get(0));
-               /*
-                MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
-                for (int i = all.length; --i>=0;){
-                    for (MapLocation c: corners){
-                        if (all[i]==c){
-                            Direction d = myLocation.directionTo(c);
-                            tryMoveMultiple(d);
-                        }
-                    }
+                if(!tryMoveMultipleNew()){
+                    tryMoveMultiple(initDirection);
                 }
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
-                    Direction d = myLocation.directionTo(center);
-                    tryMoveMultiple(d);
-                }
-                else{
-                    if(!tryMoveMultipleNew()){
-                        tryMoveMultiple(initDirection);
-                    }
-                }
-
-                */
             }
-
         }
 
     }

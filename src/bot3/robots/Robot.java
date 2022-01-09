@@ -369,6 +369,8 @@ public abstract class Robot {
         return (int) Math.ceil(Math.floor((1+rubble/(double)10)*myType.movementCooldown)/(double) 10);
     }
 
+
+	//got bytecode gapped :(
     private void pathfind(MapLocation target) throws GameActionException{
         //if already has path to follow, selects farthest intermediate target from path that is in vision to optimize path
         
