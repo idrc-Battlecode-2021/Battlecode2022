@@ -550,7 +550,9 @@ public abstract class Robot {
     public MapLocation readSymmetry() throws GameActionException{
         int n = rc.readSharedArray(48);
         String k = Integer.toBinaryString(n);
-        String pad ="000000000000";
+        String pad = "";
+
+        pad ="000000000000";
         k=pad.substring(k.length())+k;
 
         System.out.println(k+" "+ enemyArchons.size());
