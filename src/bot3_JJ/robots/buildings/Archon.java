@@ -8,7 +8,7 @@ public class Archon extends Building{
     private static int targetMinerCount; //target # of miners to build across all archons
 
     private static int minerBuild = 7; //miners to build
-    private static int soldierBuild = 15; //soldiers to build
+    private static int soldierBuild = 10; //soldiers to build
     private static int soldierBuild2 = 25;
     private static int builderBuild = 4; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
@@ -276,7 +276,7 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if ((minerCount<minerBuild && soldierCount >= soldierBuild || minerFoundCount < minerBuild) &&
+        if ((minerCount<minerBuild && globalSoldierCount >= soldierBuild*rc.getArchonCount() || minerFoundCount < minerBuild) &&
                 rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
@@ -301,7 +301,7 @@ public class Archon extends Building{
                 }
             }
 
-        } else if (soldierCount >= soldierBuild && (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2))){
+        } else if (globalSoldierCount >= soldierBuild*rc.getArchonCount() && (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2))){
             //rc.setIndicatorString("builder phase");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -353,7 +353,7 @@ public class Archon extends Building{
             int mod =2;
             rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
             //System.out.println("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
-            if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead && (soldierCount >= soldierBuild2)){
+            if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead && (globalSoldierCount >= soldierBuild2*rc.getArchonCount())){
                 rc.setIndicatorString("build watchtower");
                 int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                 int currentValue = rc.readSharedArray(58);
