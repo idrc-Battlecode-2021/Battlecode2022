@@ -611,7 +611,6 @@ public abstract class Robot {
         MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         int centerX = center.x, centerY=center.y;
         ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
-        //(2,36) --> (57, 23)
         for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
