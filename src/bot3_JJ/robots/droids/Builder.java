@@ -19,7 +19,7 @@ public class Builder extends Droid{
         detectArchon();
         archonLoc = rc.senseRobot(myArchonID-1).getLocation();
         startingBit = 2*myArchonOrder;
-        System.out.println(myArchonOrder);
+        //System.out.println(myArchonOrder);
     }
 
     @Override
