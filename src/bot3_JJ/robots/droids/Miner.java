@@ -33,6 +33,9 @@ public class Miner extends Droid{
         avoidCharge();
         // update shared array
         MapLocation prev = myLocation;
+        if(myLocation.equals(target)){
+            rc.writeSharedArray(31+myArchonOrder,rc.readSharedArray(31+myArchonOrder)+1);
+        }
         if (rc.getRoundNum() % 3 == 2) {
             if (myArchonOrder <= 1) {
                 rc.writeSharedArray(0, rc.readSharedArray(0) + (int) Math.pow(256, myArchonOrder));
@@ -138,15 +141,24 @@ public class Miner extends Droid{
                                 }
                             }
                             if(nextToMiner){
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 1
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2); //Maybe change to 1
                                 int amount = lead.get(target);
                                 for(int i = nearbyLead.length; --i>=0;) {
-                                    if (rc.senseLead(nearbyLead[i]) > 0 && !rc.canSenseRobotAtLocation(nearbyLead[i])) {
+                                    MapLocation[] nextTo = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
+                                    boolean none = false;
+                                    for(int j = nextTo.length; --j >=0;){
+                                        if(rc.canSenseRobotAtLocation(nextTo[j])){
+                                            none = true;
+                                            break;
+                                        }
+                                    }
+                                    if (none) {
                                         target = nearbyLead[i];
                                         amount = rc.senseLead(nearbyLead[i]);
+                                        break;
                                     }
                                 }
-                                if(!myLocation.equals(target) && rc.canMove(myLocation.directionTo(target))){
+                                if(rc.canMove(myLocation.directionTo(target))){
                                     rc.move(myLocation.directionTo(target));
                                     myLocation = rc.getLocation();
                                 }
