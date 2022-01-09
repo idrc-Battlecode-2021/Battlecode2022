@@ -6,7 +6,7 @@ import battlecode.common.*;
 import battlecode.common.MapLocation;
 
 public class Watchtower extends Building {
-    private boolean isDefensive = true;
+    private boolean isDefensive = false;
     private MapLocation archon = null;
     public Watchtower(RobotController rc) {
         super(rc);

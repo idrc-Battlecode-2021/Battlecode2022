@@ -26,7 +26,7 @@ public class Miner extends Droid {
 
     @Override
     public void run() throws GameActionException {
-         broadcast();
+        broadcast();
         reassignArchon();
         avoidCharge();
         // update shared array

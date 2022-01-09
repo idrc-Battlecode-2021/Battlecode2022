@@ -338,7 +338,7 @@ public class Archon extends Building{
             else */
             //rc.setIndicatorString("late game");
             //rc.setIndicatorString("done with lab");
-            if (rc.getTeamLeadAmount(myTeam)>2500*rc.getArchonCount() && globalLabCount < 4){
+            if (rc.getTeamLeadAmount(myTeam)>4000*rc.getArchonCount() && globalLabCount < 4){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead+proposedExpenses){
                     //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                     int temp = (int)Math.pow(4,archonOrder);
@@ -364,7 +364,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                 rc.writeSharedArray(58, buildCommand);
             }
-            if ((rc.getTeamLeadAmount(rc.getTeam()) > 100*rc.getArchonCount()) && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                 rc.setIndicatorString("build soldier");
                 Direction directions[] = Direction.allDirections();
                 int i=0;

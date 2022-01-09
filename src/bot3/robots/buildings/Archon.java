@@ -89,18 +89,18 @@ public class Archon extends Building{
             int temp = (int)Math.pow(2,i);
             int thisDefense = (defenseStatus % (temp*16))/temp;
             if (thisDefense > 0){
-                indicatorString = "defense";
+                indicatorString += "defense";
                 return false;
             }
         }
         // Check if all archons have passed phase n, phases on top of file
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;}
+            if (rc.readSharedArray(63-i/4)==0){continue;}
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
             if (thisPhase < n){
-                indicatorString = "phase too low";
+                indicatorString += "phase too low: ";
                 return false;
             }
         }
@@ -225,8 +225,9 @@ public class Archon extends Building{
             spawnPhase++;
             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
         }
+        indicatorString +="spawnPhase: "+spawnPhase;
         //minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
-        if (defense()){rc.setIndicatorString("defending"); return;}
+        if (defense()){indicatorString+="defense"; rc.setIndicatorString(indicatorString);return;}
         avoidFury();
         retransform();
         updateLabConstraints();
@@ -249,7 +250,7 @@ public class Archon extends Building{
             return;
         }
         if (minerCount<minerBuild){
-            indicatorString = "miners";
+            indicatorString += "miners";
             if (!minerDone && msBuildType % 4 == 0){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
