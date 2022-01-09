@@ -1,8 +1,8 @@
 package bot3_SL.robots.droids;
 
 import battlecode.common.*;
-import bot3.robots.Robot;
-import bot3.util.Constants;
+import bot3_SL.robots.Robot;
+import bot3_SL.util.Constants;
 
 import java.util.ArrayList;
 

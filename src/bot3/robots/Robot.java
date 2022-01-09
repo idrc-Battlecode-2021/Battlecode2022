@@ -404,13 +404,13 @@ public abstract class Robot {
 	            
 	        }
 	        
-	         
+	        
 	        
 	        MapLocation intermediateTarget = pickSquaresInDirection(myLocation.directionTo(target), rc.getType().visionRadiusSquared);
-			
-			//while(intermediateTarget){
-                
-            //}
+			myPath.add(intermediateTarget);
+			while(!intermediateTarget.equals(myLocation)){
+                myPath.add(0,paths.get(intermediateTarget));
+            }
 	    }
         
         //dists now contains a dictionary of smallest distance to every square in sight

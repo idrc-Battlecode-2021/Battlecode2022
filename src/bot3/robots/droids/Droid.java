@@ -238,6 +238,10 @@ public abstract class Droid extends Robot {
         }
         exploreTarget = new MapLocation(x+myLocation.x,y+myLocation.y);
     }
+    public void explore() throws GameActionException {
+        newLocation();
+        intermediateMove(exploreTarget);
+    }
     public void parseAnomalies() {
             for (AnomalyScheduleEntry a : anomaly) {
                 if (a.anomalyType == AnomalyType.CHARGE) {
