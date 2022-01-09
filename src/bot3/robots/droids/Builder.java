@@ -57,6 +57,12 @@ public class Builder extends Droid{
         int toBuild = read();
         //rc.setIndicatorString(Integer.toBinaryString(toBuild));
         boolean built = build(toBuild);
+        //if (!built && rc.getTeamLeadAmount(myTeam)>1000){
+        //    for (Direction d: Constants.DIRECTIONS)
+        //    if(rc.canBuildRobot(RobotType.WATCHTOWER, d)){
+        //        rc.buildRobot(RobotType.WATCHTOWER, d);
+        //    }
+        //}
         boolean nearPrototype = false;
         MapLocation prototypeLoc = null;
         RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);

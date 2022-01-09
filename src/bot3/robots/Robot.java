@@ -6,6 +6,7 @@ import bot3.util.Constants;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public abstract class Robot {
     protected RobotController rc;
@@ -17,11 +18,12 @@ public abstract class Robot {
     protected int mapWidth,mapHeight;
     protected int initialArchons;
     protected boolean archonWait = false;
-    protected RobotInfo [] enemyArchons = new RobotInfo [4];
+    protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
     protected int[][] internalMap;
+    protected HashSet<MapLocation> prevLocs = new HashSet<>();
     // -1 = unknown, otherwise amount of rubble
 
     public Robot( RobotController rc){
@@ -30,14 +32,8 @@ public abstract class Robot {
         myLocation = rc.getLocation();
         myType = rc.getType();
         
-        mapWidth = rc.getMapWidth();
-        mapHeight = rc.getMapHeight();
+        mapWidth = rc.getMapWidth(); mapHeight = rc.getMapHeight();
         initialArchons = rc.getArchonCount();
-        switch(myType){
-            case MINER:
-            case SOLDIER:
-            case SAGE: internalMap = new int[mapWidth][mapHeight];
-        }
         //Too Much Bytecode, 5000
         /*for(int i = mapWidth; --i>=0;){
             for(int j = mapHeight; --j>=0;){
@@ -582,12 +578,27 @@ public abstract class Robot {
     
     private void updateInternalMap(){}
 
-    private void storeEnemyArchons(){
+    private void targetArchons() throws GameActionException{
+        storeEnemyArchons();
+        if (enemyArchons.size()>0){
+            MapLocation target = enemyArchons.get(0);
+            intermediateMove(target);
+        }
+    }
+    private void storeEnemyArchons() throws GameActionException{
         for (RobotInfo r: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
             if (r.getType()==RobotType.ARCHON){
                 int x = r.getLocation().x, y=r.getLocation().y;
-                x=x/8; y=y/8;
+                if(!enemyArchons.contains(new MapLocation(x,y))){
+                    enemyArchons.add(new MapLocation(x,y));
+                    rc.writeSharedArray(52, 64*x+y);
+                }
             }
+        }
+        int n = rc.readSharedArray(51);
+        int x = n/64, y=n%64;
+        if (enemyArchons.contains(new MapLocation(x,y))){
+            enemyArchons.remove(new MapLocation(x,y));
         }
     }
 }

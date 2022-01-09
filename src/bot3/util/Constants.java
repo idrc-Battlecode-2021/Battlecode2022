@@ -30,7 +30,11 @@ public class Constants {
         {-3, -4}, {-3, -5}, {-4, -1}, {-4, -2}, {-4, -3}, {-4, -4}, {-5, -1}, {-5, -2}, {-5, -3}};
     public static final Direction[] DIRECTIONS = {Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST,
             Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST,};
-    public static final Direction[] COMPOSITE_DIRECTIONS = {Direction.NORTHEAST,Direction.NORTHWEST, Direction.SOUTHWEST,
+    public static final Direction[] INTERMEDIATE_DIRECTIONS = {Direction.NORTHEAST,Direction.NORTHWEST, Direction.SOUTHWEST,
             Direction.SOUTHEAST};
     public static final Direction[] BASIC_DIRECTIONS = {Direction.NORTH,Direction.EAST,Direction.SOUTH,Direction.WEST};
+    public static final Direction[] NORTHERN_DIR = {Direction.NORTHEAST,Direction.NORTHWEST};
+    public static final Direction[] SOUTHERN_DIR = {Direction.SOUTHEAST,Direction.SOUTHWEST};
+    public static final Direction[] EASTERN_DIR = {Direction.NORTHEAST,Direction.SOUTHEAST};
+    public static final Direction[] WESTERN_DIR = {Direction.NORTHWEST,Direction.SOUTHWEST};
 }

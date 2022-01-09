@@ -16,9 +16,33 @@ public abstract class Droid extends Robot {
         exploreTarget = myLocation;
     }
 
+    private boolean priorityMoveNew2() throws GameActionException{
+        Direction dir2 = initDirection.rotateLeft(), dir3 = initDirection.rotateRight();
+        int rubble1 = rc.senseRubble(rc.adjacentLocation(initDirection)),
+                rubble2 = rc.senseRubble(rc.adjacentLocation(dir2)),
+                rubble3 = rc.senseRubble(rc.adjacentLocation(dir3));
+        if(rubble1 <= rubble2 && rubble1 <= rubble3 && rc.canMove(initDirection)){
+            rc.move(initDirection);
+            myLocation = rc.getLocation();
+            prevLocs.add(myLocation);
+            return true;
+        }else if(rubble2 <= rubble3 && rc.canMove(dir2)){
+            rc.move(dir2);
+            myLocation = rc.getLocation();
+            prevLocs.add(myLocation);
+            return true;
+        }else if(rc.canMove(dir3)){
+            rc.move(dir3);
+            myLocation = rc.getLocation();
+            prevLocs.add(myLocation);
+            return true;
+        }
+        return false;
+    }
+
     public boolean priorityMoveNew() throws GameActionException {
         if(initDirection == null){
-            updateDirection(Constants.COMPOSITE_DIRECTIONS[(int) (Math.random()*4)]);
+            updateDirection(Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
         }
         if(myLocation.x == 0 || myLocation.y == 0 || myLocation.x == rc.getMapWidth()-1 || myLocation.y == rc.getMapHeight()){
             updateDirection(initDirection.rotateLeft().rotateLeft());
@@ -29,7 +53,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < mapWidth && yVal >= 0 && yVal < mapHeight &&
-                    internalMap[xVal][yVal] == 0){
+                    !prevLocs.contains(myLocation)){
                 dir = initDirection;
                 rubble = rc.senseRubble(rc.adjacentLocation(initDirection));
             }
@@ -40,7 +64,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0){
+                    !prevLocs.contains(myLocation)){
                 rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateLeft()));
                 if(rubble2 < rubble){
                     dir = initDirection.rotateLeft();
@@ -52,7 +76,7 @@ public abstract class Droid extends Robot {
             offsets = getDirectionOffsets(initDirection);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0){
+                    !prevLocs.contains(myLocation)){
                 rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateRight()));
                 if(rubble2 < rubble){
                     dir = initDirection.rotateLeft();
@@ -69,17 +93,79 @@ public abstract class Droid extends Robot {
 
     public boolean tryMoveMultipleNew() throws GameActionException {
         if(initDirection == null){
-            updateDirection(Constants.COMPOSITE_DIRECTIONS[(int) (Math.random()*4)]);
+            updateDirection(Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
         }
-        if(priorityMoveNew()) return true;
-        //Pair<Direction,Double> pair = new Pair<>(null,0.0);
-        for(Direction d : directions){
-            int[] offsets = getDirectionOffsets(d);
+        switch(initDirection){
+            case SOUTHEAST:
+            case NORTHEAST:
+            case NORTHWEST:
+            case SOUTHWEST: break;
+            case SOUTH: updateDirection(Constants.SOUTHERN_DIR[(int) (Math.random()*2)]); break;
+            case NORTH: updateDirection(Constants.NORTHERN_DIR[(int) (Math.random()*2)]); break;
+            case WEST:  updateDirection(Constants.WESTERN_DIR[(int) (Math.random()*2)]);  break;
+            case EAST:  updateDirection(Constants.EASTERN_DIR[(int) (Math.random()*2)]);  break;
+        }
+        if(!rc.onTheMap(myLocation.add(initDirection))){
+            int x = myLocation.x, y = myLocation.y;
+            switch (initDirection){
+                case SOUTHWEST:
+                    if(x == 0){
+                        if(y == 0){
+                            updateDirection(Direction.NORTHEAST);
+                        }else{
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }else{
+                        if(y == 0){
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }break;
+                case NORTHEAST:
+                    if(x == mapWidth-1){
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHWEST);
+                        }else{
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }else{
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }break;
+                case NORTHWEST:
+                    if(x == 0){
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHEAST);
+                        }else{
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }else{
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }break;
+                case SOUTHEAST:
+                    if(x == mapWidth-1){
+                        if(y == 0){
+                            updateDirection(Direction.NORTHWEST);
+                        }else{
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }else{
+                        if(y == 0){
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }break;
+            }
+        }
+        if(priorityMoveNew2()) return true;
+        for(int i = 0; i < directions.length; i++){
+            int[] offsets = getDirectionOffsets(directions[i]);
             int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    internalMap[xVal][yVal] == 0 && rc.canMove(d)){
-                if(tryMoveMultiple(d)){
-                    internalMap[myLocation.x][myLocation.y] = rc.senseRubble(myLocation)+1;
+                    !prevLocs.contains(myLocation) && rc.canMove(directions[i])){
+                if(tryMoveMultiple(directions[i])){
+                    prevLocs.add(myLocation);
                     return true;
                 }
             }
@@ -164,30 +250,30 @@ public abstract class Droid extends Robot {
             }
         }
         public void avoidCharge() throws GameActionException {
-            for (AnomalyScheduleEntry a: relevantAnomalies){
-                if (rc.getRoundNum()>a.roundNumber){
-                    relevantAnomalies.remove(a);
-                    break;
-                }
-                if(rc.getRoundNum()+10>a.roundNumber){
-                    int x=0;
-                    int y=0;
-                    RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
-                    for (RobotInfo r: friends){
-                        switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
-                        case NORTH:y+=1;break;
-                        case NORTHEAST: y+=1; x+=1; break;
-                        case NORTHWEST: y+=1; x-=1; break;
-                        case SOUTH: y-=1; break;
-                       case EAST: x+=1; break;
-                        case WEST: x-=1; break;
-                        case SOUTHEAST: y-=1; x+=1; break;
-                        case SOUTHWEST: y-=1; x-=1; break;
-                        }
+            AnomalyScheduleEntry a = relevantAnomalies.get(0);
+            if (rc.getRoundNum()>a.roundNumber){
+                relevantAnomalies.remove(a);
+                return;
+            }
+            if(rc.getRoundNum()+10>a.roundNumber){
+                int x=0;
+                int y=0;
+                RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+                for (RobotInfo r: friends){
+                    switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
+                    case NORTH:y+=1;break;
+                    case NORTHEAST: y+=1; x+=1; break;
+                    case NORTHWEST: y+=1; x-=1; break;
+                    case SOUTH: y-=1; break;
+                   case EAST: x+=1; break;
+                    case WEST: x-=1; break;
+                    case SOUTHEAST: y-=1; x+=1; break;
+                    case SOUTHWEST: y-=1; x-=1; break;
                     }
-                    Direction d = getDirection(x, y);
-                    tryMoveMultiple(d);
                 }
+                Direction d = getDirection(x, y);
+                tryMoveMultiple(d);
             }
         }
+
 }

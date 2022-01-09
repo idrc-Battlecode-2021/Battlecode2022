@@ -22,9 +22,7 @@ public class Miner extends Droid{
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         //exploreDirIndex = (int)(8*Math.random());
-        if(!tryMoveMultipleNew()){
-            tryMoveMultiple(initDirection);
-        }
+        //tryMoveMultipleNew();
         viewResources();
         detectArchon();
     }
@@ -35,33 +33,36 @@ public class Miner extends Droid{
         avoidCharge();
         // update shared array
         MapLocation prev = myLocation;
-        rc.setIndicatorString(""+myArchonOrder);
-        try{
-            if (rc.getRoundNum()%3==2){
-                if (myArchonOrder<=1){
-                    rc.writeSharedArray(0, rc.readSharedArray(0)+(int)Math.pow(256,myArchonOrder));
-                }
-                else{
-                    rc.writeSharedArray(10, rc.readSharedArray(10)+(int)Math.pow(256,myArchonOrder-2));
-                }
+        if (rc.getRoundNum()%3==2){
+            if (myArchonOrder<=1){
+                rc.writeSharedArray(0, rc.readSharedArray(0)+(int)Math.pow(256,myArchonOrder));
+            }
+            else{
+                rc.writeSharedArray(10, rc.readSharedArray(10)+(int)Math.pow(256,myArchonOrder-2));
             }
         }
-        catch(Exception e){
-            System.out.println(rc.getRoundNum()+" "+Integer.toBinaryString(rc.readSharedArray(0))+" "+Integer.toBinaryString(rc.readSharedArray(10)));
-        }
-        
         if(checkEnemy()){
-            MapLocation[] local = rc.senseNearbyLocationsWithLead(2);
+            MapLocation[] local = rc.senseNearbyLocationsWithGold(2);
+            for(int i = local.length; --i >= 0;){
+                if(rc.canMineGold(local[i])){
+                    rc.mineGold(local[i]);
+                    target = local[i];
+                    targetType = 2;
+                    gold.put(target,rc.senseGold(target));
+                    break;
+                }
+            }
+            local = rc.senseNearbyLocationsWithLead(2);
             for(int i = local.length; --i >= 0;){
                 if(rc.senseLead(local[i]) > 1 && rc.canMineLead(local[i])){
                     rc.mineLead(local[i]);
                     target = local[i];
+                    targetType = 1;
                     lead.put(target,rc.senseLead(target));
                     break;
                 }
             }
         }else{
-            //TODO: Optimize branching
             if(gold.isEmpty()){
                 int amount = rc.senseLead(myLocation);
                 if(amount > 1){
@@ -127,7 +128,8 @@ public class Miner extends Droid{
                                     }
                                 }
                                 if(rc.senseLead(target) > 1 && rc.canMineLead(target)) rc.mineLead(target);
-                            }intermediateMove(target);
+                            }
+                            intermediateMove(target);
                             RobotInfo[] nearbyBots = rc.senseNearbyRobots(1,myTeam); //Maybe change to 2
                             boolean nextToMiner = false;
                             for(int i = nearbyBots.length; --i >=0;){
@@ -137,10 +139,10 @@ public class Miner extends Droid{
                                 }
                             }
                             if(nextToMiner){
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2); //Maybe change to 1
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 1
                                 int amount = lead.get(target);
                                 for(int i = nearbyLead.length; --i>=0;) {
-                                    if (rc.senseLead(nearbyLead[i]) > amount && !rc.canSenseRobotAtLocation(nearbyLead[i])) {
+                                    if (rc.senseLead(nearbyLead[i]) > 0 && !rc.canSenseRobotAtLocation(nearbyLead[i])) {
                                         target = nearbyLead[i];
                                         amount = rc.senseLead(nearbyLead[i]);
                                     }
@@ -150,11 +152,15 @@ public class Miner extends Droid{
                                     myLocation = rc.getLocation();
                                 }
                                 lead.put(target,amount);
-                            }else if(rc.isActionReady()){
+                            }
+                            boolean mine = true;
+                            while(rc.isActionReady() && mine){
+                                mine = false;
                                 MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
                                 for(int i = nearbyLead.length; --i>=0;) {
                                     if (rc.senseLead(nearbyLead[i]) > 1 && rc.canMineLead(nearbyLead[i])){
                                         rc.mineLead(nearbyLead[i]);
+                                        mine = true;
                                     }
                                 }
                             }
@@ -186,10 +192,23 @@ public class Miner extends Droid{
                         if(rc.canMineGold(target)){
                             rc.mineGold(target);
                         }intermediateMove(target);
+                        while(rc.isActionReady()){
+                            boolean mine = true;
+                            while(rc.isActionReady() && mine){
+                                mine = false;
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
+                                for(int i = nearbyLead.length; --i>=0;) {
+                                    if (rc.senseLead(nearbyLead[i]) > 1 && rc.canMineLead(nearbyLead[i])){
+                                        rc.mineLead(nearbyLead[i]);
+                                        mine = true;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            if(rc.getMovementCooldownTurns() == 0 && target == null){
+            if(target == null){
                 if(!tryMoveMultipleNew()){
                    tryMoveMultiple(initDirection);
                 }
@@ -237,12 +256,12 @@ public class Miner extends Droid{
         //Currently choosing closest Location over Amount, may want to change.
         MapLocation loc = null;
         List<Map.Entry<MapLocation, Integer>> entries = new ArrayList<Map.Entry<MapLocation, Integer>>(gold.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<MapLocation, Integer>>() {
+        /*Collections.sort(entries, new Comparator<Map.Entry<MapLocation, Integer>>() {
             public int compare(
                     Map.Entry<MapLocation, Integer> entry1, Map.Entry<MapLocation, Integer> entry2) {
                 return ((Integer)movementTileDistance(entry1.getKey(),myLocation)).compareTo(movementTileDistance(entry2.getKey(),myLocation));
             }
-        });
+        });*/
         for(Map.Entry<MapLocation, Integer> entry : entries){
             MapLocation location = entry.getKey();
             if(rc.canSenseLocation(location)){
@@ -262,12 +281,12 @@ public class Miner extends Droid{
         //Currently choosing closest Location over Amount, may want to change.
         MapLocation loc = null;
         List<Map.Entry<MapLocation, Integer>> entries = new ArrayList<Map.Entry<MapLocation, Integer>>(lead.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<MapLocation, Integer>>() {
+        /*Collections.sort(entries, new Comparator<Map.Entry<MapLocation, Integer>>() {
             public int compare(
                     Map.Entry<MapLocation, Integer> entry1, Map.Entry<MapLocation, Integer> entry2) {
                 return ((Integer)movementTileDistance(entry1.getKey(),myLocation)).compareTo(movementTileDistance(entry2.getKey(),myLocation));
             }
-        });
+        });*/
         for(Map.Entry<MapLocation, Integer> entry : entries){
             MapLocation location = entry.getKey();
             if(rc.canSenseLocation(location)){
@@ -312,6 +331,8 @@ public class Miner extends Droid{
                 }
             }
             if(xMove != 0 || yMove != 0){
+                target = null;
+                targetType = 2;
                 return tryMoveMultiple(selectDirection(xMove,yMove));
             }
 
