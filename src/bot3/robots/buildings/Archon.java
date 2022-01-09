@@ -9,7 +9,7 @@ public class Archon extends Building{
 
     private static int minerBuild = 5; //miners to build
     private static int soldierBuild = 10; //soldiers to build
-    private static int builderBuild = 5; //builders to build
+    private static int builderBuild = 3; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
     private static int labBuild = 1; //labs to build
 
@@ -93,7 +93,7 @@ public class Archon extends Building{
         // Check if all archons have passed phase n, phases on top of file
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;}
+            if (rc.readSharedArray(63-i/4)==0){continue;}
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
             if (thisPhase < n){return false;}
