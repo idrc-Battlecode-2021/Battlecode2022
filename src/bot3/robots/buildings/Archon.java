@@ -18,6 +18,8 @@ public class Archon extends Building{
     private static int archonOrder = 0; //reverse position of archonID in shared array
     private static int power = 0; // power of 16 that corresponds with archonOrder 
 
+    private static final int SURPLUS_THRESHOLD = 500;
+
     private static String indicatorString = "";
 
     private static int spawnPhase = 0; 
@@ -430,7 +432,7 @@ public class Archon extends Building{
                     }
                     //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.SOLDIER.buildCostLead){
+                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.SOLDIER.buildCostLead+SURPLUS_THRESHOLD){
                         buildSoldier();
                     }
                 }
@@ -454,7 +456,7 @@ public class Archon extends Building{
                         rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
                         soldierCount++;
                     }
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead){
+                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead+SURPLUS_THRESHOLD){
                         buildWatchtower();
                     }
                 }
@@ -478,7 +480,7 @@ public class Archon extends Building{
                         rc.buildRobot(RobotType.MINER,directions[minerIndex]);
                         minerCount++;
                     }
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead){
+                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead+SURPLUS_THRESHOLD){
                         buildWatchtower();
                     }
                 }

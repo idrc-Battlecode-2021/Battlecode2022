@@ -3,10 +3,7 @@ package bot3_SL.robots;
 import battlecode.common.*;
 import bot3_SL.util.Constants;
 
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 public abstract class Robot {
     protected RobotController rc;
@@ -624,5 +621,9 @@ public abstract class Robot {
                 enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
             }
         }
+        Set<MapLocation> s = new LinkedHashSet<MapLocation>();
+        s.addAll(enemyArchons);
+        enemyArchons.clear();
+        enemyArchons.addAll(s);
     }
 }

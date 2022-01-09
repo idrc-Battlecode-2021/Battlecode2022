@@ -451,9 +451,10 @@ public abstract class Robot {
         }
         
         //finally moving based on path pogga
-        Direction moveDir = myLocation.directionTo(myPath.get(0));
+        Direction moveDir = myLocation.directionTo(myPath.et(0));
         if(rc.canMove(moveDir)){
             rc.move(moveDir);
+            myLocation = rc.getLocation();
             myPath.remove(0); //if the bot does move to the square, it will be removed from the path obviously
         }
         
