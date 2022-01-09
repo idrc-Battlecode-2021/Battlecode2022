@@ -88,15 +88,21 @@ public class Archon extends Building{
             if (rc.readSharedArray(63-i/4)==0){break;} // don't check archons that don't exist
             int temp = (int)Math.pow(2,i);
             int thisDefense = (defenseStatus % (temp*16))/temp;
-            if (thisDefense > 0){return false;}
+            if (thisDefense > 0){
+                indicatorString = "defense";
+                return false;
+            }
         }
         // Check if all archons have passed phase n, phases on top of file
         int archonStatus = rc.readSharedArray(57);
         for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){continue;}
+            if (rc.readSharedArray(63-i/4)==0){break;}
             int temp = (int)Math.pow(2,i);
             int thisPhase = (archonStatus % (temp*16))/temp;
-            if (thisPhase < n){return false;}
+            if (thisPhase < n){
+                indicatorString = "phase too low";
+                return false;
+            }
         }
         return true;
     }
@@ -239,7 +245,7 @@ public class Archon extends Building{
 
         if (!canProceed(spawnPhase)){
             // shouldn't continue if other archons haven't caught up with spawning
-            rc.setIndicatorString("can't proceed, spawn phase: "+spawnPhase);
+            rc.setIndicatorString(indicatorString);
             return;
         }
         if (minerCount<minerBuild){

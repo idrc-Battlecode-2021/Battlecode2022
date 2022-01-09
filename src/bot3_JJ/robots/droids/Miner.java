@@ -136,9 +136,10 @@ public class Miner extends Droid{
                                 }
                                 if(!target.equals(myLocation) && rc.canSenseRobotAtLocation(target)){
                                     RobotInfo potentialMiner = rc.senseRobotAtLocation(target);
-                                    if(potentialMiner)
-                                }
-                                if(rc.senseLead(target) > 1 && rc.canMineLead(target)) rc.mineLead(target);
+                                    if(!potentialMiner.getTeam().equals(myTeam) && potentialMiner.getType().equals(RobotType.MINER)){
+                                        if(rc.canMineLead(target)) rc.mineLead(target);
+                                    }
+                                } else if(rc.senseLead(target) > 1 && rc.canMineLead(target)) rc.mineLead(target);
                             }
                             intermediateMove(target);                            
                             if(myLocation.equals(target)){

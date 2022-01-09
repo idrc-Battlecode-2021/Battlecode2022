@@ -34,7 +34,8 @@ public class Miner extends Droid {
                 count++;
             }
         }
-        if (target != null && count < nLead.length){
+        double ratio = 1;
+        if (target != null && count * ratio < nLead.length){
             MapLocation m = target;
             int x = m.x, y=m.y;
             int k = x*64+y;
