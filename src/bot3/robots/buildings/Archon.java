@@ -9,7 +9,7 @@ public class Archon extends Building{
 
     private static int minerBuild = 5; //miners to build
     private static int soldierBuild = 10; //soldiers to build
-    private static int builderBuild = 3; //builders to build
+    private static int builderBuild = 5; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
     private static int labBuild = 1; //labs to build
 

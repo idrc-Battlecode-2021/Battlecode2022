@@ -26,14 +26,7 @@ public class Miner extends Droid {
 
     @Override
     public void run() throws GameActionException {
-        if (target != null){
-            MapLocation m = rc.getLocation();
-            int x = m.x, y=m.y;
-            int k = x*64+y;
-            rc.writeSharedArray(47,k);
-        }
-        rc.setIndicatorString(rc.readSharedArray(47)+"");
-        broadcast();
+         broadcast();
         reassignArchon();
         avoidCharge();
         // update shared array
