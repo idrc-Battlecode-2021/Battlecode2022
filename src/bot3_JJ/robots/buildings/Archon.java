@@ -222,7 +222,7 @@ public class Archon extends Building{
             else{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
-            minerFoundCount = Math.max(rc.readSharedArray(31+archonOrder)-minerBuild+2,0);
+            minerFoundCount = Math.max(rc.readSharedArray(31+archonOrder)-minerBuild+2,0)/2;
             minerCount -= minerFoundCount;
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             //rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
@@ -277,7 +277,7 @@ public class Archon extends Building{
         ;
         else */
         if ((minerCount<minerBuild && soldierCount >= soldierBuild || minerFoundCount < minerBuild) &&
-                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount() ){
+                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
