@@ -78,38 +78,8 @@ public class Archon extends Building{
         soldierBuild = minerBuild;
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
-        labBuild = rc.getMapHeight()/40+1;
+        //labBuild = rc.getMapHeight()/40+1;
     }
-
-    // Checks if this archon can proceed onto the next spawning phase
-    /*
-    public boolean canProceed(int n) throws GameActionException {
-        // First check if other archons are trying to defend
-        int defenseStatus = rc.readSharedArray(56);
-        for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
-                break;
-            }
-            int temp = (int)Math.pow(2,i);
-            int thisDefense = (defenseStatus % (temp*16))/temp;
-            if (thisDefense > 0){
-                return false;
-            }
-        }
-        int archonStatus = rc.readSharedArray(57);
-        for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){ // don't check archons that don't exist
-                continue;
-            }
-            int temp = (int)Math.pow(2,i);
-            int thisPhase = (archonStatus % (temp*16))/temp;
-            if (thisPhase < n){
-                return false;
-            }
-        }
-        return true;
-    }
-    */
     
     public boolean canProceed(int n) throws GameActionException {
         // First check if other archons are trying to defend
@@ -164,29 +134,6 @@ public class Archon extends Building{
         }
         return true;
     }
-    /*
-    public boolean defense() throws GameActionException {
-        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
-        int current = rc.readSharedArray(56);
-        int myValue = (current % (power*16))/power;
-        if (enemies.length>0) rc.writeSharedArray(56, current - myValue*power + power);
-        else{
-            rc.writeSharedArray(56, current - myValue*power);
-            return false;
-        }
-        if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
-            Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
-            int i=0;
-            while (!rc.canBuildRobot(RobotType.SOLDIER,directions[i]) && i<8){
-                i++;
-            }
-            if (rc.canBuildRobot(RobotType.SOLDIER,directions[i])){
-                rc.buildRobot(RobotType.SOLDIER,directions[i]);
-            }
-        }
-        return true;
-    }
-    */
 
     // When surplus is achieved, don't increment buildType, otherwise increment
     public void buildSoldier(boolean incrementBuildType) throws GameActionException {
