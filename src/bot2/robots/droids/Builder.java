@@ -29,16 +29,11 @@ public class Builder extends Droid{
 
     @Override
     public void run() throws GameActionException {
-        //reassignArchon();
-        if (Clock.getBytecodesLeft()<7000){
-            System.out.println("Round "+rc.getRoundNum());
-            System.out.println(Clock.getBytecodesLeft());
-        }
+        reassignArchon();
         //System.out.println(Clock.getBytecodesLeft());
         startingBit = 2*myArchonOrder;
         avoidCharge();
         // update shared array
-        rc.setIndicatorString(myArchonOrder+" ");
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(1, rc.readSharedArray(1)+(int)Math.pow(16,myArchonOrder));
         }
@@ -146,13 +141,19 @@ public class Builder extends Droid{
     }
     public void addTowers() throws GameActionException{
         //System.out.println("Subtracting 180 from "+rc.readSharedArray(11));
-        rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.WATCHTOWER.buildCostLead);
-        int index = myArchonOrder + 5;
-        rc.writeSharedArray(index, rc.readSharedArray(index)+1);
+        try{
+            rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.WATCHTOWER.buildCostLead);
+            int index = myArchonOrder + 5;
+            rc.writeSharedArray(index, rc.readSharedArray(index)+1);
 
-        int power = (int)Math.pow(2,startingBit);
-        int buildCommand = rc.readSharedArray(58) - 2 * power;
-        rc.writeSharedArray(58, buildCommand);
+            int power = (int)Math.pow(2,startingBit);
+            int buildCommand = rc.readSharedArray(58) - 2 * power;
+            rc.writeSharedArray(58, buildCommand);
+        }
+        catch (GameActionException e) {
+            System.out.println(e);
+        }
+
     }
     public void addLabs() throws GameActionException{
         //System.out.println("Subtracting 800 from "+rc.readSharedArray(11));

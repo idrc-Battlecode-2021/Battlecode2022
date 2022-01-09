@@ -18,7 +18,7 @@ public abstract class Robot {
     protected int mapWidth,mapHeight;
     protected int initialArchons;
     protected boolean archonWait = false;
-    protected RobotInfo [] enemyArchons;
+    protected RobotInfo [] enemyArchons = new RobotInfo [4];
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -376,29 +376,26 @@ public abstract class Robot {
         return (int) Math.ceil(Math.floor((1+rubble/(double)10)*myType.movementCooldown)/(double) 10);
     }
 
-    protected void pathfind(MapLocation target) throws GameActionException{
+    protected void pathFind(MapLocation target) throws GameActionException{
         //dijkstra for unknown square
         ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
         HashMap<MapLocation, Integer> dists = new HashMap<>(), movementCosts = new HashMap<>();
         //dist: base distance to target plus rubble penalty, movementCosts: the weighted graph
-		queue.add(myLocation);
-		dists.put(myLocation, 0);
-		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, 15);
+		MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, 4);
 		//Set Radius squared to 15 to try and reduce bytecode
-
+        System.out.println(2+" "+Clock.getBytecodesLeft());
 		for (int i = senseLocations.length; --i >= 0;){
-             //Not Tested but could result in less bytecode used at the cost of not checking all tiles
-            int distance = movementTileDistance(senseLocations[i],target);
+		    //Not Tested but could result in less bytecode used at the cost of not checking all tiles
+            /*int distance = movementTileDistance(senseLocations[i],target);
             if(distance < movementTileDistance(myLocation,target)){
                 queue.add(senseLocations[i]);
                 dists.put(senseLocations[i],distance+turnPenalty(rc.senseRubble(senseLocations[i])));
-            }
-            //queue.add(senseLocations[i]);
-            //dists.put(senseLocations[i], movementTileDistance(senseLocations[i],target)+turnPenalty(rc.senseRubble(senseLocations[i])));
-            //could optimize distance based how many tiles a bot would need to traverse to get there rather than distance squared
-            //since distanceSquaredTo() favors cardinal directions vs intermediate directions
+            }*/
+            queue.add(senseLocations[i]);
+            dists.put(senseLocations[i], movementTileDistance(senseLocations[i],target)+turnPenalty(rc.senseRubble(senseLocations[i])));
 
         }
+        System.out.println(3+" "+Clock.getBytecodesLeft());
         while (queue.size() > 0){
             MapLocation chosen = null;
 			int min= Integer.MAX_VALUE;
@@ -426,48 +423,16 @@ public abstract class Robot {
            	}
            	
         }
-        //TODO: Optimize Code
-        List<MapLocation> local = Arrays.asList(rc.getAllLocationsWithinRadiusSquared(myLocation,2));
-        boolean notMoved = true;
-        while(notMoved){
-            boolean inMovementCost = false;
-            int value = Integer.MAX_VALUE;
-            MapLocation moveLoc = null;
-            for(int i = local.size(); --i>=0;){
-                MapLocation tempLoc = local.get(i);
-                if(inMovementCost){
-                    if(movementCosts.containsKey(tempLoc)){
-                        int temp = movementCosts.get(tempLoc);
-                        if(value > temp){
-                            value = temp;
-                            moveLoc = tempLoc;
-                        }
-                    }
-                }else{
-                    if(movementCosts.containsKey(tempLoc)){
-                        value = movementCosts.get(tempLoc);
-                        moveLoc = tempLoc;
-                        inMovementCost = true;
-                    }else{
-                        int temp = dists.get(tempLoc);
-                        if(value > temp){
-                            value = temp;
-                            moveLoc = tempLoc;
-                        }
-                    }
-                }
-                
-            }
-            Direction dirTo = myLocation.directionTo(moveLoc);
+        MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
+        Arrays.sort(local,(MapLocation o1, MapLocation o2) -> movementCosts.get(o2)-movementCosts.get(o1));
+        for(int i = local.length; --i>=0;){
+            Direction dirTo = myLocation.directionTo(local[i]);
             if(rc.canMove(dirTo)){
                 rc.move(dirTo);
                 myLocation = rc.getLocation();
-                notMoved = false;
-            }else{
-                local.remove(moveLoc);
+                break;
             }
         }
-
 
         //dists now contains a dictionary of smallest distance to every square in sight
         
@@ -617,4 +582,13 @@ public abstract class Robot {
     }
     
     private void updateInternalMap(){}
+
+    private void storeEnemyArchons(){
+        for (RobotInfo r: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
+            if (r.getType()==RobotType.ARCHON){
+                int x = r.getLocation().x, y=r.getLocation().y;
+                x=x/8; y=y/8;
+            }
+        }
+    }
 }

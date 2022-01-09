@@ -225,6 +225,7 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
+            rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
             globalSageCount = rc.readSharedArray(2);
             globalSoldierCount = rc.readSharedArray(3);
             globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);
@@ -257,7 +258,7 @@ public class Archon extends Building{
         //rc.setIndicatorString("minerCount: "+minerCount+" minerBuild: "+minerBuild);
         if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
             indicatorString += "can't proceed, spawn phase: "+spawnPhase;
-            rc.setIndicatorString(indicatorString);
+            //rc.setIndicatorString(indicatorString);
             return;
         }
         int proposedExpenses = rc.readSharedArray(11);
@@ -291,7 +292,7 @@ public class Archon extends Building{
                         msBuildType++;
                         minerIndex++;
                         minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
-                        rc.setIndicatorString("built miner, count: "+minerCount);
+                        //rc.setIndicatorString("built miner, count: "+minerCount);
                         if (!minerDone && minerCount == minerBuild){
                             minerDone = true;
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
@@ -327,7 +328,7 @@ public class Archon extends Building{
                 if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
                     rc.buildRobot(RobotType.BUILDER,directions[i]);
                     builderCount++;
-                    rc.setIndicatorString("builderCount: "+builderCount);
+                    //rc.setIndicatorString("builderCount: "+builderCount);
                     if (!builderDone && builderCount == builderBuild){
                         builderDone = true;
                         rc.writeSharedArray(57, rc.readSharedArray(57)+power);
