@@ -409,24 +409,33 @@ public abstract class Robot {
             }
 
             queue.remove(chosen); //remove it from queue to be checked
+
+            //update adjacent squares to chosen square with rubble values
             MapLocation[] adjacents = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
             for (int i = adjacents.length; --i>=0;){
+                if(myLocation.distanceSquaredTo(adjacents[i]) > rc.getType().visionRadiusSquared){
+                    continue;
+                }
                 int additional_rubble = adjacents[i].isAdjacentTo(myLocation) && rc.canSenseRobotAtLocation(adjacents[i]) ? 101 : rc.senseRubble(adjacents[i]);
+                //^ this is a hack to make squares with robots on them to be unpassable, otherwise will be actual rubble value
                 int tot_rubble = dists.get(chosen) + additional_rubble;
+                //total rubble of path including current adjacent square's additional rubble
+                //v only update distance in dist array if current path to the adjacent square is less than old distance
                 if (tot_rubble < dists.get(adjacents[i])){
                     dists.put(adjacents[i], tot_rubble);
-                    paths.put(adjacents[i], chosen);
+                    paths.put(adjacents[i], chosen); //update paths with new path tree
                 }
             }
 
         }
-
+        
+        //paths now contains a tree with correct shortest path values to every square in sight
 
 	    if(myLocation.distanceSquaredTo(target) > rc.getType().visionRadiusSquared){
             //pick intermediate target with low rubble score to path to as intermediate target if target not in vision
 	        MapLocation intermediateTarget = pickSquaresInDirection(myLocation.directionTo(target), rc.getType().visionRadiusSquared);
 			while(!intermediateTarget.equals(myLocation)){
-                myPath.add(0,intermediateTarget);
+                myPath.add(0,intermediateTarget); //add in reverse order to avoid messing up old path values
                 intermediateTarget = paths.get(intermediateTarget);
             }
 
@@ -436,14 +445,16 @@ public abstract class Robot {
             //generate path directly to target if in vision
             myPath.add(target);
 			while(!target.equals(myLocation)){
-                myPath.add(0,paths.get(target));
+                myPath.add(0,paths.get(target)); //add in reverse order to avoid messing up old path values
                 target = paths.get(target);
             }
         }
+        
+        //finally moving based on path pogga
         Direction moveDir = myLocation.directionTo(paths.get(0));
         if(rc.canMove(moveDir)){
             rc.move(moveDir);
-            myPath.remove(0);
+            myPath.remove(0); //if the bot does move to the square, it will be removed from the path obviously
         }
         
         
