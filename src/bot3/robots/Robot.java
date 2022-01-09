@@ -451,7 +451,7 @@ public abstract class Robot {
         }
         
         //finally moving based on path pogga
-        Direction moveDir = myLocation.directionTo(myPath.et(0));
+        Direction moveDir = myLocation.directionTo(myPath.get(0));
         if(rc.canMove(moveDir)){
             rc.move(moveDir);
             myLocation = rc.getLocation();
