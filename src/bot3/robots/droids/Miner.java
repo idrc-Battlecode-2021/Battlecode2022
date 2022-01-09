@@ -118,7 +118,7 @@ public class Miner extends Droid {
                                     }
                                 }
                             }
-                            if(rc.senseLead(myLocation) > 1){
+                            if(rc.senseLead(myLocation) > 0){
                                 target = myLocation;
                                 lead.put(target,rc.senseLead(myLocation));
                             }
@@ -133,7 +133,7 @@ public class Miner extends Droid {
                             }
                             intermediateMove(target);
                             if(myLocation.equals(target)){
-                                RobotInfo[] nearbyBots = rc.senseNearbyRobots(1, myTeam); //Maybe change to 2
+                                RobotInfo[] nearbyBots = rc.senseNearbyRobots(2, myTeam); //Maybe change to 2
                                 boolean nextToMiner = false;
                                 for (int i = nearbyBots.length; --i >= 0; ) {
                                     if (nearbyBots[i].getType() == myType && !nearbyBots[i].getLocation().equals(myLocation)) {
@@ -142,7 +142,7 @@ public class Miner extends Droid {
                                     }
                                 }
                                 if (nextToMiner) {
-                                    MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 2
+                                    MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2); //Maybe change to 1
                                     int amount = lead.get(target);
                                     int start = (int) (nearbyLead.length * Math.random());
                                     loop1: for (int i = start; i < start + nearbyLead.length; i++) {
@@ -150,7 +150,7 @@ public class Miner extends Droid {
                                         MapLocation[] nextTo = rc.getAllLocationsWithinRadiusSquared(nearbyLead[j], 1);
                                         boolean none = false;
                                         for (int k = nextTo.length; --k >= 0; ) {
-                                            if (rc.canSenseRobotAtLocation(nextTo[k])) {
+                                            if (rc.canSenseRobotAtLocation(nextTo[k]) && rc.senseRobotAtLocation(nextTo[k]).getID() != rc.getID()) {
                                                 continue loop1;
                                             }
                                         }

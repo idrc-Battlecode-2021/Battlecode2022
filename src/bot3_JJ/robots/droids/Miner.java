@@ -123,7 +123,7 @@ public class Miner extends Droid{
                                     }
                                 }
                             }
-                            if(rc.senseLead(myLocation) > 1){
+                            if(rc.senseLead(myLocation) > 0){
                                 target = myLocation;
                                 lead.put(target,rc.senseLead(myLocation));
                             }
