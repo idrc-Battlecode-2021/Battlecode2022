@@ -142,7 +142,7 @@ public class Miner extends Droid{
                                 }
                             }
                             if(nextToMiner){
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 1
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 2
                                 int amount = lead.get(target);
                                 int start= (int)(nearbyLead.length*Math.random());
                                 for(int i = start; i< start+nearbyLead.length; i++) {

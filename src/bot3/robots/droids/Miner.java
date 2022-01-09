@@ -29,7 +29,7 @@ public class Miner extends Droid{
 
     @Override
     public void run() throws GameActionException {
-        rc.setIndicatorString(myArchonOrder+"");
+        broadcast();
         reassignArchon();
         avoidCharge();
         // update shared array
@@ -140,12 +140,23 @@ public class Miner extends Droid{
                                 }
                             }
                             if(nextToMiner){
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 1
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(1); //Maybe change to 2
                                 int amount = lead.get(target);
-                                for(int i = nearbyLead.length; --i>=0;) {
-                                    if (rc.senseLead(nearbyLead[i]) > 0 && !rc.canSenseRobotAtLocation(nearbyLead[i])) {
-                                        target = nearbyLead[i];
-                                        amount = rc.senseLead(nearbyLead[i]);
+                                int start= (int)(nearbyLead.length*Math.random());
+                                for(int i = start; i< start+nearbyLead.length; i++) {
+                                    int j = i%nearbyLead.length;
+                                    MapLocation[] nextTo = rc.getAllLocationsWithinRadiusSquared(nearbyLead[j],1);
+                                    boolean none = false;
+                                    for(int k = nextTo.length; --k >=0;){
+                                        if(rc.canSenseRobotAtLocation(nextTo[k])){
+                                            none = true;
+                                            break;
+                                        }
+                                    }
+                                    if (none) {
+                                        target = nearbyLead[j];
+                                        amount = rc.senseLead(nearbyLead[j]);
+                                        break;
                                     }
                                 }
                                 if(!myLocation.equals(target) && rc.canMove(myLocation.directionTo(target))){

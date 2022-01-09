@@ -369,36 +369,44 @@ public abstract class Robot {
     }
 
     private void pathfind(MapLocation target) throws GameActionException{
-        //dijkstra for unknown square
-        ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
-        HashMap<MapLocation, Integer> dists = new HashMap<>();
-        queue.add(myLocation);
-        dists.put(myLocation, 0);
-        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
-        for (int i = senseLocations.length; --i >= 0;){
-            queue.add(senseLocations[i]);
-            dists.put(senseLocations[i], Integer.MAX_VALUE);
-        }
-        while (queue.size() > 0){
-            MapLocation chosen = null;
-            int min= Integer.MAX_VALUE;
-            for(MapLocation m : queue){
-                if(dists.get(m) < min){
-                    min = dists.get(m);
-                    chosen = m;
-                }
-            }
-            
-            queue.remove(chosen);
-            MapLocation[] temp = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
-            for (int i = temp.length; --i>=0;){
-                int tot_rubble = dists.get(chosen) + rc.senseRubble(temp[i]);
-                if (tot_rubble < dists.get(temp[i])){
-                    dists.put(temp[i], tot_rubble);
-                }
-            }
-            
-        }
+        if(myLocation.distanceSquaredTo(target) > rc.getType().visionRadiusSquared){
+	        //dijkstra for unknown square
+	        ArrayList<MapLocation> queue = new ArrayList<MapLocation>();
+	        HashMap<MapLocation, Integer> dists = new HashMap<>();
+	        HashMap<MapLocation, MapLocation> paths = new HashMap<>(); //paths[node] = previous
+	        queue.add(myLocation);
+	        dists.put(myLocation, 0);
+	        MapLocation[] senseLocations = rc.getAllLocationsWithinRadiusSquared(myLocation, rc.getType().visionRadiusSquared);
+	        for (int i = senseLocations.length; --i >= 0;){
+	            queue.add(senseLocations[i]);
+	            dists.put(senseLocations[i], Integer.MAX_VALUE);
+	        }
+	        while (queue.size() > 0){
+	            MapLocation chosen = null;
+	            int min= Integer.MAX_VALUE;
+	            for(MapLocation m : queue){
+	                if(dists.get(m) < min){
+	                    min = dists.get(m);
+	                    chosen = m;
+	                }
+	            }
+	            
+	            queue.remove(chosen);
+	            MapLocation[] adjacents = rc.getAllLocationsWithinRadiusSquared(chosen, 2);
+	            for (int i = adjacents.length; --i>=0;){
+	                int tot_rubble = dists.get(chosen) + rc.senseRubble(adjacents[i]);
+	                if (tot_rubble < dists.get(adjacents[i])){
+	                    dists.put(adjacents[i], tot_rubble);
+	                    paths.put(adjacents[i], chosen);
+	                }
+	            }
+	            
+	        }
+	        
+	         
+	        
+	        //MapLocation intermediateTarget = (myLocation.directionTo(target));
+	    }
         
         //dists now contains a dictionary of smallest distance to every square in sight
         

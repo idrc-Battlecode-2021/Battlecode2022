@@ -19,6 +19,10 @@ public abstract class Robot {
     protected int initialArchons;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> xReflect = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> yReflect = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> rotate = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> myArchons = new ArrayList<>();
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -570,6 +574,53 @@ public abstract class Robot {
         int x = n/64, y=n%64;
         if (enemyArchons.contains(new MapLocation(x,y))){
             enemyArchons.remove(new MapLocation(x,y));
+        }
+    }
+    public void readArchonLocs() throws GameActionException{
+        int n1 = rc.readSharedArray(49);
+        int x1=n1%16;
+        int y1=(n1/16)%16;
+        int x2=(n1/256)%16;
+        int y2=(n1/4096)%16;
+        MapLocation m1 = new MapLocation (x1, y1);
+        MapLocation m2 = new MapLocation (x2, y2);
+        MapLocation bad = new MapLocation (0,0);
+        if (m1!= bad){
+            myArchons.add(m1);
+        }
+        if (m2!=bad){
+            myArchons.add(m2);
+        }
+        n1 = rc.readSharedArray(50);
+        x1=n1%16;
+        y1=(n1/16)%16;
+        x2=(n1/256)%16;
+        y2=(n1/4096)%16;
+        m1 = new MapLocation (x1, y1);
+        m2 = new MapLocation (x2, y2);
+        if (m1!= bad){
+            myArchons.add(m1);
+        }
+        if (m2!=bad){
+            myArchons.add(m2);
+        }
+    }
+    public void possibleArchonLocs() throws GameActionException{
+        // Get Archon Positions
+        // Get Map Size
+        // Reflect each archon position over x and over y
+        // Rotate 180 degrees
+        MapLocation [] myArchonLocs = new MapLocation[4];
+        MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
+        int centerX = center.x, centerY=center.y;
+        ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
+        //(2,36) --> (57, 23)
+        for (MapLocation m: myArchonLocs){
+            int x = m.x;
+            int y = m.y;
+            xReflect.add(new MapLocation(2*centerX -x, y));
+            yReflect.add(new MapLocation(x, 2*centerY-y));
+            rotate.add(new MapLocation(2*centerX-x, 2*centerY-y));
         }
     }
 }

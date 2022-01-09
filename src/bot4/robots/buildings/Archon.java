@@ -68,6 +68,19 @@ public class Archon extends Building{
             }
         }
         rc.writeSharedArray(63-archonOrder,rc.getID()+1);
+        MapLocation myLocation = rc.getLocation();
+        int x = myLocation.x/4;
+        int y = myLocation.y/4;
+        if (archonOrder<=1){
+            int temp = (int)Math.pow(256,archonOrder);
+            rc.writeSharedArray(49, rc.readSharedArray(49)+x*temp);
+            rc.writeSharedArray(49, rc.readSharedArray(49)+y*(temp*16));
+        }
+        else{
+            int temp = (int)Math.pow(256,archonOrder-2);
+            rc.writeSharedArray(50, rc.readSharedArray(50)+x*temp);
+            rc.writeSharedArray(50, rc.readSharedArray(50)+y*(temp*16));
+        }
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
         int leadTiles = rc.senseNearbyLocationsWithLead(34).length;

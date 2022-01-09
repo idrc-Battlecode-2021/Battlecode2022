@@ -173,7 +173,6 @@ public class Archon extends Building{
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
-        rc.setIndicatorString(archonOrder+"");
         //rc.setIndicatorString("spawn phase: "+spawnPhase);
         if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
             // update spawnphase array (57)
@@ -259,7 +258,7 @@ public class Archon extends Building{
             //rc.setIndicatorString(indicatorString);
             return;
         }
-        int proposedExpenses = Math.min(rc.readSharedArray(11),180);
+        int proposedExpenses = rc.readSharedArray(11);
         /*;
         if (rc.getTeamLeadAmount(rc.getTeam())>=1000+proposedExpenses){
             //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
@@ -291,7 +290,7 @@ public class Archon extends Building{
                 }
             }
             else{
-                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
+                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead+proposedExpenses){
                     Direction directions[] = Direction.allDirections();
                     int i=0;
                     while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
@@ -331,7 +330,7 @@ public class Archon extends Building{
         }
         else if (builderCount<builderBuild){
             //rc.setIndicatorString("builder phase");
-            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
+            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead+proposedExpenses){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
                 while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
@@ -400,9 +399,9 @@ public class Archon extends Building{
                 else{
                     mod=3;
                 }
-                //rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
+                rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
                 //System.out.println("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
-                if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
+                if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead+proposedExpenses){
                     //rc.setIndicatorString("build watchtower");
                     int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                     int currentValue = rc.readSharedArray(58); 
@@ -413,7 +412,7 @@ public class Archon extends Building{
                     rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
                 }
-                else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+                else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead+proposedExpenses){
                     //rc.setIndicatorString("build soldier");
                     Direction directions[] = Direction.allDirections();
                     int i=0;
@@ -427,7 +426,7 @@ public class Archon extends Building{
                         soldierCount++;
                     }
                 }
-                else if (wsBuildType%mod==2 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
+                else if (wsBuildType%mod==2 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead+proposedExpenses){
 
                     Direction directions[] = Direction.allDirections();
                     int i=0;
@@ -457,6 +456,6 @@ public class Archon extends Building{
                 }
             }
         }
+        rc.setIndicatorString(indicatorString);
     }
-
 }
