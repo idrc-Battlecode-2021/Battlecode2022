@@ -1,4 +1,4 @@
-package bot3.robots.buildings;
+package bot3_JJ.robots.buildings;
 
 import battlecode.common.*;
 
@@ -65,9 +65,9 @@ public class Archon extends Building{
         else {
             while(rc.readSharedArray(63-archonOrder)>0){
                 archonOrder++;
-            }   
-            rc.writeSharedArray(63-archonOrder,rc.getID());
+            }
         }
+        rc.writeSharedArray(63-archonOrder,rc.getID()+1);
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
         int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
@@ -155,7 +155,7 @@ public class Archon extends Building{
             }
         }
         catch(Exception e){
-            System.out.println(Integer.toBinaryString(rc.readSharedArray(56)));
+            //System.out.println(Integer.toBinaryString(rc.readSharedArray(56)));
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
@@ -198,7 +198,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(63-archonOrder,rc.getID());
             }
             power = (int)Math.pow(16,archonOrder);
-            System.out.println("Reassigning archonOrder "+archonOrder);
+            //System.out.println("Reassigning archonOrder "+archonOrder);
             initialArchons = rc.getArchonCount();
         }
         if (globalLabCount==labBuild && spawnPhase==2){
@@ -271,7 +271,7 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if (minerCount<minerBuild){
+        if (minerCount<minerBuild && rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
             //rc.setIndicatorString("phase 1");
             if (!minerDone && msBuildType % 4 == 0){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
@@ -288,8 +288,7 @@ public class Archon extends Building{
                         soldierCount++;
                     }
                 }
-            }
-            else{
+            } else{
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
                     int i=0;
@@ -327,8 +326,7 @@ public class Archon extends Building{
                     }
                 }
             }
-        }
-        else if (builderCount<builderBuild){
+        } else if (builderCount<builderBuild){
             //rc.setIndicatorString("builder phase");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -399,7 +397,7 @@ public class Archon extends Building{
                 else{
                     mod=3;
                 }
-                //rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
+                rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
                 //System.out.println("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
                 if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
                     rc.setIndicatorString("build watchtower");
@@ -412,7 +410,7 @@ public class Archon extends Building{
                     rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
                 }
-                else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+                else if ((rc.getTeamLeadAmount(rc.getTeam()) > 1000*rc.getArchonCount() || wsBuildType%mod==0) && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     rc.setIndicatorString("build soldier");
                     Direction directions[] = Direction.allDirections();
                     int i=0;
