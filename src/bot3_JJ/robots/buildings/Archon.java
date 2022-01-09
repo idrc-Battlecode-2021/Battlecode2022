@@ -3,12 +3,12 @@ package bot3_JJ.robots.buildings;
 import battlecode.common.*;
 
 public class Archon extends Building{
-    private static int minerCount, builderCount, sageCount, soldierCount, labCount, watchtowerCount;
+    private static int minerCount, minerFoundCount, builderCount, sageCount, soldierCount, labCount, watchtowerCount;
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
 
     private static int minerBuild = 5; //miners to build
-    private static int soldierBuild = 10; //soldiers to build
+    private static int soldierBuild = 15; //soldiers to build
     private static int builderBuild = 4; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
     private static int labBuild = 1; //labs to build
@@ -221,7 +221,8 @@ public class Archon extends Building{
             else{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
-            minerCount -= Math.max(rc.readSharedArray(31+archonOrder)-2,0);
+            minerFoundCount = Math.max(rc.readSharedArray(31+archonOrder)-3,0);
+            minerCount -= minerFoundCount;
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             //rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
             globalSageCount = rc.readSharedArray(2);
@@ -274,7 +275,8 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if (minerCount<minerBuild && rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
+        if ((minerCount<minerBuild && soldierCount >= soldierBuild || minerFoundCount < minerBuild) &&
+                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount() ){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -298,7 +300,7 @@ public class Archon extends Building{
                 }
             }
 
-        } else if (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2)){
+        } else if (soldierCount >= soldierBuild && (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2))){
             //rc.setIndicatorString("builder phase");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -335,7 +337,7 @@ public class Archon extends Building{
             else */
             //rc.setIndicatorString("late game");
             //rc.setIndicatorString("done with lab");
-            if (rc.getTeamLeadAmount(myTeam)>1600*rc.getArchonCount() && globalLabCount < 5){
+            if (rc.getTeamLeadAmount(myTeam)>2500*rc.getArchonCount() && globalLabCount < 4){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead+proposedExpenses){
                     //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                     int temp = (int)Math.pow(4,archonOrder);
@@ -361,7 +363,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                 rc.writeSharedArray(58, buildCommand);
             }
-            else if ((rc.getTeamLeadAmount(rc.getTeam()) > 1000*rc.getArchonCount() || wsBuildType%mod==0 || soldierCount < soldierBuild) && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+            if ((rc.getTeamLeadAmount(rc.getTeam()) > 1000*rc.getArchonCount() || wsBuildType%mod==0 || soldierCount < soldierBuild) && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                 rc.setIndicatorString("build soldier");
                 Direction directions[] = Direction.allDirections();
                 int i=0;
