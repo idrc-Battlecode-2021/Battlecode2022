@@ -34,14 +34,14 @@ public class Watchtower extends Building {
         retransform();
         if(isDefensive){
             rc.setIndicatorString(isDefensive+" ");
-
+            MapLocation archonLoc = rc.senseRobot(myArchonID).getLocation();
             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
-            if (rc.getLocation().isWithinDistanceSquared(rc.senseRobot(myArchonID).getLocation(),2)){
+            if (rc.getLocation().isWithinDistanceSquared(archonLoc,2)){
                 if (rc.getMode()!=RobotMode.PORTABLE){
                     rc.transform();
                 }
                 else{
-                    //rc.intermediateMove(rc.getLocation().add(rc.getLocation().directionTo()))
+                    intermediateMove(rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite()));
                 }
             }
             else{
