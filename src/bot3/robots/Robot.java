@@ -24,6 +24,7 @@ public abstract class Robot {
     //OLD Movement Method Fields
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
+    protected ArrayList<MapLocation> myPath = new ArrayList<>();
     // -1 = unknown, otherwise amount of rubble
 
     public Robot( RobotController rc){
@@ -405,7 +406,11 @@ public abstract class Robot {
 	        
 	         
 	        
-	        //MapLocation intermediateTarget = (myLocation.directionTo(target));
+	        MapLocation intermediateTarget = pickSquaresInDirection(myLocation.directionTo(target), rc.getType().visionRadiusSquared);
+			
+			//while(intermediateTarget){
+                
+            //}
 	    }
         
         //dists now contains a dictionary of smallest distance to every square in sight
@@ -421,11 +426,291 @@ public abstract class Robot {
             //note to self: use internal map to find closest known square to target? instead of current
     }
     
-    private MapLocation[] pickSquaresInDirection(double angle, int dist){
+    private MapLocation pickSquaresInDirection(Direction d, int dist) throws GameActionException{
+        MapLocation[] ml;
         switch(dist){
             case 20:
+				switch(d){
+                    case NORTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + 4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
 
-            case 34:	
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case EAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 4, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + -4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case WEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -4, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 3, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + 2),
+                            	new MapLocation(myLocation.x + 2, myLocation.y + 3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 3, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + -2),
+                            	new MapLocation(myLocation.x + 2, myLocation.y + -3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -3, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + -2),
+                            	new MapLocation(myLocation.x + -2, myLocation.y + -3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -3, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + 2),
+                            	new MapLocation(myLocation.x + -2, myLocation.y + 3)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+
+                }
+            	break;
+            case 34:
+            	switch(d){
+                    case NORTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + 5),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + 5),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + 5)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case EAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 5, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + 5, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + 5, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTH:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -1, myLocation.y + -5),
+                            	new MapLocation(myLocation.x + 0, myLocation.y + -5),
+                            	new MapLocation(myLocation.x + 1, myLocation.y + -5)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case WEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -5, myLocation.y + -1),
+                            	new MapLocation(myLocation.x + -5, myLocation.y + 0),
+                            	new MapLocation(myLocation.x + -5, myLocation.y + 1)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + 4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHEAST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + 4, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + 4, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + 3, myLocation.y + -4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case SOUTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -4, myLocation.y + -4),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + -3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + -4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+                    case NORTHWEST:
+                    	ml = new MapLocation[]{
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 4),
+                            	new MapLocation(myLocation.x + -4, myLocation.y + 3),
+                            	new MapLocation(myLocation.x + -3, myLocation.y + 4)
+                            };
+                        if(rc.senseRubble(ml[0]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[0]) <= rc.senseRubble(ml[2])){
+							return ml[0];
+                        }
+                        if(rc.senseRubble(ml[1]) <= rc.senseRubble(ml[0]) && rc.senseRubble(ml[1]) <= rc.senseRubble(ml[2])){
+							return ml[1];
+
+                        }
+                        if(rc.senseRubble(ml[2]) <= rc.senseRubble(ml[1]) && rc.senseRubble(ml[2]) <= rc.senseRubble(ml[0])){
+							return ml[2];
+
+                        }
+
+                }
+            	break;	
         }
         return null;
         

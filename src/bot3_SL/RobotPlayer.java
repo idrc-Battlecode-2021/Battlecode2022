@@ -1,14 +1,14 @@
-package bot4;
+package bot3_SL;
 
 import battlecode.common.*;
-import bot4.robots.Robot;
-import bot4.robots.buildings.Archon;
-import bot4.robots.buildings.Lab;
-import bot4.robots.buildings.Watchtower;
-import bot4.robots.droids.Builder;
-import bot4.robots.droids.Miner;
-import bot4.robots.droids.Sage;
-import bot4.robots.droids.Soldier;
+import bot3_SL.robots.Robot;
+import bot3_SL.robots.buildings.Archon;
+import bot3_SL.robots.buildings.Lab;
+import bot3_SL.robots.buildings.Watchtower;
+import bot3_SL.robots.droids.Builder;
+import bot3_SL.robots.droids.Miner;
+import bot3_SL.robots.droids.Sage;
+import bot3_SL.robots.droids.Soldier;
 
 public strictfp class RobotPlayer {
     static RobotController rc;

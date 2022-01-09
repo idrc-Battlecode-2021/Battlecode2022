@@ -1,4 +1,4 @@
-package bot4.robots.droids;
+package bot3_SL.robots.droids;
 
 import battlecode.common.*;
 
@@ -6,14 +6,15 @@ public class Soldier extends Droid{
     private MapLocation target;
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
-    private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private boolean defensive = false;
+    private MapLocation center;
     public Soldier(RobotController rc) {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
+        center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         readArchonLocs();
         possibleArchonLocs();
         parseAnomalies();
@@ -32,6 +33,8 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        checkSymmetry();
+        readSymmetry();
         rc.setIndicatorString(myArchonOrder+"");
         avoidCharge();
         // update shared array

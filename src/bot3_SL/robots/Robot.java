@@ -1,7 +1,7 @@
-package bot4.robots;
+package bot3_SL.robots;
 
 import battlecode.common.*;
-import bot4.util.Constants;
+import bot3_SL.util.Constants;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -19,11 +19,8 @@ public abstract class Robot {
     protected int initialArchons;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
-    protected ArrayList <MapLocation> xReflect = new ArrayList<MapLocation>();
-    protected ArrayList <MapLocation> yReflect = new ArrayList<MapLocation>();
-    protected ArrayList <MapLocation> rotate = new ArrayList<MapLocation>();
-    protected ArrayList <MapLocation> myArchons = new ArrayList<>();
-    protected int symmetry = 0;
+    protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> enemyLocs = new ArrayList<>();
     protected Direction initDirection;
     protected Direction[] directions;
     //OLD Movement Method Fields
@@ -554,20 +551,30 @@ public abstract class Robot {
     
     private void updateInternalMap(){}
 
-
+    public void readSymmetry() throws GameActionException{
+        int n = rc.readSharedArray(48);
+        if (n==0){
+            return;
+        }
+        int y=n%64;
+        int x = (n/64)%64;
+        if (n>4096){
+            enemyArchons.remove(new MapLocation(x,y));
+            return;
+        }
+        
+    }
     public void checkSymmetry() throws GameActionException{
-        boolean close = false;
-        if (symmetry==0){
-            for (MapLocation m: xReflect){
-                if (rc.canSenseLocation(m)){
-                    if (rc.canSenseRobotAtLocation(m)){
-                        RobotInfo r = rc.senseRobotAtLocation(m);
-                        if (r.getTeam()==myTeam.opponent() && r.getType()==RobotType.ARCHON){
-                            symmetry = 1;
-                            rc.writeSharedArray(48,1);
-                        }
+        for (MapLocation m: enemyArchons){
+            if (rc.canSenseLocation(m)){
+                for (RobotInfo ro: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())){
+                    if(ro.getType()==RobotType.ARCHON){
+                        rc.writeSharedArray(48, m.x*64+m.y);
+                        return;
                     }
                 }
+                rc.writeSharedArray(48, 4096+m.x*64+m.y);
+                return;
             }
         }
     }
@@ -608,9 +615,9 @@ public abstract class Robot {
         for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
-            xReflect.add(new MapLocation(2*centerX -x, y));
-            yReflect.add(new MapLocation(x, 2*centerY-y));
-            rotate.add(new MapLocation(2*centerX-x, 2*centerY-y));
+            enemyArchons.add(new MapLocation(2*centerX -x, y));
+            enemyArchons.add(new MapLocation(x, 2*centerY-y));
+            enemyArchons.add(new MapLocation(2*centerX-x, 2*centerY-y));
         }
     }
 }

@@ -359,14 +359,36 @@ public class Archon extends Building{
                 }
             }
             else{
-                int mod;
+                int mod, cost = 0;
                 if (minerCount>=60){
                     mod=2;
                 }
                 else{
                     mod=3;
                 }
-                //indicatorString = "bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses;
+                switch(wsBuildType%mod){
+                    case 0:
+                        cost=RobotType.SOLDIER.buildCostLead; break;
+                    case 1:
+                        cost=RobotType.WATCHTOWER.buildCostLead; break;
+                    case 2:
+                        cost=RobotType.MINER.buildCostLead; break;
+                }
+                int archonBuildStatus = rc.readSharedArray(11);
+                int diff = archonBuildStatus - archonOrder;
+                if (diff<0){
+                    if (rc.getTeamLeadAmount(rc.getTeam())-180*-1*diff<cost){
+                        rc.setIndicatorString(indicatorString);
+                        return;
+                    }
+                }
+                if (diff>0){
+                    int space = rc.getArchonCount()-diff;
+                    if (rc.getTeamLeadAmount(rc.getTeam())-180*space<cost){
+                        rc.setIndicatorString(indicatorString);
+                        return;
+                    }
+                }
                 if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
                     int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                     int currentValue = rc.readSharedArray(58); 
@@ -374,6 +396,14 @@ public class Archon extends Building{
                     int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
                     watchtowerCount++;
                     wsBuildType++;
+                    if (diff==0){
+                        if (archonBuildStatus == rc.getArchonCount()-1){
+                            rc.writeSharedArray(11,0);
+                        }
+                        else{
+                            rc.writeSharedArray(11,archonBuildStatus+1);
+                        }
+                    }
                     //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
                 }
@@ -384,6 +414,14 @@ public class Archon extends Building{
                         i++;
                     }
                     if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
+                        if (diff==0){
+                            if (archonBuildStatus == rc.getArchonCount()-1){
+                                rc.writeSharedArray(11,0);
+                            }
+                            else{
+                                rc.writeSharedArray(11,archonBuildStatus+1);
+                            }
+                        }
                         soldierIndex = (soldierIndex+i)%8;
                         wsBuildType++;
                         rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
@@ -398,6 +436,14 @@ public class Archon extends Building{
                         i++;
                     }
                     if (rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8])){
+                        if (diff==0){
+                            if (archonBuildStatus == rc.getArchonCount()-1){
+                                rc.writeSharedArray(11,0);
+                            }
+                            else{
+                                rc.writeSharedArray(11,archonBuildStatus+1);
+                            }
+                        }
                         minerIndex = (minerIndex+i)%8;
                         wsBuildType++;
                         rc.buildRobot(RobotType.MINER,directions[minerIndex]);

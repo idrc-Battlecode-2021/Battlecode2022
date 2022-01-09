@@ -1,4 +1,4 @@
-package bot4.robots.buildings;
+package bot3_SL.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
@@ -32,6 +32,8 @@ public class Watchtower extends Building {
     }
     @Override
     public void run() throws GameActionException {
+        checkSymmetry();
+        readSymmetry();
         avoidFury();
         retransform();
         if(isDefensive){

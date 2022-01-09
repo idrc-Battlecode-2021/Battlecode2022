@@ -237,9 +237,14 @@ public class Miner extends Droid{
                 gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));
                 break searchBlock;
             }
-            for(int i = nearbyLead.length; --i>=0;){
+            //Chec
+            loop1: for(int i = nearbyLead.length; --i>=0;){
                 RobotInfo robot;
                 MapLocation[] nearbyTiles = rc.	getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
+                for(int j = nearbyTiles.length; --j>=0;){
+                    if(rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null &&
+                    robot.getID() != rc.getID()) continue loop1;
+                }
                 if(rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
                     if(robot.getTeam() == myTeam && robot.getType() == myType){
                         continue;
