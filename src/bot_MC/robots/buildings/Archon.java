@@ -262,7 +262,7 @@ public class Archon extends Building{
             else{
                 mod=2;
             }
-            indicatorString += " ";
+            indicatorString += " "+minerBuild;
             //TODO: make archons spawn in direction of deposits
             if (!minerDone && msBuildType % mod == 1){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
@@ -365,7 +365,7 @@ public class Archon extends Building{
             }
             else{
                 int mod, cost = 0;
-                if (minerCount>=60){
+                if (minerCount>=minerBuild*2/3){ 
                     mod=2;
                 }
                 else{

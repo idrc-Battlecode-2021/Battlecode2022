@@ -52,7 +52,8 @@ public class Soldier extends Droid{
                 if(movementTileDistance(target,myLocation) > movementTileDistance(temp,myLocation)) target = temp;
             }
         }
-        if(target != null){
+        if(shouldAttack()){
+                    if(target != null){
             intermediateMove(target);
             if(rc.canAttack(target))rc.attack(target);
         }
@@ -99,6 +100,12 @@ public class Soldier extends Droid{
                         tryMoveMultiple(initDirection);
                     }
                 }
+            }
+        }
+        }
+        else{
+            if(rc.getLocation().distanceSquaredTo(archonLoc)<3){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
             }
         }
 
