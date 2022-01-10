@@ -1,7 +1,7 @@
 package examplefuncsplayer3;
 
 import battlecode.common.*;
-import bot3_JJ.util.Constants;
+import bot3_JJ2.util.Constants;
 
 import java.util.HashSet;
 import java.util.Random;
