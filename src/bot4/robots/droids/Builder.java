@@ -54,10 +54,19 @@ public class Builder extends Droid{
                 return;
             }
         }
+        //Moves away from archons to not distrub its spawning rates
+        RobotInfo[] checkArchons = rc.senseNearbyRobots(5,myTeam);
+        for(int i = checkArchons.length; --i>=0;){
+            if(checkArchons[i].getType().equals(RobotType.ARCHON)){
+                tryMoveMultiple(myLocation.directionTo(checkArchons[i].getLocation()).opposite());
+            }
+        }
+
         boolean built = false;
         if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180){
             built = build(2);
         }
+        
         boolean nearPrototype = false;
         MapLocation prototypeLoc = null;
         RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);
@@ -104,13 +113,7 @@ public class Builder extends Droid{
                 }
                 //System.out.println("After random: "+Clock.getBytecodesLeft());
             }
-        //Moves away from archons to not distrub its spawning rates
-        RobotInfo[] checkArchons = rc.senseNearbyRobots(5,myTeam);
-        for(int i = checkArchons.length; --i>=0;){
-            if(checkArchons[i].getType().equals(RobotType.ARCHON)){
-                tryMoveMultiple(myLocation.directionTo(checkArchons[i].getLocation()).opposite());
-            }
-        }
+
     }
     public boolean canHeal() throws GameActionException{
         if(rc.readSharedArray(59)==0){
