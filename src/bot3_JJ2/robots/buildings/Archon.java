@@ -174,7 +174,6 @@ public class Archon extends Building{
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
-        //rc.setIndicatorString("spawn phase: "+spawnPhase);
         if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
             // update spawnphase array (57)
             int i=0;
@@ -223,9 +222,7 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             minerFoundCount = rc.readSharedArray(31+archonOrder);
-            minerCount -= Math.max((minerFoundCount-minerBuild+2),0);
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
-            //rc.setIndicatorString("builder info: "+Integer.toBinaryString(rc.readSharedArray(1)));
             globalSageCount = rc.readSharedArray(2);
             globalSoldierCount = rc.readSharedArray(3);
             globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);
@@ -258,11 +255,6 @@ public class Archon extends Building{
         }
         // find individual lab count
         labCount = (rc.readSharedArray(4) % (power*16))/power;
-        if (!canProceed(spawnPhase)){ // shouldn't continue if other archons haven't caught up with spawning
-            indicatorString += "can't proceed, spawn phase: "+spawnPhase;
-            rc.setIndicatorString(indicatorString);
-            return;
-        }
         int proposedExpenses = Math.min(rc.readSharedArray(11),180);
         /*;
         if (rc.getTeamLeadAmount(rc.getTeam())>=1000+proposedExpenses){
@@ -276,8 +268,8 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if ((minerCount<minerBuild && globalSoldierCount >= soldierBuild*rc.getArchonCount() || minerFoundCount < minerBuild) &&
-                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount() && minerCount < 150/rc.getArchonCount()){
+        if ((minerCount-minerFoundCount<minerBuild && globalSoldierCount >= soldierBuild*rc.getArchonCount() || minerFoundCount < minerBuild) &&
+                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount() && minerCount < 180/rc.getArchonCount()){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -291,7 +283,6 @@ public class Archon extends Building{
                     msBuildType++;
                     minerIndex++;
                     minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
-                    //rc.setIndicatorString("built miner, count: "+minerCount);
                     if (!minerDone && minerCount == minerBuild){
                         minerDone = true;
                         rc.writeSharedArray(57, rc.readSharedArray(57)+power);
@@ -302,7 +293,6 @@ public class Archon extends Building{
             }
 
         } else if (globalSoldierCount >= soldierBuild*rc.getArchonCount() && (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2))){
-            //rc.setIndicatorString("builder phase");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -312,7 +302,6 @@ public class Archon extends Building{
                 if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
                     rc.buildRobot(RobotType.BUILDER,directions[i]);
                     builderCount++;
-                    //rc.setIndicatorString("builderCount: "+builderCount);
                     if (!builderDone && builderCount == builderBuild){
                         builderDone = true;
                         rc.writeSharedArray(57, rc.readSharedArray(57)+power);
@@ -322,7 +311,6 @@ public class Archon extends Building{
             }
         }
         else {
-            //rc.setIndicatorString("lab");
             /*
             if (globalSoldierCount+globalWatchtowerCount>40 && rc.getTeamGoldAmount(rc.getTeam())>=RobotType.SAGE.buildCostGold){
                 Direction[] directions = Direction.allDirections();
@@ -336,8 +324,6 @@ public class Archon extends Building{
                 }
             }
             else */
-            //rc.setIndicatorString("late game");
-            //rc.setIndicatorString("done with lab");
             if (rc.getTeamLeadAmount(myTeam)>4000*rc.getArchonCount() && globalLabCount < 4){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead+proposedExpenses){
                     //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
@@ -351,10 +337,8 @@ public class Archon extends Building{
                 }
             }
             int mod =2;
-            rc.setIndicatorString("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
             //System.out.println("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
             if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead && (globalSoldierCount >= soldierBuild2*rc.getArchonCount())){
-                rc.setIndicatorString("build watchtower");
                 int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                 int currentValue = rc.readSharedArray(58);
                 int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
@@ -365,7 +349,6 @@ public class Archon extends Building{
                 rc.writeSharedArray(58, buildCommand);
             }
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
-                rc.setIndicatorString("build soldier");
                 Direction directions[] = Direction.allDirections();
                 int i=0;
                 while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
