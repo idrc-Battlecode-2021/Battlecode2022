@@ -364,6 +364,7 @@ public abstract class Robot {
                 case SAGE:
                 case BUILDER:
                 case SOLDIER:
+                case WATCHTOWER:
                     seesAttackers = true;
             }
         }
