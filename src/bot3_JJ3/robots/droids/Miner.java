@@ -269,11 +269,14 @@ public class Miner extends Droid{
                 gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));
                 break searchBlock;
             }
-            for(int i = nearbyLead.length; --i>=0;){
+            loop1: for(int i = nearbyLead.length; --i>=0;){
                 RobotInfo robot;
-                if(rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
-                    if(robot.getTeam() == myTeam && robot.getType() == myType){
-                        continue;
+                MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
+                for(int j = nearbyLocs.length; --j>=0;){
+                    if(!myLocation.equals(nearbyLocs[j]) && rc.canSenseRobotAtLocation(nearbyLocs[j]) && (robot = rc.senseRobotAtLocation(nearbyLocs[j]))!=null){
+                        if(robot.getTeam() == myTeam && robot.getType() == myType){
+                            continue loop1;
+                        }
                     }
                 }
                 int amount = rc.senseLead(nearbyLead[i]);
@@ -328,16 +331,22 @@ public class Miner extends Droid{
                 return ((Integer)movementTileDistance(entry1.getKey(),myLocation)).compareTo(movementTileDistance(entry2.getKey(),myLocation));
             }
         });*/
-        for(Map.Entry<MapLocation, Integer> entry : entries){
+        loop1: for(Map.Entry<MapLocation, Integer> entry : entries){
             MapLocation location = entry.getKey();
             if(rc.canSenseLocation(location)){
                 RobotInfo robot;
-                if(rc.canSenseRobotAtLocation(location) && (robot = rc.senseRobotAtLocation(location))!=null){
-                    if(robot.getTeam() == myTeam && robot.getType() == myType){
-                        lead.remove(location);
+                MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(location,1);
+                for(int j = nearbyLocs.length; --j>=0;){
+                    if(!myLocation.equals(nearbyLocs[j]) && rc.canSenseRobotAtLocation(nearbyLocs[j]) && (robot = rc.senseRobotAtLocation(nearbyLocs[j]))!=null){
+                        if(robot.getTeam() == myTeam && robot.getType() == myType){
+                            lead.remove(location);
+                            continue loop1;
+                        }
                     }
-                }else if(rc.senseLead(location) < 2){
+                }
+                if(rc.senseLead(location) < 6){
                     lead.remove(location);
+                    continue loop1;
                 }else{
                     loc = location;break;
                 }
