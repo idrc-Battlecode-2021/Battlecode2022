@@ -2,6 +2,7 @@
 Uses bot_mc_2 as base
 
 building builders and watchtowers when we have a surplus (after miner encounters enemy)
+mirror/symmetry enemy archon
 
 ## Shared Array
 12 - location of first enemy troop

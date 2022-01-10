@@ -85,14 +85,14 @@ public class Soldier extends Droid{
                 }
             }
             if(rc.readSharedArray(40) == 1){
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+                if (rc.getLocation().distanceSquaredTo(archonLoc)<5){
                     Direction d = myLocation.directionTo(center);
                     tryMoveMultiple(d);
                 }
                 else if(!tryMoveMultipleNew()){
                     tryMoveMultiple(initDirection);
                 }
-            }else if(rc.senseNearbyRobots(2).length>1){
+            }else if(rc.senseNearbyRobots(2).length>2){
                 MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
                 int start = (int) (local.length * Math.random());
                 loop1: for (int i = start; i < start + local.length; i++) {

@@ -53,19 +53,49 @@ public class Watchtower extends Building {
                         }
                         else{
                             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
-                            attackDefensive();
+                            MapLocation target = selectPriorityTarget();
+                            if (target!=rc.getLocation()){
+                                if (rc.canAttack(target)){
+                                    rc.attack(target);
+                                }
+                                else if (rc.isActionReady()){
+                                    intermediateMove(target);
+                                }
+                                return;
+                            }
+                            //attackDefensive();
                         }
                     }
                 }
             }
             else{
                 if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
-                attackDefensive();
+                MapLocation target = selectPriorityTarget();
+                if (target!=rc.getLocation()){
+                    if (rc.canAttack(target)){
+                        rc.attack(target);
+                    }
+                    else if (rc.isActionReady()){
+                        intermediateMove(target);
+                    }
+                    return;
+                }
+                //attackDefensive();
             }
         }
         else{
             broadcast();
-            attackDefensive();
+            MapLocation target = selectPriorityTarget();
+            if (target!=rc.getLocation()){
+                if (rc.canAttack(target)){
+                    rc.attack(target);
+                }
+                else if (rc.isActionReady()){
+                    intermediateMove(target);
+                }
+                return;
+            }
+            //attackDefensive();
             if (hasMapLocation()){
                 if (rc.getMode()==RobotMode.TURRET){
                     if(rc.canTransform()){
@@ -79,7 +109,9 @@ public class Watchtower extends Building {
                         }
                     }
                     else{
-                        intermediateMove(decode());
+                        if (rc.isActionReady()){
+                            intermediateMove(decode());
+                        }
                     }
                 }
                 else if(rc.getLocation().isWithinDistanceSquared(decode(), 5)){
@@ -90,13 +122,18 @@ public class Watchtower extends Building {
                 else{
                     if(decode()!=null){
                         System.out.println(decode());
-                        intermediateMove(decode());
+                        if (rc.isActionReady()){
+                            intermediateMove(decode());
+                        }
                     }
                  }
             }
             else{
                 broadcastLattice();
-                joinLattice();
+                if (rc.isActionReady()){
+                    joinLattice();
+                }
+                
             }
             rc.setIndicatorString(rc.readSharedArray(54)+" ");
             }

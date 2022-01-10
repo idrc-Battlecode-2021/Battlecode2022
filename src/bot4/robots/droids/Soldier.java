@@ -9,6 +9,7 @@ public class Soldier extends Droid{
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
+    private int globalSoldierCount = 0;
     private boolean defensive = false;
     private boolean reachedLocation = false;
     public Soldier(RobotController rc) {
@@ -43,6 +44,8 @@ public class Soldier extends Droid{
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
+        }else if(rc.getRoundNum()%3 == 0){
+            globalSoldierCount = rc.readSharedArray(3);
         }
         broadcast();
         target = null;
@@ -61,7 +64,7 @@ public class Soldier extends Droid{
                 return;
             }
         }
-        if (possibleLocation>0 && !reachedLocation){
+        if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
             int bytecode = Clock.getBytecodeNum();
             int locs1 = rc.readSharedArray(12);
@@ -81,7 +84,7 @@ public class Soldier extends Droid{
             if (four.x!=0 && four.y!=0 && movementTileDistance(rc.getLocation(), four)<movementTileDistance(rc.getLocation(), target)){
                 target = four;
             }
-            
+
             if (rc.canSenseLocation(target) && rc.getLocation().isWithinDistanceSquared(target, 8)){
                 reachedLocation = true;
             }
@@ -129,18 +132,36 @@ public class Soldier extends Droid{
                     }
                 }
             }
-
-            if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+            /*if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
                 Direction d = myLocation.directionTo(center);
                 tryMoveMultiple(d);
-            }
-            else{
-                if(!tryMoveMultipleNew()){
+            }*/
+            if(rc.readSharedArray(40) == 1){
+                if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
+                    Direction d = myLocation.directionTo(center);
+                    tryMoveMultiple(d);
+                }
+                else if(!tryMoveMultipleNew()){
                     tryMoveMultiple(initDirection);
+                }
+            }else if(rc.senseNearbyRobots(2).length>3){
+                //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
+                //tryMoveMultiple(initDirection);
+                MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
+                int start = (int) (local.length * Math.random());
+                loop1: for (int i = start; i < start + local.length; i++) {
+                    int j = i % local.length;
+                    Direction dirTo = myLocation.directionTo(local[j]);
+                    if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
+                        rc.move(dirTo);
+                        myLocation = rc.getLocation();
+                        prevLocs.add(local[j]);
+                        break;
+                    }
                 }
             }
         }
-        
+
 
     }
     public boolean isDefensive() throws GameActionException{
@@ -155,7 +176,7 @@ public class Soldier extends Droid{
         if (enemies.length>0 && justSpawned){
             return true;
         }
-        
+
         return false;
     }
 

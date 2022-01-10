@@ -4,7 +4,7 @@ import battlecode.common.*;
 import bot4.util.Constants;
 
 public class Archon extends Building{
-    private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0;
+    private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
 
@@ -205,6 +205,7 @@ public class Archon extends Building{
             else{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
+            if(minerCount > minerCountMax)minerCountMax = minerCount;
             minerFoundCount = rc.readSharedArray(31+archonOrder);
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             globalSageCount = rc.readSharedArray(2);
@@ -247,12 +248,19 @@ public class Archon extends Building{
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
-        if (rc.readSharedArray(12)==0){
+        if (minerCount<10 || rc.readSharedArray(12)==0){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString+=" miners";
             if (!checkBuildStatus(diff, cost)) return;
-            if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
+            int mod = 1;
+            if (rc.getTeamLeadAmount(rc.getTeam())>1000){
+                mod = 3;
+                if (builderCount>7){
+                    mod = 2;
+                }
+            }
+            if (minerCount%mod==0 &&  rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
                 while (!rc.canBuildRobot(type,directions[(minerIndex+i)%8]) && i<8){
@@ -271,6 +279,49 @@ public class Archon extends Building{
                     rc.buildRobot(type,directions[minerIndex]);
                     minerIndex++;
                     minerCount++;
+                }
+            }
+            else if (minerCount%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+                cost = RobotType.SOLDIER.buildCostLead;
+                type = RobotType.SOLDIER;
+                indicatorString += " soldiers";
+                if (!checkBuildStatus(diff, cost)) return;
+                if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
+                    Direction directions[] = Direction.allDirections();
+                    int i=0;
+                    while (!rc.canBuildRobot(type,directions[(soldierIndex+i)%8]) && i<8){
+                        i++;
+                    }
+                    if (rc.canBuildRobot(type,directions[(soldierIndex+i)%8])){
+                        if (diff==0){
+                            if (archonBuildStatus == rc.getArchonCount()-1){
+                                rc.writeSharedArray(11,0);
+                            }
+                            else{
+                                rc.writeSharedArray(11,archonBuildStatus+1);
+                            }
+                        }
+                        soldierIndex = (soldierIndex+i)%8;
+                        rc.buildRobot(type,directions[soldierIndex]);
+                        soldierIndex++;
+                        soldierCount++;
+                        minerCount++; //temp
+                    }
+                }
+            }
+            else{
+                if (minerCount%mod==2 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
+                    Direction directions[] = Direction.allDirections();
+                    int i = 0;
+                    while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
+                        i++;
+                    }
+                    if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
+                        builderCount++;
+                        minerCount++; //temp
+                        rc.buildRobot(RobotType.BUILDER,directions[i]);
+                        indicatorString+=" builders "+builderCount;
+                    }
                 }
             }
         }

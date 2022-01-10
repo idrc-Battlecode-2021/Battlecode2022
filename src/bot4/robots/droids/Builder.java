@@ -29,6 +29,7 @@ public class Builder extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        int builderCount = 1;
         reassignArchon();
         rc.setIndicatorString("archon: "+myArchonOrder);
         //System.out.println(Clock.getBytecodesLeft());
@@ -37,6 +38,9 @@ public class Builder extends Droid{
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(1, rc.readSharedArray(1)+(int)Math.pow(16,myArchonOrder));
+        }else if(rc.getRoundNum()%3 == 0){
+            int power = (int)Math.pow(16,myArchonOrder);
+            builderCount = (rc.readSharedArray(1)%(power*16))/(power);
         }
         int numTowers = rc.readSharedArray(myArchonOrder+5);
         if (numTowers==2){
@@ -55,7 +59,7 @@ public class Builder extends Droid{
             }
         }
         //Moves away from archons to not distrub its spawning rates
-        RobotInfo[] checkArchons = rc.senseNearbyRobots(5,myTeam);
+        RobotInfo[] checkArchons = rc.senseNearbyRobots(Math.max(builderCount,8),myTeam);
         for(int i = checkArchons.length; --i>=0;){
             if(checkArchons[i].getType().equals(RobotType.ARCHON)){
                 tryMoveMultiple(myLocation.directionTo(checkArchons[i].getLocation()).opposite());
