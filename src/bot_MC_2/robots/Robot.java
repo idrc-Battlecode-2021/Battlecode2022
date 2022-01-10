@@ -337,11 +337,45 @@ public abstract class Robot {
     public void broadcast() throws GameActionException{
         // broadcasts location of multiple enemies and enemy archon
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
-        int num_enemies =enemies.length;
-        if (rc.readSharedArray(12)==0 && enemies.length>0){
-            int x = rc.getLocation().x/4;
-            int y = rc.getLocation().y/4;
-            rc.writeSharedArray(12, x+y*16);
+        int num_enemies = enemies.length;
+        if (enemies.length>0){
+            int bytecode = Clock.getBytecodeNum();
+            int locs1 = rc.readSharedArray(12);
+            int locs2 = rc.readSharedArray(13);
+            MapLocation one = new MapLocation(locs1%16*4, locs1%256/16*4);
+            MapLocation two = new MapLocation(locs1%4096/256*4, locs1/4096*4);
+            MapLocation three = new MapLocation(locs2%16*4, locs2%256/16*4);
+            MapLocation four = new MapLocation(locs2%4096/256*4, locs2/4096*4);
+            if (one.x==one.y && one.x==0){
+                int x = rc.getLocation().x/4;
+                int y = rc.getLocation().y/4;
+                rc.writeSharedArray(12, rc.readSharedArray(12)+x+y*16);
+            }
+            else if (two.x==two.y && two.x==0){
+                int x = rc.getLocation().x/4;
+                int y = rc.getLocation().y/4;
+                if (movementTileDistance(rc.getLocation(), one)>rc.readSharedArray(14)/2){
+                    rc.writeSharedArray(12, rc.readSharedArray(12)+x*256+y*4096);
+                }
+            }
+            else if (three.x==three.y && three.x==0){
+                int x = rc.getLocation().x/4;
+                int y = rc.getLocation().y/4;
+                if (movementTileDistance(rc.getLocation(), one)>rc.readSharedArray(14)/2 && movementTileDistance(rc.getLocation(), two)>rc.readSharedArray(14)/2){
+                    rc.writeSharedArray(13, rc.readSharedArray(13)+y*16);
+                }
+            }
+            else if (four.x==four.y && four.x==0){
+                if (movementTileDistance(rc.getLocation(), one)>rc.readSharedArray(14)/2 && movementTileDistance(rc.getLocation(), two)>rc.readSharedArray(14)/2 && movementTileDistance(rc.getLocation(), three)>rc.readSharedArray(14)/2){
+                    int x = rc.getLocation().x/4;
+                    int y = rc.getLocation().y/4;
+                    rc.writeSharedArray(13, rc.readSharedArray(13)+x*256+y*4096);
+                }
+            }
+            if (Clock.getBytecodeNum()-bytecode>1000){
+                System.out.println(" bytecode of broadcast "+(Clock.getBytecodeNum()-bytecode));
+            }
+
         }
         int k=0;
         boolean seesArchon = false;
@@ -777,11 +811,15 @@ public abstract class Robot {
         }
     }
 
-    private void selectPriorityTarget() throws GameActionException {
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+    public MapLocation selectPriorityTarget() throws GameActionException {
+        //returns location of target
+        //returns own location if none
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
+        int bytecode = Clock.getBytecodeNum();
+        MapLocation target = rc.getLocation();
         for (RobotInfo r : enemyRobots) {
             if (r.getType() == RobotType.ARCHON) {
                 if (archon == null || archon.getHealth() > r.getHealth()) {
@@ -817,7 +855,7 @@ public abstract class Robot {
                 }
             }
             else if (r.getType() == RobotType.WATCHTOWER) {
-                if (watchtower == null || archon.getHealth() > r.getHealth()) {
+                if (watchtower == null || watchtower.getHealth() > r.getHealth()) {
                     watchtower = r;
                     damages[3]=rc.getType().getDamage(rc.getLevel());
                     for (RobotInfo robot: myRobots){
@@ -852,57 +890,88 @@ public abstract class Robot {
         int archonTurns = Integer.MAX_VALUE, sageTurns = Integer.MAX_VALUE, labTurns = Integer.MAX_VALUE,
                 watchtowerTurns = Integer.MAX_VALUE, soldierTurns = Integer.MAX_VALUE;
         int[] turns = {archonTurns, sageTurns, labTurns, watchtowerTurns, soldierTurns};
-        MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
+        //MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
         if (archon!=null){
-            archonTurns = archon.getHealth()/damages[0];
+            turns[0] = archon.getHealth()/damages[0];
         }
-        if (archon!=null){
-            sageTurns = sage.getHealth()/damages[1];
+        if (sage!=null){
+            turns[1] = sage.getHealth()/damages[1];
         }
         if (lab!=null){
-            labTurns = lab.getHealth()/damages[2];
+            turns[2] = lab.getHealth()/damages[2];
         }
         if (watchtower!=null){
-            watchtowerTurns = watchtower.getHealth()/damages[3];
+            turns[3] = watchtower.getHealth()/damages[3];
         }
         if (soldier!=null){
-            soldierTurns = soldier.getHealth()/damages[4];
+            turns[4] = soldier.getHealth()/damages[4];
         }
 
         if (archonTurns<=10){
-            tryAttack(archon.getLocation());
+            target = archon.getLocation();
         }
         else if (labTurns<=5){
-            tryAttack(lab.getLocation());
+            target = lab.getLocation();
         }
         else if (sageTurns<=5){
-            tryAttack(sage.getLocation());
+            target = sage.getLocation();
         }
         else if (watchtowerTurns<=5){
-            tryAttack(watchtower.getLocation());
+            target = watchtower.getLocation();
         }
         else if (soldierTurns<=5){
-            tryAttack(soldier.getLocation());
+            target = soldier.getLocation();
         }
         else{
-            int minIndex = -1;
-            for (int i=0;i<5;i++){
-                if (minIndex==-1 || turns[i]<turns[minIndex]){
+            int minIndex = 0;
+            for (int i=1;i<5;i++){
+                if (turns[i]<turns[minIndex]){
                     minIndex = i;
                 }
             }
             if (turns[minIndex]<Integer.MAX_VALUE){
-                tryAttack(locations[minIndex]);
+                switch(minIndex){
+                    case 0:
+                        target = archon.getLocation();
+                        break;
+                    case 1:
+                        target = sage.getLocation();
+                        break;
+                    case 2:
+                        target = lab.getLocation();
+                        break;
+                    case 3:
+                        target = watchtower.getLocation();
+                        break;
+                    case 4:
+                        target = soldier.getLocation();
+                        break;
+                }
             }
             else{
                 if (miner!=null){
-                    tryAttack(miner.getLocation());
+                    target = miner.getLocation();
                 }
                 else if (builder!=null){
-                    tryAttack(builder.getLocation());
+                    target = builder.getLocation();
                 }
             }
         }
+        //Maximum bytecode seems to be ~2000 on maptestsmall
+        /*
+        if (Clock.getBytecodeNum()-bytecode>2000){
+            System.out.println(Clock.getBytecodeNum()-bytecode);
+        }
+        */
+        if (target==null){
+            target=rc.getLocation();
+        }
+        if (target!=rc.getLocation()){
+            tryAttack(target);
+        }
+        rc.setIndicatorString("target: "+target);
+        return target;
+        
     }
     
     private void updateInternalMap(){}

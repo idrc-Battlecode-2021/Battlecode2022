@@ -1,5 +1,7 @@
 package bot_MC_2.robots.droids;
 
+import java.lang.annotation.Target;
+
 import battlecode.common.*;
 
 public class Soldier extends Droid{
@@ -32,7 +34,7 @@ public class Soldier extends Droid{
     @Override
     public void run() throws GameActionException {
         reassignArchon();
-        rc.setIndicatorString("archon: "+myArchonOrder);
+        //rc.setIndicatorString("archon: "+myArchonOrder);
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
@@ -43,25 +45,58 @@ public class Soldier extends Droid{
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
         int possibleLocation = rc.readSharedArray(12);
         if(nearbyBots.length >= 1){
+            target = selectPriorityTarget();
+            if (target!=rc.getLocation()){
+                if (rc.canAttack(target)){
+                    rc.attack(target);
+                }
+                else if (rc.isActionReady()){
+                    intermediateMove(target);
+                }
+                return;
+            }
+            /*
             target = nearbyBots[nearbyBots.length-1].getLocation();
             for(int i=nearbyBots.length-1;--i>=0;){
                 MapLocation temp = nearbyBots[i].getLocation();
                 if(movementTileDistance(target,myLocation) > movementTileDistance(temp,myLocation)) target = temp;
             }
+            */
         }
+        /*
         if(target != null){
             intermediateMove(target);
             if(rc.canAttack(target))rc.attack(target);
         }
-        else if (possibleLocation>0 && !reachedLocation){
-            int x = (possibleLocation%16)*4;
-            int y = (possibleLocation/16)*4;
-            MapLocation target = new MapLocation(x,y);
+        */
+        if (possibleLocation>0 && !reachedLocation){
+            int bytecode = Clock.getBytecodeNum();
+            int locs1 = rc.readSharedArray(12);
+            int locs2 = rc.readSharedArray(13);
+            MapLocation one = new MapLocation(locs1%16*4, locs1%256/16*4);
+            MapLocation two = new MapLocation(locs1%4096/256*4, locs1/4096*4);
+            MapLocation three = new MapLocation(locs2%16*4, locs2%256/16*4);
+            MapLocation four = new MapLocation(locs2%4096/256*4, locs2/4096*4);
+            rc.setIndicatorString(one+ " "+two+" "+three+" "+four);
+            target = one;
+            if (two.x!=0 && two.y!=0 && movementTileDistance(rc.getLocation(), two)<movementTileDistance(rc.getLocation(), target)){
+                target = two;
+            }
+            if (three.x!=0 && three.y!=0 && movementTileDistance(rc.getLocation(), three)<movementTileDistance(rc.getLocation(), target)){
+                target = three;
+            }
+            if (four.x!=0 && four.y!=0 && movementTileDistance(rc.getLocation(), four)<movementTileDistance(rc.getLocation(), target)){
+                target = four;
+            }
+            
             if (rc.canSenseLocation(target) && rc.getLocation().isWithinDistanceSquared(target, 8)){
                 reachedLocation = true;
             }
-            else{
+            else if (rc.isActionReady()){
                 intermediateMove(target);
+            }
+            if (Clock.getBytecodeNum()-bytecode>1000){
+                System.out.println("targetting BC: "+(Clock.getBytecodeNum()-bytecode));
             }
         }
         /*
@@ -81,9 +116,14 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(55,0);
                 }
             }
-            intermediateMove(target);
+            if (rc.isActionReady()){
+                intermediateMove(target);
+            }
         }
         else{
+            if (!rc.isActionReady()){
+                return;
+            }
             MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
             for (int i = all.length; --i>=0;){
                 for (MapLocation c: corners){
