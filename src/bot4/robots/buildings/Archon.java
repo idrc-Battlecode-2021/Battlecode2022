@@ -190,7 +190,7 @@ public class Archon extends Building{
 
     // update troop count variables from shared array
     public void updateTroopCount() throws GameActionException{
-         if (roundNum%3==1){
+         if (roundNum%3==1){ //Reset Troop Counts
             rc.writeSharedArray(10, 0);
             for (int i=0;i<4;i++){
                 rc.writeSharedArray(i, 0);
@@ -198,7 +198,7 @@ public class Archon extends Building{
             for (int i = 31; i < 35; i++){
                 rc.writeSharedArray(i,0);
             }
-         }else if (rc.getRoundNum()%3==0){
+         }else if (rc.getRoundNum()%3==0){ //Create New Values
             if (archonOrder<=1){
                 minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);
             }
