@@ -1,7 +1,7 @@
 package bot_MC.robots.droids;
 
 import battlecode.common.*;
-import bot3.util.Constants;
+import bot_MC.util.Constants;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,10 +54,14 @@ public class Builder extends Droid{
                 return;
             }
         }
+        boolean built = false;
+        if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180){
+            built = build(2);
+        }
         //System.out.println("After prototype: "+Clock.getBytecodesLeft());
-        int toBuild = read();
+        //int toBuild = read();
         //rc.setIndicatorString(Integer.toBinaryString(toBuild));
-        boolean built = build(toBuild);
+        //boolean built = build(toBuild);
         //if (!built && rc.getTeamLeadAmount(myTeam)>1000){
         //    for (Direction d: Constants.DIRECTIONS)
         //    if(rc.canBuildRobot(RobotType.WATCHTOWER, d)){
@@ -84,7 +88,7 @@ public class Builder extends Droid{
                     }
                 }
                 //System.out.println("After built: "+Clock.getBytecodesLeft());
-            }
+        }
             
         else if (nearPrototype){
             rc.repair(prototypeLoc);

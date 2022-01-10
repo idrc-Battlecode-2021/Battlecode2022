@@ -1,12 +1,4 @@
-# Third Bot
+# Bot MC
 
-## Buildings
-### Archons
-### Labs
-### Watchtowers
-## Droids
-### Builders
-#### Changelog
-### Miners
-### Sages
-### Soldiers
+Builds only miners and soldiers super aggressively
+Whenever there's a surplus, build watchtowers

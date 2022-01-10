@@ -1,5 +1,6 @@
 package bot_MC.robots.buildings;
 
+import bot_MC.util.Constants;
 import battlecode.common.*;
 
 public class Archon extends Building{
@@ -9,7 +10,7 @@ public class Archon extends Building{
 
     private static int minerBuild = 10; //miners to build
     private static int soldierBuild = 10; //soldiers to build
-    private static int builderBuild = 3; //builders to build
+    private static int builderBuild = 0; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
     private static int labBuild = 0; //labs to build
 
@@ -17,8 +18,6 @@ public class Archon extends Building{
     private static int soldierIndex = 0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
     private static int power = 0; // power of 16 that corresponds with archonOrder
-
-    private static final int SURPLUS_THRESHOLD = 500;
 
     private static String indicatorString = "";
 
@@ -78,7 +77,216 @@ public class Archon extends Building{
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
     }
-    
+
+    @Override
+    public void run() throws GameActionException {
+        indicatorString = "";
+        checkArchonsAlive();
+        // update spawn phases if necessary
+        if (minerCount>=minerBuild && spawnPhase==2){ 
+            spawnPhase++;
+            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+        }
+        if (builderCount>=builderBuild && spawnPhase==3){ 
+            spawnPhase++;
+            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+        }
+        indicatorString+=" archon: "+archonOrder;
+        indicatorString +=" spawnPhase: "+spawnPhase;
+        minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
+        
+        if (defense()){indicatorString+="defense"; rc.setIndicatorString(indicatorString);return;}
+        avoidFury();
+        retransform();
+        updateLabConstraints();
+        updateTroopCount();
+
+        // reset total # of troops in shared array
+        if (rc.getRoundNum()%3==1){
+            rc.writeSharedArray(10, 0);
+            for (int i=0;i<4;i++){
+                rc.writeSharedArray(i, 0);
+            }
+        }
+
+        watchtowerCount = rc.readSharedArray(archonOrder+5);
+        labCount = (rc.readSharedArray(4) % (power*16))/power;
+
+        if (!canProceed(spawnPhase)){
+            // shouldn't continue if other archons haven't caught up with spawning
+            rc.setIndicatorString(indicatorString);
+            return;
+        }
+        if (!minerDone && minerCount<minerBuild){
+            int mod;
+            if (minerCount<minerBuild/3){
+                mod=1;
+            }
+            else if (minerCount<minerBuild*2/3){
+                mod=3;
+            }
+            else{
+                mod=2;
+            }
+            indicatorString += " "+minerBuild;
+            //TODO: make archons spawn in direction of deposits
+            if (!minerDone && msBuildType % mod == 1){
+                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+                    Direction directions[] = Direction.allDirections();
+                    int i=0;
+                    while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
+                        i++;
+                    }
+                    if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
+                        soldierIndex = (soldierIndex+i)%8;
+                        msBuildType++;
+                        rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
+                        soldierIndex++;
+                        soldierCount++;
+                    }
+                }
+            }
+            else{
+                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
+                    Direction directions[] = Direction.allDirections();
+                    int i=0;
+                    while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
+                        i++;
+                    }
+                    if (rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8])){
+                        minerIndex = (minerIndex+i)%8;
+                        rc.buildRobot(RobotType.MINER,directions[minerIndex]);
+                        msBuildType++;
+                        minerIndex++;
+                        minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
+                        /*
+                        if (!minerDone && minerCount == minerBuild){
+                            minerDone = true;
+                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+                            spawnPhase++;
+                            msBuildType = 0;
+                        }
+                        */
+                        if (minerCount == minerBuild/3){
+                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+                            spawnPhase++;
+                        }
+                        else if (minerCount == minerBuild*2/3){
+                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+                            spawnPhase++;
+                        }
+                        else if (minerCount == minerBuild){
+                            minerDone = true;
+                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
+                            spawnPhase++;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            int mod, cost = 0;
+            if (minerCount>=minerBuild*2/3){ 
+                mod=4;
+            }
+            else{
+                mod=2;
+            }
+            switch(wsBuildType%mod){
+                case 0:
+                    cost=RobotType.MINER.buildCostLead; break;
+                default:
+                    cost=RobotType.SOLDIER.buildCostLead; break;
+            }
+            int archonBuildStatus = rc.readSharedArray(11);
+            int diff = archonBuildStatus - archonOrder;
+            if (diff<0){
+                if (rc.getTeamLeadAmount(rc.getTeam())-75*-1*diff<cost){
+                    rc.setIndicatorString(indicatorString);
+                    return;
+                }
+            }
+            if (diff>0){
+                int space = rc.getArchonCount()-diff;
+                if (rc.getTeamLeadAmount(rc.getTeam())-75*space<cost){
+                    rc.setIndicatorString(indicatorString);
+                    return;
+                }
+            }
+            if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*globalBuilderCount+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
+                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
+                    Direction directions[] = Direction.allDirections();
+                    int i = 0;
+                    while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
+                        i++;
+                    }
+                    if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
+                        builderCount++;
+                        rc.buildRobot(RobotType.BUILDER,directions[i]);
+                        indicatorString+=" builders "+builderCount;
+                    }
+                }
+            }
+            if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
+                Direction directions[] = Direction.allDirections();
+                int i=0;
+                while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
+                    i++;
+                }
+                if (rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8])){
+                    if (diff==0){
+                        if (archonBuildStatus == rc.getArchonCount()-1){
+                            rc.writeSharedArray(11,0);
+                        }
+                        else{
+                            rc.writeSharedArray(11,archonBuildStatus+1);
+                        }
+                    }
+                    minerIndex = (minerIndex+i)%8;
+                    wsBuildType++;
+                    rc.buildRobot(RobotType.MINER,directions[minerIndex]);
+                    minerCount++;
+                }
+            }
+            else if(rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
+                Direction directions[] = Direction.allDirections();
+                int i=0;
+                while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
+                    i++;
+                }
+                if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
+                    if (diff==0){
+                        if (archonBuildStatus == rc.getArchonCount()-1){
+                            rc.writeSharedArray(11,0);
+                        }
+                        else{
+                            rc.writeSharedArray(11,archonBuildStatus+1);
+                        }
+                    }
+                    soldierIndex = (soldierIndex+i)%8;
+                    wsBuildType++;
+                    rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
+                    soldierCount++;
+                }
+            }
+            else { //repair robots if can't build anything
+                RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam()); 
+                int lowestHealth = 99999;
+                MapLocation location = null;
+                for (RobotInfo robot : robots){
+                    if (robot.getMode() == RobotMode.DROID && robot.getHealth()<lowestHealth){
+                        lowestHealth = robot.getHealth();
+                        location = robot.getLocation();
+                    }
+                }
+                if (location!=null && rc.canRepair(location)){
+                    rc.repair(location);
+                }
+            }
+        }
+        rc.setIndicatorString(indicatorString);
+    }
+
     public boolean canProceed(int n) throws GameActionException {
         // First check if other archons are trying to defend
         int defenseStatus = rc.readSharedArray(56);
@@ -210,275 +418,5 @@ public class Archon extends Building{
             int lc = rc.readSharedArray(4);
             globalLabCount = lc % 16 + (lc % 256)/16 + (lc % 4096)/256 + lc / 4096;
         }
-    }
-
-    @Override
-    public void run() throws GameActionException {
-        indicatorString = "";
-        checkArchonsAlive();
-        // update spawn phases if necessary
-        if (minerCount>=minerBuild && spawnPhase==2){ 
-            spawnPhase++;
-            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-        }
-        if (builderCount>=builderBuild && spawnPhase==3){ 
-            spawnPhase++;
-            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-        }
-        indicatorString+=" archon: "+archonOrder;
-        indicatorString +=" spawnPhase: "+spawnPhase;
-        minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
-        
-        if (defense()){indicatorString+="defense"; rc.setIndicatorString(indicatorString);return;}
-        avoidFury();
-        retransform();
-        updateLabConstraints();
-        updateTroopCount();
-
-        // reset total # of troops in shared array
-        if (rc.getRoundNum()%3==1){
-            rc.writeSharedArray(10, 0);
-            for (int i=0;i<4;i++){
-                rc.writeSharedArray(i, 0);
-            }
-        }
-
-        watchtowerCount = rc.readSharedArray(archonOrder+5);
-        labCount = (rc.readSharedArray(4) % (power*16))/power;
-
-        if (!canProceed(spawnPhase)){
-            // shouldn't continue if other archons haven't caught up with spawning
-            rc.setIndicatorString(indicatorString);
-            return;
-        }
-        if (!minerDone && minerCount<minerBuild){
-            int mod;
-            if (minerCount<minerBuild/3){
-                mod=1;
-            }
-            else if (minerCount<minerBuild*2/3){
-                mod=3;
-            }
-            else{
-                mod=2;
-            }
-            indicatorString += " "+minerBuild;
-            //TODO: make archons spawn in direction of deposits
-            if (!minerDone && msBuildType % mod == 1){
-                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
-                    Direction directions[] = Direction.allDirections();
-                    int i=0;
-                    while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
-                        i++;
-                    }
-                    if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
-                        soldierIndex = (soldierIndex+i)%8;
-                        msBuildType++;
-                        rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
-                        soldierIndex++;
-                        soldierCount++;
-                    }
-                }
-            }
-            else{
-                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
-                    Direction directions[] = Direction.allDirections();
-                    int i=0;
-                    while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
-                        i++;
-                    }
-                    if (rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8])){
-                        minerIndex = (minerIndex+i)%8;
-                        rc.buildRobot(RobotType.MINER,directions[minerIndex]);
-                        msBuildType++;
-                        minerIndex++;
-                        minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
-                        /*
-                        if (!minerDone && minerCount == minerBuild){
-                            minerDone = true;
-                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-                            spawnPhase++;
-                            msBuildType = 0;
-                        }
-                        */
-                        if (minerCount == minerBuild/3){
-                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-                            spawnPhase++;
-                        }
-                        else if (minerCount == minerBuild*2/3){
-                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-                            spawnPhase++;
-                        }
-                        else if (minerCount == minerBuild){
-                            minerDone = true;
-                            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-                            spawnPhase++;
-                        }
-                    }
-                }
-            }
-        }
-        else if (builderCount<builderBuild){
-            indicatorString += " archon: "+archonOrder+" array 1 "+Integer.toBinaryString(rc.readSharedArray(1));
-            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
-                Direction directions[] = Direction.allDirections();
-                int i = 0;
-                while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
-                    i++;
-                }
-                if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
-                    builderCount++;
-                    rc.buildRobot(RobotType.BUILDER,directions[i]);
-                    indicatorString+=" builders "+builderCount;
-                    if (!builderDone && builderCount == builderBuild){
-                        builderDone = true;
-                        rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-                        spawnPhase++;
-                    }
-                }
-            }
-        }
-        else {
-            if (globalLabCount<labBuild){
-                indicatorString += "labs";
-                int mod = 2;
-                if (lwBuildType%3==mod){
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
-                        int temp = (int)Math.pow(4,archonOrder);
-                        int currentValue = rc.readSharedArray(58);
-                        int previousBuildCommand = (currentValue % (temp*4))/temp;
-                        int buildCommand = currentValue - previousBuildCommand * temp + temp;
-                        rc.writeSharedArray(58, buildCommand);
-                        lwBuildType++;
-                    }
-                }
-                else{
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
-                        int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
-                        int currentValue = rc.readSharedArray(58); 
-                        int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
-                        int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
-                        rc.writeSharedArray(58, buildCommand);
-                        lwBuildType++;
-                    }
-                }
-            }
-            else{
-                int mod, cost = 0;
-                if (minerCount>=minerBuild*2/3){ 
-                    mod=2;
-                }
-                else{
-                    mod=3;
-                }
-                switch(wsBuildType%mod){
-                    case 0:
-                        cost=RobotType.SOLDIER.buildCostLead; break;
-                    case 1:
-                        cost=RobotType.WATCHTOWER.buildCostLead; break;
-                    case 2:
-                        cost=RobotType.MINER.buildCostLead; break;
-                }
-                int archonBuildStatus = rc.readSharedArray(11);
-                int diff = archonBuildStatus - archonOrder;
-                if (diff<0){
-                    if (rc.getTeamLeadAmount(rc.getTeam())-180*-1*diff<cost){
-                        rc.setIndicatorString(indicatorString);
-                        return;
-                    }
-                }
-                if (diff>0){
-                    int space = rc.getArchonCount()-diff;
-                    if (rc.getTeamLeadAmount(rc.getTeam())-180*space<cost){
-                        rc.setIndicatorString(indicatorString);
-                        return;
-                    }
-                }
-                if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead){
-                    int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
-                    int currentValue = rc.readSharedArray(58); 
-                    int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
-                    int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
-                    watchtowerCount++;
-                    wsBuildType++;
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
-                            rc.writeSharedArray(11,0);
-                        }
-                        else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
-                        }
-                    }
-                    //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
-                    rc.writeSharedArray(58, buildCommand);
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.SOLDIER.buildCostLead+SURPLUS_THRESHOLD){
-                        buildSoldier();
-                    }
-                }
-                else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
-                    Direction directions[] = Direction.allDirections();
-                    int i=0;
-                    while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
-                        i++;
-                    }
-                    if (rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8])){
-                        if (diff==0){
-                            if (archonBuildStatus == rc.getArchonCount()-1){
-                                rc.writeSharedArray(11,0);
-                            }
-                            else{
-                                rc.writeSharedArray(11,archonBuildStatus+1);
-                            }
-                        }
-                        soldierIndex = (soldierIndex+i)%8;
-                        wsBuildType++;
-                        rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
-                        soldierCount++;
-                    }
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead+SURPLUS_THRESHOLD){
-                        buildWatchtower();
-                    }
-                }
-                else if (wsBuildType%mod==2 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
-                    Direction directions[] = Direction.allDirections();
-                    int i=0;
-                    while (!rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8]) && i<8){
-                        i++;
-                    }
-                    if (rc.canBuildRobot(RobotType.MINER,directions[(minerIndex+i)%8])){
-                        if (diff==0){
-                            if (archonBuildStatus == rc.getArchonCount()-1){
-                                rc.writeSharedArray(11,0);
-                            }
-                            else{
-                                rc.writeSharedArray(11,archonBuildStatus+1);
-                            }
-                        }
-                        minerIndex = (minerIndex+i)%8;
-                        wsBuildType++;
-                        rc.buildRobot(RobotType.MINER,directions[minerIndex]);
-                        minerCount++;
-                    }
-                    if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.WATCHTOWER.buildCostLead+SURPLUS_THRESHOLD){
-                        buildWatchtower();
-                    }
-                }
-                else { //repair robots if can't build anything
-                    RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam()); 
-                    int lowestHealth = 99999;
-                    MapLocation location = null;
-                    for (RobotInfo robot : robots){
-                        if (robot.getMode() == RobotMode.DROID && robot.getHealth()<lowestHealth){
-                            lowestHealth = robot.getHealth();
-                            location = robot.getLocation();
-                        }
-                    }
-                    if (location!=null && rc.canRepair(location)){
-                        rc.repair(location);
-                    }
-                }
-            }
-        }
-        rc.setIndicatorString(indicatorString);
     }
 }
