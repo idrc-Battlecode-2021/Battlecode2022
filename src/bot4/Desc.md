@@ -1,15 +1,7 @@
 # Bot 4
 Uses bot_mc_2 as base
 
-Attempt at a more aggressive strategy
-
-Archon:
-spawns miners until an ally troop has detected enemy
-once the archon detected an enemy, continually spawn soldiers and sends them to 1 of 4 locations where the enemy is spotted
-NO WATCHTOWERS
-
-Soldier:
-Using selectPriorityTargetting 
+building builders and watchtowers when we have a surplus (after miner encounters enemy)
 
 ## Shared Array
 12 - location of first enemy troop

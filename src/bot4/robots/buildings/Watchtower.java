@@ -88,9 +88,11 @@ public class Watchtower extends Building {
                     }
                 }
                 else{
-                    if(decode()!=null)
-                    intermediateMove(decode());
-                }
+                    if(decode()!=null){
+                        System.out.println(decode());
+                        intermediateMove(decode());
+                    }
+                 }
             }
             else{
                 broadcastLattice();

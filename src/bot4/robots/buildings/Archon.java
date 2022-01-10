@@ -274,7 +274,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (builderCount<13 && rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*5+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
+        else if (builderCount<9 && rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*5+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
