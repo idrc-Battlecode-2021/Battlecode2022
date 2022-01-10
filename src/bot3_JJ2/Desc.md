@@ -24,7 +24,7 @@ When miners find a deposit
 - 38: minerAlert (WIP)
 - 39: minerAlert (WIP)
 - 40: attacked
-- 41: minorLocation  
+- 41: minorLocation (Where enemy is)  
 - All Other ids the same
 
 #Bugs
