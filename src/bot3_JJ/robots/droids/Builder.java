@@ -159,7 +159,7 @@ public class Builder extends Droid{
             rc.writeSharedArray(58, buildCommand);
         }
         catch (GameActionException e) {
-            System.out.println(rc.readSharedArray(11)+" "+RobotType.WATCHTOWER.buildCostLead);
+            //System.out.println(rc.readSharedArray(11)+" "+RobotType.WATCHTOWER.buildCostLead);
         }
 
     }
