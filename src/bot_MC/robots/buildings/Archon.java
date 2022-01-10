@@ -1,4 +1,4 @@
-package bot3_MC.robots.buildings;
+package bot_MC.robots.buildings;
 
 import battlecode.common.*;
 
@@ -7,7 +7,7 @@ public class Archon extends Building{
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
 
-    private static int minerBuild = 5; //miners to build
+    private static int minerBuild = 10; //miners to build
     private static int soldierBuild = 10; //soldiers to build
     private static int builderBuild = 3; //builders to build
     private static int watchtowerBuild = 5; //watchtowers to build; *currently not in use*
@@ -73,12 +73,10 @@ public class Archon extends Building{
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
         int leadTiles = rc.senseNearbyLocationsWithLead(34).length;
-        
-        minerBuild = Math.min(30,Math.max(minerBuild, (int)(60*((double)leadTiles/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length))));
+        minerBuild = Math.max(10, (int)(0.75*(double)leadTiles));
         soldierBuild = minerBuild;
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
-        //labBuild = rc.getMapHeight()/40+1;
     }
     
     public boolean canProceed(int n) throws GameActionException {
@@ -89,7 +87,7 @@ public class Archon extends Building{
             int temp = (int)Math.pow(2,i);
             int thisDefense = (defenseStatus % (temp*16))/temp;
             if (thisDefense > 0){
-                indicatorString += "defense";
+                indicatorString += " other archon defending";
                 return false;
             }
         }
@@ -141,8 +139,8 @@ public class Archon extends Building{
         return true;
     }
 
-    // When surplus is achieved, don't increment buildType, otherwise increment
-    public void buildSoldier(boolean incrementBuildType) throws GameActionException {
+    // NOT substitute for build soldier code in run(), only used when surplus of lead is achieved
+    public void buildSoldier() throws GameActionException {
         Direction directions[] = Direction.allDirections();
         int i=0;
         while (!rc.canBuildRobot(RobotType.SOLDIER,directions[(soldierIndex+i)%8]) && i<8){
@@ -153,9 +151,6 @@ public class Archon extends Building{
             rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
             soldierIndex++;
             soldierCount++;
-            if (incrementBuildType){
-                msBuildType++;
-            }
         }
     }
 
@@ -221,21 +216,19 @@ public class Archon extends Building{
     public void run() throws GameActionException {
         indicatorString = "";
         checkArchonsAlive();
-        if (minerCount>=minerBuild && spawnPhase==0){
+        // update spawn phases if necessary
+        if (minerCount>=minerBuild && spawnPhase==2){ 
             spawnPhase++;
             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
         }
-        if (builderCount>=builderBuild && spawnPhase==1){
-            spawnPhase++;
-            rc.writeSharedArray(57, rc.readSharedArray(57)+power);
-        }
-        if (globalLabCount==labBuild && spawnPhase==2){ // if the global # of labs have been built
+        if (builderCount>=builderBuild && spawnPhase==3){ 
             spawnPhase++;
             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
         }
         indicatorString+=" archon: "+archonOrder;
         indicatorString +=" spawnPhase: "+spawnPhase;
-        //minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
+        minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
+        
         if (defense()){indicatorString+="defense"; rc.setIndicatorString(indicatorString);return;}
         avoidFury();
         retransform();
@@ -258,10 +251,20 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        if (minerCount<minerBuild){
-            indicatorString += "miners";
+        if (!minerDone && minerCount<minerBuild){
+            int mod;
+            if (minerCount<minerBuild/3){
+                mod=1;
+            }
+            else if (minerCount<minerBuild*2/3){
+                mod=3;
+            }
+            else{
+                mod=2;
+            }
+            indicatorString += " "+minerBuild;
             //TODO: make archons spawn in direction of deposits
-            if (!minerDone && msBuildType % 4 == 3){
+            if (!minerDone && msBuildType % mod == 1){
                 if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                     Direction directions[] = Direction.allDirections();
                     int i=0;
@@ -290,13 +293,14 @@ public class Archon extends Building{
                         msBuildType++;
                         minerIndex++;
                         minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
+                        /*
                         if (!minerDone && minerCount == minerBuild){
                             minerDone = true;
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                             spawnPhase++;
                             msBuildType = 0;
                         }
-                        /*
+                        */
                         if (minerCount == minerBuild/3){
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                             spawnPhase++;
@@ -306,11 +310,10 @@ public class Archon extends Building{
                             spawnPhase++;
                         }
                         else if (minerCount == minerBuild){
+                            minerDone = true;
                             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
                             spawnPhase++;
-                            buildType = 0;
                         }
-                        */
                     }
                 }
             }
@@ -341,13 +344,11 @@ public class Archon extends Building{
                 int mod = 2;
                 if (lwBuildType%3==mod){
                     if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
-                        //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
                         int temp = (int)Math.pow(4,archonOrder);
                         int currentValue = rc.readSharedArray(58);
                         int previousBuildCommand = (currentValue % (temp*4))/temp;
                         int buildCommand = currentValue - previousBuildCommand * temp + temp;
                         rc.writeSharedArray(58, buildCommand);
-                        //rc.writeSharedArray(11, proposedExpenses+RobotType.LABORATORY.buildCostLead);
                         lwBuildType++;
                     }
                 }
@@ -358,14 +359,13 @@ public class Archon extends Building{
                         int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
                         int buildCommand = currentValue - previousBuildCommand * temp + temp * 2; // subtract previous command and add new command
                         rc.writeSharedArray(58, buildCommand);
-                        //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                         lwBuildType++;
                     }
                 }
             }
             else{
                 int mod, cost = 0;
-                if (minerCount>=60){
+                if (minerCount>=minerBuild*2/3){ 
                     mod=2;
                 }
                 else{
@@ -412,7 +412,7 @@ public class Archon extends Building{
                     //rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                     rc.writeSharedArray(58, buildCommand);
                     if (rc.getTeamLeadAmount(rc.getTeam())>=(rc.getArchonCount()-1)*180+RobotType.SOLDIER.buildCostLead+SURPLUS_THRESHOLD){
-                        buildSoldier(false);
+                        buildSoldier();
                     }
                 }
                 else if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){

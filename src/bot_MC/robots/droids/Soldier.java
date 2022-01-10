@@ -1,4 +1,4 @@
-package bot3_JJ.robots.droids;
+package bot_MC.robots.droids;
 
 import battlecode.common.*;
 
@@ -6,17 +6,14 @@ public class Soldier extends Droid{
     private MapLocation target;
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
+    private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private boolean defensive = false;
-    private MapLocation center;
     public Soldier(RobotController rc) {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
-        center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-        readArchonLocs();
-        possibleArchonLocs();
         parseAnomalies();
         RobotInfo [] r = rc.senseNearbyRobots();
         for (RobotInfo ro : r){
@@ -33,9 +30,8 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
-        checkSymmetry();
-        MapLocation enemyArchon = readSymmetry();
-        rc.setIndicatorString(myArchonOrder+"");
+        reassignArchon();
+        rc.setIndicatorString("archon: "+myArchonOrder);
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
@@ -51,12 +47,11 @@ public class Soldier extends Droid{
                 if(movementTileDistance(target,myLocation) > movementTileDistance(temp,myLocation)) target = temp;
             }
         }
-
-            if(target != null){
+        if(target != null){
             intermediateMove(target);
             if(rc.canAttack(target))rc.attack(target);
         }
-            else if (defensive){
+        else if (defensive){
             if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
                 tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
             }
@@ -64,7 +59,7 @@ public class Soldier extends Droid{
                 tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
             }
         }
-        else if (shouldAttack() && hasMapLocation()){
+        else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
@@ -74,34 +69,26 @@ public class Soldier extends Droid{
             intermediateMove(target);
         }
         else{
-            if(enemyArchon !=null){
-                intermediateMove(enemyArchon);
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            for (int i = all.length; --i>=0;){
+                for (MapLocation c: corners){
+                    if (all[i]==c){
+                        Direction d = myLocation.directionTo(c);
+                        tryMoveMultiple(d);
+                    }
+                }
             }
-            else if (enemyArchons.size()>0) {
-                intermediateMove(enemyArchons.get(0));
+
+            if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+                Direction d = myLocation.directionTo(center);
+                tryMoveMultiple(d);
             }
             else{
-                MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
-                for (int i = all.length; --i>=0;){
-                    for (MapLocation c: corners){
-                        if (all[i]==c){
-                            Direction d = myLocation.directionTo(c);
-                            tryMoveMultiple(d);
-                        }
-                    }
-                }
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
-                    Direction d = myLocation.directionTo(center);
-                    tryMoveMultiple(d);
-                }
-                else{
-                    if(!tryMoveMultipleNew()){
-                        tryMoveMultiple(initDirection);
-                    }
+                if(!tryMoveMultipleNew()){
+                    tryMoveMultiple(initDirection);
                 }
             }
         }
-
 
     }
     public boolean isDefensive() throws GameActionException{
@@ -116,19 +103,8 @@ public class Soldier extends Droid{
         if (enemies.length>0 && justSpawned){
             return true;
         }
+        
         return false;
     }
-    public boolean shouldAttack() throws GameActionException{
-        RobotInfo [] otherSoldiers = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam);
-        int numSoldiers = 0;
-        for (RobotInfo r: otherSoldiers){
-            if(r.getType()==RobotType.SOLDIER){
-                numSoldiers++;
-            }
-        }
-        if (numSoldiers>10){
-            return true;
-        }
-        return false;
-    }
+
 }
