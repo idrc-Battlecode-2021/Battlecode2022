@@ -156,7 +156,7 @@ public class Miner extends Droid {
                                         MapLocation[] nextTo = rc.getAllLocationsWithinRadiusSquared(nearbyLead[j], 1);
                                         boolean none = false;
                                         for (int k = nextTo.length; --k >= 0; ) {
-                                            if (rc.canSenseRobotAtLocation(nextTo[k]) && rc.senseRobotAtLocation(nextTo[k]).getID() != rc.getID()) {
+                                            if (rc.canSenseRobotAtLocation(nextTo[k]) && !nextTo[k].equals(myLocation)) {
                                                 continue loop1;
                                             }
                                         }

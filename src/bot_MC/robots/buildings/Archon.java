@@ -117,7 +117,21 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        if (!minerDone && minerCount<minerBuild){
+        if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*globalBuilderCount+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
+            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
+                Direction directions[] = Direction.allDirections();
+                int i = 0;
+                while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
+                    i++;
+                }
+                if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
+                    builderCount++;
+                    rc.buildRobot(RobotType.BUILDER,directions[i]);
+                    indicatorString+=" builders "+builderCount;
+                }
+            }
+        }
+        else if (!minerDone && minerCount<minerBuild){
             int mod;
             if (minerCount<minerBuild/3){
                 mod=1;
@@ -211,20 +225,6 @@ public class Archon extends Building{
                 if (rc.getTeamLeadAmount(rc.getTeam())-75*space<cost){
                     rc.setIndicatorString(indicatorString);
                     return;
-                }
-            }
-            if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*globalBuilderCount+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
-                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
-                    Direction directions[] = Direction.allDirections();
-                    int i = 0;
-                    while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
-                        i++;
-                    }
-                    if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
-                        builderCount++;
-                        rc.buildRobot(RobotType.BUILDER,directions[i]);
-                        indicatorString+=" builders "+builderCount;
-                    }
                 }
             }
             if (wsBuildType%mod==0 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
