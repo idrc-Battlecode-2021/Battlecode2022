@@ -1,4 +1,4 @@
-package bot3_JJ3.robots.droids;
+package bot4.robots.droids;
 
 import battlecode.common.*;
 
@@ -399,3 +399,4 @@ public class Miner extends Droid{
         return false;
     }
 }
+
