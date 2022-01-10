@@ -4,6 +4,9 @@
 - Labs only if a stupid amount of lead is avaliable
 - Watchtowers are always offensive
 - Doubles builder count if there is a good surplus of lead
+- Hardcoded Miner Limit
+- Soldiers close to other units until at least one enemy location is known
+- Builders always at least 2 block away from archon
 
 # IDs
 - Archon ID's are all +1
@@ -26,3 +29,4 @@ When miners find a deposit
 #Bugs
 - Miners get stuck in corners
 - Sometimes Miners don't go to lead deposits
+- one archon gets most of the soldiers
