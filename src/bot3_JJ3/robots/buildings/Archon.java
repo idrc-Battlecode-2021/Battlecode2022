@@ -174,6 +174,7 @@ public class Archon extends Building{
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
+        int soldierBuildStart = rc.readSharedArray(42);
         if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
             // update spawnphase array (57)
             int i=0;
@@ -268,8 +269,8 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if ((minerCount-minerFoundCount<minerBuild && globalSoldierCount >= soldierBuild*rc.getArchonCount() || minerCount < minerBuild) &&
-                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount() && minerCount < 180/rc.getArchonCount()){
+        if ((minerCount-minerFoundCount<minerBuild && (globalSoldierCount >= soldierBuild*rc.getArchonCount() || soldierBuildStart == 0) || minerCount < minerBuild) &&
+                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();

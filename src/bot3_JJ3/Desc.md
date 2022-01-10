@@ -25,6 +25,7 @@ When miners find a deposit
 - 39: minerAlert (WIP)
 - 40: attacked
 - 41: minorLocation (Where enemy is)  
+- 42: soldierBuild Start
 - All Other ids the same
 
 #Bugs

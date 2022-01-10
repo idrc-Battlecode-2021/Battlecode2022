@@ -354,10 +354,17 @@ public abstract class Robot {
         int num_enemies =enemies.length;
         int k=0;
         boolean seesArchon = false;
-        for (RobotInfo r:enemies){
-            if (r.getType()== RobotType.ARCHON){
-                seesArchon=true;
-                k=4096+64*r.getLocation().x+r.getLocation().y;
+        boolean seesAttackers = false;
+        loop: for(int i = enemies.length; --i>=0;){
+            switch (enemies[i].getType()){
+                case ARCHON:
+                    seesArchon=true;
+                    k=4096+64*enemies[i].getLocation().x+enemies[i].getLocation().y;
+                    break loop;
+                case SAGE:
+                case BUILDER:
+                case SOLDIER:
+                    seesAttackers = true;
             }
         }
         if (num_enemies>5 && !seesArchon){
@@ -367,7 +374,7 @@ public abstract class Robot {
             rc.writeSharedArray(55,k);
         } else if (seesArchon){
             rc.writeSharedArray(55, k);
-        }else if(num_enemies > 0){
+        }else if(seesAttackers){
             rc.writeSharedArray(41,k);
         }
     }
