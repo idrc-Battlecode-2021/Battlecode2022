@@ -247,21 +247,7 @@ public class Archon extends Building{
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
-        if (builderCount<13 && rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*5+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
-            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
-                Direction directions[] = Direction.allDirections();
-                int i = 0;
-                while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
-                    i++;
-                }
-                if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
-                    builderCount++;
-                    rc.buildRobot(RobotType.BUILDER,directions[i]);
-                    indicatorString+=" builders "+builderCount;
-                }
-            }
-        }
-        else if (rc.readSharedArray(12)==0){
+        if (rc.readSharedArray(12)==0){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString+=" miners";
@@ -285,6 +271,20 @@ public class Archon extends Building{
                     rc.buildRobot(type,directions[minerIndex]);
                     minerIndex++;
                     minerCount++;
+                }
+            }
+        }
+        else if (builderCount<13 && rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*5+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
+            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
+                Direction directions[] = Direction.allDirections();
+                int i = 0;
+                while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
+                    i++;
+                }
+                if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
+                    builderCount++;
+                    rc.buildRobot(RobotType.BUILDER,directions[i]);
+                    indicatorString+=" builders "+builderCount;
                 }
             }
         }

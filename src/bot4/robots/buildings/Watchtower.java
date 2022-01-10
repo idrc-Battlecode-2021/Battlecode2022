@@ -88,6 +88,7 @@ public class Watchtower extends Building {
                     }
                 }
                 else{
+                    if(decode()!=null)
                     intermediateMove(decode());
                 }
             }
