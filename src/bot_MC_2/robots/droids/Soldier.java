@@ -45,6 +45,7 @@ public class Soldier extends Droid{
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
         int possibleLocation = rc.readSharedArray(12);
         if(nearbyBots.length >= 1){
+            //New targetting
             target = selectPriorityTarget();
             if (target!=rc.getLocation()){
                 if (rc.canAttack(target)){
@@ -55,21 +56,9 @@ public class Soldier extends Droid{
                 }
                 return;
             }
-            /*
-            target = nearbyBots[nearbyBots.length-1].getLocation();
-            for(int i=nearbyBots.length-1;--i>=0;){
-                MapLocation temp = nearbyBots[i].getLocation();
-                if(movementTileDistance(target,myLocation) > movementTileDistance(temp,myLocation)) target = temp;
-            }
-            */
         }
-        /*
-        if(target != null){
-            intermediateMove(target);
-            if(rc.canAttack(target))rc.attack(target);
-        }
-        */
         if (possibleLocation>0 && !reachedLocation){
+            //Chooses the closest location where an enemy has been sighted
             int bytecode = Clock.getBytecodeNum();
             int locs1 = rc.readSharedArray(12);
             int locs2 = rc.readSharedArray(13);

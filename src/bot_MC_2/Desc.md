@@ -1,4 +1,6 @@
 # Bot MC 2
+Uses bot3 as a base
+
 Attempt at a more aggressive strategy
 
 Archon:

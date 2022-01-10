@@ -47,6 +47,7 @@ public class Archon extends Building{
                 archonOrder++;
             }
         }
+        //write archon location to array
         MapLocation myLocation = rc.getLocation();
         int x = myLocation.x/4;
         int y = myLocation.y/4;
@@ -58,7 +59,8 @@ public class Archon extends Building{
             int temp = (int)Math.pow(256,archonOrder-2);
             rc.writeSharedArray(50, rc.readSharedArray(50)+x*temp+y*(temp*16));
         }
-        if (archonOrder==rc.getArchonCount()-1){ //last archon
+        if (archonOrder==rc.getArchonCount()-1){
+            //if this is the last archon, find the average distance between all of the archons
             if(archonOrder==0){
                 rc.writeSharedArray(14, (int)Math.pow(2,14));
             }
@@ -118,41 +120,6 @@ public class Archon extends Building{
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
-    }
-    
-    public boolean canProceed(int n) throws GameActionException {
-        // First check if other archons are trying to defend
-        int defenseStatus = rc.readSharedArray(56);
-        for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;} // don't check archons that don't exist
-            int temp = (int)Math.pow(2,i);
-            int thisDefense = (defenseStatus % (temp*16))/temp;
-            if (thisDefense > 0){
-                indicatorString += "defense";
-                return false;
-            }
-        }
-        // Check if all archons have passed phase n, phases on top of file
-        int archonStatus = rc.readSharedArray(57);
-        for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;}
-            int temp = (int)Math.pow(2,i);
-            int thisPhase = (archonStatus % (temp*16))/temp;
-            if (thisPhase < n){
-                indicatorString += " phase too low ";
-                return false;
-            }
-        }
-        return true;
-    }
-    
-     
-    public void updateLabConstraints() throws GameActionException {
-        //TODO: update constraints for lab based on current lead amounts and needs
-        int minLead = 300; //placeholder
-        int maxRate = 20; //placeholder, 5 to 20
-        rc.writeSharedArray(9, (maxRate-5)*4096+minLead); //minLead may need to be divided by a factor to fit in 12 bits if minLead is large
-        
     }
 
     // if enemies are near archon, spawn soldiers and inform other archons
@@ -261,7 +228,6 @@ public class Archon extends Building{
         checkArchonsAlive();
         avoidFury();
         retransform();
-        updateLabConstraints();
         updateTroopCount();
 
         // reset total # of troops in shared array
