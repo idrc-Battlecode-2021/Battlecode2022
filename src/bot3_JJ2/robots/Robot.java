@@ -336,6 +336,18 @@ public abstract class Robot {
         int y = loc%64;
         return new MapLocation(x, y);
     }
+    public boolean hasMapLocation(int i) throws GameActionException{
+        if (rc.readSharedArray(i)==0){
+            return false;
+        }
+        return true;
+    }
+    public MapLocation decode(int i) throws GameActionException{
+        int loc = rc.readSharedArray(i);
+        int x = (loc/64)%64;
+        int y = loc%64;
+        return new MapLocation(x, y);
+    }
     public void broadcast() throws GameActionException{
         // broadcasts location of multiple enemies and enemy archon
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
@@ -353,9 +365,10 @@ public abstract class Robot {
             int x = m.x, y=m.y;
             k=x*64+y;
             rc.writeSharedArray(55,k);
-        }
-        if (seesArchon){
+        } else if (seesArchon){
             rc.writeSharedArray(55, k);
+        }else if(num_enemies > 0){
+            rc.writeSharedArray(41,k);
         }
     }
     public boolean attackArchon() throws GameActionException{

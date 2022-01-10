@@ -277,7 +277,7 @@ public class Archon extends Building{
         ;
         else */
         if ((minerCount<minerBuild && globalSoldierCount >= soldierBuild*rc.getArchonCount() || minerFoundCount < minerBuild) &&
-                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
+                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount() && minerCount < 150/rc.getArchonCount()){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();

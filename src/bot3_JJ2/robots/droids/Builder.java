@@ -55,6 +55,12 @@ public class Builder extends Droid{
                 return;
             }
         }
+        RobotInfo[] checkArchons = rc.senseNearbyRobots(5,myTeam);
+        for(int i = checkArchons.length; --i>=0;){
+            if(checkArchons[i].getType().equals(RobotType.ARCHON)){
+                tryMoveMultiple(myLocation.directionTo(checkArchons[i].getLocation()).opposite());
+            }
+        }
         //System.out.println("After prototype: "+Clock.getBytecodesLeft());
         int toBuild = read();
         //rc.setIndicatorString(Integer.toBinaryString(toBuild));

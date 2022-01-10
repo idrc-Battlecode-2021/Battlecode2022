@@ -123,7 +123,7 @@ public class Miner extends Droid{
                                     }
                                 }
                             }
-                            if(rc.senseLead(myLocation) > 0){
+                            if(rc.senseLead(myLocation) > 1){
                                 target = myLocation;
                                 lead.put(target,rc.senseLead(myLocation));
                             }
@@ -141,7 +141,6 @@ public class Miner extends Droid{
                                     }
                                 } else if(rc.senseLead(target) > 1 && rc.canMineLead(target)) rc.mineLead(target);
                             }
-                            intermediateMove(target);                            
                             if(myLocation.equals(target)){
                                 RobotInfo[] nearbyBots = rc.senseNearbyRobots(2,myTeam);
                                 boolean nextToMiner = false;
@@ -151,8 +150,8 @@ public class Miner extends Droid{
                                         break;
                                     }
                                 }
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
                                 if (nextToMiner) {
-                                    MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
                                     int amount = lead.get(target);
                                     int start = (int) (nearbyLead.length * Math.random());
                                     loop1: for (int i = start; i < start + nearbyLead.length; i++) {
@@ -173,8 +172,28 @@ public class Miner extends Droid{
                                             break loop1;
                                         }
                                     }
+                                }else {
+                                    Arrays.sort(nearbyLead,(MapLocation o1, MapLocation o2) -> {
+                                        try {
+                                            return rc.senseLead(o1) - rc.senseLead(o2);
+                                        } catch (GameActionException e) {
+                                            e.printStackTrace();
+                                            return 1;
+                                        }
+                                    });
+                                    for(int i = nearbyLead.length; --i>=0;){
+                                        Direction dirTo = myLocation.directionTo(nearbyLead[i]);
+                                        if (rc.canMove(dirTo)){
+                                            rc.move(dirTo);
+                                            myLocation = rc.getLocation();
+                                            target = nearbyLead[i];
+                                            lead.put(target, rc.senseLead(nearbyLead[i]));
+                                            break;
+                                        }
+                                    }
                                 }
                             }
+                            intermediateMove(target);
                             boolean mine = true;
                             while(rc.isActionReady() && mine){
                                 mine = false;
@@ -331,7 +350,6 @@ public class Miner extends Droid{
 
     public boolean checkEnemy() throws GameActionException {
         //detect enemy muckraker
-        rc.writeSharedArray(40,1);
         RobotInfo[] robots=rc.senseNearbyRobots(20,myTeam.opponent());
         if(robots.length > 0){
             int xMove = 0, yMove = 0;
@@ -354,6 +372,7 @@ public class Miner extends Droid{
                 }
             }
             if(xMove != 0 || yMove != 0){
+                rc.writeSharedArray(41,1);
                 target = null;
                 targetType = 2;
                 return tryMoveMultiple(selectDirection(xMove,yMove));
