@@ -91,8 +91,6 @@ public class Archon extends Building{
             spawnPhase++;
             rc.writeSharedArray(57, rc.readSharedArray(57)+power);
         }
-        indicatorString+=" archon: "+archonOrder;
-        indicatorString +=" spawnPhase: "+spawnPhase;
         minerBuild = Math.max(minerBuild, (int)(60*((double)rc.senseNearbyLocationsWithLead(34).length/rc.getAllLocationsWithinRadiusSquared(myLocation,34).length)));
         
         if (defense()){indicatorString+="defense"; rc.setIndicatorString(indicatorString);return;}
@@ -111,13 +109,14 @@ public class Archon extends Building{
 
         watchtowerCount = rc.readSharedArray(archonOrder+5);
         labCount = (rc.readSharedArray(4) % (power*16))/power;
-
+        indicatorString+=" buildCount: "+builderCount;
         if (!canProceed(spawnPhase)){
             // shouldn't continue if other archons haven't caught up with spawning
             rc.setIndicatorString(indicatorString);
             return;
         }
-        if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*globalBuilderCount+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
+        //surplus
+        if (builderCount<13 && rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180*5+RobotType.BUILDER.buildCostLead+RobotType.WATCHTOWER.buildCostLead){
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -412,6 +411,7 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
+            // update troop count variables from shared array
             globalSageCount = rc.readSharedArray(2);
             globalSoldierCount = rc.readSharedArray(3);
             globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);

@@ -52,11 +52,20 @@ public class Soldier extends Droid{
             if(rc.canAttack(target))rc.attack(target);
         }
         else if (defensive){
-            if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
-                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
-            }
-            else if (rc.getLocation().distanceSquaredTo(archonLoc)>20){
-                tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
+            if (rc.getLocation().isWithinDistanceSquared(archonLoc,8)){
+                MapLocation away =  rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite());
+                if (rc.onTheMap(away)){
+                    intermediateMove(away);
+                    return;
+                }
+                else{
+                    Direction direction = rc.getLocation().directionTo(archonLoc);
+                    away = (archonLoc.add(direction)).add(direction);
+                    if (rc.onTheMap(away)){
+                        intermediateMove(away);
+                        return;
+                    }
+                }
             }
         }
         else if (hasMapLocation()){
@@ -69,6 +78,21 @@ public class Soldier extends Droid{
             intermediateMove(target);
         }
         else{
+            if (rc.getLocation().isWithinDistanceSquared(archonLoc,18)){
+                MapLocation away =  rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite());
+                if (rc.canSenseLocation(away) && rc.onTheMap(away)){
+                    intermediateMove(away);
+                    return;
+                }
+                else{
+                    Direction direction = rc.getLocation().directionTo(archonLoc);
+                    away = (archonLoc.add(direction)).add(direction);
+                    if (rc.canSenseLocation(away) && rc.onTheMap(away)){
+                        intermediateMove(away);
+                        return;
+                    }
+                }
+            }
             MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
             for (int i = all.length; --i>=0;){
                 for (MapLocation c: corners){

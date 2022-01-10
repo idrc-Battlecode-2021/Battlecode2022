@@ -54,6 +54,21 @@ public class Builder extends Droid{
                 return;
             }
         }
+        if (rc.getLocation().isWithinDistanceSquared(archonLoc,18)){
+            MapLocation away =  rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite());
+            if (rc.canSenseLocation(away) && rc.onTheMap(away)){
+                intermediateMove(away);
+                return;
+            }
+            else{
+                Direction direction = rc.getLocation().directionTo(archonLoc);
+                away = (archonLoc.add(direction)).add(direction);
+                if (rc.canSenseLocation(away) && rc.onTheMap(away)){
+                    intermediateMove(away);
+                    return;
+                }
+            }
+        }
         boolean built = false;
         if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180){
             built = build(2);
@@ -174,6 +189,7 @@ public class Builder extends Droid{
         rc.writeSharedArray(58, rc.readSharedArray(58) - (int)Math.pow(2,startingBit));
     }
     public boolean build(int id) throws GameActionException{
+        
         if(myLocation.x%2 == myLocation.y%2){
             boolean notMoved = true;
             List<Direction> basic = Arrays.asList(Constants.BASIC_DIRECTIONS);
@@ -188,6 +204,7 @@ public class Builder extends Droid{
             }
             if(notMoved || myLocation.x%2 == myLocation.y%2)return false;
         }
+        
         RobotType r = RobotType.WATCHTOWER;
         if (id ==0){
             return false;
