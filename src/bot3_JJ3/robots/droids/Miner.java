@@ -123,9 +123,16 @@ public class Miner extends Droid{
                                     }
                                 }
                             }
-                            if(rc.senseLead(myLocation) > 1){
-                                target = myLocation;
-                                lead.put(target,rc.senseLead(myLocation));
+                            if(!myLocation.equals(target) && rc.senseLead(myLocation) > 1){
+                                RobotInfo[] localBots = rc.senseNearbyRobots(1,myTeam);
+                                int count = 0;
+                                for(int i = localBots.length; --i>=0;){
+                                    if(localBots[i].getType().equals(RobotType.MINER))count++;
+                                }
+                                if(count < 3){
+                                    target = myLocation;
+                                    lead.put(target,rc.senseLead(myLocation));
+                                }
                             }
                             if(rc.canMineLead(target)){
                                 RobotInfo[] robots = rc.senseNearbyRobots(2);
