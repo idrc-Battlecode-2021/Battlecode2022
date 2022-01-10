@@ -28,64 +28,15 @@ public abstract class Droid extends Robot {
             return true;
         }else if(rubble2 <= rubble3 && rc.canMove(dir2)){
             rc.move(dir2);
+            updateDirection(dir2);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
             return true;
         }else if(rc.canMove(dir3)){
             rc.move(dir3);
+            updateDirection(dir3);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean priorityMoveNew() throws GameActionException {
-        if(initDirection == null){
-            updateDirection(Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
-        }
-        if(myLocation.x == 0 || myLocation.y == 0 || myLocation.x == rc.getMapWidth()-1 || myLocation.y == rc.getMapHeight()){
-            updateDirection(initDirection.rotateLeft().rotateLeft());
-        }
-        Direction dir = null; int rubble = 101;
-        int[] offsets = new int[2];
-        if(rc.canMove(initDirection)){
-            offsets = getDirectionOffsets(initDirection);
-            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < mapWidth && yVal >= 0 && yVal < mapHeight &&
-                    !prevLocs.contains(myLocation)){
-                dir = initDirection;
-                rubble = rc.senseRubble(rc.adjacentLocation(initDirection));
-            }
-
-        }
-        int rubble2;
-        if(rc.canMove(initDirection.rotateLeft())){
-            offsets = getDirectionOffsets(initDirection);
-            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    !prevLocs.contains(myLocation)){
-                rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateLeft()));
-                if(rubble2 < rubble){
-                    dir = initDirection.rotateLeft();
-                    rubble = rubble2;
-                }
-            }
-        }
-        if(rc.canMove(initDirection.rotateRight())){
-            offsets = getDirectionOffsets(initDirection);
-            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    !prevLocs.contains(myLocation)){
-                rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateRight()));
-                if(rubble2 < rubble){
-                    dir = initDirection.rotateLeft();
-                }
-            }
-        }
-        Direction temp = initDirection;
-        if(dir != null && tryMoveMultiple(dir)){
-            updateDirection(temp);
             return true;
         }
         return false;
@@ -165,6 +116,7 @@ public abstract class Droid extends Robot {
             if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
                     !prevLocs.contains(myLocation) && rc.canMove(directions[i])){
                 if(tryMoveMultiple(directions[i])){
+                    updateDirection(directions[i]);
                     prevLocs.add(myLocation);
                     return true;
                 }

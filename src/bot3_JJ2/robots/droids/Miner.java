@@ -372,7 +372,7 @@ public class Miner extends Droid{
                 }
             }
             if(xMove != 0 || yMove != 0){
-                rc.writeSharedArray(41,1);
+                rc.writeSharedArray(40,1);
                 target = null;
                 targetType = 2;
                 return tryMoveMultiple(selectDirection(xMove,yMove));
