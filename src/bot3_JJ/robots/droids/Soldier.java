@@ -35,7 +35,6 @@ public class Soldier extends Droid{
     public void run() throws GameActionException {
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
-        System.out.println(enemyArchons.size());
         rc.setIndicatorString(myArchonOrder+"");
         avoidCharge();
         // update shared array
@@ -52,12 +51,12 @@ public class Soldier extends Droid{
                 if(movementTileDistance(target,myLocation) > movementTileDistance(temp,myLocation)) target = temp;
             }
         }
-        if(shouldAttack()){
-                    if(target != null){
+
+            if(target != null){
             intermediateMove(target);
             if(rc.canAttack(target))rc.attack(target);
         }
-        else if (defensive){
+            else if (defensive){
             if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
                 tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
             }
@@ -65,7 +64,7 @@ public class Soldier extends Droid{
                 tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
             }
         }
-        else if (hasMapLocation()){
+        else if (shouldAttack() && hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
@@ -102,12 +101,7 @@ public class Soldier extends Droid{
                 }
             }
         }
-        }
-        else{
-            if(rc.getLocation().distanceSquaredTo(archonLoc)<3){
-                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
-            }
-        }
+
 
     }
     public boolean isDefensive() throws GameActionException{
