@@ -3,10 +3,7 @@ package bot3_JJ.robots;
 import battlecode.common.*;
 import bot3_JJ.util.Constants;
 
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 public abstract class Robot {
     protected RobotController rc;
@@ -19,11 +16,9 @@ public abstract class Robot {
     protected int initialArchons;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
-    protected ArrayList<MapLocation> xReflect = new ArrayList<MapLocation>();
-    protected ArrayList<MapLocation> yReflect = new ArrayList<MapLocation>();
-    protected ArrayList<MapLocation> rotate = new ArrayList<MapLocation>();
 
     //OLD Movement Method Fields
     protected int[][] internalMap;
@@ -601,22 +596,91 @@ public abstract class Robot {
             enemyArchons.remove(new MapLocation(x,y));
         }
     }
-    private void possibleArchonLocs() throws GameActionException{
-        // Get Archon Positions
-        // Get Map Size
-        // Reflect each archon position over x and over y
-        // Rotate 180 degrees
-        MapLocation [] myArchonLocs = new MapLocation[4];
+    public MapLocation readSymmetry() throws GameActionException {
+        int n = rc.readSharedArray(48);
+        if (n == 0) {
+            return null;
+        }
+        int y = n % 64;
+        int x = (n / 64) % 64;
+        if (n > 4096) {
+            enemyArchons.remove(new MapLocation(x, y));
+            return null;
+        }
+        return new MapLocation(x, y);
+    }
+    public void checkSymmetry() throws GameActionException {
+        for (MapLocation m : enemyArchons) {
+            if (rc.canSenseLocation(m)) {
+                for (int i = 0; i < enemyArchons.size(); i++) {
+                    if (rc.canSenseLocation(enemyArchons.get(i))) {
+                        for (RobotInfo ro : rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent())) {
+                            if (ro.getType() == RobotType.ARCHON) {
+                                rc.writeSharedArray(48, m.x * 64 + m.y);
+                                return;
+                            }
+                        }
+                        rc.writeSharedArray(48, 4096 + m.x * 64 + m.y);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    public void readArchonLocs() throws GameActionException{
+        int n1 = rc.readSharedArray(49);
+        int x1=n1%16;
+        int y1=(n1/16)%16;
+        int x2=(n1/256)%16;
+        int y2=(n1/4096)%16;
+        MapLocation m1 = new MapLocation (x1*4, y1*4);
+        MapLocation m2 = new MapLocation (x2*4, y2*4);
+        MapLocation bad = new MapLocation (0,0);
+        if (m1!=bad){
+            myArchons.add(m1);
+        }
+        if (m2!=bad){
+            myArchons.add(m2);
+        }
+        n1 = rc.readSharedArray(50);
+        x1=n1%16;
+        y1=(n1/16)%16;
+        x2=(n1/256)%16;
+        y2=(n1/4096)%16;
+        m1 = new MapLocation (x1*4, y1*4);
+        m2 = new MapLocation (x2*4, y2*4);
+        if (m1!=bad){
+            myArchons.add(m1);
+        }
+        if (m2!=bad){
+            myArchons.add(m2);
+        }
+        myArchons.removeAll(Collections.singleton(bad));
+    }
+    public void possibleArchonLocs() throws GameActionException{
         MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         int centerX = center.x, centerY=center.y;
         ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
-        //(2,36) --> (57, 23)
-        for (MapLocation m: myArchonLocs){
+        for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
-            xReflect.add(new MapLocation(2*centerX -x, y));
-            yReflect.add(new MapLocation(x, 2*centerY-y));
-            rotate.add(new MapLocation(2*centerX-x, 2*centerY-y));
+            if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
+                enemyArchons.add(new MapLocation(2*centerX -x, y));
+            }
+            if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
+                enemyArchons.add(new MapLocation( x, 2*centerY-y));
+            }
+            if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
+                enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
+            }
+        }
+        Set<MapLocation> s = new LinkedHashSet<MapLocation>();
+        s.addAll(enemyArchons);
+        enemyArchons.clear();
+        enemyArchons.addAll(s);
+        Collections.sort(enemyArchons);
+        for (MapLocation m: myArchons){
+            enemyArchons.remove(m);
         }
     }
 }

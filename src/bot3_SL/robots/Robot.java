@@ -617,18 +617,14 @@ public abstract class Robot {
             int y = m.y;
             if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
                 enemyArchons.add(new MapLocation(2*centerX -x, y));
-                System.out.println("X" + m + " "+new MapLocation(2*centerX -x, y) );
-            }
+                }
             if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
                 enemyArchons.add(new MapLocation( x, 2*centerY-y));
-                System.out.println("Y" + m + " "+new MapLocation(x, 2*centerY-y) );
                 }
             if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
                 enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
-                System.out.println("R" + m + " "+new MapLocation(2*centerX -x, 2*centerY-y) );
-            }
+                }
        }
-        System.out.println(enemyArchons);
         Set<MapLocation> s = new LinkedHashSet<MapLocation>();
         s.addAll(enemyArchons);
         enemyArchons.clear();
