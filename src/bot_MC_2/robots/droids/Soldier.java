@@ -1,4 +1,4 @@
-package bot_MC.robots.droids;
+package bot_MC_2.robots.droids;
 
 import battlecode.common.*;
 
@@ -8,6 +8,7 @@ public class Soldier extends Droid{
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private boolean defensive = false;
+    private boolean reachedLocation = false;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -40,6 +41,7 @@ public class Soldier extends Droid{
         broadcast();
         target = null;
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
+        int possibleLocation = rc.readSharedArray(12);
         if(nearbyBots.length >= 1){
             target = nearbyBots[nearbyBots.length-1].getLocation();
             for(int i=nearbyBots.length-1;--i>=0;){
@@ -51,9 +53,27 @@ public class Soldier extends Droid{
             intermediateMove(target);
             if(rc.canAttack(target))rc.attack(target);
         }
-        else if(rc.getLocation().distanceSquaredTo(archonLoc)<18){
-            tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
+        else if (possibleLocation>0 && !reachedLocation){
+            int x = (possibleLocation%16)*4;
+            int y = (possibleLocation/16)*4;
+            MapLocation target = new MapLocation(x,y);
+            if (rc.canSenseLocation(target) && rc.getLocation().isWithinDistanceSquared(target, 8)){
+                reachedLocation = true;
+            }
+            else{
+                intermediateMove(target);
+            }
         }
+        /*
+        else if (defensive){
+            if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
+            }
+            else if (rc.getLocation().distanceSquaredTo(archonLoc)>20){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
+            }
+        }
+        */
         else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
@@ -84,6 +104,7 @@ public class Soldier extends Droid{
                 }
             }
         }
+        
 
     }
     public boolean isDefensive() throws GameActionException{
