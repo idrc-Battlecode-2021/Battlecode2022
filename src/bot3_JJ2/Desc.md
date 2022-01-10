@@ -7,6 +7,7 @@
 - Hardcoded Miner Limit
 - Soldiers close to other units until at least one enemy location is known
 - Builders always at least 2 block away from archon
+- Miners go to place with most lead
 
 # IDs
 - Archon ID's are all +1
