@@ -255,10 +255,10 @@ public class Archon extends Building{
             if (!checkBuildStatus(diff, cost)) return;
             int mod = 1;
             if (rc.getTeamLeadAmount(rc.getTeam())>1000 || rc.readSharedArray(12)!=0){
-                mod = 3;
-            }
-            if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount>7){
                 mod = 2;
+            }
+            if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
+                mod = 3;
             }
             if (minerCount%mod==0 &&  (rc.getTeamLeadAmount(rc.getTeam())>=cost)){
                 Direction directions[] = Direction.allDirections();
