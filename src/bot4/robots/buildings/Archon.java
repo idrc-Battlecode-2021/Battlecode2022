@@ -248,19 +248,19 @@ public class Archon extends Building{
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
-        if (minerCount<10 || rc.readSharedArray(12)==0){
+        if (minerCount<minerCountMax/3 || rc.readSharedArray(12)==0){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString+=" miners";
             if (!checkBuildStatus(diff, cost)) return;
             int mod = 1;
-            if (rc.getTeamLeadAmount(rc.getTeam())>1000){
+            if (rc.getTeamLeadAmount(rc.getTeam())>1000 || rc.readSharedArray(12)!=0){
                 mod = 3;
                 if (builderCount>7){
                     mod = 2;
                 }
             }
-            if (minerCount%mod==0 &&  rc.getTeamLeadAmount(rc.getTeam())>=cost){
+            if (minerCount%mod==0 &&  (rc.getTeamLeadAmount(rc.getTeam())>=cost)){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
                 while (!rc.canBuildRobot(type,directions[(minerIndex+i)%8]) && i<8){
