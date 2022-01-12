@@ -55,7 +55,7 @@ public class Miner extends Droid{
                     break;
                 }
             }
-            local = rc.senseNearbyLocationsWithLead(2);
+            local = rc.senseNearbyLocationsWithLead(2,2);
             for(int i = local.length; --i >= 0;){
                 if(rc.senseLead(local[i]) > 1 && rc.canMineLead(local[i])){
                     rc.mineLead(local[i]);
@@ -157,7 +157,7 @@ public class Miner extends Droid{
                                         break;
                                     }
                                 }
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2,2);
                                 if (nextToMiner) {
                                     int amount = lead.get(target);
                                     int start = (int) (nearbyLead.length * Math.random());
@@ -204,7 +204,7 @@ public class Miner extends Droid{
                             boolean mine = true;
                             while(rc.isActionReady() && mine){
                                 mine = false;
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2,2);
                                 for(int i = nearbyLead.length; --i>=0;) {
                                     if (rc.senseLead(nearbyLead[i]) > 1 && rc.canMineLead(nearbyLead[i])){
                                         rc.mineLead(nearbyLead[i]);
@@ -213,6 +213,12 @@ public class Miner extends Droid{
                                 }
                             }
 
+                        }
+                        if(rc.canSenseLocation(target) && rc.senseLead(target) < 2){
+                            lead.remove(target);
+                            target = null;
+                            targetType = 2;
+                            break miningBlock;
                         }
                     }
                     if(targetType == 2){
@@ -239,12 +245,17 @@ public class Miner extends Droid{
                         }
                         if(rc.canMineGold(target)){
                             rc.mineGold(target);
+                            if(rc.senseGold(target) ==0){
+                                gold.remove(target);
+                                target = null;
+                                break miningBlock;
+                            }
                         }intermediateMove(target);
                         while(rc.isActionReady()){
                             boolean mine = true;
                             while(rc.isActionReady() && mine){
                                 mine = false;
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
+                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2,2);
                                 for(int i = nearbyLead.length; --i>=0;) {
                                     if (rc.senseLead(nearbyLead[i]) > 1 && rc.canMineLead(nearbyLead[i])){
                                         rc.mineLead(nearbyLead[i]);
