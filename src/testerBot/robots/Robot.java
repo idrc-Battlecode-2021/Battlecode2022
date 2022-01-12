@@ -1,4 +1,11 @@
 package testerBot.robots;
 
-public class Robot {
+import battlecode.common.RobotController;
+
+public abstract class Robot {
+
+    public Robot (RobotController rc){
+
+    }
+
 }
