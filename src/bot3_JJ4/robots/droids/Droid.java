@@ -11,9 +11,10 @@ public abstract class Droid extends Robot {
     private AnomalyScheduleEntry[] anomaly = rc.getAnomalySchedule();
     private ArrayList<AnomalyScheduleEntry> relevantAnomalies = new ArrayList<AnomalyScheduleEntry>();
 
-    public Droid(RobotController rc) {
+    public Droid(RobotController rc) throws GameActionException {
         super(rc);
         exploreTarget = myLocation;
+        detectArchon();
     }
 
     private boolean priorityMoveNew2() throws GameActionException{

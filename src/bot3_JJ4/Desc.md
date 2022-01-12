@@ -1,4 +1,4 @@
-# Third Bot Variant (JJ2)
+# Third Bot Variant (JJ4)
 - When 1 miner finds a deposit, another is built
 - Heavily Priorities Soldiers
 - Labs only if a stupid amount of lead is avaliable

@@ -16,7 +16,6 @@ public class Builder extends Droid{
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
         int archonID=0;
-        detectArchon();
         archonLoc = rc.senseRobot(myArchonID-1).getLocation();
         startingBit = 2*myArchonOrder;
         //System.out.println(myArchonOrder);
