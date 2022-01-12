@@ -1,8 +1,11 @@
-# Bot 4
-Uses bot_mc_2 as base
+# Bot 5
+Uses bot 4 as a base
 
-building builders and watchtowers when we have a surplus (after miner encounters enemy)
-mirror/symmetry enemy archon
+Added defense method to archons
+spawns miners in 2 to 1 ratio to soldiers, changes to 1 to 1 once enemy has been sighted
+
+selectPriorityTargetting
+miners and builders are prioritized if the turns that it takes to kill the archon>25 (and no other troops are present)
 
 ## Shared Array
 12 - location of first enemy troop

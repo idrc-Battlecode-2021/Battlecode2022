@@ -934,6 +934,20 @@ public abstract class Robot {
                 }
             }
             if (turns[minIndex]<Integer.MAX_VALUE){
+                if (turns[minIndex]>25){
+                    if (miner!=null){
+                        target = miner.getLocation();
+                        tryAttack(target);
+                        rc.setIndicatorString("target: "+target);
+                        return target;
+                    }
+                    else if (builder!=null){
+                        target = builder.getLocation();
+                        tryAttack(target);
+                        rc.setIndicatorString("target: "+target);
+                        return target;
+                    }
+                }
                 switch(minIndex){
                     case 0:
                         target = archon.getLocation();
