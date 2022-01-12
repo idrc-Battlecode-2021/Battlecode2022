@@ -212,7 +212,11 @@ public class Miner extends Droid{
                                     }
                                 }
                             }
-
+                            if(rc.canSenseRobotAtLocation(target) && rc.senseLead(target) < 2){
+                                lead.remove(target);
+                                target = null;
+                                targetType = 2;
+                            }
                         }
                     }
                     if(targetType == 2){
