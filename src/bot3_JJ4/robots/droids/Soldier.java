@@ -8,7 +8,7 @@ public class Soldier extends Droid{
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private boolean defensive = false;
-    public Soldier(RobotController rc) {
+    public Soldier(RobotController rc) throws GameActionException {
         super(rc);
     }
 

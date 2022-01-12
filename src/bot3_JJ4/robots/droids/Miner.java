@@ -12,7 +12,7 @@ public class Miner extends Droid{
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
-    public Miner(RobotController rc) {
+    public Miner(RobotController rc) throws GameActionException {
         super(rc);
     }
 
@@ -216,6 +216,7 @@ public class Miner extends Droid{
                                 lead.remove(target);
                                 target = null;
                                 targetType = 2;
+                                break miningBlock;
                             }
                         }
                     }

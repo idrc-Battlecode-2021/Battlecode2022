@@ -271,8 +271,8 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if (prevSoldierCount <= globalSoldierCount && (minerCount-minerFoundCount<minerBuild && (globalSoldierCount >= soldierBuild*rc.getArchonCount() || soldierBuildStart == 0) || minerCount < minerBuild) &&
-                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()){
+        if (/*prevSoldierCount <= globalSoldierCount && (minerCount-minerFoundCount<minerBuild && (globalSoldierCount >= soldierBuild*rc.getArchonCount() || soldierBuildStart == 0) || minerCount < minerBuild) &&
+                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()*/(minerCount+globalSoldierCount)%3 != 2 && soldierBuildStart == 0){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -295,7 +295,8 @@ public class Archon extends Building{
                 }
             }
 
-        } else if (globalSoldierCount >= soldierBuild*rc.getArchonCount() && (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2))){
+        } //Learn how to use Builders later
+        /*else if (globalSoldierCount >= soldierBuild*rc.getArchonCount() && (builderCount<builderBuild || (rc.getTeamLeadAmount(myTeam) > 2000 && builderCount < builderBuild*2))){
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
@@ -312,7 +313,7 @@ public class Archon extends Building{
                     }
                 }
             }
-        }
+        }*/
         else {
             /*
             if (globalSoldierCount+globalWatchtowerCount>40 && rc.getTeamGoldAmount(rc.getTeam())>=RobotType.SAGE.buildCostGold){

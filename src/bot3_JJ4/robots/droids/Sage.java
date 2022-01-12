@@ -9,7 +9,7 @@ import battlecode.common.AnomalyType;
 public class Sage extends Droid {
     private MapLocation target;
     
-    public Sage(RobotController rc) {
+    public Sage(RobotController rc) throws GameActionException {
         super(rc);
     }
 
