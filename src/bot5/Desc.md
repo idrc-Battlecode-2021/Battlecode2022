@@ -1,7 +1,7 @@
 # Bot 5
 Uses bot 4 as a base
 
-Added defense method to archons
+Added defense method back to archons
 spawns miners in 2 to 1 ratio to soldiers, changes to 1 to 1 once enemy has been sighted
 
 selectPriorityTargetting
@@ -19,6 +19,7 @@ When miners find a deposit
 Miner Attacked
 - 40: attacked (Not Used Currently)
 - 41: minorLocation (Where enemy is)  (Not Used Currently)
+- 42: enemy seen
 48 - used to tell friendly soldiers possible enemy archon locations
 49 - locations of archon 0-1
 50 - locations of archon 2-3

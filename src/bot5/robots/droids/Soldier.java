@@ -51,6 +51,8 @@ public class Soldier extends Droid{
         int possibleLocation = rc.readSharedArray(12);
         if(nearbyBots.length >= 1){
             //New targetting
+            Direction d = passabilityCheck();
+            if (d!=null && rc.canMove(d)) rc.move(d);
             target = selectPriorityTarget();
             if (target!=rc.getLocation()){
                 if (rc.canAttack(target)){
@@ -176,6 +178,19 @@ public class Soldier extends Droid{
         }
 
         return false;
+    }
+    public Direction passabilityCheck() throws GameActionException{
+        int r = rc.senseRubble(rc.getLocation());
+        MapLocation target = null;
+        MapLocation [] mapLocs= rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 1);
+        for (MapLocation m: mapLocs){
+            if (rc.senseRubble(m)<r){
+                target = m;
+            }
+        }
+        if (target ==null)
+        return null;
+        return rc.getLocation().directionTo(target);
     }
 
 }

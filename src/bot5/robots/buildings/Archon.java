@@ -286,6 +286,7 @@ public class Archon extends Building{
         if (rc.readSharedArray(12)>0){ // if an enemy troop has been sighted
             mod = 2;
         }
+        rc.setIndicatorString(""+mod+ " "+count);
         if (count%mod==0 || count%mod==2){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 Direction directions[] = Direction.allDirections();
