@@ -21,8 +21,8 @@ def main():
     primaryPlayers = sys.argv[1:]
     #players = ['agrobot','bot1','bot2','bot3','bot3_EW','bot3_JJ','bot] # Bot names (i.e. examplefuncsplayer, should be folders in src/ directory)
     players = os.listdir('./src/')
-    #maps = ["colosseum", "eckleburg", "fortress", "intersection", "jellyfish", "maptestsmall", "nottestsmall", "progress", "rivers", "sandwich", "squer", "uncomfortable", "underground", "valley"] # Maps
-    maps = ["colosseum"]
+    maps = ["colosseum", "eckleburg", "fortress", "intersection", "jellyfish", "maptestsmall", "nottestsmall", "progress", "rivers", "sandwich", "squer", "uncomfortable", "underground", "valley"] # Maps
+    #maps = ["colosseum"]
     scaffold_directory = "./" # Battlefold Scaffold location ("./" if this file is in scaffold location)
     ##
 
