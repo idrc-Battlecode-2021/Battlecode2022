@@ -282,12 +282,12 @@ public class Archon extends Building{
         if (!checkBuildStatus(diff, cost)) return;
         int mod = 3;
         if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
-            mod = 4;
+            mod = 5;
         }
         if(rc.readSharedArray(40) !=0){
-            mod = 2;
+            mod = 1;
         }else if (rc.readSharedArray(42)!= 0){ // if an enemy troop has been sighted
-            mod = 3;
+            mod = 2;
         }
         if (count %mod != 1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
