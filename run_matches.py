@@ -28,6 +28,7 @@ def main():
 
     results = {}
     winCount = {}
+    mapLosses = {}
     output = "";
     for i in range(len(primaryPlayers)):
         player = primaryPlayers[i]
@@ -52,6 +53,8 @@ def main():
 
                 results[player][opponent] = winner
                 winCount[winner] += 1
+                if winner != player:
+                    mapLosses{map} += 1
                 redOut = f"Red {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
                 output += redOut +'\n'
                 print(redOut)
@@ -62,9 +65,12 @@ def main():
 
                 results[player][opponent] = winner
                 winCount[winner] += 1
+                if winner != player:
+                    mapLosses{map} += 1
                 blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
                 output += blueOut + '\n'
                 print(blueOut)
+                print()
         print()
         break;
     output += '\n'
@@ -74,7 +80,13 @@ def main():
         score = f"{k}: {v}/{2*(len(players)-1) * len(maps)}"
         output += score + '\n'
         print(score)
-    
+    print()
+    print("Map Losses")
+    output += "Map Losses" + '\n'
+    for map,losses in mapLosses.items():
+        score = f"{map}: {losses}"
+        output += score + '\n'
+        print(score)
     file = open("matchLogs.txt", "a")
     file.write(output)
     file.close()
