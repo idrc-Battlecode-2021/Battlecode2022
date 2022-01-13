@@ -21,22 +21,24 @@ def main():
     primaryPlayers = sys.argv[1:]
     #players = ['agrobot','bot1','bot2','bot3','bot3_EW','bot3_JJ','bot] # Bot names (i.e. examplefuncsplayer, should be folders in src/ directory)
     players = os.listdir('./src/')
-    maps = ["colosseum", "eckleburg", "fortress", "intersection", "jellyfish", "maptestsmall", "nottestsmall", "progress", "rivers", "sandwich", "squer", "uncomfortable", "underground", "valley"] # Maps
+    #maps = ["colosseum", "eckleburg", "fortress", "intersection", "jellyfish", "maptestsmall", "nottestsmall", "progress", "rivers", "sandwich", "squer", "uncomfortable", "underground", "valley"] # Maps
+    maps = ["colosseum"]
     scaffold_directory = "./" # Battlefold Scaffold location ("./" if this file is in scaffold location)
     ##
 
     results = {}
     winCount = {}
-
+    output = "";
     for i in range(len(primaryPlayers)):
         player = primaryPlayers[i]
+        output += player + '\n'
         results[player] = {}
         if player not in winCount:
             winCount[player] = 0
 
         print(player + ": ")
         for j in range(len(players)):
-            if (i == j):
+            if (player == players[j]):
                 continue
             
             opponent = players[j]
@@ -50,8 +52,9 @@ def main():
 
                 results[player][opponent] = winner
                 winCount[winner] += 1
-                print("Player Red")
-                print(f"{player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}")
+                redOut = f"Red {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
+                output += redOut +'\n'
+                print(redOut)
                 
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={opponent}", f"-PpackageNameA={opponent}",f"-PteamB={player}", f"-PpackageNameB={player}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
@@ -59,13 +62,22 @@ def main():
 
                 results[player][opponent] = winner
                 winCount[winner] += 1
-                print("Player Blue")
-                print(f"{player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}")
+                blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
+                output += blueOut + '\n'
+                print(blueOut)
         print()
-
+        break;
+    output += '\n'
+    output += 'Scoreboard: ' + '\n'
     print("Scoreboard: ")
     for k,v in winCount.items():
-        print(f"{k}: {v}/{2*(len(players)-1) * len(maps)}")
+        score = f"{k}: {v}/{2*(len(players)-1) * len(maps)}"
+        output += score + '\n'
+        print(score)
+    
+    file = open("matchLogs.txt", "a")
+    f.write(output)
+    f.close()
 
 if __name__ == "__main__":
     main()
