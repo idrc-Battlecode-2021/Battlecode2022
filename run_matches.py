@@ -52,6 +52,7 @@ def main():
                 winCount[winner] += 1
                 print("Player Red")
                 print(f"{player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}")
+                
                 match_result = subprocess.check_output(["gradle", "run",f"-PteamA={opponent}", f"-PpackageNameA={opponent}",f"-PteamB={player}", f"-PpackageNameB={player}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
                 winner = parse_winner(match_result, player, opponent)
