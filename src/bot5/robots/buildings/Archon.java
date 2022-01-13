@@ -3,7 +3,8 @@ package bot5.robots.buildings;
 import battlecode.common.*;
 
 public class Archon extends Building{
-    private static Integer count = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
+    private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
+    private static int count = 0;
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
     private static int minersForNearbyLead;
@@ -215,12 +216,12 @@ public class Archon extends Building{
             }
          }else if (rc.getRoundNum()%3==0){ //Create New Values
             if (archonOrder<=1){
-                count = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);
+                minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);
             }
             else{
-                count = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
+                minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
-            if(count > minerCountMax)minerCountMax = count;
+            if(minerCount > minerCountMax)minerCountMax = minerCount;
             minerFoundCount = rc.readSharedArray(31+archonOrder);
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             globalSageCount = rc.readSharedArray(2);
@@ -283,11 +284,12 @@ public class Archon extends Building{
         if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
             mod = 4;
         }
-        if (rc.readSharedArray(12)>0){ // if an enemy troop has been sighted
+        if(rc.readSharedArray(40) !=0){
             mod = 2;
+        }else if (rc.readSharedArray(42)!= 0){ // if an enemy troop has been sighted
+            mod = 3;
         }
-        rc.setIndicatorString(""+mod+ " "+count);
-        if (count%mod==0 || count%mod==2){
+        if (count %mod != 1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
@@ -306,11 +308,12 @@ public class Archon extends Building{
                     minerIndex = (minerIndex+i)%8;
                     rc.buildRobot(type,directions[minerIndex]);
                     minerIndex++;
+                    minerCount++;
                     count++;
                 }
             }
         }
-        else if (count%mod==1){
+        else if (count %mod==1){
             cost = RobotType.SOLDIER.buildCostLead;
             type = RobotType.SOLDIER;
             indicatorString += " soldiers";
@@ -338,7 +341,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (count%mod==3){
+        else if (count %mod==4){
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i = 0;
