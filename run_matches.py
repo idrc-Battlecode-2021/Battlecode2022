@@ -44,7 +44,7 @@ def main():
                 winCount[opponent] = 0
 
             for map in maps:          
-                match_result = subprocess.check_output(["gradle", "run",f"-PteamA={player}", f"-PpackageNameA={player}",f"-PteamB={opponent}", f"-PpackageNameB={opponent}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
+                match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={player}", f"-PpackageNameA={player}",f"-PteamB={opponent}", f"-PpackageNameB={opponent}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
                 winner = parse_winner(match_result, player, opponent)
 
@@ -53,7 +53,7 @@ def main():
                 print("Player Red")
                 print(f"{player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}")
                 
-                match_result = subprocess.check_output(["gradle", "run",f"-PteamA={opponent}", f"-PpackageNameA={opponent}",f"-PteamB={player}", f"-PpackageNameB={player}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
+                match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={opponent}", f"-PpackageNameA={opponent}",f"-PteamB={player}", f"-PpackageNameB={player}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
                 winner = parse_winner(match_result, player, opponent)
 
