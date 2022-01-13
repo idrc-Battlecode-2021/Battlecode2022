@@ -77,7 +77,11 @@ def main():
     output += 'Scoreboard: ' + '\n'
     print("Scoreboard: ")
     for k,v in winCount.items():
-        score = f"{k}: {v}/{2*(len(players)-1) * len(maps)}"
+        score = ""
+        if k == primaryPlayers[0]:
+            score = f"{k}: {v}/{2*(len(players)-1) * len(maps)}"
+        else:
+            score = f"{k}: {v}/{2* len(maps)}"
         output += score + '\n'
         print(score)
     print()
