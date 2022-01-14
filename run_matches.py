@@ -91,7 +91,7 @@ def main():
         score = f"{map}: {losses}"
         output += score + '\n'
         print(score)
-    file = open("matchLogs.txt", "a")
+    file = open("matchLogs"+primaryPlayers[0]+".txt", "a")
     file.write(output)
     file.close()
 
