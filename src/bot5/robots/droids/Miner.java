@@ -43,6 +43,7 @@ public class Miner extends Droid{
             } else {
                 rc.writeSharedArray(10, rc.readSharedArray(10) + (int) Math.pow(256, myArchonOrder - 2));
             }
+            rc.writeSharedArray(44,rc.readSharedArray(44)+1);
         }
         if(checkEnemy()){
             MapLocation[] local = rc.senseNearbyLocationsWithGold(2);
