@@ -1,0 +1,12 @@
+bot5
+Red bot5 (1) - dummybot (0) [uncomfortable]: bot5 | Rounds: 1063
+Blue bot5 (2) - dummybot (0) [uncomfortable]: bot5 | Rounds: 1374
+
+
+Scoreboard: 
+bot5: 2/0
+dummybot: 0/2
+
+Map Losses
+uncomfortable: 0/0
+

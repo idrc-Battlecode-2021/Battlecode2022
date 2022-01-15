@@ -2,28 +2,30 @@ import subprocess,sys,os
 
 def parse_winner(str, p1, p2):
     ls = str.splitlines()
-    for line in ls[-50:]: # save some looping time
+    for line in ls[-40:]: # save some looping time
         if "wins" in line:
+            returnStr = "str"
             if len(p2) > len(p1):
                 if p2 in line:
-                    return p2
+                    returnStr = p2
                 else:
-                    return p1
+                    returnStr = p1
             else:
                 if p1 in line:
-                    return p1
+                    returnStr = p1
                 else:
-                    return p2
-
+                    returnStr = p2
+            roundNum = line.split(" ")[-1][:-1]
+            return (returnStr,roundNum)
 def main():
 
     ## Fill in desired players and maps here!
     primaryPlayers = sys.argv[1:]
     #players = ['agrobot','bot1','bot2','bot3','bot3_EW','bot3_JJ','bot] # Bot names (i.e. examplefuncsplayer, should be folders in src/ directory)
     players = os.listdir('./src/')
-    #players = ['agrobot']
+    #players = ['dummybot']
     maps = ["colosseum", "eckleburg", "fortress", "intersection", "jellyfish", "maptestsmall", "nottestsmall", "progress", "rivers", "sandwich", "squer", "uncomfortable", "underground", "valley"] # Maps
-    #maps = ["intersection"]
+    #maps = ["uncomfortable"]
     scaffold_directory = "./" # Battlefold Scaffold location ("./" if this file is in scaffold location)
     ##
 
@@ -50,26 +52,26 @@ def main():
             for map in maps:
                 if map not in mapLosses:
                     mapLosses[map] = 0
+                
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={player}", f"-PpackageNameA={player}",f"-PteamB={opponent}", f"-PpackageNameB={opponent}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
-                winner = parse_winner(match_result, player, opponent)
-
+                winner,roundNumber = parse_winner(match_result, player, opponent)
                 results[player][opponent] = winner
                 winCount[winner] += 1
                 if winner != player:
                     mapLosses[map] += 1
-                redOut = f"Red {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
+                redOut = f"Red {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}"
                 output += redOut +'\n'
                 print(redOut)
                 
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={opponent}", f"-PpackageNameA={opponent}",f"-PteamB={player}", f"-PpackageNameB={player}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
-                winner = parse_winner(match_result, player, opponent)
+                winner,roundNumber = parse_winner(match_result, player, opponent)
 
                 results[player][opponent] = winner
                 winCount[winner] += 1
                 if winner != player:
                     mapLosses[map] += 1
-                blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
+                blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}"
                 output += blueOut + '\n' + '\n'
                 print(blueOut)
                 print()
