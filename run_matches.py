@@ -94,7 +94,7 @@ def main():
         output += score + '\n'
         print(score)
     file = open("scriptMatchLogs/matchLogs"+primaryPlayers[0]+".txt", "a")
-    file.write(output)
+    file.write(output+'\n')
     file.close()
 
 if __name__ == "__main__":
