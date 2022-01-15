@@ -74,7 +74,7 @@ public class Soldier extends Droid{
             }
         }
         retreat();
-        if (shouldHeal) return;
+        if (shouldHeal) end(); return;
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
             int bytecode = Clock.getBytecodeNum();
@@ -167,6 +167,7 @@ public class Soldier extends Droid{
             }
             explore();
         }
+        end();
     }
     public void retreat() throws GameActionException{
         if(rc.getHealth()>47){
@@ -210,6 +211,12 @@ public class Soldier extends Droid{
             myLocation = rc.getLocation();
         }
         else*/ tryMoveMultipleNew();
+    }
+    private void end(){
+        MapLocation target = selectPriorityTarget();
+        if (rc.canAttack(target)){
+            rc.attack(target);
+        }
     }
 
 }
