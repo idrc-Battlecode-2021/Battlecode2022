@@ -95,7 +95,7 @@ def main():
         score = f"{map}: {losses}/{2*(len(players)-1)}"
         output += score + '\n'
         print(score)
-    file = open("scriptMatchLogs/matchLogs"+primaryPlayers[0]+".txt", "a")
+    file = open("scriptMatchLogs/matchLogs"+primaryPlayers[0]+".txt", "w")
     file.write(output+'\n')
     file.close()
 
