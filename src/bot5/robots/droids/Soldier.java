@@ -64,6 +64,7 @@ public class Soldier extends Droid{
                 return;
             }
         }
+        /*
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
             int bytecode = Clock.getBytecodeNum();
@@ -95,6 +96,8 @@ public class Soldier extends Droid{
                 System.out.println("targetting BC: "+(Clock.getBytecodeNum()-bytecode));
             }
         }
+        */
+
         /*
         else if (defensive){
             if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
@@ -105,54 +108,64 @@ public class Soldier extends Droid{
             }
         }
         */
-        else if (hasMapLocation()){
+        else if(hasMapLocation(43) && globalSoldierCount > 15){
+
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
-                    rc.writeSharedArray(55,0);
+                    rc.writeSharedArray(43,0);
                 }
             }
             if (rc.isActionReady()){
                 intermediateMove(target);
             }
-        }
-        else{
-            if (!rc.isActionReady()){
+        }else if(hasMapLocation()){
+            MapLocation target = decode();
+            if (rc.getLocation().distanceSquaredTo(target) < 20) {
+                if (nearbyBots.length < 5) {
+                    rc.writeSharedArray(55, 0);
+                }
+            }
+            if (rc.isActionReady()) {
+                intermediateMove(target);
+            }
+        }else {
+            if (!rc.isActionReady()) {
                 return;
             }
-            if(enemyArchon !=null){
+            if (enemyArchon != null) {
                 intermediateMove(enemyArchon);
             }
-            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
-            for (int i = all.length; --i>=0;){
-                for (MapLocation c: corners){
-                    if (all[i]==c){
+            MapLocation[] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            for (int i = all.length; --i >= 0; ) {
+                for (MapLocation c : corners) {
+                    if (all[i] == c) {
                         Direction d = myLocation.directionTo(c).opposite();
                         tryMoveMultiple(d);
                     }
                 }
             }
-            /*if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
-                Direction d = myLocation.directionTo(center);
-                tryMoveMultiple(d);
-            }*/
-            if(rc.readSharedArray(40) == 1){
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
+    /*if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
+        Direction d = myLocation.directionTo(center);
+        tryMoveMultiple(d);
+    }*/
+            if (rc.readSharedArray(40) == 1) {
+                if (rc.getLocation().distanceSquaredTo(archonLoc) < 4) {
                     Direction d = myLocation.directionTo(center);
                     tryMoveMultiple(d);
-                }
-                else if(!tryMoveMultipleNew()){
+                } else if (!tryMoveMultipleNew()) {
                     tryMoveMultiple(initDirection);
                 }
-            }else if(rc.senseNearbyRobots(2).length>2){
+            } else if (rc.senseNearbyRobots(2).length > 2) {
                 //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
                 //tryMoveMultiple(initDirection);
-                MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
+                MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation, 2);
                 int start = (int) (local.length * Math.random());
-                loop1: for (int i = start; i < start + local.length; i++) {
+                loop1:
+                for (int i = start; i < start + local.length; i++) {
                     int j = i % local.length;
                     Direction dirTo = myLocation.directionTo(local[j]);
-                    if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
+                    if (!myLocation.equals(local[j]) && rc.canMove(dirTo)) {
                         rc.move(dirTo);
                         myLocation = rc.getLocation();
                         prevLocs.add(local[j]);
@@ -161,8 +174,6 @@ public class Soldier extends Droid{
                 }
             }
         }
-
-
     }
     public boolean isDefensive() throws GameActionException{
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());

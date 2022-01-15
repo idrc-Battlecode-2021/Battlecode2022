@@ -332,8 +332,20 @@ public abstract class Robot {
         }
         return true;
     }
+    public boolean hasMapLocation(int i) throws GameActionException{
+        if (rc.readSharedArray(i)==0){
+            return false;
+        }
+        return true;
+    }
     public MapLocation decode() throws GameActionException{
         int loc = rc.readSharedArray(55);
+        int x = (loc/64)%64;
+        int y = loc%64;
+        return new MapLocation(x, y);
+    }
+    public MapLocation decode(int i) throws GameActionException{
+        int loc = rc.readSharedArray(i);
         int x = (loc/64)%64;
         int y = loc%64;
         return new MapLocation(x, y);
@@ -389,15 +401,18 @@ public abstract class Robot {
                 k=4096+64*r.getLocation().x+r.getLocation().y;
             }
         }
-        if (num_enemies>5 && !seesArchon){
+        if (seesArchon){
+            rc.writeSharedArray(43, k);
+        }
+        if (num_enemies>5){
             MapLocation m = rc.getLocation();
             int x = m.x, y=m.y;
             k=x*64+y;
             rc.writeSharedArray(55,k);
+        }else if(num_enemies>0){
+            rc.writeSharedArray(41,k);
         }
-        if (seesArchon){
-            rc.writeSharedArray(55, k);
-        }
+
     }
     public boolean attackArchon() throws GameActionException{
         if (hasMapLocation()){
@@ -926,6 +941,10 @@ public abstract class Robot {
         else if (soldierTurns<=5){
             target = soldier.getLocation();
         }
+        else if(miner!=null){
+            return miner.getLocation();
+        }
+
         else{
             int minIndex = 0;
             for (int i=1;i<5;i++){

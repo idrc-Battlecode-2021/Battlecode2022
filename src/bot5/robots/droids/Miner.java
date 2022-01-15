@@ -67,6 +67,9 @@ public class Miner extends Droid{
                 }
             }
         }else{
+            if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
+                target = getMaxLead();
+            }
             if(gold.isEmpty()){
                 int amount = rc.senseLead(myLocation);
                 if(amount > 1){
@@ -271,7 +274,7 @@ public class Miner extends Droid{
         //TODO: Could also check rubble amount
         //Maybe change so that the closest location above the threshold is chosen as the target rather than
         MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
-            nearbyLead = rc.senseNearbyLocationsWithLead(20,6); //change to (20,6)
+            nearbyLead = rc.senseNearbyLocationsWithLead(20,3); //change to (20,6)
         searchBlock:{
             for(int i = nearbyGold.length; --i>=0;){
                 gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));
@@ -352,7 +355,7 @@ public class Miner extends Droid{
                         }
                     }
                 }
-                if(rc.senseLead(location) < 6){
+                if(rc.senseLead(location) < 2){
                     lead.remove(location);
                     continue loop1;
                 }else{
