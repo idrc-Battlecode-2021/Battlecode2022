@@ -218,6 +218,8 @@ public class Soldier extends Droid{
     private int globalSoldierCount = 0;
     private boolean defensive = false;
     private boolean reachedLocation = false;
+    private boolean shouldHeal = false;
+    private MapLocation[] archonLocs;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -238,6 +240,7 @@ public class Soldier extends Droid{
         corners[2]=new MapLocation(rc.getMapWidth(),0);
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
         defensive = isDefensive();
+        archonLocs = getArchonLocs();
     }
 
     @Override
@@ -267,9 +270,10 @@ public class Soldier extends Droid{
                 else if (rc.isActionReady()){
                     intermediateMove(target);
                 }
-                return;
             }
         }
+        retreat();
+        if (shouldHeal) return;
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
             int bytecode = Clock.getBytecodeNum();
@@ -311,7 +315,17 @@ public class Soldier extends Droid{
             }
         }
         */
-        else if (hasMapLocation()){
+        else if(hasMapLocation(43) && globalSoldierCount > 15){
+            MapLocation target = decode();
+            if (rc.getLocation().distanceSquaredTo(target)<20){
+                if (nearbyBots.length <5){
+                    rc.writeSharedArray(43,0);
+                }
+            }
+            if (rc.isActionReady()){
+                intermediateMove(target);
+            }
+        }else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
@@ -366,9 +380,13 @@ public class Soldier extends Droid{
                     }
                 }
             }
+            explore();
         }
-
-
+    }
+    public void retreat() throws GameActionException{
+        if(rc.getHealth()>10)return;
+        shouldHeal=true;
+        intermediateMove(archonLoc);
     }
     public boolean isDefensive() throws GameActionException{
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
@@ -384,6 +402,22 @@ public class Soldier extends Droid{
         }
 
         return false;
+    }
+    public void explore() throws GameActionException{
+        Direction [] all = Direction.allDirections();
+        Direction bestDir = Direction.CENTER;
+        int minRubble=100;
+        for (Direction d: all){
+            if(rc.canMove(d) && rc.canSenseLocation(rc.getLocation().add(d))){
+                if (rc.senseRubble(rc.getLocation().add(d))<minRubble){
+                    minRubble=rc.senseRubble(myLocation.add(d));
+                    bestDir = d;
+                }
+
+            }
+        }
+        if(rc.canMove(bestDir)) rc.move(bestDir);
+        else tryMoveMultipleNew();
     }
 
 }
