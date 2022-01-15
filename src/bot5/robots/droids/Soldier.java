@@ -145,19 +145,19 @@ public class Soldier extends Droid{
                     }
                 }
             }
-            
+
     /*if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
         Direction d = myLocation.directionTo(center);
         tryMoveMultiple(d);
     }*/
-            if (rc.readSharedArray(40) == 1) {
+            //if (rc.readSharedArray(40) == 1) {
                 if (rc.getLocation().distanceSquaredTo(archonLoc) < 4) {
                     Direction d = myLocation.directionTo(center);
                     tryMoveMultiple(d);
                 } else if (!tryMoveMultipleNew()) {
                     tryMoveMultiple(initDirection);
                 }
-            } else if (rc.senseNearbyRobots(2).length > 2) {
+            /*} else if (rc.senseNearbyRobots(2).length > 2) {
                 //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
                 //tryMoveMultiple(initDirection);
                 MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation, 2);
@@ -173,7 +173,7 @@ public class Soldier extends Droid{
                         break;
                     }
                 }
-            }
+            }*/
         }
     }
     public boolean isDefensive() throws GameActionException{
