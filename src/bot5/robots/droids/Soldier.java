@@ -74,7 +74,10 @@ public class Soldier extends Droid{
             }
         }
         retreat();
-        if (shouldHeal) end(); return;
+        if (shouldHeal){
+            end();
+            return;
+        }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
             int bytecode = Clock.getBytecodeNum();
