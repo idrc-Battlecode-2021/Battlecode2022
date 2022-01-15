@@ -64,14 +64,6 @@ public class Soldier extends Droid{
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
-            if (target!=rc.getLocation()){
-                if (rc.canAttack(target)){
-                    rc.attack(target);
-                }
-                else if (rc.isActionReady()){
-                    intermediateMove(target);
-                }
-            }
         }
         retreat();
         if (shouldHeal){
@@ -119,7 +111,7 @@ public class Soldier extends Droid{
             }
         }
         */
-        else if(hasMapLocation(43) && globalSoldierCount > 15){
+        else if(hasMapLocation(43) && globalSoldierCount > 12){
             MapLocation target = decode(43);
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
@@ -216,10 +208,7 @@ public class Soldier extends Droid{
         else*/ tryMoveMultipleNew();
     }
     private void end() throws GameActionException{
-        MapLocation target = selectPriorityTarget();
-        if (rc.canAttack(target)){
-            rc.attack(target);
-        }
+        selectPriorityTarget();
     }
 
 }

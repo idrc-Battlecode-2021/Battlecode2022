@@ -853,7 +853,7 @@ public abstract class Robot {
     public MapLocation selectPriorityTarget() throws GameActionException {
         //returns location of target
         //returns own location if none
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
@@ -948,7 +948,6 @@ public abstract class Robot {
         if (soldier!=null){
             turns[4] = soldier.getHealth()/damages[4];
         }
-
         if (archonTurns<=10){
             target = archon.getLocation();
         }
@@ -975,12 +974,14 @@ public abstract class Robot {
                 if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
+                        moveToLowPassability();
                         tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
+                        moveToLowPassability();
                         tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
@@ -1018,6 +1019,7 @@ public abstract class Robot {
             target=rc.getLocation();
         }
         if (target!=rc.getLocation()){
+            moveToLowPassability();
             tryAttack(target);
         }
         rc.setIndicatorString("target: "+target);
@@ -1025,8 +1027,29 @@ public abstract class Robot {
         
     }
 
-    public void moveToLowPassability(){
-        //MapLocations adjacent = ;
+    public boolean moveToLowPassability() throws GameActionException{
+        //TODO: doesn't guarantee that the target will be attacked
+        //moves to lowest passability nearby
+        if (!rc.isMovementReady()){
+            return false;
+        }
+        Direction lowest = Direction.CENTER;
+        int lowest_rubble = rc.senseRubble(rc.getLocation());
+        for (Direction d: Direction.allDirections()){
+            MapLocation adjacent=rc.getLocation().add(d);
+            if (rc.onTheMap(adjacent) && rc.canMove(d)){
+                int rubble = rc.senseRubble(adjacent);
+                if (rubble<lowest_rubble){
+                    lowest = d;
+                    lowest_rubble = rubble;
+                }
+            }
+        }
+        if (lowest==Direction.CENTER){
+            return false;
+        }
+        rc.move(lowest);
+        return true;
     }
     
     private void updateInternalMap(){}

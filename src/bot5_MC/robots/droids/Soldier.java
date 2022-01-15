@@ -53,7 +53,6 @@ public class Soldier extends Droid{
             target = selectPriorityTarget();
             if (target!=rc.getLocation()){
                 moveToLowPassability();
-                return;
             }
         }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
