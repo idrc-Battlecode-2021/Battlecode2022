@@ -51,7 +51,6 @@ def main():
                 if map not in mapLosses:
                     mapLosses[map] = 0
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={player}", f"-PpackageNameA={player}",f"-PteamB={opponent}", f"-PpackageNameB={opponent}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
-
                 winner = parse_winner(match_result, player, opponent)
 
                 results[player][opponent] = winner
