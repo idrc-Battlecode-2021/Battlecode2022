@@ -1,759 +1,759 @@
 bot5
-Red bot5 (1) - agrobot (0) [colosseum]: bot5
-Blue bot5 (2) - agrobot (0) [colosseum]: bot5
+Red  bot5 (1) - agrobot (0) [colosseum]: bot5 | Rounds: 1091
+Blue bot5 (2) - agrobot (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (3) - agrobot (0) [eckleburg]: bot5
-Blue bot5 (4) - agrobot (0) [eckleburg]: bot5
+Red  bot5 (3) - agrobot (0) [eckleburg]: bot5 | Rounds: 885
+Blue bot5 (4) - agrobot (0) [eckleburg]: bot5 | Rounds: 580
 
-Red bot5 (5) - agrobot (0) [fortress]: bot5
-Blue bot5 (6) - agrobot (0) [fortress]: bot5
+Red  bot5 (5) - agrobot (0) [fortress]: bot5 | Rounds: 793
+Blue bot5 (6) - agrobot (0) [fortress]: bot5 | Rounds: 841
 
-Red bot5 (7) - agrobot (0) [intersection]: bot5
-Blue bot5 (8) - agrobot (0) [intersection]: bot5
+Red  bot5 (7) - agrobot (0) [intersection]: bot5 | Rounds: 590
+Blue bot5 (8) - agrobot (0) [intersection]: bot5 | Rounds: 581
 
-Red bot5 (9) - agrobot (0) [jellyfish]: bot5
-Blue bot5 (10) - agrobot (0) [jellyfish]: bot5
+Red  bot5 (9) - agrobot (0) [jellyfish]: bot5 | Rounds: 378
+Blue bot5 (10) - agrobot (0) [jellyfish]: bot5 | Rounds: 465
 
-Red bot5 (11) - agrobot (0) [maptestsmall]: bot5
-Blue bot5 (12) - agrobot (0) [maptestsmall]: bot5
+Red  bot5 (11) - agrobot (0) [maptestsmall]: bot5 | Rounds: 290
+Blue bot5 (12) - agrobot (0) [maptestsmall]: bot5 | Rounds: 229
 
-Red bot5 (13) - agrobot (0) [nottestsmall]: bot5
-Blue bot5 (14) - agrobot (0) [nottestsmall]: bot5
+Red  bot5 (13) - agrobot (0) [nottestsmall]: bot5 | Rounds: 472
+Blue bot5 (14) - agrobot (0) [nottestsmall]: bot5 | Rounds: 421
 
-Red bot5 (15) - agrobot (0) [progress]: bot5
-Blue bot5 (16) - agrobot (0) [progress]: bot5
+Red  bot5 (15) - agrobot (0) [progress]: bot5 | Rounds: 264
+Blue bot5 (16) - agrobot (0) [progress]: bot5 | Rounds: 240
 
-Red bot5 (17) - agrobot (0) [rivers]: bot5
-Blue bot5 (18) - agrobot (0) [rivers]: bot5
+Red  bot5 (17) - agrobot (0) [rivers]: bot5 | Rounds: 844
+Blue bot5 (18) - agrobot (0) [rivers]: bot5 | Rounds: 1083
 
-Red bot5 (19) - agrobot (0) [sandwich]: bot5
-Blue bot5 (20) - agrobot (0) [sandwich]: bot5
+Red  bot5 (19) - agrobot (0) [sandwich]: bot5 | Rounds: 374
+Blue bot5 (20) - agrobot (0) [sandwich]: bot5 | Rounds: 389
 
-Red bot5 (21) - agrobot (0) [squer]: bot5
-Blue bot5 (22) - agrobot (0) [squer]: bot5
+Red  bot5 (21) - agrobot (0) [squer]: bot5 | Rounds: 322
+Blue bot5 (22) - agrobot (0) [squer]: bot5 | Rounds: 356
 
-Red bot5 (23) - agrobot (0) [uncomfortable]: bot5
-Blue bot5 (24) - agrobot (0) [uncomfortable]: bot5
+Red  bot5 (23) - agrobot (0) [uncomfortable]: bot5 | Rounds: 1379
+Blue bot5 (24) - agrobot (0) [uncomfortable]: bot5 | Rounds: 1301
 
-Red bot5 (25) - agrobot (0) [underground]: bot5
-Blue bot5 (26) - agrobot (0) [underground]: bot5
+Red  bot5 (25) - agrobot (0) [underground]: bot5 | Rounds: 637
+Blue bot5 (26) - agrobot (0) [underground]: bot5 | Rounds: 2000
 
-Red bot5 (27) - agrobot (0) [valley]: bot5
-Blue bot5 (28) - agrobot (0) [valley]: bot5
+Red  bot5 (27) - agrobot (0) [valley]: bot5 | Rounds: 928
+Blue bot5 (28) - agrobot (0) [valley]: bot5 | Rounds: 639
 
-Red bot5 (29) - bot1 (0) [colosseum]: bot5
-Blue bot5 (30) - bot1 (0) [colosseum]: bot5
+Red  bot5 (29) - bot1 (0) [colosseum]: bot5 | Rounds: 731
+Blue bot5 (30) - bot1 (0) [colosseum]: bot5 | Rounds: 1379
 
-Red bot5 (31) - bot1 (0) [eckleburg]: bot5
-Blue bot5 (32) - bot1 (0) [eckleburg]: bot5
+Red  bot5 (31) - bot1 (0) [eckleburg]: bot5 | Rounds: 809
+Blue bot5 (32) - bot1 (0) [eckleburg]: bot5 | Rounds: 1580
 
-Red bot5 (33) - bot1 (0) [fortress]: bot5
-Blue bot5 (34) - bot1 (0) [fortress]: bot5
+Red  bot5 (33) - bot1 (0) [fortress]: bot5 | Rounds: 2000
+Blue bot5 (34) - bot1 (0) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (34) - bot1 (1) [intersection]: bot1
-Blue bot5 (35) - bot1 (1) [intersection]: bot5
+Red  bot5 (34) - bot1 (1) [intersection]: bot1 | Rounds: 2000
+Blue bot5 (35) - bot1 (1) [intersection]: bot5 | Rounds: 1993
 
-Red bot5 (36) - bot1 (1) [jellyfish]: bot5
-Blue bot5 (37) - bot1 (1) [jellyfish]: bot5
+Red  bot5 (36) - bot1 (1) [jellyfish]: bot5 | Rounds: 874
+Blue bot5 (37) - bot1 (1) [jellyfish]: bot5 | Rounds: 1677
 
-Red bot5 (37) - bot1 (2) [maptestsmall]: bot1
-Blue bot5 (38) - bot1 (2) [maptestsmall]: bot5
+Red  bot5 (37) - bot1 (2) [maptestsmall]: bot1 | Rounds: 2000
+Blue bot5 (38) - bot1 (2) [maptestsmall]: bot5 | Rounds: 133
 
-Red bot5 (39) - bot1 (2) [nottestsmall]: bot5
-Blue bot5 (40) - bot1 (2) [nottestsmall]: bot5
+Red  bot5 (39) - bot1 (2) [nottestsmall]: bot5 | Rounds: 1534
+Blue bot5 (40) - bot1 (2) [nottestsmall]: bot5 | Rounds: 470
 
-Red bot5 (41) - bot1 (2) [progress]: bot5
-Blue bot5 (42) - bot1 (2) [progress]: bot5
+Red  bot5 (41) - bot1 (2) [progress]: bot5 | Rounds: 947
+Blue bot5 (42) - bot1 (2) [progress]: bot5 | Rounds: 1537
 
-Red bot5 (43) - bot1 (2) [rivers]: bot5
-Blue bot5 (44) - bot1 (2) [rivers]: bot5
+Red  bot5 (43) - bot1 (2) [rivers]: bot5 | Rounds: 2000
+Blue bot5 (44) - bot1 (2) [rivers]: bot5 | Rounds: 699
 
-Red bot5 (45) - bot1 (2) [sandwich]: bot5
-Blue bot5 (46) - bot1 (2) [sandwich]: bot5
+Red  bot5 (45) - bot1 (2) [sandwich]: bot5 | Rounds: 568
+Blue bot5 (46) - bot1 (2) [sandwich]: bot5 | Rounds: 628
 
-Red bot5 (47) - bot1 (2) [squer]: bot5
-Blue bot5 (48) - bot1 (2) [squer]: bot5
+Red  bot5 (47) - bot1 (2) [squer]: bot5 | Rounds: 329
+Blue bot5 (48) - bot1 (2) [squer]: bot5 | Rounds: 628
 
-Red bot5 (49) - bot1 (2) [uncomfortable]: bot5
-Blue bot5 (50) - bot1 (2) [uncomfortable]: bot5
+Red  bot5 (49) - bot1 (2) [uncomfortable]: bot5 | Rounds: 940
+Blue bot5 (50) - bot1 (2) [uncomfortable]: bot5 | Rounds: 1574
 
-Red bot5 (51) - bot1 (2) [underground]: bot5
-Blue bot5 (52) - bot1 (2) [underground]: bot5
+Red  bot5 (51) - bot1 (2) [underground]: bot5 | Rounds: 2000
+Blue bot5 (52) - bot1 (2) [underground]: bot5 | Rounds: 2000
 
-Red bot5 (53) - bot1 (2) [valley]: bot5
-Blue bot5 (54) - bot1 (2) [valley]: bot5
+Red  bot5 (53) - bot1 (2) [valley]: bot5 | Rounds: 2000
+Blue bot5 (54) - bot1 (2) [valley]: bot5 | Rounds: 1268
 
-Red bot5 (55) - bot2 (0) [colosseum]: bot5
-Blue bot5 (56) - bot2 (0) [colosseum]: bot5
+Red  bot5 (55) - bot2 (0) [colosseum]: bot5 | Rounds: 1162
+Blue bot5 (56) - bot2 (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (57) - bot2 (0) [eckleburg]: bot5
-Blue bot5 (58) - bot2 (0) [eckleburg]: bot5
+Red  bot5 (57) - bot2 (0) [eckleburg]: bot5 | Rounds: 2000
+Blue bot5 (58) - bot2 (0) [eckleburg]: bot5 | Rounds: 2000
 
-Red bot5 (59) - bot2 (0) [fortress]: bot5
-Blue bot5 (60) - bot2 (0) [fortress]: bot5
+Red  bot5 (59) - bot2 (0) [fortress]: bot5 | Rounds: 2000
+Blue bot5 (60) - bot2 (0) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (61) - bot2 (0) [intersection]: bot5
-Blue bot5 (62) - bot2 (0) [intersection]: bot5
+Red  bot5 (61) - bot2 (0) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (62) - bot2 (0) [intersection]: bot5 | Rounds: 2000
 
-Red bot5 (63) - bot2 (0) [jellyfish]: bot5
-Blue bot5 (64) - bot2 (0) [jellyfish]: bot5
+Red  bot5 (63) - bot2 (0) [jellyfish]: bot5 | Rounds: 2000
+Blue bot5 (64) - bot2 (0) [jellyfish]: bot5 | Rounds: 414
 
-Red bot5 (65) - bot2 (0) [maptestsmall]: bot5
-Blue bot5 (66) - bot2 (0) [maptestsmall]: bot5
+Red  bot5 (65) - bot2 (0) [maptestsmall]: bot5 | Rounds: 2000
+Blue bot5 (66) - bot2 (0) [maptestsmall]: bot5 | Rounds: 2000
 
-Red bot5 (67) - bot2 (0) [nottestsmall]: bot5
-Blue bot5 (68) - bot2 (0) [nottestsmall]: bot5
+Red  bot5 (67) - bot2 (0) [nottestsmall]: bot5 | Rounds: 2000
+Blue bot5 (68) - bot2 (0) [nottestsmall]: bot5 | Rounds: 438
 
-Red bot5 (69) - bot2 (0) [progress]: bot5
-Blue bot5 (70) - bot2 (0) [progress]: bot5
+Red  bot5 (69) - bot2 (0) [progress]: bot5 | Rounds: 1995
+Blue bot5 (70) - bot2 (0) [progress]: bot5 | Rounds: 2000
 
-Red bot5 (71) - bot2 (0) [rivers]: bot5
-Blue bot5 (72) - bot2 (0) [rivers]: bot5
+Red  bot5 (71) - bot2 (0) [rivers]: bot5 | Rounds: 2000
+Blue bot5 (72) - bot2 (0) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (73) - bot2 (0) [sandwich]: bot5
-Blue bot5 (74) - bot2 (0) [sandwich]: bot5
+Red  bot5 (73) - bot2 (0) [sandwich]: bot5 | Rounds: 1070
+Blue bot5 (74) - bot2 (0) [sandwich]: bot5 | Rounds: 450
 
-Red bot5 (75) - bot2 (0) [squer]: bot5
-Blue bot5 (76) - bot2 (0) [squer]: bot5
+Red  bot5 (75) - bot2 (0) [squer]: bot5 | Rounds: 356
+Blue bot5 (76) - bot2 (0) [squer]: bot5 | Rounds: 460
 
-Red bot5 (77) - bot2 (0) [uncomfortable]: bot5
-Blue bot5 (78) - bot2 (0) [uncomfortable]: bot5
+Red  bot5 (77) - bot2 (0) [uncomfortable]: bot5 | Rounds: 974
+Blue bot5 (78) - bot2 (0) [uncomfortable]: bot5 | Rounds: 1038
 
-Red bot5 (79) - bot2 (0) [underground]: bot5
-Blue bot5 (79) - bot2 (1) [underground]: bot2
+Red  bot5 (79) - bot2 (0) [underground]: bot5 | Rounds: 2000
+Blue bot5 (79) - bot2 (1) [underground]: bot2 | Rounds: 2000
 
-Red bot5 (80) - bot2 (1) [valley]: bot5
-Blue bot5 (81) - bot2 (1) [valley]: bot5
+Red  bot5 (80) - bot2 (1) [valley]: bot5 | Rounds: 2000
+Blue bot5 (81) - bot2 (1) [valley]: bot5 | Rounds: 973
 
-Red bot5 (82) - bot3 (0) [colosseum]: bot5
-Blue bot5 (83) - bot3 (0) [colosseum]: bot5
+Red  bot5 (82) - bot3 (0) [colosseum]: bot5 | Rounds: 1522
+Blue bot5 (83) - bot3 (0) [colosseum]: bot5 | Rounds: 1475
 
-Red bot5 (83) - bot3 (1) [eckleburg]: bot3
-Blue bot5 (84) - bot3 (1) [eckleburg]: bot5
+Red  bot5 (83) - bot3 (1) [eckleburg]: bot3 | Rounds: 2000
+Blue bot5 (84) - bot3 (1) [eckleburg]: bot5 | Rounds: 2000
 
-Red bot5 (85) - bot3 (1) [fortress]: bot5
-Blue bot5 (86) - bot3 (1) [fortress]: bot5
+Red  bot5 (85) - bot3 (1) [fortress]: bot5 | Rounds: 2000
+Blue bot5 (86) - bot3 (1) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (86) - bot3 (2) [intersection]: bot3
-Blue bot5 (87) - bot3 (2) [intersection]: bot5
+Red  bot5 (86) - bot3 (2) [intersection]: bot3 | Rounds: 2000
+Blue bot5 (87) - bot3 (2) [intersection]: bot5 | Rounds: 2000
 
-Red bot5 (87) - bot3 (3) [jellyfish]: bot3
-Blue bot5 (87) - bot3 (4) [jellyfish]: bot3
+Red  bot5 (87) - bot3 (3) [jellyfish]: bot3 | Rounds: 2000
+Blue bot5 (87) - bot3 (4) [jellyfish]: bot3 | Rounds: 2000
 
-Red bot5 (87) - bot3 (5) [maptestsmall]: bot3
-Blue bot5 (87) - bot3 (6) [maptestsmall]: bot3
+Red  bot5 (87) - bot3 (5) [maptestsmall]: bot3 | Rounds: 233
+Blue bot5 (87) - bot3 (6) [maptestsmall]: bot3 | Rounds: 1127
 
-Red bot5 (88) - bot3 (6) [nottestsmall]: bot5
-Blue bot5 (89) - bot3 (6) [nottestsmall]: bot5
+Red  bot5 (88) - bot3 (6) [nottestsmall]: bot5 | Rounds: 419
+Blue bot5 (89) - bot3 (6) [nottestsmall]: bot5 | Rounds: 2000
 
-Red bot5 (90) - bot3 (6) [progress]: bot5
-Blue bot5 (90) - bot3 (7) [progress]: bot3
+Red  bot5 (90) - bot3 (6) [progress]: bot5 | Rounds: 278
+Blue bot5 (90) - bot3 (7) [progress]: bot3 | Rounds: 1840
 
-Red bot5 (91) - bot3 (7) [rivers]: bot5
-Blue bot5 (91) - bot3 (8) [rivers]: bot3
+Red  bot5 (91) - bot3 (7) [rivers]: bot5 | Rounds: 2000
+Blue bot5 (91) - bot3 (8) [rivers]: bot3 | Rounds: 2000
 
-Red bot5 (92) - bot3 (8) [sandwich]: bot5
-Blue bot5 (93) - bot3 (8) [sandwich]: bot5
+Red  bot5 (92) - bot3 (8) [sandwich]: bot5 | Rounds: 536
+Blue bot5 (93) - bot3 (8) [sandwich]: bot5 | Rounds: 442
 
-Red bot5 (94) - bot3 (8) [squer]: bot5
-Blue bot5 (95) - bot3 (8) [squer]: bot5
+Red  bot5 (94) - bot3 (8) [squer]: bot5 | Rounds: 382
+Blue bot5 (95) - bot3 (8) [squer]: bot5 | Rounds: 852
 
-Red bot5 (96) - bot3 (8) [uncomfortable]: bot5
-Blue bot5 (97) - bot3 (8) [uncomfortable]: bot5
+Red  bot5 (96) - bot3 (8) [uncomfortable]: bot5 | Rounds: 928
+Blue bot5 (97) - bot3 (8) [uncomfortable]: bot5 | Rounds: 960
 
-Red bot5 (97) - bot3 (9) [underground]: bot3
-Blue bot5 (97) - bot3 (10) [underground]: bot3
+Red  bot5 (97) - bot3 (9) [underground]: bot3 | Rounds: 2000
+Blue bot5 (97) - bot3 (10) [underground]: bot3 | Rounds: 2000
 
-Red bot5 (98) - bot3 (10) [valley]: bot5
-Blue bot5 (99) - bot3 (10) [valley]: bot5
+Red  bot5 (98) - bot3 (10) [valley]: bot5 | Rounds: 2000
+Blue bot5 (99) - bot3 (10) [valley]: bot5 | Rounds: 660
 
-Red bot5 (99) - bot3_EW (1) [colosseum]: bot3_EW
-Blue bot5 (99) - bot3_EW (2) [colosseum]: bot3_EW
+Red  bot5 (99) - bot3_EW (1) [colosseum]: bot3_EW | Rounds: 2000
+Blue bot5 (99) - bot3_EW (2) [colosseum]: bot3_EW | Rounds: 2000
 
-Red bot5 (100) - bot3_EW (2) [eckleburg]: bot5
-Blue bot5 (101) - bot3_EW (2) [eckleburg]: bot5
+Red  bot5 (100) - bot3_EW (2) [eckleburg]: bot5 | Rounds: 974
+Blue bot5 (101) - bot3_EW (2) [eckleburg]: bot5 | Rounds: 2000
 
-Red bot5 (102) - bot3_EW (2) [fortress]: bot5
-Blue bot5 (102) - bot3_EW (3) [fortress]: bot3_EW
+Red  bot5 (102) - bot3_EW (2) [fortress]: bot5 | Rounds: 880
+Blue bot5 (102) - bot3_EW (3) [fortress]: bot3_EW | Rounds: 2000
 
-Red bot5 (102) - bot3_EW (4) [intersection]: bot3_EW
-Blue bot5 (103) - bot3_EW (4) [intersection]: bot5
+Red  bot5 (102) - bot3_EW (4) [intersection]: bot3_EW | Rounds: 2000
+Blue bot5 (103) - bot3_EW (4) [intersection]: bot5 | Rounds: 2000
 
-Red bot5 (104) - bot3_EW (4) [jellyfish]: bot5
-Blue bot5 (105) - bot3_EW (4) [jellyfish]: bot5
+Red  bot5 (104) - bot3_EW (4) [jellyfish]: bot5 | Rounds: 415
+Blue bot5 (105) - bot3_EW (4) [jellyfish]: bot5 | Rounds: 419
 
-Red bot5 (106) - bot3_EW (4) [maptestsmall]: bot5
-Blue bot5 (106) - bot3_EW (5) [maptestsmall]: bot3_EW
+Red  bot5 (106) - bot3_EW (4) [maptestsmall]: bot5 | Rounds: 2000
+Blue bot5 (106) - bot3_EW (5) [maptestsmall]: bot3_EW | Rounds: 2000
 
-Red bot5 (106) - bot3_EW (6) [nottestsmall]: bot3_EW
-Blue bot5 (107) - bot3_EW (6) [nottestsmall]: bot5
+Red  bot5 (106) - bot3_EW (6) [nottestsmall]: bot3_EW | Rounds: 2000
+Blue bot5 (107) - bot3_EW (6) [nottestsmall]: bot5 | Rounds: 585
 
-Red bot5 (108) - bot3_EW (6) [progress]: bot5
-Blue bot5 (109) - bot3_EW (6) [progress]: bot5
+Red  bot5 (108) - bot3_EW (6) [progress]: bot5 | Rounds: 298
+Blue bot5 (109) - bot3_EW (6) [progress]: bot5 | Rounds: 280
 
-Red bot5 (109) - bot3_EW (7) [rivers]: bot3_EW
-Blue bot5 (110) - bot3_EW (7) [rivers]: bot5
+Red  bot5 (109) - bot3_EW (7) [rivers]: bot3_EW | Rounds: 2000
+Blue bot5 (110) - bot3_EW (7) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (111) - bot3_EW (7) [sandwich]: bot5
-Blue bot5 (112) - bot3_EW (7) [sandwich]: bot5
+Red  bot5 (111) - bot3_EW (7) [sandwich]: bot5 | Rounds: 360
+Blue bot5 (112) - bot3_EW (7) [sandwich]: bot5 | Rounds: 521
 
-Red bot5 (113) - bot3_EW (7) [squer]: bot5
-Blue bot5 (114) - bot3_EW (7) [squer]: bot5
+Red  bot5 (113) - bot3_EW (7) [squer]: bot5 | Rounds: 367
+Blue bot5 (114) - bot3_EW (7) [squer]: bot5 | Rounds: 744
 
-Red bot5 (115) - bot3_EW (7) [uncomfortable]: bot5
-Blue bot5 (116) - bot3_EW (7) [uncomfortable]: bot5
+Red  bot5 (115) - bot3_EW (7) [uncomfortable]: bot5 | Rounds: 1191
+Blue bot5 (116) - bot3_EW (7) [uncomfortable]: bot5 | Rounds: 984
 
-Red bot5 (117) - bot3_EW (7) [underground]: bot5
-Blue bot5 (118) - bot3_EW (7) [underground]: bot5
+Red  bot5 (117) - bot3_EW (7) [underground]: bot5 | Rounds: 2000
+Blue bot5 (118) - bot3_EW (7) [underground]: bot5 | Rounds: 877
 
-Red bot5 (119) - bot3_EW (7) [valley]: bot5
-Blue bot5 (120) - bot3_EW (7) [valley]: bot5
+Red  bot5 (119) - bot3_EW (7) [valley]: bot5 | Rounds: 968
+Blue bot5 (120) - bot3_EW (7) [valley]: bot5 | Rounds: 732
 
-Red bot5 (121) - bot3_JJ (0) [colosseum]: bot5
-Blue bot5 (122) - bot3_JJ (0) [colosseum]: bot5
+Red  bot5 (121) - bot3_JJ (0) [colosseum]: bot5 | Rounds: 2000
+Blue bot5 (122) - bot3_JJ (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (123) - bot3_JJ (0) [eckleburg]: bot5
-Blue bot5 (124) - bot3_JJ (0) [eckleburg]: bot5
+Red  bot5 (123) - bot3_JJ (0) [eckleburg]: bot5 | Rounds: 2000
+Blue bot5 (124) - bot3_JJ (0) [eckleburg]: bot5 | Rounds: 1083
 
-Red bot5 (125) - bot3_JJ (0) [fortress]: bot5
-Blue bot5 (126) - bot3_JJ (0) [fortress]: bot5
+Red  bot5 (125) - bot3_JJ (0) [fortress]: bot5 | Rounds: 2000
+Blue bot5 (126) - bot3_JJ (0) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (127) - bot3_JJ (0) [intersection]: bot5
-Blue bot5 (128) - bot3_JJ (0) [intersection]: bot5
+Red  bot5 (127) - bot3_JJ (0) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (128) - bot3_JJ (0) [intersection]: bot5 | Rounds: 812
 
-Red bot5 (129) - bot3_JJ (0) [jellyfish]: bot5
-Blue bot5 (130) - bot3_JJ (0) [jellyfish]: bot5
+Red  bot5 (129) - bot3_JJ (0) [jellyfish]: bot5 | Rounds: 494
+Blue bot5 (130) - bot3_JJ (0) [jellyfish]: bot5 | Rounds: 419
 
-Red bot5 (130) - bot3_JJ (1) [maptestsmall]: bot3_JJ
-Blue bot5 (130) - bot3_JJ (2) [maptestsmall]: bot3_JJ
+Red  bot5 (130) - bot3_JJ (1) [maptestsmall]: bot3_JJ | Rounds: 496
+Blue bot5 (130) - bot3_JJ (2) [maptestsmall]: bot3_JJ | Rounds: 318
 
-Red bot5 (131) - bot3_JJ (2) [nottestsmall]: bot5
-Blue bot5 (132) - bot3_JJ (2) [nottestsmall]: bot5
+Red  bot5 (131) - bot3_JJ (2) [nottestsmall]: bot5 | Rounds: 368
+Blue bot5 (132) - bot3_JJ (2) [nottestsmall]: bot5 | Rounds: 1541
 
-Red bot5 (133) - bot3_JJ (2) [progress]: bot5
-Blue bot5 (134) - bot3_JJ (2) [progress]: bot5
+Red  bot5 (133) - bot3_JJ (2) [progress]: bot5 | Rounds: 298
+Blue bot5 (134) - bot3_JJ (2) [progress]: bot5 | Rounds: 280
 
-Red bot5 (135) - bot3_JJ (2) [rivers]: bot5
-Blue bot5 (136) - bot3_JJ (2) [rivers]: bot5
+Red  bot5 (135) - bot3_JJ (2) [rivers]: bot5 | Rounds: 2000
+Blue bot5 (136) - bot3_JJ (2) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (137) - bot3_JJ (2) [sandwich]: bot5
-Blue bot5 (138) - bot3_JJ (2) [sandwich]: bot5
+Red  bot5 (137) - bot3_JJ (2) [sandwich]: bot5 | Rounds: 360
+Blue bot5 (138) - bot3_JJ (2) [sandwich]: bot5 | Rounds: 495
 
-Red bot5 (139) - bot3_JJ (2) [squer]: bot5
-Blue bot5 (140) - bot3_JJ (2) [squer]: bot5
+Red  bot5 (139) - bot3_JJ (2) [squer]: bot5 | Rounds: 367
+Blue bot5 (140) - bot3_JJ (2) [squer]: bot5 | Rounds: 744
 
-Red bot5 (141) - bot3_JJ (2) [uncomfortable]: bot5
-Blue bot5 (142) - bot3_JJ (2) [uncomfortable]: bot5
+Red  bot5 (141) - bot3_JJ (2) [uncomfortable]: bot5 | Rounds: 1086
+Blue bot5 (142) - bot3_JJ (2) [uncomfortable]: bot5 | Rounds: 983
 
-Red bot5 (143) - bot3_JJ (2) [underground]: bot5
-Blue bot5 (144) - bot3_JJ (2) [underground]: bot5
+Red  bot5 (143) - bot3_JJ (2) [underground]: bot5 | Rounds: 2000
+Blue bot5 (144) - bot3_JJ (2) [underground]: bot5 | Rounds: 2000
 
-Red bot5 (145) - bot3_JJ (2) [valley]: bot5
-Blue bot5 (146) - bot3_JJ (2) [valley]: bot5
+Red  bot5 (145) - bot3_JJ (2) [valley]: bot5 | Rounds: 1008
+Blue bot5 (146) - bot3_JJ (2) [valley]: bot5 | Rounds: 764
 
-Red bot5 (147) - bot3_JJ2 (0) [colosseum]: bot5
-Blue bot5 (148) - bot3_JJ2 (0) [colosseum]: bot5
+Red  bot5 (147) - bot3_JJ2 (0) [colosseum]: bot5 | Rounds: 1415
+Blue bot5 (148) - bot3_JJ2 (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (149) - bot3_JJ2 (0) [eckleburg]: bot5
-Blue bot5 (150) - bot3_JJ2 (0) [eckleburg]: bot5
+Red  bot5 (149) - bot3_JJ2 (0) [eckleburg]: bot5 | Rounds: 2000
+Blue bot5 (150) - bot3_JJ2 (0) [eckleburg]: bot5 | Rounds: 922
 
-Red bot5 (151) - bot3_JJ2 (0) [fortress]: bot5
-Blue bot5 (152) - bot3_JJ2 (0) [fortress]: bot5
+Red  bot5 (151) - bot3_JJ2 (0) [fortress]: bot5 | Rounds: 2000
+Blue bot5 (152) - bot3_JJ2 (0) [fortress]: bot5 | Rounds: 870
 
-Red bot5 (153) - bot3_JJ2 (0) [intersection]: bot5
-Blue bot5 (154) - bot3_JJ2 (0) [intersection]: bot5
+Red  bot5 (153) - bot3_JJ2 (0) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (154) - bot3_JJ2 (0) [intersection]: bot5 | Rounds: 682
 
-Red bot5 (155) - bot3_JJ2 (0) [jellyfish]: bot5
-Blue bot5 (156) - bot3_JJ2 (0) [jellyfish]: bot5
+Red  bot5 (155) - bot3_JJ2 (0) [jellyfish]: bot5 | Rounds: 428
+Blue bot5 (156) - bot3_JJ2 (0) [jellyfish]: bot5 | Rounds: 473
 
-Red bot5 (156) - bot3_JJ2 (1) [maptestsmall]: bot3_JJ2
-Blue bot5 (156) - bot3_JJ2 (2) [maptestsmall]: bot3_JJ2
+Red  bot5 (156) - bot3_JJ2 (1) [maptestsmall]: bot3_JJ2 | Rounds: 184
+Blue bot5 (156) - bot3_JJ2 (2) [maptestsmall]: bot3_JJ2 | Rounds: 183
 
-Red bot5 (157) - bot3_JJ2 (2) [nottestsmall]: bot5
-Blue bot5 (158) - bot3_JJ2 (2) [nottestsmall]: bot5
+Red  bot5 (157) - bot3_JJ2 (2) [nottestsmall]: bot5 | Rounds: 1331
+Blue bot5 (158) - bot3_JJ2 (2) [nottestsmall]: bot5 | Rounds: 1016
 
-Red bot5 (159) - bot3_JJ2 (2) [progress]: bot5
-Blue bot5 (159) - bot3_JJ2 (3) [progress]: bot3_JJ2
+Red  bot5 (159) - bot3_JJ2 (2) [progress]: bot5 | Rounds: 328
+Blue bot5 (159) - bot3_JJ2 (3) [progress]: bot3_JJ2 | Rounds: 942
 
-Red bot5 (160) - bot3_JJ2 (3) [rivers]: bot5
-Blue bot5 (160) - bot3_JJ2 (4) [rivers]: bot3_JJ2
+Red  bot5 (160) - bot3_JJ2 (3) [rivers]: bot5 | Rounds: 2000
+Blue bot5 (160) - bot3_JJ2 (4) [rivers]: bot3_JJ2 | Rounds: 2000
 
-Red bot5 (161) - bot3_JJ2 (4) [sandwich]: bot5
-Blue bot5 (162) - bot3_JJ2 (4) [sandwich]: bot5
+Red  bot5 (161) - bot3_JJ2 (4) [sandwich]: bot5 | Rounds: 438
+Blue bot5 (162) - bot3_JJ2 (4) [sandwich]: bot5 | Rounds: 327
 
-Red bot5 (163) - bot3_JJ2 (4) [squer]: bot5
-Blue bot5 (164) - bot3_JJ2 (4) [squer]: bot5
+Red  bot5 (163) - bot3_JJ2 (4) [squer]: bot5 | Rounds: 318
+Blue bot5 (164) - bot3_JJ2 (4) [squer]: bot5 | Rounds: 504
 
-Red bot5 (165) - bot3_JJ2 (4) [uncomfortable]: bot5
-Blue bot5 (166) - bot3_JJ2 (4) [uncomfortable]: bot5
+Red  bot5 (165) - bot3_JJ2 (4) [uncomfortable]: bot5 | Rounds: 981
+Blue bot5 (166) - bot3_JJ2 (4) [uncomfortable]: bot5 | Rounds: 970
 
-Red bot5 (167) - bot3_JJ2 (4) [underground]: bot5
-Blue bot5 (168) - bot3_JJ2 (4) [underground]: bot5
+Red  bot5 (167) - bot3_JJ2 (4) [underground]: bot5 | Rounds: 1810
+Blue bot5 (168) - bot3_JJ2 (4) [underground]: bot5 | Rounds: 2000
 
-Red bot5 (169) - bot3_JJ2 (4) [valley]: bot5
-Blue bot5 (170) - bot3_JJ2 (4) [valley]: bot5
+Red  bot5 (169) - bot3_JJ2 (4) [valley]: bot5 | Rounds: 2000
+Blue bot5 (170) - bot3_JJ2 (4) [valley]: bot5 | Rounds: 2000
 
-Red bot5 (170) - bot3_JJ3 (1) [colosseum]: bot3_JJ3
-Blue bot5 (171) - bot3_JJ3 (1) [colosseum]: bot5
+Red  bot5 (170) - bot3_JJ3 (1) [colosseum]: bot3_JJ3 | Rounds: 2000
+Blue bot5 (171) - bot3_JJ3 (1) [colosseum]: bot5 | Rounds: 1229
 
-Red bot5 (172) - bot3_JJ3 (1) [eckleburg]: bot5
-Blue bot5 (173) - bot3_JJ3 (1) [eckleburg]: bot5
+Red  bot5 (172) - bot3_JJ3 (1) [eckleburg]: bot5 | Rounds: 1943
+Blue bot5 (173) - bot3_JJ3 (1) [eckleburg]: bot5 | Rounds: 686
 
-Red bot5 (174) - bot3_JJ3 (1) [fortress]: bot5
-Blue bot5 (175) - bot3_JJ3 (1) [fortress]: bot5
+Red  bot5 (174) - bot3_JJ3 (1) [fortress]: bot5 | Rounds: 904
+Blue bot5 (175) - bot3_JJ3 (1) [fortress]: bot5 | Rounds: 757
 
-Red bot5 (176) - bot3_JJ3 (1) [intersection]: bot5
-Blue bot5 (176) - bot3_JJ3 (2) [intersection]: bot3_JJ3
+Red  bot5 (176) - bot3_JJ3 (1) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (176) - bot3_JJ3 (2) [intersection]: bot3_JJ3 | Rounds: 684
 
-Red bot5 (177) - bot3_JJ3 (2) [jellyfish]: bot5
-Blue bot5 (178) - bot3_JJ3 (2) [jellyfish]: bot5
+Red  bot5 (177) - bot3_JJ3 (2) [jellyfish]: bot5 | Rounds: 692
+Blue bot5 (178) - bot3_JJ3 (2) [jellyfish]: bot5 | Rounds: 379
 
-Red bot5 (178) - bot3_JJ3 (3) [maptestsmall]: bot3_JJ3
-Blue bot5 (178) - bot3_JJ3 (4) [maptestsmall]: bot3_JJ3
+Red  bot5 (178) - bot3_JJ3 (3) [maptestsmall]: bot3_JJ3 | Rounds: 186
+Blue bot5 (178) - bot3_JJ3 (4) [maptestsmall]: bot3_JJ3 | Rounds: 183
 
-Red bot5 (178) - bot3_JJ3 (5) [nottestsmall]: bot3_JJ3
-Blue bot5 (179) - bot3_JJ3 (5) [nottestsmall]: bot5
+Red  bot5 (178) - bot3_JJ3 (5) [nottestsmall]: bot3_JJ3 | Rounds: 2000
+Blue bot5 (179) - bot3_JJ3 (5) [nottestsmall]: bot5 | Rounds: 1211
 
-Red bot5 (180) - bot3_JJ3 (5) [progress]: bot5
-Blue bot5 (181) - bot3_JJ3 (5) [progress]: bot5
+Red  bot5 (180) - bot3_JJ3 (5) [progress]: bot5 | Rounds: 405
+Blue bot5 (181) - bot3_JJ3 (5) [progress]: bot5 | Rounds: 344
 
-Red bot5 (181) - bot3_JJ3 (6) [rivers]: bot3_JJ3
-Blue bot5 (182) - bot3_JJ3 (6) [rivers]: bot5
+Red  bot5 (181) - bot3_JJ3 (6) [rivers]: bot3_JJ3 | Rounds: 2000
+Blue bot5 (182) - bot3_JJ3 (6) [rivers]: bot5 | Rounds: 822
 
-Red bot5 (183) - bot3_JJ3 (6) [sandwich]: bot5
-Blue bot5 (184) - bot3_JJ3 (6) [sandwich]: bot5
+Red  bot5 (183) - bot3_JJ3 (6) [sandwich]: bot5 | Rounds: 485
+Blue bot5 (184) - bot3_JJ3 (6) [sandwich]: bot5 | Rounds: 480
 
-Red bot5 (185) - bot3_JJ3 (6) [squer]: bot5
-Blue bot5 (186) - bot3_JJ3 (6) [squer]: bot5
+Red  bot5 (185) - bot3_JJ3 (6) [squer]: bot5 | Rounds: 273
+Blue bot5 (186) - bot3_JJ3 (6) [squer]: bot5 | Rounds: 391
 
-Red bot5 (187) - bot3_JJ3 (6) [uncomfortable]: bot5
-Blue bot5 (188) - bot3_JJ3 (6) [uncomfortable]: bot5
+Red  bot5 (187) - bot3_JJ3 (6) [uncomfortable]: bot5 | Rounds: 1130
+Blue bot5 (188) - bot3_JJ3 (6) [uncomfortable]: bot5 | Rounds: 1072
 
-Red bot5 (189) - bot3_JJ3 (6) [underground]: bot5
-Blue bot5 (189) - bot3_JJ3 (7) [underground]: bot3_JJ3
+Red  bot5 (189) - bot3_JJ3 (6) [underground]: bot5 | Rounds: 2000
+Blue bot5 (189) - bot3_JJ3 (7) [underground]: bot3_JJ3 | Rounds: 2000
 
-Red bot5 (190) - bot3_JJ3 (7) [valley]: bot5
-Blue bot5 (191) - bot3_JJ3 (7) [valley]: bot5
+Red  bot5 (190) - bot3_JJ3 (7) [valley]: bot5 | Rounds: 648
+Blue bot5 (191) - bot3_JJ3 (7) [valley]: bot5 | Rounds: 723
 
-Red bot5 (191) - bot3_JJ4 (1) [colosseum]: bot3_JJ4
-Blue bot5 (192) - bot3_JJ4 (1) [colosseum]: bot5
+Red  bot5 (191) - bot3_JJ4 (1) [colosseum]: bot3_JJ4 | Rounds: 760
+Blue bot5 (192) - bot3_JJ4 (1) [colosseum]: bot5 | Rounds: 1040
 
-Red bot5 (192) - bot3_JJ4 (2) [eckleburg]: bot3_JJ4
-Blue bot5 (192) - bot3_JJ4 (3) [eckleburg]: bot3_JJ4
+Red  bot5 (192) - bot3_JJ4 (2) [eckleburg]: bot3_JJ4 | Rounds: 964
+Blue bot5 (192) - bot3_JJ4 (3) [eckleburg]: bot3_JJ4 | Rounds: 789
 
-Red bot5 (192) - bot3_JJ4 (4) [fortress]: bot3_JJ4
-Blue bot5 (193) - bot3_JJ4 (4) [fortress]: bot5
+Red  bot5 (192) - bot3_JJ4 (4) [fortress]: bot3_JJ4 | Rounds: 1079
+Blue bot5 (193) - bot3_JJ4 (4) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (193) - bot3_JJ4 (5) [intersection]: bot3_JJ4
-Blue bot5 (193) - bot3_JJ4 (6) [intersection]: bot3_JJ4
+Red  bot5 (193) - bot3_JJ4 (5) [intersection]: bot3_JJ4 | Rounds: 361
+Blue bot5 (193) - bot3_JJ4 (6) [intersection]: bot3_JJ4 | Rounds: 482
 
-Red bot5 (193) - bot3_JJ4 (7) [jellyfish]: bot3_JJ4
-Blue bot5 (193) - bot3_JJ4 (8) [jellyfish]: bot3_JJ4
+Red  bot5 (193) - bot3_JJ4 (7) [jellyfish]: bot3_JJ4 | Rounds: 504
+Blue bot5 (193) - bot3_JJ4 (8) [jellyfish]: bot3_JJ4 | Rounds: 517
 
-Red bot5 (193) - bot3_JJ4 (9) [maptestsmall]: bot3_JJ4
-Blue bot5 (193) - bot3_JJ4 (10) [maptestsmall]: bot3_JJ4
+Red  bot5 (193) - bot3_JJ4 (9) [maptestsmall]: bot3_JJ4 | Rounds: 186
+Blue bot5 (193) - bot3_JJ4 (10) [maptestsmall]: bot3_JJ4 | Rounds: 195
 
-Red bot5 (194) - bot3_JJ4 (10) [nottestsmall]: bot5
-Blue bot5 (195) - bot3_JJ4 (10) [nottestsmall]: bot5
+Red  bot5 (194) - bot3_JJ4 (10) [nottestsmall]: bot5 | Rounds: 917
+Blue bot5 (195) - bot3_JJ4 (10) [nottestsmall]: bot5 | Rounds: 1544
 
-Red bot5 (195) - bot3_JJ4 (11) [progress]: bot3_JJ4
-Blue bot5 (195) - bot3_JJ4 (12) [progress]: bot3_JJ4
+Red  bot5 (195) - bot3_JJ4 (11) [progress]: bot3_JJ4 | Rounds: 295
+Blue bot5 (195) - bot3_JJ4 (12) [progress]: bot3_JJ4 | Rounds: 332
 
-Red bot5 (195) - bot3_JJ4 (13) [rivers]: bot3_JJ4
-Blue bot5 (195) - bot3_JJ4 (14) [rivers]: bot3_JJ4
+Red  bot5 (195) - bot3_JJ4 (13) [rivers]: bot3_JJ4 | Rounds: 844
+Blue bot5 (195) - bot3_JJ4 (14) [rivers]: bot3_JJ4 | Rounds: 582
 
-Red bot5 (196) - bot3_JJ4 (14) [sandwich]: bot5
-Blue bot5 (196) - bot3_JJ4 (15) [sandwich]: bot3_JJ4
+Red  bot5 (196) - bot3_JJ4 (14) [sandwich]: bot5 | Rounds: 338
+Blue bot5 (196) - bot3_JJ4 (15) [sandwich]: bot3_JJ4 | Rounds: 674
 
-Red bot5 (197) - bot3_JJ4 (15) [squer]: bot5
-Blue bot5 (198) - bot3_JJ4 (15) [squer]: bot5
+Red  bot5 (197) - bot3_JJ4 (15) [squer]: bot5 | Rounds: 326
+Blue bot5 (198) - bot3_JJ4 (15) [squer]: bot5 | Rounds: 406
 
-Red bot5 (199) - bot3_JJ4 (15) [uncomfortable]: bot5
-Blue bot5 (200) - bot3_JJ4 (15) [uncomfortable]: bot5
+Red  bot5 (199) - bot3_JJ4 (15) [uncomfortable]: bot5 | Rounds: 1532
+Blue bot5 (200) - bot3_JJ4 (15) [uncomfortable]: bot5 | Rounds: 1394
 
-Red bot5 (201) - bot3_JJ4 (15) [underground]: bot5
-Blue bot5 (201) - bot3_JJ4 (16) [underground]: bot3_JJ4
+Red  bot5 (201) - bot3_JJ4 (15) [underground]: bot5 | Rounds: 2000
+Blue bot5 (201) - bot3_JJ4 (16) [underground]: bot3_JJ4 | Rounds: 866
 
-Red bot5 (202) - bot3_JJ4 (16) [valley]: bot5
-Blue bot5 (203) - bot3_JJ4 (16) [valley]: bot5
+Red  bot5 (202) - bot3_JJ4 (16) [valley]: bot5 | Rounds: 858
+Blue bot5 (203) - bot3_JJ4 (16) [valley]: bot5 | Rounds: 976
 
-Red bot5 (204) - bot3_MC (0) [colosseum]: bot5
-Blue bot5 (205) - bot3_MC (0) [colosseum]: bot5
+Red  bot5 (204) - bot3_MC (0) [colosseum]: bot5 | Rounds: 2000
+Blue bot5 (205) - bot3_MC (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (206) - bot3_MC (0) [eckleburg]: bot5
-Blue bot5 (207) - bot3_MC (0) [eckleburg]: bot5
+Red  bot5 (206) - bot3_MC (0) [eckleburg]: bot5 | Rounds: 2000
+Blue bot5 (207) - bot3_MC (0) [eckleburg]: bot5 | Rounds: 752
 
-Red bot5 (208) - bot3_MC (0) [fortress]: bot5
-Blue bot5 (209) - bot3_MC (0) [fortress]: bot5
+Red  bot5 (208) - bot3_MC (0) [fortress]: bot5 | Rounds: 921
+Blue bot5 (209) - bot3_MC (0) [fortress]: bot5 | Rounds: 807
 
-Red bot5 (209) - bot3_MC (1) [intersection]: bot3_MC
-Blue bot5 (210) - bot3_MC (1) [intersection]: bot5
+Red  bot5 (209) - bot3_MC (1) [intersection]: bot3_MC | Rounds: 2000
+Blue bot5 (210) - bot3_MC (1) [intersection]: bot5 | Rounds: 2000
 
-Red bot5 (210) - bot3_MC (2) [jellyfish]: bot3_MC
-Blue bot5 (211) - bot3_MC (2) [jellyfish]: bot5
+Red  bot5 (210) - bot3_MC (2) [jellyfish]: bot3_MC | Rounds: 2000
+Blue bot5 (211) - bot3_MC (2) [jellyfish]: bot5 | Rounds: 2000
 
-Red bot5 (212) - bot3_MC (2) [maptestsmall]: bot5
-Blue bot5 (213) - bot3_MC (2) [maptestsmall]: bot5
+Red  bot5 (212) - bot3_MC (2) [maptestsmall]: bot5 | Rounds: 327
+Blue bot5 (213) - bot3_MC (2) [maptestsmall]: bot5 | Rounds: 2000
 
-Red bot5 (214) - bot3_MC (2) [nottestsmall]: bot5
-Blue bot5 (215) - bot3_MC (2) [nottestsmall]: bot5
+Red  bot5 (214) - bot3_MC (2) [nottestsmall]: bot5 | Rounds: 2000
+Blue bot5 (215) - bot3_MC (2) [nottestsmall]: bot5 | Rounds: 2000
 
-Red bot5 (216) - bot3_MC (2) [progress]: bot5
-Blue bot5 (216) - bot3_MC (3) [progress]: bot3_MC
+Red  bot5 (216) - bot3_MC (2) [progress]: bot5 | Rounds: 2000
+Blue bot5 (216) - bot3_MC (3) [progress]: bot3_MC | Rounds: 2000
 
-Red bot5 (217) - bot3_MC (3) [rivers]: bot5
-Blue bot5 (218) - bot3_MC (3) [rivers]: bot5
+Red  bot5 (217) - bot3_MC (3) [rivers]: bot5 | Rounds: 756
+Blue bot5 (218) - bot3_MC (3) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (219) - bot3_MC (3) [sandwich]: bot5
-Blue bot5 (220) - bot3_MC (3) [sandwich]: bot5
+Red  bot5 (219) - bot3_MC (3) [sandwich]: bot5 | Rounds: 2000
+Blue bot5 (220) - bot3_MC (3) [sandwich]: bot5 | Rounds: 2000
 
-Red bot5 (221) - bot3_MC (3) [squer]: bot5
-Blue bot5 (222) - bot3_MC (3) [squer]: bot5
+Red  bot5 (221) - bot3_MC (3) [squer]: bot5 | Rounds: 1306
+Blue bot5 (222) - bot3_MC (3) [squer]: bot5 | Rounds: 721
 
-Red bot5 (223) - bot3_MC (3) [uncomfortable]: bot5
-Blue bot5 (224) - bot3_MC (3) [uncomfortable]: bot5
+Red  bot5 (223) - bot3_MC (3) [uncomfortable]: bot5 | Rounds: 2000
+Blue bot5 (224) - bot3_MC (3) [uncomfortable]: bot5 | Rounds: 2000
 
-Red bot5 (224) - bot3_MC (4) [underground]: bot3_MC
-Blue bot5 (224) - bot3_MC (5) [underground]: bot3_MC
+Red  bot5 (224) - bot3_MC (4) [underground]: bot3_MC | Rounds: 2000
+Blue bot5 (224) - bot3_MC (5) [underground]: bot3_MC | Rounds: 2000
 
-Red bot5 (224) - bot3_MC (6) [valley]: bot3_MC
-Blue bot5 (225) - bot3_MC (6) [valley]: bot5
+Red  bot5 (224) - bot3_MC (6) [valley]: bot3_MC | Rounds: 2000
+Blue bot5 (225) - bot3_MC (6) [valley]: bot5 | Rounds: 927
 
-Red bot5 (226) - bot3_SL (0) [colosseum]: bot5
-Blue bot5 (227) - bot3_SL (0) [colosseum]: bot5
+Red  bot5 (226) - bot3_SL (0) [colosseum]: bot5 | Rounds: 2000
+Blue bot5 (227) - bot3_SL (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (228) - bot3_SL (0) [eckleburg]: bot5
-Blue bot5 (229) - bot3_SL (0) [eckleburg]: bot5
+Red  bot5 (228) - bot3_SL (0) [eckleburg]: bot5 | Rounds: 1486
+Blue bot5 (229) - bot3_SL (0) [eckleburg]: bot5 | Rounds: 2000
 
-Red bot5 (230) - bot3_SL (0) [fortress]: bot5
-Blue bot5 (231) - bot3_SL (0) [fortress]: bot5
+Red  bot5 (230) - bot3_SL (0) [fortress]: bot5 | Rounds: 2000
+Blue bot5 (231) - bot3_SL (0) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (232) - bot3_SL (0) [intersection]: bot5
-Blue bot5 (233) - bot3_SL (0) [intersection]: bot5
+Red  bot5 (232) - bot3_SL (0) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (233) - bot3_SL (0) [intersection]: bot5 | Rounds: 2000
 
-Red bot5 (234) - bot3_SL (0) [jellyfish]: bot5
-Blue bot5 (235) - bot3_SL (0) [jellyfish]: bot5
+Red  bot5 (234) - bot3_SL (0) [jellyfish]: bot5 | Rounds: 2000
+Blue bot5 (235) - bot3_SL (0) [jellyfish]: bot5 | Rounds: 421
 
-Red bot5 (235) - bot3_SL (1) [maptestsmall]: bot3_SL
-Blue bot5 (235) - bot3_SL (2) [maptestsmall]: bot3_SL
+Red  bot5 (235) - bot3_SL (1) [maptestsmall]: bot3_SL | Rounds: 1283
+Blue bot5 (235) - bot3_SL (2) [maptestsmall]: bot3_SL | Rounds: 1668
 
-Red bot5 (236) - bot3_SL (2) [nottestsmall]: bot5
-Blue bot5 (237) - bot3_SL (2) [nottestsmall]: bot5
+Red  bot5 (236) - bot3_SL (2) [nottestsmall]: bot5 | Rounds: 357
+Blue bot5 (237) - bot3_SL (2) [nottestsmall]: bot5 | Rounds: 868
 
-Red bot5 (237) - bot3_SL (3) [progress]: bot3_SL
-Blue bot5 (238) - bot3_SL (3) [progress]: bot5
+Red  bot5 (237) - bot3_SL (3) [progress]: bot3_SL | Rounds: 2000
+Blue bot5 (238) - bot3_SL (3) [progress]: bot5 | Rounds: 2000
 
-Red bot5 (239) - bot3_SL (3) [rivers]: bot5
-Blue bot5 (240) - bot3_SL (3) [rivers]: bot5
+Red  bot5 (239) - bot3_SL (3) [rivers]: bot5 | Rounds: 2000
+Blue bot5 (240) - bot3_SL (3) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (241) - bot3_SL (3) [sandwich]: bot5
-Blue bot5 (242) - bot3_SL (3) [sandwich]: bot5
+Red  bot5 (241) - bot3_SL (3) [sandwich]: bot5 | Rounds: 1148
+Blue bot5 (242) - bot3_SL (3) [sandwich]: bot5 | Rounds: 2000
 
-Red bot5 (243) - bot3_SL (3) [squer]: bot5
-Blue bot5 (244) - bot3_SL (3) [squer]: bot5
+Red  bot5 (243) - bot3_SL (3) [squer]: bot5 | Rounds: 316
+Blue bot5 (244) - bot3_SL (3) [squer]: bot5 | Rounds: 602
 
-Red bot5 (245) - bot3_SL (3) [uncomfortable]: bot5
-Blue bot5 (246) - bot3_SL (3) [uncomfortable]: bot5
+Red  bot5 (245) - bot3_SL (3) [uncomfortable]: bot5 | Rounds: 878
+Blue bot5 (246) - bot3_SL (3) [uncomfortable]: bot5 | Rounds: 1184
 
-Red bot5 (247) - bot3_SL (3) [underground]: bot5
-Blue bot5 (248) - bot3_SL (3) [underground]: bot5
+Red  bot5 (247) - bot3_SL (3) [underground]: bot5 | Rounds: 2000
+Blue bot5 (248) - bot3_SL (3) [underground]: bot5 | Rounds: 2000
 
-Red bot5 (249) - bot3_SL (3) [valley]: bot5
-Blue bot5 (250) - bot3_SL (3) [valley]: bot5
+Red  bot5 (249) - bot3_SL (3) [valley]: bot5 | Rounds: 2000
+Blue bot5 (250) - bot3_SL (3) [valley]: bot5 | Rounds: 1083
 
-Red bot5 (250) - bot4 (1) [colosseum]: bot4
-Blue bot5 (250) - bot4 (2) [colosseum]: bot4
+Red  bot5 (250) - bot4 (1) [colosseum]: bot4 | Rounds: 947
+Blue bot5 (250) - bot4 (2) [colosseum]: bot4 | Rounds: 1105
 
-Red bot5 (250) - bot4 (3) [eckleburg]: bot4
-Blue bot5 (250) - bot4 (4) [eckleburg]: bot4
+Red  bot5 (250) - bot4 (3) [eckleburg]: bot4 | Rounds: 743
+Blue bot5 (250) - bot4 (4) [eckleburg]: bot4 | Rounds: 653
 
-Red bot5 (250) - bot4 (5) [fortress]: bot4
-Blue bot5 (250) - bot4 (6) [fortress]: bot4
+Red  bot5 (250) - bot4 (5) [fortress]: bot4 | Rounds: 689
+Blue bot5 (250) - bot4 (6) [fortress]: bot4 | Rounds: 735
 
-Red bot5 (250) - bot4 (7) [intersection]: bot4
-Blue bot5 (250) - bot4 (8) [intersection]: bot4
+Red  bot5 (250) - bot4 (7) [intersection]: bot4 | Rounds: 445
+Blue bot5 (250) - bot4 (8) [intersection]: bot4 | Rounds: 409
 
-Red bot5 (251) - bot4 (8) [jellyfish]: bot5
-Blue bot5 (251) - bot4 (9) [jellyfish]: bot4
+Red  bot5 (251) - bot4 (8) [jellyfish]: bot5 | Rounds: 2000
+Blue bot5 (251) - bot4 (9) [jellyfish]: bot4 | Rounds: 417
 
-Red bot5 (251) - bot4 (10) [maptestsmall]: bot4
-Blue bot5 (251) - bot4 (11) [maptestsmall]: bot4
+Red  bot5 (251) - bot4 (10) [maptestsmall]: bot4 | Rounds: 371
+Blue bot5 (251) - bot4 (11) [maptestsmall]: bot4 | Rounds: 239
 
-Red bot5 (251) - bot4 (12) [nottestsmall]: bot4
-Blue bot5 (251) - bot4 (13) [nottestsmall]: bot4
+Red  bot5 (251) - bot4 (12) [nottestsmall]: bot4 | Rounds: 468
+Blue bot5 (251) - bot4 (13) [nottestsmall]: bot4 | Rounds: 501
 
-Red bot5 (251) - bot4 (14) [progress]: bot4
-Blue bot5 (251) - bot4 (15) [progress]: bot4
+Red  bot5 (251) - bot4 (14) [progress]: bot4 | Rounds: 258
+Blue bot5 (251) - bot4 (15) [progress]: bot4 | Rounds: 250
 
-Red bot5 (251) - bot4 (16) [rivers]: bot4
-Blue bot5 (251) - bot4 (17) [rivers]: bot4
+Red  bot5 (251) - bot4 (16) [rivers]: bot4 | Rounds: 863
+Blue bot5 (251) - bot4 (17) [rivers]: bot4 | Rounds: 714
 
-Red bot5 (251) - bot4 (18) [sandwich]: bot4
-Blue bot5 (251) - bot4 (19) [sandwich]: bot4
+Red  bot5 (251) - bot4 (18) [sandwich]: bot4 | Rounds: 699
+Blue bot5 (251) - bot4 (19) [sandwich]: bot4 | Rounds: 752
 
-Red bot5 (251) - bot4 (20) [squer]: bot4
-Blue bot5 (252) - bot4 (20) [squer]: bot5
+Red  bot5 (251) - bot4 (20) [squer]: bot4 | Rounds: 469
+Blue bot5 (252) - bot4 (20) [squer]: bot5 | Rounds: 346
 
-Red bot5 (253) - bot4 (20) [uncomfortable]: bot5
-Blue bot5 (254) - bot4 (20) [uncomfortable]: bot5
+Red  bot5 (253) - bot4 (20) [uncomfortable]: bot5 | Rounds: 1252
+Blue bot5 (254) - bot4 (20) [uncomfortable]: bot5 | Rounds: 938
 
-Red bot5 (254) - bot4 (21) [underground]: bot4
-Blue bot5 (254) - bot4 (22) [underground]: bot4
+Red  bot5 (254) - bot4 (21) [underground]: bot4 | Rounds: 745
+Blue bot5 (254) - bot4 (22) [underground]: bot4 | Rounds: 824
 
-Red bot5 (255) - bot4 (22) [valley]: bot5
-Blue bot5 (256) - bot4 (22) [valley]: bot5
+Red  bot5 (255) - bot4 (22) [valley]: bot5 | Rounds: 2000
+Blue bot5 (256) - bot4 (22) [valley]: bot5 | Rounds: 892
 
-Red bot5 (257) - bot_MC (0) [colosseum]: bot5
-Blue bot5 (258) - bot_MC (0) [colosseum]: bot5
+Red  bot5 (257) - bot_MC (0) [colosseum]: bot5 | Rounds: 1494
+Blue bot5 (258) - bot_MC (0) [colosseum]: bot5 | Rounds: 1938
 
-Red bot5 (259) - bot_MC (0) [eckleburg]: bot5
-Blue bot5 (260) - bot_MC (0) [eckleburg]: bot5
+Red  bot5 (259) - bot_MC (0) [eckleburg]: bot5 | Rounds: 2000
+Blue bot5 (260) - bot_MC (0) [eckleburg]: bot5 | Rounds: 1547
 
-Red bot5 (260) - bot_MC (1) [fortress]: bot_MC
-Blue bot5 (261) - bot_MC (1) [fortress]: bot5
+Red  bot5 (260) - bot_MC (1) [fortress]: bot_MC | Rounds: 978
+Blue bot5 (261) - bot_MC (1) [fortress]: bot5 | Rounds: 2000
 
-Red bot5 (262) - bot_MC (1) [intersection]: bot5
-Blue bot5 (263) - bot_MC (1) [intersection]: bot5
+Red  bot5 (262) - bot_MC (1) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (263) - bot_MC (1) [intersection]: bot5 | Rounds: 1870
 
-Red bot5 (264) - bot_MC (1) [jellyfish]: bot5
-Blue bot5 (265) - bot_MC (1) [jellyfish]: bot5
+Red  bot5 (264) - bot_MC (1) [jellyfish]: bot5 | Rounds: 1576
+Blue bot5 (265) - bot_MC (1) [jellyfish]: bot5 | Rounds: 2000
 
-Red bot5 (265) - bot_MC (2) [maptestsmall]: bot_MC
-Blue bot5 (265) - bot_MC (3) [maptestsmall]: bot_MC
+Red  bot5 (265) - bot_MC (2) [maptestsmall]: bot_MC | Rounds: 1006
+Blue bot5 (265) - bot_MC (3) [maptestsmall]: bot_MC | Rounds: 813
 
-Red bot5 (266) - bot_MC (3) [nottestsmall]: bot5
-Blue bot5 (267) - bot_MC (3) [nottestsmall]: bot5
+Red  bot5 (266) - bot_MC (3) [nottestsmall]: bot5 | Rounds: 1649
+Blue bot5 (267) - bot_MC (3) [nottestsmall]: bot5 | Rounds: 511
 
-Red bot5 (268) - bot_MC (3) [progress]: bot5
-Blue bot5 (268) - bot_MC (4) [progress]: bot_MC
+Red  bot5 (268) - bot_MC (3) [progress]: bot5 | Rounds: 1712
+Blue bot5 (268) - bot_MC (4) [progress]: bot_MC | Rounds: 984
 
-Red bot5 (268) - bot_MC (5) [rivers]: bot_MC
-Blue bot5 (269) - bot_MC (5) [rivers]: bot5
+Red  bot5 (268) - bot_MC (5) [rivers]: bot_MC | Rounds: 810
+Blue bot5 (269) - bot_MC (5) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (270) - bot_MC (5) [sandwich]: bot5
-Blue bot5 (271) - bot_MC (5) [sandwich]: bot5
+Red  bot5 (270) - bot_MC (5) [sandwich]: bot5 | Rounds: 819
+Blue bot5 (271) - bot_MC (5) [sandwich]: bot5 | Rounds: 364
 
-Red bot5 (272) - bot_MC (5) [squer]: bot5
-Blue bot5 (273) - bot_MC (5) [squer]: bot5
+Red  bot5 (272) - bot_MC (5) [squer]: bot5 | Rounds: 380
+Blue bot5 (273) - bot_MC (5) [squer]: bot5 | Rounds: 293
 
-Red bot5 (274) - bot_MC (5) [uncomfortable]: bot5
-Blue bot5 (275) - bot_MC (5) [uncomfortable]: bot5
+Red  bot5 (274) - bot_MC (5) [uncomfortable]: bot5 | Rounds: 1071
+Blue bot5 (275) - bot_MC (5) [uncomfortable]: bot5 | Rounds: 1276
 
-Red bot5 (276) - bot_MC (5) [underground]: bot5
-Blue bot5 (277) - bot_MC (5) [underground]: bot5
+Red  bot5 (276) - bot_MC (5) [underground]: bot5 | Rounds: 2000
+Blue bot5 (277) - bot_MC (5) [underground]: bot5 | Rounds: 2000
 
-Red bot5 (278) - bot_MC (5) [valley]: bot5
-Blue bot5 (279) - bot_MC (5) [valley]: bot5
+Red  bot5 (278) - bot_MC (5) [valley]: bot5 | Rounds: 2000
+Blue bot5 (279) - bot_MC (5) [valley]: bot5 | Rounds: 724
 
-Red bot5 (280) - bot_MC_2 (0) [colosseum]: bot5
-Blue bot5 (281) - bot_MC_2 (0) [colosseum]: bot5
+Red  bot5 (280) - bot_MC_2 (0) [colosseum]: bot5 | Rounds: 2000
+Blue bot5 (281) - bot_MC_2 (0) [colosseum]: bot5 | Rounds: 2000
 
-Red bot5 (281) - bot_MC_2 (1) [eckleburg]: bot_MC_2
-Blue bot5 (281) - bot_MC_2 (2) [eckleburg]: bot_MC_2
+Red  bot5 (281) - bot_MC_2 (1) [eckleburg]: bot_MC_2 | Rounds: 718
+Blue bot5 (281) - bot_MC_2 (2) [eckleburg]: bot_MC_2 | Rounds: 835
 
-Red bot5 (281) - bot_MC_2 (3) [fortress]: bot_MC_2
-Blue bot5 (281) - bot_MC_2 (4) [fortress]: bot_MC_2
+Red  bot5 (281) - bot_MC_2 (3) [fortress]: bot_MC_2 | Rounds: 1140
+Blue bot5 (281) - bot_MC_2 (4) [fortress]: bot_MC_2 | Rounds: 743
 
-Red bot5 (282) - bot_MC_2 (4) [intersection]: bot5
-Blue bot5 (282) - bot_MC_2 (5) [intersection]: bot_MC_2
+Red  bot5 (282) - bot_MC_2 (4) [intersection]: bot5 | Rounds: 2000
+Blue bot5 (282) - bot_MC_2 (5) [intersection]: bot_MC_2 | Rounds: 561
 
-Red bot5 (282) - bot_MC_2 (6) [jellyfish]: bot_MC_2
-Blue bot5 (282) - bot_MC_2 (7) [jellyfish]: bot_MC_2
+Red  bot5 (282) - bot_MC_2 (6) [jellyfish]: bot_MC_2 | Rounds: 905
+Blue bot5 (282) - bot_MC_2 (7) [jellyfish]: bot_MC_2 | Rounds: 309
 
-Red bot5 (282) - bot_MC_2 (8) [maptestsmall]: bot_MC_2
-Blue bot5 (282) - bot_MC_2 (9) [maptestsmall]: bot_MC_2
+Red  bot5 (282) - bot_MC_2 (8) [maptestsmall]: bot_MC_2 | Rounds: 276
+Blue bot5 (282) - bot_MC_2 (9) [maptestsmall]: bot_MC_2 | Rounds: 240
 
-Red bot5 (282) - bot_MC_2 (10) [nottestsmall]: bot_MC_2
-Blue bot5 (282) - bot_MC_2 (11) [nottestsmall]: bot_MC_2
+Red  bot5 (282) - bot_MC_2 (10) [nottestsmall]: bot_MC_2 | Rounds: 417
+Blue bot5 (282) - bot_MC_2 (11) [nottestsmall]: bot_MC_2 | Rounds: 465
 
-Red bot5 (282) - bot_MC_2 (12) [progress]: bot_MC_2
-Blue bot5 (282) - bot_MC_2 (13) [progress]: bot_MC_2
+Red  bot5 (282) - bot_MC_2 (12) [progress]: bot_MC_2 | Rounds: 439
+Blue bot5 (282) - bot_MC_2 (13) [progress]: bot_MC_2 | Rounds: 259
 
-Red bot5 (282) - bot_MC_2 (14) [rivers]: bot_MC_2
-Blue bot5 (283) - bot_MC_2 (14) [rivers]: bot5
+Red  bot5 (282) - bot_MC_2 (14) [rivers]: bot_MC_2 | Rounds: 672
+Blue bot5 (283) - bot_MC_2 (14) [rivers]: bot5 | Rounds: 2000
 
-Red bot5 (284) - bot_MC_2 (14) [sandwich]: bot5
-Blue bot5 (285) - bot_MC_2 (14) [sandwich]: bot5
+Red  bot5 (284) - bot_MC_2 (14) [sandwich]: bot5 | Rounds: 576
+Blue bot5 (285) - bot_MC_2 (14) [sandwich]: bot5 | Rounds: 607
 
-Red bot5 (286) - bot_MC_2 (14) [squer]: bot5
-Blue bot5 (286) - bot_MC_2 (15) [squer]: bot_MC_2
+Red  bot5 (286) - bot_MC_2 (14) [squer]: bot5 | Rounds: 376
+Blue bot5 (286) - bot_MC_2 (15) [squer]: bot_MC_2 | Rounds: 373
 
-Red bot5 (287) - bot_MC_2 (15) [uncomfortable]: bot5
-Blue bot5 (288) - bot_MC_2 (15) [uncomfortable]: bot5
+Red  bot5 (287) - bot_MC_2 (15) [uncomfortable]: bot5 | Rounds: 957
+Blue bot5 (288) - bot_MC_2 (15) [uncomfortable]: bot5 | Rounds: 1121
 
-Red bot5 (288) - bot_MC_2 (16) [underground]: bot_MC_2
-Blue bot5 (288) - bot_MC_2 (17) [underground]: bot_MC_2
+Red  bot5 (288) - bot_MC_2 (16) [underground]: bot_MC_2 | Rounds: 896
+Blue bot5 (288) - bot_MC_2 (17) [underground]: bot_MC_2 | Rounds: 811
 
-Red bot5 (288) - bot_MC_2 (18) [valley]: bot_MC_2
-Blue bot5 (288) - bot_MC_2 (19) [valley]: bot_MC_2
+Red  bot5 (288) - bot_MC_2 (18) [valley]: bot_MC_2 | Rounds: 1023
+Blue bot5 (288) - bot_MC_2 (19) [valley]: bot_MC_2 | Rounds: 1063
 
-Red bot5 (289) - dummyBot (0) [colosseum]: bot5
-Blue bot5 (290) - dummyBot (0) [colosseum]: bot5
+Red  bot5 (289) - dummyBot (0) [colosseum]: bot5 | Rounds: 1010
+Blue bot5 (290) - dummyBot (0) [colosseum]: bot5 | Rounds: 1065
 
-Red bot5 (291) - dummyBot (0) [eckleburg]: bot5
-Blue bot5 (292) - dummyBot (0) [eckleburg]: bot5
+Red  bot5 (291) - dummyBot (0) [eckleburg]: bot5 | Rounds: 758
+Blue bot5 (292) - dummyBot (0) [eckleburg]: bot5 | Rounds: 633
 
-Red bot5 (293) - dummyBot (0) [fortress]: bot5
-Blue bot5 (294) - dummyBot (0) [fortress]: bot5
+Red  bot5 (293) - dummyBot (0) [fortress]: bot5 | Rounds: 765
+Blue bot5 (294) - dummyBot (0) [fortress]: bot5 | Rounds: 826
 
-Red bot5 (295) - dummyBot (0) [intersection]: bot5
-Blue bot5 (296) - dummyBot (0) [intersection]: bot5
+Red  bot5 (295) - dummyBot (0) [intersection]: bot5 | Rounds: 729
+Blue bot5 (296) - dummyBot (0) [intersection]: bot5 | Rounds: 763
 
-Red bot5 (297) - dummyBot (0) [jellyfish]: bot5
-Blue bot5 (298) - dummyBot (0) [jellyfish]: bot5
+Red  bot5 (297) - dummyBot (0) [jellyfish]: bot5 | Rounds: 381
+Blue bot5 (298) - dummyBot (0) [jellyfish]: bot5 | Rounds: 377
 
-Red bot5 (299) - dummyBot (0) [maptestsmall]: bot5
-Blue bot5 (300) - dummyBot (0) [maptestsmall]: bot5
+Red  bot5 (299) - dummyBot (0) [maptestsmall]: bot5 | Rounds: 264
+Blue bot5 (300) - dummyBot (0) [maptestsmall]: bot5 | Rounds: 250
 
-Red bot5 (301) - dummyBot (0) [nottestsmall]: bot5
-Blue bot5 (302) - dummyBot (0) [nottestsmall]: bot5
+Red  bot5 (301) - dummyBot (0) [nottestsmall]: bot5 | Rounds: 338
+Blue bot5 (302) - dummyBot (0) [nottestsmall]: bot5 | Rounds: 374
 
-Red bot5 (303) - dummyBot (0) [progress]: bot5
-Blue bot5 (304) - dummyBot (0) [progress]: bot5
+Red  bot5 (303) - dummyBot (0) [progress]: bot5 | Rounds: 263
+Blue bot5 (304) - dummyBot (0) [progress]: bot5 | Rounds: 230
 
-Red bot5 (305) - dummyBot (0) [rivers]: bot5
-Blue bot5 (306) - dummyBot (0) [rivers]: bot5
+Red  bot5 (305) - dummyBot (0) [rivers]: bot5 | Rounds: 841
+Blue bot5 (306) - dummyBot (0) [rivers]: bot5 | Rounds: 753
 
-Red bot5 (307) - dummyBot (0) [sandwich]: bot5
-Blue bot5 (308) - dummyBot (0) [sandwich]: bot5
+Red  bot5 (307) - dummyBot (0) [sandwich]: bot5 | Rounds: 352
+Blue bot5 (308) - dummyBot (0) [sandwich]: bot5 | Rounds: 388
 
-Red bot5 (309) - dummyBot (0) [squer]: bot5
-Blue bot5 (310) - dummyBot (0) [squer]: bot5
+Red  bot5 (309) - dummyBot (0) [squer]: bot5 | Rounds: 371
+Blue bot5 (310) - dummyBot (0) [squer]: bot5 | Rounds: 291
 
-Red bot5 (311) - dummyBot (0) [uncomfortable]: bot5
-Blue bot5 (312) - dummyBot (0) [uncomfortable]: bot5
+Red  bot5 (311) - dummyBot (0) [uncomfortable]: bot5 | Rounds: 1063
+Blue bot5 (312) - dummyBot (0) [uncomfortable]: bot5 | Rounds: 1374
 
-Red bot5 (313) - dummyBot (0) [underground]: bot5
-Blue bot5 (314) - dummyBot (0) [underground]: bot5
+Red  bot5 (313) - dummyBot (0) [underground]: bot5 | Rounds: 544
+Blue bot5 (314) - dummyBot (0) [underground]: bot5 | Rounds: 591
 
-Red bot5 (315) - dummyBot (0) [valley]: bot5
-Blue bot5 (316) - dummyBot (0) [valley]: bot5
+Red  bot5 (315) - dummyBot (0) [valley]: bot5 | Rounds: 583
+Blue bot5 (316) - dummyBot (0) [valley]: bot5 | Rounds: 763
 
-Red bot5 (317) - examplefuncsplayer (0) [colosseum]: bot5
-Blue bot5 (318) - examplefuncsplayer (0) [colosseum]: bot5
+Red  bot5 (317) - examplefuncsplayer (0) [colosseum]: bot5 | Rounds: 1017
+Blue bot5 (318) - examplefuncsplayer (0) [colosseum]: bot5 | Rounds: 1042
 
-Red bot5 (319) - examplefuncsplayer (0) [eckleburg]: bot5
-Blue bot5 (320) - examplefuncsplayer (0) [eckleburg]: bot5
+Red  bot5 (319) - examplefuncsplayer (0) [eckleburg]: bot5 | Rounds: 686
+Blue bot5 (320) - examplefuncsplayer (0) [eckleburg]: bot5 | Rounds: 670
 
-Red bot5 (321) - examplefuncsplayer (0) [fortress]: bot5
-Blue bot5 (322) - examplefuncsplayer (0) [fortress]: bot5
+Red  bot5 (321) - examplefuncsplayer (0) [fortress]: bot5 | Rounds: 888
+Blue bot5 (322) - examplefuncsplayer (0) [fortress]: bot5 | Rounds: 786
 
-Red bot5 (323) - examplefuncsplayer (0) [intersection]: bot5
-Blue bot5 (324) - examplefuncsplayer (0) [intersection]: bot5
+Red  bot5 (323) - examplefuncsplayer (0) [intersection]: bot5 | Rounds: 570
+Blue bot5 (324) - examplefuncsplayer (0) [intersection]: bot5 | Rounds: 671
 
-Red bot5 (325) - examplefuncsplayer (0) [jellyfish]: bot5
-Blue bot5 (326) - examplefuncsplayer (0) [jellyfish]: bot5
+Red  bot5 (325) - examplefuncsplayer (0) [jellyfish]: bot5 | Rounds: 415
+Blue bot5 (326) - examplefuncsplayer (0) [jellyfish]: bot5 | Rounds: 429
 
-Red bot5 (327) - examplefuncsplayer (0) [maptestsmall]: bot5
-Blue bot5 (328) - examplefuncsplayer (0) [maptestsmall]: bot5
+Red  bot5 (327) - examplefuncsplayer (0) [maptestsmall]: bot5 | Rounds: 2000
+Blue bot5 (328) - examplefuncsplayer (0) [maptestsmall]: bot5 | Rounds: 2000
 
-Red bot5 (329) - examplefuncsplayer (0) [nottestsmall]: bot5
-Blue bot5 (330) - examplefuncsplayer (0) [nottestsmall]: bot5
+Red  bot5 (329) - examplefuncsplayer (0) [nottestsmall]: bot5 | Rounds: 461
+Blue bot5 (330) - examplefuncsplayer (0) [nottestsmall]: bot5 | Rounds: 479
 
-Red bot5 (331) - examplefuncsplayer (0) [progress]: bot5
-Blue bot5 (332) - examplefuncsplayer (0) [progress]: bot5
+Red  bot5 (331) - examplefuncsplayer (0) [progress]: bot5 | Rounds: 436
+Blue bot5 (332) - examplefuncsplayer (0) [progress]: bot5 | Rounds: 283
 
-Red bot5 (333) - examplefuncsplayer (0) [rivers]: bot5
-Blue bot5 (334) - examplefuncsplayer (0) [rivers]: bot5
+Red  bot5 (333) - examplefuncsplayer (0) [rivers]: bot5 | Rounds: 631
+Blue bot5 (334) - examplefuncsplayer (0) [rivers]: bot5 | Rounds: 663
 
-Red bot5 (335) - examplefuncsplayer (0) [sandwich]: bot5
-Blue bot5 (336) - examplefuncsplayer (0) [sandwich]: bot5
+Red  bot5 (335) - examplefuncsplayer (0) [sandwich]: bot5 | Rounds: 298
+Blue bot5 (336) - examplefuncsplayer (0) [sandwich]: bot5 | Rounds: 383
 
-Red bot5 (337) - examplefuncsplayer (0) [squer]: bot5
-Blue bot5 (338) - examplefuncsplayer (0) [squer]: bot5
+Red  bot5 (337) - examplefuncsplayer (0) [squer]: bot5 | Rounds: 616
+Blue bot5 (338) - examplefuncsplayer (0) [squer]: bot5 | Rounds: 301
 
-Red bot5 (339) - examplefuncsplayer (0) [uncomfortable]: bot5
-Blue bot5 (340) - examplefuncsplayer (0) [uncomfortable]: bot5
+Red  bot5 (339) - examplefuncsplayer (0) [uncomfortable]: bot5 | Rounds: 1322
+Blue bot5 (340) - examplefuncsplayer (0) [uncomfortable]: bot5 | Rounds: 1299
 
-Red bot5 (341) - examplefuncsplayer (0) [underground]: bot5
-Blue bot5 (342) - examplefuncsplayer (0) [underground]: bot5
+Red  bot5 (341) - examplefuncsplayer (0) [underground]: bot5 | Rounds: 712
+Blue bot5 (342) - examplefuncsplayer (0) [underground]: bot5 | Rounds: 685
 
-Red bot5 (343) - examplefuncsplayer (0) [valley]: bot5
-Blue bot5 (344) - examplefuncsplayer (0) [valley]: bot5
+Red  bot5 (343) - examplefuncsplayer (0) [valley]: bot5 | Rounds: 737
+Blue bot5 (344) - examplefuncsplayer (0) [valley]: bot5 | Rounds: 916
 
-Red bot5 (345) - examplefuncsplayer2 (0) [colosseum]: bot5
-Blue bot5 (346) - examplefuncsplayer2 (0) [colosseum]: bot5
+Red  bot5 (345) - examplefuncsplayer2 (0) [colosseum]: bot5 | Rounds: 1173
+Blue bot5 (346) - examplefuncsplayer2 (0) [colosseum]: bot5 | Rounds: 1144
 
-Red bot5 (347) - examplefuncsplayer2 (0) [eckleburg]: bot5
-Blue bot5 (348) - examplefuncsplayer2 (0) [eckleburg]: bot5
+Red  bot5 (347) - examplefuncsplayer2 (0) [eckleburg]: bot5 | Rounds: 769
+Blue bot5 (348) - examplefuncsplayer2 (0) [eckleburg]: bot5 | Rounds: 606
 
-Red bot5 (349) - examplefuncsplayer2 (0) [fortress]: bot5
-Blue bot5 (350) - examplefuncsplayer2 (0) [fortress]: bot5
+Red  bot5 (349) - examplefuncsplayer2 (0) [fortress]: bot5 | Rounds: 942
+Blue bot5 (350) - examplefuncsplayer2 (0) [fortress]: bot5 | Rounds: 865
 
-Red bot5 (351) - examplefuncsplayer2 (0) [intersection]: bot5
-Blue bot5 (352) - examplefuncsplayer2 (0) [intersection]: bot5
+Red  bot5 (351) - examplefuncsplayer2 (0) [intersection]: bot5 | Rounds: 600
+Blue bot5 (352) - examplefuncsplayer2 (0) [intersection]: bot5 | Rounds: 576
 
-Red bot5 (353) - examplefuncsplayer2 (0) [jellyfish]: bot5
-Blue bot5 (354) - examplefuncsplayer2 (0) [jellyfish]: bot5
+Red  bot5 (353) - examplefuncsplayer2 (0) [jellyfish]: bot5 | Rounds: 425
+Blue bot5 (354) - examplefuncsplayer2 (0) [jellyfish]: bot5 | Rounds: 370
 
-Red bot5 (355) - examplefuncsplayer2 (0) [maptestsmall]: bot5
-Blue bot5 (356) - examplefuncsplayer2 (0) [maptestsmall]: bot5
+Red  bot5 (355) - examplefuncsplayer2 (0) [maptestsmall]: bot5 | Rounds: 197
+Blue bot5 (356) - examplefuncsplayer2 (0) [maptestsmall]: bot5 | Rounds: 274
 
-Red bot5 (357) - examplefuncsplayer2 (0) [nottestsmall]: bot5
-Blue bot5 (358) - examplefuncsplayer2 (0) [nottestsmall]: bot5
+Red  bot5 (357) - examplefuncsplayer2 (0) [nottestsmall]: bot5 | Rounds: 548
+Blue bot5 (358) - examplefuncsplayer2 (0) [nottestsmall]: bot5 | Rounds: 559
 
-Red bot5 (359) - examplefuncsplayer2 (0) [progress]: bot5
-Blue bot5 (360) - examplefuncsplayer2 (0) [progress]: bot5
+Red  bot5 (359) - examplefuncsplayer2 (0) [progress]: bot5 | Rounds: 334
+Blue bot5 (360) - examplefuncsplayer2 (0) [progress]: bot5 | Rounds: 315
 
-Red bot5 (361) - examplefuncsplayer2 (0) [rivers]: bot5
-Blue bot5 (362) - examplefuncsplayer2 (0) [rivers]: bot5
+Red  bot5 (361) - examplefuncsplayer2 (0) [rivers]: bot5 | Rounds: 708
+Blue bot5 (362) - examplefuncsplayer2 (0) [rivers]: bot5 | Rounds: 615
 
-Red bot5 (363) - examplefuncsplayer2 (0) [sandwich]: bot5
-Blue bot5 (364) - examplefuncsplayer2 (0) [sandwich]: bot5
+Red  bot5 (363) - examplefuncsplayer2 (0) [sandwich]: bot5 | Rounds: 454
+Blue bot5 (364) - examplefuncsplayer2 (0) [sandwich]: bot5 | Rounds: 501
 
-Red bot5 (365) - examplefuncsplayer2 (0) [squer]: bot5
-Blue bot5 (366) - examplefuncsplayer2 (0) [squer]: bot5
+Red  bot5 (365) - examplefuncsplayer2 (0) [squer]: bot5 | Rounds: 565
+Blue bot5 (366) - examplefuncsplayer2 (0) [squer]: bot5 | Rounds: 294
 
-Red bot5 (367) - examplefuncsplayer2 (0) [uncomfortable]: bot5
-Blue bot5 (368) - examplefuncsplayer2 (0) [uncomfortable]: bot5
+Red  bot5 (367) - examplefuncsplayer2 (0) [uncomfortable]: bot5 | Rounds: 1311
+Blue bot5 (368) - examplefuncsplayer2 (0) [uncomfortable]: bot5 | Rounds: 1487
 
-Red bot5 (369) - examplefuncsplayer2 (0) [underground]: bot5
-Blue bot5 (370) - examplefuncsplayer2 (0) [underground]: bot5
+Red  bot5 (369) - examplefuncsplayer2 (0) [underground]: bot5 | Rounds: 689
+Blue bot5 (370) - examplefuncsplayer2 (0) [underground]: bot5 | Rounds: 724
 
-Red bot5 (371) - examplefuncsplayer2 (0) [valley]: bot5
-Blue bot5 (372) - examplefuncsplayer2 (0) [valley]: bot5
+Red  bot5 (371) - examplefuncsplayer2 (0) [valley]: bot5 | Rounds: 881
+Blue bot5 (372) - examplefuncsplayer2 (0) [valley]: bot5 | Rounds: 885
 
-Red bot5 (373) - examplefuncsplayer3 (0) [colosseum]: bot5
-Blue bot5 (374) - examplefuncsplayer3 (0) [colosseum]: bot5
+Red  bot5 (373) - examplefuncsplayer3 (0) [colosseum]: bot5 | Rounds: 969
+Blue bot5 (374) - examplefuncsplayer3 (0) [colosseum]: bot5 | Rounds: 866
 
-Red bot5 (375) - examplefuncsplayer3 (0) [eckleburg]: bot5
-Blue bot5 (376) - examplefuncsplayer3 (0) [eckleburg]: bot5
+Red  bot5 (375) - examplefuncsplayer3 (0) [eckleburg]: bot5 | Rounds: 831
+Blue bot5 (376) - examplefuncsplayer3 (0) [eckleburg]: bot5 | Rounds: 944
 
-Red bot5 (377) - examplefuncsplayer3 (0) [fortress]: bot5
-Blue bot5 (378) - examplefuncsplayer3 (0) [fortress]: bot5
+Red  bot5 (377) - examplefuncsplayer3 (0) [fortress]: bot5 | Rounds: 810
+Blue bot5 (378) - examplefuncsplayer3 (0) [fortress]: bot5 | Rounds: 927
 
-Red bot5 (379) - examplefuncsplayer3 (0) [intersection]: bot5
-Blue bot5 (380) - examplefuncsplayer3 (0) [intersection]: bot5
+Red  bot5 (379) - examplefuncsplayer3 (0) [intersection]: bot5 | Rounds: 730
+Blue bot5 (380) - examplefuncsplayer3 (0) [intersection]: bot5 | Rounds: 452
 
-Red bot5 (381) - examplefuncsplayer3 (0) [jellyfish]: bot5
-Blue bot5 (382) - examplefuncsplayer3 (0) [jellyfish]: bot5
+Red  bot5 (381) - examplefuncsplayer3 (0) [jellyfish]: bot5 | Rounds: 443
+Blue bot5 (382) - examplefuncsplayer3 (0) [jellyfish]: bot5 | Rounds: 463
 
-Red bot5 (383) - examplefuncsplayer3 (0) [maptestsmall]: bot5
-Blue bot5 (384) - examplefuncsplayer3 (0) [maptestsmall]: bot5
+Red  bot5 (383) - examplefuncsplayer3 (0) [maptestsmall]: bot5 | Rounds: 145
+Blue bot5 (384) - examplefuncsplayer3 (0) [maptestsmall]: bot5 | Rounds: 132
 
-Red bot5 (385) - examplefuncsplayer3 (0) [nottestsmall]: bot5
-Blue bot5 (386) - examplefuncsplayer3 (0) [nottestsmall]: bot5
+Red  bot5 (385) - examplefuncsplayer3 (0) [nottestsmall]: bot5 | Rounds: 364
+Blue bot5 (386) - examplefuncsplayer3 (0) [nottestsmall]: bot5 | Rounds: 426
 
-Red bot5 (387) - examplefuncsplayer3 (0) [progress]: bot5
-Blue bot5 (388) - examplefuncsplayer3 (0) [progress]: bot5
+Red  bot5 (387) - examplefuncsplayer3 (0) [progress]: bot5 | Rounds: 287
+Blue bot5 (388) - examplefuncsplayer3 (0) [progress]: bot5 | Rounds: 270
 
-Red bot5 (389) - examplefuncsplayer3 (0) [rivers]: bot5
-Blue bot5 (390) - examplefuncsplayer3 (0) [rivers]: bot5
+Red  bot5 (389) - examplefuncsplayer3 (0) [rivers]: bot5 | Rounds: 684
+Blue bot5 (390) - examplefuncsplayer3 (0) [rivers]: bot5 | Rounds: 680
 
-Red bot5 (391) - examplefuncsplayer3 (0) [sandwich]: bot5
-Blue bot5 (392) - examplefuncsplayer3 (0) [sandwich]: bot5
+Red  bot5 (391) - examplefuncsplayer3 (0) [sandwich]: bot5 | Rounds: 335
+Blue bot5 (392) - examplefuncsplayer3 (0) [sandwich]: bot5 | Rounds: 337
 
-Red bot5 (393) - examplefuncsplayer3 (0) [squer]: bot5
-Blue bot5 (394) - examplefuncsplayer3 (0) [squer]: bot5
+Red  bot5 (393) - examplefuncsplayer3 (0) [squer]: bot5 | Rounds: 313
+Blue bot5 (394) - examplefuncsplayer3 (0) [squer]: bot5 | Rounds: 344
 
-Red bot5 (395) - examplefuncsplayer3 (0) [uncomfortable]: bot5
-Blue bot5 (396) - examplefuncsplayer3 (0) [uncomfortable]: bot5
+Red  bot5 (395) - examplefuncsplayer3 (0) [uncomfortable]: bot5 | Rounds: 1563
+Blue bot5 (396) - examplefuncsplayer3 (0) [uncomfortable]: bot5 | Rounds: 1383
 
-Red bot5 (397) - examplefuncsplayer3 (0) [underground]: bot5
-Blue bot5 (398) - examplefuncsplayer3 (0) [underground]: bot5
+Red  bot5 (397) - examplefuncsplayer3 (0) [underground]: bot5 | Rounds: 716
+Blue bot5 (398) - examplefuncsplayer3 (0) [underground]: bot5 | Rounds: 704
 
-Red bot5 (399) - examplefuncsplayer3 (0) [valley]: bot5
-Blue bot5 (400) - examplefuncsplayer3 (0) [valley]: bot5
+Red  bot5 (399) - examplefuncsplayer3 (0) [valley]: bot5 | Rounds: 923
+Blue bot5 (400) - examplefuncsplayer3 (0) [valley]: bot5 | Rounds: 733
 
 
 Scoreboard: 
@@ -792,3 +792,4 @@ squer: 2/36
 uncomfortable: 0/36
 underground: 11/36
 valley: 3/36
+
