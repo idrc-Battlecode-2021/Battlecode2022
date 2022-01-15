@@ -59,7 +59,7 @@ def main():
                 winCount[winner] += 1
                 if winner != player:
                     mapLosses[map] += 1
-                redOut = f"Red {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}"
+                redOut = f"Red  {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}"
                 output += redOut +'\n'
                 print(redOut)
                 
