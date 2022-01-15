@@ -21,8 +21,9 @@ def main():
     primaryPlayers = sys.argv[1:]
     #players = ['agrobot','bot1','bot2','bot3','bot3_EW','bot3_JJ','bot] # Bot names (i.e. examplefuncsplayer, should be folders in src/ directory)
     players = os.listdir('./src/')
+    #players = ['agrobot']
     maps = ["colosseum", "eckleburg", "fortress", "intersection", "jellyfish", "maptestsmall", "nottestsmall", "progress", "rivers", "sandwich", "squer", "uncomfortable", "underground", "valley"] # Maps
-    #maps = ["colosseum"]
+    #maps = ["intersection"]
     scaffold_directory = "./" # Battlefold Scaffold location ("./" if this file is in scaffold location)
     ##
 
@@ -46,7 +47,9 @@ def main():
             if opponent not in winCount:
                 winCount[opponent] = 0
 
-            for map in maps:          
+            for map in maps:
+                if map not in mapLosses:
+                    mapLosses[map] = 0
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={player}", f"-PpackageNameA={player}",f"-PteamB={opponent}", f"-PpackageNameB={opponent}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
                 winner = parse_winner(match_result, player, opponent)
@@ -54,7 +57,7 @@ def main():
                 results[player][opponent] = winner
                 winCount[winner] += 1
                 if winner != player:
-                    mapLosses{map} += 1
+                    mapLosses[map] += 1
                 redOut = f"Red {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
                 output += redOut +'\n'
                 print(redOut)
@@ -66,7 +69,7 @@ def main():
                 results[player][opponent] = winner
                 winCount[winner] += 1
                 if winner != player:
-                    mapLosses{map} += 1
+                    mapLosses[map] += 1
                 blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
                 output += blueOut + '\n'
                 print(blueOut)
@@ -88,7 +91,7 @@ def main():
     print("Map Losses")
     output += "Map Losses" + '\n'
     for map,losses in mapLosses.items():
-        score = f"{map}: {losses}"
+        score = f"{map}: {losses}/{2*(len(players)-1)}"
         output += score + '\n'
         print(score)
     file = open("matchLogs"+primaryPlayers[0]+".txt", "a")

@@ -1,0 +1,8 @@
+bot5
+Red bot5 (1) - agrobot (0) [intersection]: bot5
+Blue bot5 (2) - agrobot (0) [intersection]: bot5
+
+Scoreboard: 
+bot5: 2/0
+agrobot: 0/2
+Map Losses
