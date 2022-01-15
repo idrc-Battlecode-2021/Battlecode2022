@@ -17,10 +17,6 @@ soldiers have better explore methods
 13 - extension of 12
 14 - average distance between archons
 When miners find a deposit
-- 31: minerFound 1
-- 32: minerFound 2
-- 33: minerFound 3
-- 34: minerFound 4
 Miner Attacked
 - 40: attacked (Not Used Currently)
 - 41: minorLocation (Where enemy is)  (Not Used Currently)

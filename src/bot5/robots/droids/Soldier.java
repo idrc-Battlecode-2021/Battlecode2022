@@ -117,15 +117,13 @@ public class Soldier extends Droid{
         }
         */
         else if(hasMapLocation(43) && globalSoldierCount > 15){
-            MapLocation target = decode();
+            MapLocation target = decode(43);
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
                     rc.writeSharedArray(43,0);
                 }
             }
-            if (rc.isActionReady()){
-                intermediateMove(target);
-            }
+            intermediateMove(target);
         }else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
@@ -133,14 +131,9 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(55,0);
                 }
             }
-            if (rc.isActionReady()){
-                intermediateMove(target);
-            }
+            intermediateMove(target);
         }
         else{
-            if (!rc.isActionReady()){
-                return;
-            }
             if(enemyArchon !=null){
                 intermediateMove(enemyArchon);
             }

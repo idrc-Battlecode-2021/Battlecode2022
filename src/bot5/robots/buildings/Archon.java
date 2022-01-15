@@ -223,7 +223,6 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             if(minerCount > minerCountMax)minerCountMax = minerCount;
-            minerFoundCount = rc.readSharedArray(31+archonOrder);
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             globalSageCount = rc.readSharedArray(2);
             globalMinerCount = rc.readSharedArray(44);
