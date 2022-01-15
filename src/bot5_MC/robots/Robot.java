@@ -1008,6 +1008,7 @@ public abstract class Robot {
     }
 
     public boolean moveToLowPassability() throws GameActionException{
+        //TODO: doesn't guarantee that the target will be attacked
         //moves to lowest passability nearby
         if (!rc.isMovementReady()){
             return false;

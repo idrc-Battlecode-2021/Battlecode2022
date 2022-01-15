@@ -95,7 +95,7 @@ public abstract class Robot {
                               new MapLocation(((array2/256)%16)*4,((array2/4096)%16)*4)};
         MapLocation[] returnLocs = new MapLocation[4];
         MapLocation zeroPos = new MapLocation(0,0);
-        for(int i = 0; i < locs.length; i++){
+        for(int i = 0; i < locs.length; i++){ //needs to start at 0
             if(!locs[i].equals(zeroPos) || archons > i){
                 returnLocs[i] = locs[i];
             }else{
