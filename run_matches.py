@@ -45,7 +45,7 @@ def main():
 
         print(player + ": ")
         for j in range(len(players)):
-            if (player == players[j]):
+            if (player == players[j] || "dummyBot" == players[j] || "examplefuncsplayer" in players[j]):
                 continue
             
             opponent = players[j]

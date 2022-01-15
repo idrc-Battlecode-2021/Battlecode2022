@@ -26,6 +26,7 @@ When miners find a deposit
 - 40: attacked
 - 41: minorLocation (Where enemy is)  
 - 42: soldierBuild Start
+- 43: Archon Location  
 - All Other ids the same
 
 #Bugs

@@ -174,7 +174,6 @@ public class Archon extends Building{
     
     @Override
     public void run() throws GameActionException {
-        indicatorString = "";
         int soldierBuildStart = rc.readSharedArray(42);
         if (rc.getArchonCount()<initialArchons){ // change all relevant shared array items when an archon dies
             // update spawnphase array (57)

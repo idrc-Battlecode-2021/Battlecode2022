@@ -369,13 +369,14 @@ public abstract class Robot {
                     seesAttackers = true;
             }
         }
-        if (num_enemies>5 && !seesArchon){
+        if (seesArchon) {
+            rc.writeSharedArray(43, k);
+        }
+        if (num_enemies>5){
             MapLocation m = rc.getLocation();
             int x = m.x, y=m.y;
             k=x*64+y;
             rc.writeSharedArray(55,k);
-        } else if (seesArchon){
-            rc.writeSharedArray(55, k);
         }else if(seesAttackers){
             rc.writeSharedArray(41,k);
         }
