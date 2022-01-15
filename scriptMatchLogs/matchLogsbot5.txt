@@ -784,6 +784,7 @@ dummyBot: 0/28
 examplefuncsplayer: 0/28
 examplefuncsplayer2: 0/28
 examplefuncsplayer3: 0/28
+
 Map Losses
 colosseum: 6/36
 eckleburg: 7/36

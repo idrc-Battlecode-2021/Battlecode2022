@@ -88,7 +88,7 @@ def main():
         print(score)
     print()
     print("Map Losses")
-    output += "Map Losses" + '\n'
+    output += '\n' + "Map Losses" + '\n'
     for map,losses in mapLosses.items():
         score = f"{map}: {losses}/{2*(len(players)-1)}"
         output += score + '\n'
