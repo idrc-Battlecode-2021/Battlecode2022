@@ -104,7 +104,7 @@ public abstract class Robot {
         }
         return returnLocs;
     }
-    
+
     public static int movementTileDistance(MapLocation a, MapLocation b){
         return Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
     }
@@ -1048,8 +1048,11 @@ public abstract class Robot {
         if (lowest==Direction.CENTER){
             return false;
         }
-        rc.move(lowest);
-        return true;
+        if (rc.canMove(lowest)){
+            rc.move(lowest);
+            return true;
+        }
+        return false;
     }
     
     private void updateInternalMap(){}
