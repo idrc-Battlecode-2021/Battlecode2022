@@ -214,6 +214,7 @@ public class Archon extends Building{
             for (int i = 31; i < 35; i++){
                 rc.writeSharedArray(i,0);
             }
+            rc.writeSharedArray(44,0);
          }else if (rc.getRoundNum()%3==0){ //Create New Values
             if (archonOrder<=1){
                 minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);

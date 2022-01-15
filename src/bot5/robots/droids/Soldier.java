@@ -118,7 +118,6 @@ public class Soldier extends Droid{
         */
         else if(hasMapLocation(43) && globalSoldierCount > 15){
             MapLocation target = decode();
-            rc.setIndicatorString(target+"");
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
                     rc.writeSharedArray(43,0);
