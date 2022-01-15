@@ -287,10 +287,10 @@ public class Archon extends Building{
         }
         if(rc.readSharedArray(40) !=0){
             mod = 1;
-        }else if (rc.readSharedArray(42)!= 0){ // if an enemy troop has been sighted
+        }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
             mod = 2;
         }
-        if (globalMinerCount < 6 || count %mod != 0){
+        if (globalMinerCount < 6 || count%mod != 0){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
@@ -343,21 +343,6 @@ public class Archon extends Building{
                 }
             }
         }
-        /*else if (count %mod==4){
-            if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.BUILDER.buildCostLead){
-                Direction directions[] = Direction.allDirections();
-                int i = 0;
-                while (!rc.canBuildRobot(RobotType.BUILDER,directions[i]) && i<8){
-                    i++;
-                }
-                if (rc.canBuildRobot(RobotType.BUILDER,directions[i])){
-                    builderCount++;
-                    count++; //temp
-                    rc.buildRobot(RobotType.BUILDER,directions[i]);
-                    indicatorString+=" builders "+builderCount;
-                }
-            }
-        }*/
 
         rc.setIndicatorString(indicatorString);
     }
