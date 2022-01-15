@@ -2,7 +2,9 @@ import subprocess,sys,os
 
 def parse_winner(str, p1, p2):
     ls = str.splitlines()
-    for line in ls[-40:]: # save some looping time
+    returnStr = "";
+    roundNum = "";
+    for line in ls[-20:]: # save some looping time
         if "wins" in line:
             returnStr = "str"
             if len(p2) > len(p1):
@@ -16,7 +18,8 @@ def parse_winner(str, p1, p2):
                 else:
                     returnStr = p2
             roundNum = line.split(" ")[-1][:-1]
-            return (returnStr,roundNum)
+        elif "Reason" in line:
+            return (returnStr,roundNum,line)
 def main():
 
     ## Fill in desired players and maps here!
@@ -54,24 +57,24 @@ def main():
                     mapLosses[map] = 0
                 
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={player}", f"-PpackageNameA={player}",f"-PteamB={opponent}", f"-PpackageNameB={opponent}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
-                winner,roundNumber = parse_winner(match_result, player, opponent)
+                winner,roundNumber,reason = parse_winner(match_result, player, opponent)
                 results[player][opponent] = winner
                 winCount[winner] += 1
                 if winner != player:
                     mapLosses[map] += 1
-                redOut = f"Red  {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}"
+                redOut = f"Red  {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}" + '\n' + reason
                 output += redOut +'\n'
                 print(redOut)
                 
                 match_result = subprocess.check_output(["gradlew", "run",f"-PteamA={opponent}", f"-PpackageNameA={opponent}",f"-PteamB={player}", f"-PpackageNameB={player}",f"-Pmaps={map}"],cwd=scaffold_directory,shell=True).decode('UTF-8')
 
-                winner,roundNumber = parse_winner(match_result, player, opponent)
+                winner,roundNumber,reason = parse_winner(match_result, player, opponent)
 
                 results[player][opponent] = winner
                 winCount[winner] += 1
                 if winner != player:
                     mapLosses[map] += 1
-                blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}"
+                blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner} | Rounds: {roundNumber}" + '\n' + reason
                 output += blueOut + '\n' + '\n'
                 print(blueOut)
                 print()
