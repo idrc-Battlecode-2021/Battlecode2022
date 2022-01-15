@@ -71,7 +71,7 @@ def main():
                 if winner != player:
                     mapLosses[map] += 1
                 blueOut = f"Blue {player} ({winCount[player]}) - {opponent} ({winCount[opponent]}) [{map}]: {winner}"
-                output += blueOut + '\n'
+                output += blueOut + '\n' + '\n'
                 print(blueOut)
                 print()
         print()
