@@ -288,9 +288,9 @@ public class Archon extends Building{
         if(rc.readSharedArray(40) !=0){
             mod = 1;
         }else if (rc.readSharedArray(42)!= 0){ // if an enemy troop has been sighted
-            mod = 1;
+            mod = 2;
         }
-        if (globalMinerCount < 6 || count %mod == 1){
+        if (globalMinerCount < 6 || count %mod != 0){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
