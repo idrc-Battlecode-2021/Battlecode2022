@@ -5,6 +5,7 @@ import battlecode.common.*;
 public class Archon extends Building{
     private static int minerCount, minerFoundCount, builderCount, sageCount, soldierCount, labCount, watchtowerCount;
     private static int globalMinerCount, globalBuilderCount, globalSageCount, globalSoldierCount = 0, globalWatchtowerCount, globalLabCount;
+    private static int minerMax = 0, buildCounter= 0;
     private int prevSoldierCount = 0;
     private static int targetMinerCount; //target # of miners to build across all archons
 
@@ -222,9 +223,13 @@ public class Archon extends Building{
             else{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
+            if(minerCount > minerMax){
+                minerMax = minerCount;
+            }
             minerFoundCount = rc.readSharedArray(31+archonOrder);
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             globalSageCount = rc.readSharedArray(2);
+            globalMinerCount = rc.readSharedArray(44);
             prevSoldierCount = globalSoldierCount;
             globalSoldierCount = rc.readSharedArray(3);
             globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);
@@ -241,6 +246,7 @@ public class Archon extends Building{
             for (int i = 31; i < 35; i++){
                 rc.writeSharedArray(i,0);
             }
+            rc.writeSharedArray(44,0);
         }
         // find individual watchtower count
         if (archonOrder==0){
@@ -270,8 +276,7 @@ public class Archon extends Building{
             //lwBuildType++
         ;
         else */
-        if (/*prevSoldierCount <= globalSoldierCount && (minerCount-minerFoundCount<minerBuild && (globalSoldierCount >= soldierBuild*rc.getArchonCount() || soldierBuildStart == 0) || minerCount < minerBuild) &&
-                rc.getTeamLeadAmount(myTeam) < 1000*rc.getArchonCount()*/(minerCount+globalSoldierCount)%3 != 2 && soldierBuildStart == 0){
+        if (globalMinerCount < 6 || (buildCounter)%6 == 5){
             //rc.setIndicatorString("phase 1");
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.MINER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
@@ -284,7 +289,9 @@ public class Archon extends Building{
                     rc.buildRobot(RobotType.MINER,directions[minerIndex]);
                     msBuildType++;
                     minerIndex++;
+                    globalMinerCount++;
                     minerCount++; // OK to manually increment minerCount because it will take <=3 rounds to reset minerCount again
+                    buildCounter++;
                     if (!minerDone && minerCount == minerBuild){
                         minerDone = true;
                         rc.writeSharedArray(57, rc.readSharedArray(57)+power);
@@ -314,34 +321,9 @@ public class Archon extends Building{
             }
         }*/
         else {
-            /*
-            if (globalSoldierCount+globalWatchtowerCount>40 && rc.getTeamGoldAmount(rc.getTeam())>=RobotType.SAGE.buildCostGold){
-                Direction[] directions = Direction.allDirections();
-                int i=0;
-                while (!rc.canBuildRobot(RobotType.SAGE,directions[i]) && i<8){
-                    i++;
-                }
-                if (rc.canBuildRobot(RobotType.SAGE,directions[i])){
-                    rc.buildRobot(RobotType.SAGE,directions[i]);
-                    sageCount++;
-                }
-            }
-            else */
-            if (rc.getTeamLeadAmount(myTeam)>4000*rc.getArchonCount() && globalLabCount < 4){
-                if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead+proposedExpenses){
-                    //if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.LABORATORY.buildCostLead){
-                    int temp = (int)Math.pow(4,archonOrder);
-                    int currentValue = rc.readSharedArray(58);
-                    int previousBuildCommand = (currentValue % (temp*4))/temp;
-                    int buildCommand = currentValue - previousBuildCommand * temp + temp;
-                    rc.writeSharedArray(58, buildCommand);
-                    rc.writeSharedArray(11, proposedExpenses+RobotType.LABORATORY.buildCostLead);
-                    lwBuildType++;
-                }
-            }
             int mod =2;
             //System.out.println("bt: "+wsBuildType+" mod: "+mod+" pe: "+proposedExpenses);
-            if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead && (globalSoldierCount >= soldierBuild2*rc.getArchonCount())){
+            /*if (wsBuildType%mod==1 && rc.getTeamLeadAmount(rc.getTeam())>=RobotType.WATCHTOWER.buildCostLead && (globalSoldierCount >= soldierBuild2*rc.getArchonCount())){
                 int temp = (int)Math.pow(4,archonOrder); // power corresponding to this Archon's bits
                 int currentValue = rc.readSharedArray(58);
                 int previousBuildCommand = (currentValue % (temp * 4))/temp; // previous two-bit build command
@@ -350,7 +332,7 @@ public class Archon extends Building{
                 wsBuildType++;
                 rc.writeSharedArray(11, proposedExpenses+RobotType.WATCHTOWER.buildCostLead);
                 rc.writeSharedArray(58, buildCommand);
-            }
+            }*/
             if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
                 Direction directions[] = Direction.allDirections();
                 int i=0;
@@ -362,6 +344,7 @@ public class Archon extends Building{
                     wsBuildType++;
                     rc.buildRobot(RobotType.SOLDIER,directions[soldierIndex]);
                     soldierCount++;
+                    buildCounter++;
                 }
             }
             else { //repair robots if can't build anything

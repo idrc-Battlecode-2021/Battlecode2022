@@ -35,6 +35,7 @@ public class Miner extends Droid{
         // update shared array
         if(myLocation.equals(target)){
             rc.writeSharedArray(31+myArchonOrder,rc.readSharedArray(31+myArchonOrder)+1);
+            rc.writeSharedArray(44,rc.readSharedArray(44)+1);
         }
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {

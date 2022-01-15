@@ -2,12 +2,15 @@ package bot3_JJ4.robots.droids;
 
 import battlecode.common.*;
 
+import java.util.Map;
+
 public class Soldier extends Droid{
     private MapLocation target;
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private boolean defensive = false;
+    private int globalSoldierCount = 0;
     public Soldier(RobotController rc) throws GameActionException {
         super(rc);
     }
@@ -35,6 +38,8 @@ public class Soldier extends Droid{
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
+        }else if(rc.getRoundNum()%3 == 0){
+            globalSoldierCount = rc.readSharedArray(3);
         }
         broadcast();
         target = null;
@@ -57,6 +62,15 @@ public class Soldier extends Droid{
             else if (rc.getLocation().distanceSquaredTo(archonLoc)>20){
                 tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
             }
+        }else if(hasMapLocation(43) && globalSoldierCount > 30){
+            target = decode(43);
+            intermediateMove(target);
+            if(rc.canAttack(target))rc.attack(target);
+            if (rc.getLocation().distanceSquaredTo(target)<20){
+                if (nearbyBots.length <5){
+                    rc.writeSharedArray(43,0);
+                }
+            }
         }
         else if (hasMapLocation()){
             MapLocation target = decode();
@@ -68,6 +82,7 @@ public class Soldier extends Droid{
             intermediateMove(target);
         } else if(hasMapLocation(41)){
             MapLocation target = decode(41);
+            intermediateMove(target);
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length == 0){
                     rc.writeSharedArray(41,0);
