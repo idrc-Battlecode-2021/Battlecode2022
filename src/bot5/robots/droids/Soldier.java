@@ -212,7 +212,7 @@ public class Soldier extends Droid{
         }
         else*/ tryMoveMultipleNew();
     }
-    private void end(){
+    private void end() throws GameActionException{
         MapLocation target = selectPriorityTarget();
         if (rc.canAttack(target)){
             rc.attack(target);
