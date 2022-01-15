@@ -22,16 +22,16 @@ public abstract class Droid extends Robot {
         int rubble1 = rc.senseRubble(rc.adjacentLocation(initDirection)), rubble2 = 101, rubble3 = 101, rubble4 = 101, rubble5 = 101;
         MapLocation loc2 = rc.adjacentLocation(dir2), loc3 = rc.adjacentLocation(dir3), loc4 = rc.adjacentLocation(dir4),
             loc5 = rc.adjacentLocation(dir5);
-        if(rc.canSenseLocation(loc2)){
+        if(rc.canSenseLocation(loc2) && !prevLocs.contains(loc2)){
             rubble2 = rc.senseRubble(loc2);
         }
-        if(rc.canSenseLocation(loc3)){
+        if(rc.canSenseLocation(loc3) && !prevLocs.contains(loc3)){
             rubble3 = rc.senseRubble(loc3);
         }
-        if(rc.canSenseLocation(loc4)){
+        if(rc.canSenseLocation(loc4) && !prevLocs.contains(loc4)){
             rubble4 = rc.senseRubble(loc4);
         }
-        if(rc.canSenseLocation(loc5)){
+        if(rc.canSenseLocation(loc5) && !prevLocs.contains(loc5)){
             rubble5 = rc.senseRubble(loc5);
         }
         if(rubble1 <= rubble2 && rubble1 <= rubble3 && rc.canMove(initDirection)){
