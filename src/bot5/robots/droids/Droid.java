@@ -17,10 +17,23 @@ public abstract class Droid extends Robot {
     }
 
     private boolean priorityMoveNew2() throws GameActionException{
-        Direction dir2 = initDirection.rotateLeft(), dir3 = initDirection.rotateRight();
-        int rubble1 = rc.senseRubble(rc.adjacentLocation(initDirection)),
-                rubble2 = rc.senseRubble(rc.adjacentLocation(dir2)),
-                rubble3 = rc.senseRubble(rc.adjacentLocation(dir3));
+        Direction dir2 = initDirection.rotateLeft(), dir3 = initDirection.rotateRight(),
+            dir4 = dir2.rotateLeft(), dir5 = dir3.rotateRight();
+        int rubble1 = rc.senseRubble(rc.adjacentLocation(initDirection)), rubble2 = 101, rubble3 = 101, rubble4 = 101, rubble5 = 101;
+        MapLocation loc2 = rc.adjacentLocation(dir2), loc3 = rc.adjacentLocation(dir3), loc4 = rc.adjacentLocation(dir4),
+            loc5 = rc.adjacentLocation(dir5);
+        if(rc.canSenseLocation(loc2)){
+            rubble2 = rc.senseRubble(loc2);
+        }
+        if(rc.canSenseLocation(loc3)){
+            rubble3 = rc.senseRubble(loc3);
+        }
+        if(rc.canSenseLocation(loc4)){
+            rubble4 = rc.senseRubble(loc4);
+        }
+        if(rc.canSenseLocation(loc5)){
+            rubble5 = rc.senseRubble(loc5);
+        }
         if(rubble1 <= rubble2 && rubble1 <= rubble3 && rc.canMove(initDirection)){
             rc.move(initDirection);
             myLocation = rc.getLocation();

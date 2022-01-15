@@ -941,10 +941,6 @@ public abstract class Robot {
         else if (soldierTurns<=5){
             target = soldier.getLocation();
         }
-        else if(miner!=null){
-            return miner.getLocation();
-        }
-
         else{
             int minIndex = 0;
             for (int i=1;i<5;i++){
@@ -995,11 +991,6 @@ public abstract class Robot {
             }
         }
         //Maximum bytecode seems to be ~2000 on maptestsmall
-        /*
-        if (Clock.getBytecodeNum()-bytecode>2000){
-            System.out.println(Clock.getBytecodeNum()-bytecode);
-        }
-        */
         if (target==null){
             target=rc.getLocation();
         }
@@ -1009,6 +1000,10 @@ public abstract class Robot {
         rc.setIndicatorString("target: "+target);
         return target;
         
+    }
+
+    public void moveToLowPassability(){
+        //MapLocations adjacent = ;
     }
     
     private void updateInternalMap(){}
