@@ -416,7 +416,10 @@ public class Soldier extends Droid{
 
             }
         }
-        if(rc.canMove(bestDir)) rc.move(bestDir);
+        if(rc.canMove(bestDir)){
+            rc.move(bestDir);
+            myLocation = rc.getLocation();
+        } 
         else tryMoveMultipleNew();
     }
 
