@@ -1,6 +1,6 @@
-# ocase
+# ocasiybfrtiygn oataktc tt r eoee
 
-slcPitttrroiygretn igarttTeeeagre s
+slcPitttrroiygoapssibla e mvsowolt retn igarttTeeeagre s
 When miners find a de 41: minorLocation (Where enemy is)  (Not Used Currently)
 - 42: enemy seen
 - 43: Archon Locations

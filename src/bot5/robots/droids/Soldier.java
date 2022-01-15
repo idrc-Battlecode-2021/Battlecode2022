@@ -185,6 +185,10 @@ public class Soldier extends Droid{
         }
     }
     public void retreat() throws GameActionException{
+        if(rc.getHealth()>47){
+            shouldHeal=false;
+            return;
+        }
         if(rc.getHealth()>10)return;
         shouldHeal=true;
         intermediateMove(archonLoc);
@@ -205,7 +209,7 @@ public class Soldier extends Droid{
         return false;
     }
     public void explore() throws GameActionException{
-        Direction [] all = Direction.allDirections();
+        /*Direction [] all = Direction.allDirections();
         Direction bestDir = Direction.CENTER;
         int minRubble=100;
         for (Direction d: all){
@@ -220,8 +224,8 @@ public class Soldier extends Droid{
         if(rc.canMove(bestDir)){
             rc.move(bestDir);
             myLocation = rc.getLocation();
-        } 
-        else tryMoveMultipleNew();
+        }
+        else*/ tryMoveMultipleNew();
     }
 
 }
