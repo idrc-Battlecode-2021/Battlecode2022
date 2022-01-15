@@ -290,6 +290,7 @@ public class Archon extends Building{
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
             mod = 2;
         }
+        indicatorString+="global miner count: "+globalMinerCount;
         if (globalMinerCount < 8 || count%mod == 1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 Direction directions[] = Direction.allDirections();
