@@ -34,18 +34,28 @@ public abstract class Droid extends Robot {
         if(rc.canSenseLocation(loc5) && !prevLocs.contains(loc5)){
             rubble5 = rc.senseRubble(loc5);
         }
-        if(rubble1 <= rubble2 && rubble1 <= rubble3 && rc.canMove(initDirection)){
+        if(rubble1 <= rubble2 && rubble1 <= rubble3 && rubble1 <= rubble4 && rubble1 <= rubble5 && rc.canMove(initDirection)){
             rc.move(initDirection);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
             return true;
-        }else if(rubble2 <= rubble3 && rc.canMove(dir2)){
+        }else if(rubble2 <= rubble3 && rubble2 <= rubble4 && rubble2 <= rubble5 && rc.canMove(dir2)){
             rc.move(dir2);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
             return true;
-        }else if(rc.canMove(dir3)){
+        }else if(rubble3 <= rubble4 && rubble3 <= rubble5 && rc.canMove(dir3)){
             rc.move(dir3);
+            myLocation = rc.getLocation();
+            prevLocs.add(myLocation);
+            return true;
+        }else if(rubble4 <= rubble5 && rc.canMove(dir4)){
+            rc.move(dir4);
+            myLocation = rc.getLocation();
+            prevLocs.add(myLocation);
+            return true;
+        }else if(rc.canMove(dir5)){
+            rc.move(dir5);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
             return true;
