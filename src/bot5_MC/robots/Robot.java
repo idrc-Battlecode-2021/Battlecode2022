@@ -1029,6 +1029,7 @@ public abstract class Robot {
             return false;
         }
         rc.move(lowest);
+        myLocation = rc.getLocation();
         return true;
     }
     

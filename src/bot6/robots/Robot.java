@@ -1,7 +1,7 @@
-package bot5.robots;
+package bot6.robots;
 
 import battlecode.common.*;
-import bot5.util.Constants;
+import bot6.util.Constants;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -85,26 +85,6 @@ public abstract class Robot {
             }
         }
     }
-    public MapLocation[] getArchonLocs() throws GameActionException{
-        int array1 = rc.readSharedArray(49);
-        int array2 = rc.readSharedArray(50);
-        int archons = rc.getArchonCount();
-        MapLocation[] locs = {new MapLocation((array1%16)*4,((array1/16)%16)*4),
-                              new MapLocation(((array1/256)%16)*4,((array1/4096)%16)*4),
-                              new MapLocation((array2%16)*4,((array2/16)%16)*4),
-                              new MapLocation(((array2/256)%16)*4,((array2/4096)%16)*4)};
-        MapLocation[] returnLocs = new MapLocation[4];
-        MapLocation zeroPos = new MapLocation(0,0);
-        for(int i = 0; i < locs.length; i++){ //needs to start at 0
-            if(!locs[i].equals(zeroPos) || archons > i){
-                returnLocs[i] = locs[i];
-            }else{
-                break;
-            }
-        }
-        return returnLocs;
-    }
-
     public static int movementTileDistance(MapLocation a, MapLocation b){
         return Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
     }
@@ -1048,12 +1028,9 @@ public abstract class Robot {
         if (lowest==Direction.CENTER){
             return false;
         }
-        if (rc.canMove(lowest)){
-            rc.move(lowest);
-            myLocation = rc.getLocation();
-            return true;
-        }
-        return false;
+        rc.move(lowest);
+        myLocation = rc.getLocation();
+        return true;
     }
     
     private void updateInternalMap(){}

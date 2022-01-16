@@ -1,7 +1,4 @@
-package bot5.robots.droids;
-
-import java.lang.annotation.Target;
-
+package bot6.robots.droids;
 import battlecode.common.*;
 
 public class Soldier extends Droid{
@@ -12,9 +9,6 @@ public class Soldier extends Droid{
     private int globalSoldierCount = 0;
     private boolean defensive = false;
     private boolean reachedLocation = false;
-    private boolean shouldHeal = false;
-    private MapLocation[] archonLocs;
-    //private MapLocation centralArchon = new MapLocation(2000,2000);
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -35,13 +29,6 @@ public class Soldier extends Droid{
         corners[2]=new MapLocation(rc.getMapWidth(),0);
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
         defensive = isDefensive();
-        /*archonLocs = getArchonLocs();
-        for(int i = 0; i < archonLocs.length; i++){ //needs to start at 0
-            if(archonLocs[i] == null)break;
-            if(archonLocs[i].distanceSquaredTo(center) < centralArchon.distanceSquaredTo(center)){
-                centralArchon = archonLocs[i];
-            }
-        }*/
     }
 
     @Override
@@ -64,11 +51,9 @@ public class Soldier extends Droid{
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
-        }
-        retreat();
-        if (shouldHeal){
-            end();
-            return;
+            if (target!=rc.getLocation()){
+                moveToLowPassability();
+            }
         }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
@@ -126,11 +111,25 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(55,0);
                 }
             }
-            intermediateMove(target);
+            if (rc.isActionReady()){
+                intermediateMove(target);
+            }
         }
         else{
+            if (!rc.isActionReady()){
+                return;
+            }
             if(enemyArchon !=null){
                 intermediateMove(enemyArchon);
+            }
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            for (int i = all.length; --i>=0;){
+                for (MapLocation c: corners){
+                    if (all[i]==c){
+                        Direction d = myLocation.directionTo(c).opposite();
+                        tryMoveMultiple(d);
+                    }
+                }
             }
             /*if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
                 Direction d = myLocation.directionTo(center);
@@ -160,20 +159,9 @@ public class Soldier extends Droid{
                     }
                 }
             }
-            if(rc.isMovementReady()){
-                explore();
-            }
         }
-        end();
-    }
-    public void retreat() throws GameActionException{
-        if(rc.getHealth()>47){
-            shouldHeal=false;
-            return;
-        }
-        if(rc.getHealth()>10)return;
-        shouldHeal=true;
-        intermediateMove(archonLoc);
+
+
     }
     public boolean isDefensive() throws GameActionException{
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
@@ -189,28 +177,6 @@ public class Soldier extends Droid{
         }
 
         return false;
-    }
-    public void explore() throws GameActionException{
-        /*Direction [] all = Direction.allDirections();
-        Direction bestDir = Direction.CENTER;
-        int minRubble=100;
-        for (Direction d: all){
-            if(rc.canMove(d) && rc.canSenseLocation(rc.getLocation().add(d))){
-                if (rc.senseRubble(rc.getLocation().add(d))<minRubble){
-                    minRubble=rc.senseRubble(myLocation.add(d));
-                    bestDir = d;
-                }
-
-            }
-        }
-        if(rc.canMove(bestDir)){
-            rc.move(bestDir);
-            myLocation = rc.getLocation();
-        }
-        else*/ tryMoveMultipleNew();
-    }
-    private void end() throws GameActionException{
-        selectPriorityTarget();
     }
 
 }
