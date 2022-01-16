@@ -172,9 +172,8 @@ public class Soldier extends Droid{
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
         int net_health = 0;
         for (RobotInfo ro: r){
-            if(ro.getType()==RobotType.SOLDIER || ro.getType()==RobotType.SAGE || ro.getType()==RobotType.WATCHTOWER){
+            if(ro.getType()==RobotType.SOLDIER)
                 net_health+=ro.getHealth();
-            }
         }
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro:r){
@@ -182,7 +181,7 @@ public class Soldier extends Droid{
                 net_health-=ro.getHealth();
         }
         if (net_health>0){
-            
+            rc.
         }
     }
     public void retreat() throws GameActionException{
