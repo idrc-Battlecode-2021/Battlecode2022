@@ -344,7 +344,7 @@ public class Archon extends Building{
             if (!checkBuildStatus(diff, cost)) return;
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
-                while (i<passableDirections.size() && !rc.canBuildRobot(type,passableDirections.get(i)){
+                while (i<passableDirections.size() && !rc.canBuildRobot(type,passableDirections.get(i))){
                     i++;
                 }
                 if (rc.canBuildRobot(type,passableDirections.get(i))){
@@ -363,7 +363,7 @@ public class Archon extends Building{
             }
         }
         if (rc.isActionReady()){
-            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam()); 
+            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
             int greatestHealthDifference = 0;
             MapLocation location = null;
             for (RobotInfo robot : robots){
