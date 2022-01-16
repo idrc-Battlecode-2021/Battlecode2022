@@ -1,6 +1,7 @@
 package bot6.robots.buildings;
 
 import battlecode.common.*;
+import java.util.*;
 
 public class Archon extends Building{
     private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
@@ -17,6 +18,8 @@ public class Archon extends Building{
     private static final int SURPLUS_THRESHOLD = 500;
 
     private static String indicatorString = "";
+
+    private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
 
     public Archon(RobotController rc) {
         super(rc);
@@ -121,6 +124,31 @@ public class Archon extends Building{
         minersForNearbyLead = (int) Math.ceil(rc.senseNearbyLocationsWithLead(34).length/9.0);
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
+
+        for (Direction d:Direction.allDirections()){
+            if (!rc.onTheMap(rc.getLocation().add(d))){
+                continue;
+            }
+            if (passableDirections.size()==0){
+                passableDirections.add(d);
+                continue;
+            }
+            MapLocation location = rc.getLocation().add(d);
+            int rubble = rc.senseRubble(location);
+            for (int i=0;i<=passableDirections.size();i++){
+                if (i==passableDirections.size()){
+                    passableDirections.add(i,d);
+                    break;
+                }
+                if (rubble<rc.senseRubble(rc.getLocation().add(passableDirections.get(i)))){
+                    passableDirections.add(i,d);
+                    break;
+                }
+            }
+        }
+        for(Direction d:passableDirections){
+            System.out.println(passableDirections);
+        }
         //labBuild = rc.getMapHeight()/40+1;
     }
 
@@ -223,7 +251,6 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             if(minerCount > minerCountMax)minerCountMax = minerCount;
-            minerFoundCount = rc.readSharedArray(31+archonOrder);
             builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             globalSageCount = rc.readSharedArray(2);
             globalMinerCount = rc.readSharedArray(44);
@@ -344,7 +371,7 @@ public class Archon extends Building{
                 }
             }
         }
-    if (rc.isActionReady()){
+        if (rc.isActionReady()){
             RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam()); 
             int greatestHealthDifference = 0;
             MapLocation location = null;

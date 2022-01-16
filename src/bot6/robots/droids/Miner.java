@@ -33,9 +33,6 @@ public class Miner extends Droid{
         reassignArchon();
         avoidCharge();
         // update shared array
-        if(myLocation.equals(target)){
-            rc.writeSharedArray(31+myArchonOrder,rc.readSharedArray(31+myArchonOrder)+1);
-        }
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {
             if (myArchonOrder <= 1) {
@@ -67,9 +64,6 @@ public class Miner extends Droid{
                 }
             }
         }else{
-            if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
-                target = getMaxLead();
-            }
             if(gold.isEmpty()){
                 int amount = rc.senseLead(myLocation);
                 if(amount > 1){
@@ -98,7 +92,7 @@ public class Miner extends Droid{
                                 }
                             }
                             checkTargetBlock:{
-                                if(rc.canSenseLocation(target) && rc.senseLead(target) == 0){
+                                if(rc.canSenseLocation(target) && rc.senseLead(target) < 2){
                                     lead.remove(target);
                                     if(lead.isEmpty()) target = null;
                                     else target = getMaxLead();
@@ -291,7 +285,7 @@ public class Miner extends Droid{
                     }
                 }
                 int amount = rc.senseLead(nearbyLead[i]);
-                if(amount > 5){
+                if(amount > 2){
                     lead.put(nearbyLead[i],amount);
                     break searchBlock;
                 }

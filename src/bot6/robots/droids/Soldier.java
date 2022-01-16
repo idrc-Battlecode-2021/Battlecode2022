@@ -2,7 +2,7 @@ package bot6.robots.droids;
 import battlecode.common.*;
 
 public class Soldier extends Droid{
-    private MapLocation target;
+    private MapLocation target = null;
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
@@ -167,6 +167,23 @@ public class Soldier extends Droid{
         }
 
         return false;
+    }
+    public void stayAlive() throws GameActionException{
+        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        int net_health = 0;
+        for (RobotInfo ro: r){
+            if(ro.getType()==RobotType.SOLDIER || ro.getType()==RobotType.SAGE || ro.getType()==RobotType.WATCHTOWER){
+                net_health+=ro.getHealth();
+            }
+        }
+        RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+        for (RobotInfo ro:r){
+            if(ro.getType()==RobotType.SOLDIER)
+                net_health-=ro.getHealth();
+        }
+        if (net_health>0){
+            
+        }
     }
     public void retreat() throws GameActionException{
         if(rc.getHealth()>47){
