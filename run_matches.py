@@ -22,7 +22,7 @@ def parse_winner(str, p1, p2):
             return (returnStr,roundNum,line)
 def main():
 
-    ## Fill in desired players and maps here!
+    ## 
     primaryPlayers = sys.argv[1:]
     #players = ['agrobot','bot1','bot2','bot3','bot3_EW','bot3_JJ','bot] # Bot names (i.e. examplefuncsplayer, should be folders in src/ directory)
     players = os.listdir('./src/')
@@ -44,8 +44,8 @@ def main():
             winCount[player] = 0
 
         print(player + ": ")
-        for j in range(len(players)):
-            if (player == players[j] || "dummyBot" == players[j] || "examplefuncsplayer" in players[j]):
+        for j in range(1,len(primaryPlayers)):
+            if (player == players[j]):
                 continue
             
             opponent = players[j]
