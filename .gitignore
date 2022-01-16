@@ -2,6 +2,7 @@ dist/*
 build/*
 
 /matches
+/old_matches
 /deploy/lib
 /deploy/bin
 *.rms
