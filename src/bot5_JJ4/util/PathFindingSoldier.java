@@ -1307,168 +1307,99 @@ public class PathFindingSoldier {
             switch(dx){
                 case -4:
                     switch(dy){
-                        case -2:
-                            return d30;
-                        case -1:
-                            return d31;
-                        case 0:
-                            return d32;
-                        case 1:
-                            return d33;
-                        case 2:
-                            return d34;
+                        case -2: return d30;
+                        case -1: return d31;
+                        case  0: return d32;
+                        case  1: return d33;
+                        case  2: return d34;
                     }break;
                 case -3:
                     switch(dy){
-                        case -3:
-                            return d42;
-                        case -2:
-                            return d43;
-                        case -1:
-                            return d44;
-                        case 0:
-                            return d45;
-                        case 1:
-                            return d46;
-                        case 2:
-                            return d47;
-                        case 3:
-                            return d48;
+                        case -3: return d42;
+                        case -2: return d43;
+                        case -1: return d44;
+                        case  0: return d45;
+                        case  1: return d46;
+                        case  2: return d47;
+                        case  3: return d48;
                     }break;
                 case -2:
                     switch(dy){
-                        case -4:
-                            return d54;
-                        case -3:
-                            return d55;
-                        case -2:
-                            return d56;
-                        case -1:
-                            return d57;
-                        case 0:
-                            return d58;
-                        case 1:
-                            return d59;
-                        case 2:
-                            return d60;
-                        case 3:
-                            return d61;
-                        case 4:
-                            return d62;
+                        case -4: return d54;
+                        case -3: return d55;
+                        case -2: return d56;
+                        case -1: return d57;
+                        case  0: return d58;
+                        case  1: return d59;
+                        case  2: return d60;
+                        case  3: return d61;
+                        case  4: return d62;
                     }break;
                 case -1:
                     switch(dy){
-                        case -4:
-                            return d67;
-                        case -3:
-                            return d68;
-                        case -2:
-                            return d69;
-                        case -1:
-                            return d70;
-                        case 0:
-                            return d71;
-                        case 1:
-                            return d72;
-                        case 2:
-                            return d73;
-                        case 3:
-                            return d74;
-                        case 4:
-                            return d75;
+                        case -4: return d67;
+                        case -3: return d68;
+                        case -2: return d69;
+                        case -1: return d70;
+                        case  0: return d71;
+                        case  1: return d72;
+                        case  2: return d73;
+                        case  3: return d74;
+                        case  4: return d75;
                     }break;
                 case 0:
                     switch(dy){
-                        case -4:
-                            return d80;
-                        case -3:
-                            return d81;
-                        case -2:
-                            return d82;
-                        case -1:
-                            return d83;
-                        case 0:
-                            return d84;
-                        case 1:
-                            return d85;
-                        case 2:
-                            return d86;
-                        case 3:
-                            return d87;
-                        case 4:
-                            return d88;
+                        case -4: return d80;
+                        case -3: return d81;
+                        case -2: return d82;
+                        case -1: return d83;
+                        case  0: return d84;
+                        case  1: return d85;
+                        case  2: return d86;
+                        case  3: return d87;
+                        case  4: return d88;
                     }break;
                 case 1:
                     switch(dy){
-                        case -4:
-                            return d93;
-                        case -3:
-                            return d94;
-                        case -2:
-                            return d95;
-                        case -1:
-                            return d96;
-                        case 0:
-                            return d97;
-                        case 1:
-                            return d98;
-                        case 2:
-                            return d99;
-                        case 3:
-                            return d100;
-                        case 4:
-                            return d101;
+                        case -4: return d93;
+                        case -3: return d94;
+                        case -2: return d95;
+                        case -1: return d96;
+                        case  0: return d97;
+                        case  1: return d98;
+                        case  2: return d99;
+                        case  3: return d100;
+                        case  4: return d101;
                     }break;
                 case 2:
                     switch(dy){
-                        case -4:
-                            return d106;
-                        case -3:
-                            return d107;
-                        case -2:
-                            return d108;
-                        case -1:
-                            return d109;
-                        case 0:
-                            return d110;
-                        case 1:
-                            return d111;
-                        case 2:
-                            return d112;
-                        case 3:
-                            return d113;
-                        case 4:
-                            return d114;
+                        case -4: return d106;
+                        case -3: return d107;
+                        case -2: return d108;
+                        case -1: return d109;
+                        case  0: return d110;
+                        case  1: return d111;
+                        case  2: return d112;
+                        case  3: return d113;
+                        case  4: return d114;
                     }break;
                 case 3:
                     switch(dy){
-                        case -3:
-                            return d120;
-                        case -2:
-                            return d121;
-                        case -1:
-                            return d122;
-                        case 0:
-                            return d123;
-                        case 1:
-                            return d124;
-                        case 2:
-                            return d125;
-                        case 3:
-                            return d126;
+                        case -3: return d120;
+                        case -2: return d121;
+                        case -1: return d122;
+                        case  0: return d123;
+                        case  1: return d124;
+                        case  2: return d125;
+                        case  3: return d126;
                     }break;
                 case 4:
                     switch(dy){
-                        case -2:
-                            return d134;
-                        case -1:
-                            return d135;
-                        case 0:
-                            return d136;
-                        case 1:
-                            return d137;
-                        case 2:
-                            return d138;
+                        case -2: return d134;
+                        case -1: return d135;
+                        case  0: return d136;
+                        case  1: return d137;
+                        case  2: return d138;
                     }break;
             }
             Direction ans = null;
@@ -1630,121 +1561,23 @@ public class PathFindingSoldier {
     //If too much bytecode, remove this method and directly put the switch statement into every if statement
     private int turnsToMove(MapLocation loc) throws GameActionException {
         switch(rc.senseRubble(loc)){
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-               return 2;
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-                return 3;
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-                return 4;
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 21:
-                return 5;
-            case 22:
-            case 23:
-            case 24:
-            case 25:
-            case 26:
-            case 27:
-            case 28:
-                return 6;
-            case 29:
-            case 30:
-            case 31:
-            case 32:
-            case 33:
-            case 34:
-                return 7;
-            case 35:
-            case 36:
-            case 37:
-            case 38:
-            case 39:
-            case 40:
-                return 8;
-            case 41:
-            case 42:
-            case 43:
-            case 44:
-            case 45:
-            case 46:
-                return 9;
-            case 47:
-            case 48:
-            case 49:
-            case 50:
-            case 51:
-            case 52:
-            case 53:
-                return 10;
-            case 54:
-            case 55:
-            case 56:
-            case 57:
-            case 58:
-            case 59:
-                return 11;
-            case 60:
-            case 61:
-            case 62:
-            case 63:
-            case 64:
-            case 65:
-                return 12;
-            case 66:
-            case 67:
-            case 68:
-            case 69:
-            case 70:
-            case 71:
-                return 13;
-            case 72:
-            case 73:
-            case 74:
-            case 75:
-            case 76:
-            case 77:
-            case 78:
-                return 14;
-            case 79:
-            case 80:
-            case 81:
-            case 82:
-            case 83:
-            case 84:
-                return 15;
-            case 85:
-            case 86:
-            case 87:
-            case 88:
-            case 89:
-            case 90:
-                return 16;
-            case 91:
-            case 92:
-            case 93:
-            case 94:
-            case 95:
-            case 96:
-                return 17;
-            default:
-                return 18;
+            case 0: case 1: case 2: case 3: return 2;
+            case 4: case 5: case 6: case 7: case 8: case 9: return 3;
+            case 10: case 11: case 12: case 13: case 14: case 15: return 4;
+            case 16: case 17: case 18: case 19: case 20: case 21: return 5;
+            case 22: case 23: case 24: case 25: case 26: case 27: case 28: return 6;
+            case 29: case 30: case 31: case 32: case 33: case 34: return 7;
+            case 35: case 36: case 37: case 38: case 39: case 40: return 8;
+            case 41: case 42: case 43: case 44: case 45: case 46: return 9;
+            case 47: case 48: case 49: case 50: case 51: case 52: case 53: return 10;
+            case 54: case 55: case 56: case 57: case 58: case 59: return 11;
+            case 60: case 61: case 62: case 63: case 64: case 65: return 12;
+            case 66: case 67: case 68: case 69: case 70: case 71: return 13;
+            case 72: case 73: case 74: case 75: case 76: case 77: case 78: return 14;
+            case 79: case 80: case 81: case 82: case 83: case 84: return 15;
+            case 85: case 86: case 87: case 88: case 89: case 90: return 16;
+            case 91: case 92: case 93: case 94: case 95: case 96: return 17;
+            default: return 18;
         }
     }
 }
