@@ -1028,8 +1028,10 @@ public abstract class Robot {
         if (lowest==Direction.CENTER){
             return false;
         }
-        rc.move(lowest);
-        myLocation = rc.getLocation();
+        if(rc.canMove(lowest)){
+            rc.move(lowest);
+            myLocation = rc.getLocation();
+        }
         return true;
     }
     
