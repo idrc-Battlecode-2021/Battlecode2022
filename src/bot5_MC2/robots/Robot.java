@@ -1015,8 +1015,16 @@ public abstract class Robot {
             target=rc.getLocation();
         }
         if (target!=rc.getLocation()){
-            moveToLowPassability();
-            tryAttack(target);
+            if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
+                if (rc.isMovementReady()){
+                    intermediateMove(target);
+                    tryAttack(target);
+                }
+            }
+            else{
+                moveToLowPassability();
+                tryAttack(target);
+            }
         }
         rc.setIndicatorString("target: "+target);
         return target;

@@ -71,7 +71,6 @@ public class Soldier extends Droid{
             MapLocation two = new MapLocation(locs1%4096/256*4, locs1/4096*4);
             MapLocation three = new MapLocation(locs2%16*4, locs2%256/16*4);
             MapLocation four = new MapLocation(locs2%4096/256*4, locs2/4096*4);
-            rc.setIndicatorString(one+ " "+two+" "+three+" "+four);
             target = one;
             if (two.x!=0 && two.y!=0 && movementTileDistance(rc.getLocation(), two)<movementTileDistance(rc.getLocation(), target)){
                 target = two;
