@@ -40,11 +40,8 @@ public class Soldier extends Droid{
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
         stayAlive();
-        rc.setIndicatorString(shouldRun+"");
-        if(shouldRun){
-            RobotInfo r [] = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam.opponent());
-                
-        }
+        //rc.setIndicatorString(shouldRun+"");
+        if(shouldRun)return;
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -185,26 +182,34 @@ public class Soldier extends Droid{
         return false;
     }
     public void stayAlive() throws GameActionException{
-        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam.opponent());
         int net_health = 0;
+        int counter=0;
         MapLocation m=null;
         for (RobotInfo ro: r){
             if(ro.getType()==RobotType.SOLDIER)
-                net_health+=ro.getHealth();
+                net_health=ro.getHealth()+net_health;
                 m=ro.getLocation();
+                counter++;
         }
+        if(net_health!=0)
+            System.out.println(net_health);
+        //rc.setIndicatorString(counter+"");
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro:r){
             if(ro.getType()==RobotType.SOLDIER)
-                net_health-=ro.getHealth();
+                net_health=net_health-ro.getHealth();
         }
-        if (net_health>=0){
+        if (net_health>0){
             shouldRun=true;
+            if(rc.canAttack(m))
+                rc.attack(m);
             tryMoveMultiple(myLocation.directionTo(m).opposite());
         }
         else{
             shouldRun=false;
         }
+        rc.setIndicatorString(net_health+" ");
     }
     public void retreat() throws GameActionException{
         if(rc.getHealth()>47){

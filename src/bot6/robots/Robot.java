@@ -956,13 +956,11 @@ public abstract class Robot {
                     if (miner!=null){
                         target = miner.getLocation();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
                         return target;
                     }
                 }
@@ -1000,7 +998,6 @@ public abstract class Robot {
         if (target!=rc.getLocation()){
             tryAttack(target);
         }
-        rc.setIndicatorString("target: "+target);
         return target;
         
     }
