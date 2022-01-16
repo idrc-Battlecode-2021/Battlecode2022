@@ -40,6 +40,11 @@ public class Soldier extends Droid{
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
         stayAlive();
+        rc.setIndicatorString(shouldRun+"");
+        if(shouldRun){
+            RobotInfo r [] = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam.opponent());
+                
+        }
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -87,9 +92,6 @@ public class Soldier extends Droid{
             }
             else if (rc.isActionReady()){
                 intermediateMove(target);
-            }
-            if (Clock.getBytecodeNum()-bytecode>1000){
-                System.out.println("targetting BC: "+(Clock.getBytecodeNum()-bytecode));
             }
         }
         else if(hasMapLocation(43) && globalSoldierCount > 12){

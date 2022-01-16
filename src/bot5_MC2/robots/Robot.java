@@ -833,7 +833,7 @@ public abstract class Robot {
     public MapLocation selectPriorityTarget() throws GameActionException {
         //returns location of target
         //returns own location if none
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
@@ -954,31 +954,15 @@ public abstract class Robot {
                 if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
-                        if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
-                            if (rc.isMovementReady()){
-                                intermediateMove(target);
-                                tryAttack(target);
-                            }
-                        }
-                        else{
-                            moveToLowPassability();
-                            tryAttack(target);
-                        }
+                        moveToLowPassability();
+                        tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
-                        if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
-                            if (rc.isMovementReady()){
-                                intermediateMove(target);
-                                tryAttack(target);
-                            }
-                        }
-                        else{
-                            moveToLowPassability();
-                            tryAttack(target);
-                        }
+                        moveToLowPassability();
+                        tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
@@ -1015,16 +999,8 @@ public abstract class Robot {
             target=rc.getLocation();
         }
         if (target!=rc.getLocation()){
-            if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
-                if (rc.isMovementReady()){
-                    intermediateMove(target);
-                    tryAttack(target);
-                }
-            }
-            else{
-                moveToLowPassability();
-                tryAttack(target);
-            }
+            moveToLowPassability();
+            tryAttack(target);
         }
         rc.setIndicatorString("target: "+target);
         return target;
@@ -1055,9 +1031,8 @@ public abstract class Robot {
         if(rc.canMove(lowest)){
             rc.move(lowest);
             myLocation = rc.getLocation();
-            return true;
         }
-        return false;
+        return true;
     }
     
     private void updateInternalMap(){}
