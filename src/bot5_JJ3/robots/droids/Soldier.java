@@ -109,7 +109,7 @@ public class Soldier extends Droid{
             if(enemyArchon !=null){
                 intermediateMove(enemyArchon);
             }
-            /*MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
+            MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
             for (int i = all.length; --i>=0;){
                 for (MapLocation c: corners){
                     if (all[i]==c){
@@ -117,7 +117,7 @@ public class Soldier extends Droid{
                         tryMoveMultiple(d);
                     }
                 }
-            }*/
+            }
             /*if (rc.getLocation().distanceSquaredTo(archonLoc)<30){
                 Direction d = myLocation.directionTo(center);
                 tryMoveMultiple(d);
