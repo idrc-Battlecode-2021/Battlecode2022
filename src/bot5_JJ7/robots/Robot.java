@@ -1,7 +1,7 @@
-package bot5_JJ6.robots;
+package bot5_JJ7.robots;
 
 import battlecode.common.*;
-import bot5_JJ6.util.Constants;
+import bot5_JJ7.util.Constants;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -401,15 +401,15 @@ public abstract class Robot {
                 k=4096+64*r.getLocation().x+r.getLocation().y;
             }
         }
-        if (seesArchon && rc.readSharedArray(43)==0){
+        if (seesArchon){
             rc.writeSharedArray(43, k);
         }
-        if (num_enemies>5 && rc.readSharedArray(55)==0){
+        if (num_enemies>5){
             MapLocation m = rc.getLocation();
             int x = m.x, y=m.y;
             k=x*64+y;
             rc.writeSharedArray(55,k);
-        }else if(num_enemies>0 && rc.readSharedArray(41)==0){
+        }else if(num_enemies>0){
             rc.writeSharedArray(41,k);
         }
 
@@ -834,7 +834,6 @@ public abstract class Robot {
         //returns location of target
         //returns own location if none
         RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
-        //if(rc.getType() == RobotType.SOLDIER && enemyRobots.length == 0)return null;
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above

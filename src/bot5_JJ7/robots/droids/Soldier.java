@@ -1,6 +1,6 @@
-package bot5_SL.robots.droids;
+package bot5_JJ7.robots.droids;
 import battlecode.common.*;
-import bot5_SL.util.PathFindingSoldier;
+import bot5_JJ7.util.PathFindingSoldier;
 
 public class Soldier extends Droid{
     private MapLocation target = null;
@@ -34,6 +34,7 @@ public class Soldier extends Droid{
         corners[2]=new MapLocation(rc.getMapWidth(),0);
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
         defensive = isDefensive();
+        prevLoc = myLocation;
     }
 
     @Override
@@ -112,17 +113,7 @@ public class Soldier extends Droid{
             if (rc.isActionReady()){
                 soldierMove(target);
             }
-        }else if (hasMapLocation(41)){
-            MapLocation target = decode(41);
-            if (rc.getLocation().distanceSquaredTo(target)<20){
-                if (nearbyBots.length <5){
-                    rc.writeSharedArray(41,0);
-                }
-            }
-            if (rc.isActionReady()){
-                soldierMove(target);
-            }
-        } else{
+        }else{
             if (!rc.isActionReady()){
                 return;
             }
@@ -224,9 +215,24 @@ public class Soldier extends Droid{
         soldierMove(archonLoc);
     }
 
+    private int lastMoveRoundNum = -100;
+    private MapLocation prevLoc;
+    private boolean useIM = false;
     private void soldierMove(MapLocation target) throws GameActionException {
         Direction dir = pfs.getBestDir(target);
-        if(dir != null && rc.canMove(dir)){
+        int roundNum = rc.getRoundNum();
+        switch (roundNum%10){
+            case 0:
+                lastMoveRoundNum = roundNum;
+                prevLoc = myLocation; break;
+            case 8:
+                useIM = false;
+            case 9:
+                if(myLocation.distanceSquaredTo(prevLoc) < 4){
+                    useIM = true;
+                }
+        }
+        if(!useIM && dir != null && rc.canMove(dir)){
             tryMoveMultiple(dir);
         }else{
             intermediateMove(target);
