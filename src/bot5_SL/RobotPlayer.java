@@ -1,20 +1,15 @@
-package bot5_MC2;
+package bot5_SL;
 
 import battlecode.common.*;
-import bot5_MC2.robots.Robot;
-import bot5_MC2.robots.buildings.Archon;
-import bot5_MC2.robots.buildings.Lab;
-import bot5_MC2.robots.buildings.Watchtower;
-import bot5_MC2.robots.droids.Builder;
-import bot5_MC2.robots.droids.Miner;
-import bot5_MC2.robots.droids.Sage;
-import bot5_MC2.robots.droids.Soldier;
+import bot5_SL.robots.Robot;
+import bot5_SL.robots.buildings.Archon;
+import bot5_SL.robots.buildings.Lab;
+import bot5_SL.robots.buildings.Watchtower;
+import bot5_SL.robots.droids.Builder;
+import bot5_SL.robots.droids.Miner;
+import bot5_SL.robots.droids.Sage;
+import bot5_SL.robots.droids.Soldier;
 
-/*
-bot5_MC2 - copied from bot5_MC
-
-- just changing selectprioritytargetting
-*/
 public strictfp class RobotPlayer {
     static RobotController rc;
     static Robot robot;

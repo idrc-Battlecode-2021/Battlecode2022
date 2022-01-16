@@ -1,7 +1,8 @@
-package bot5_MC2.robots;
+package bot5_MC_pathfind.robots;
 
 import battlecode.common.*;
-import bot5_MC2.util.Constants;
+import bot5_MC_pathfind.util.Constants;
+import bot5_MC_pathfind.util.PathFindingSoldier;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public abstract class Robot {
     protected int myArchonOrder;
     protected int mapWidth,mapHeight;
     protected int initialArchons;
+    protected PathFindingSoldier pfs;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
@@ -39,6 +41,7 @@ public abstract class Robot {
         mapWidth = rc.getMapWidth(); mapHeight = rc.getMapHeight();
         initialArchons = rc.getArchonCount();
         updateDirection(myLocation.directionTo(new MapLocation(mapWidth/22,mapHeight/2)));
+        pfs = new PathFindingSoldier(rc);
         //Too Much Bytecode, 5000
         /*for(int i = mapWidth; --i>=0;){
             for(int j = mapHeight; --j>=0;){
@@ -833,11 +836,10 @@ public abstract class Robot {
     public MapLocation selectPriorityTarget() throws GameActionException {
         //returns location of target
         //returns own location if none
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
-        ArrayList<MapLocation> targets = new ArrayList<MapLocation>();
         int bytecode = Clock.getBytecodeNum();
         MapLocation target = rc.getLocation();
         for (RobotInfo r : enemyRobots) {
@@ -849,8 +851,7 @@ public abstract class Robot {
                         damages[0]=rc.getType().getDamage(rc.getLevel());
                         for (RobotInfo robot: myRobots){
                             if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
-                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
-                                damages[0]+=(robot.getType().getDamage(robot.getLevel()))/cooldown;
+                                damages[0]+=robot.getType().getDamage(robot.getLevel());
                             }
                         }
                     }
@@ -861,8 +862,7 @@ public abstract class Robot {
                         damages[1]=rc.getType().getDamage(rc.getLevel());
                         for (RobotInfo robot: myRobots){
                             if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
-                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
-                                damages[1]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                                damages[1]+=robot.getType().getDamage(robot.getLevel());
                             }
                         }
                     }
@@ -873,8 +873,7 @@ public abstract class Robot {
                         damages[2]=rc.getType().getDamage(rc.getLevel());
                         for (RobotInfo robot: myRobots){
                             if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
-                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
-                                damages[2]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                                damages[2]+=robot.getType().getDamage(robot.getLevel());
                             }
                         }
                     }
@@ -885,8 +884,7 @@ public abstract class Robot {
                         damages[3]=rc.getType().getDamage(rc.getLevel());
                         for (RobotInfo robot: myRobots){
                             if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
-                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
-                                damages[3]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                                damages[3]+=robot.getType().getDamage(robot.getLevel());
                             }
                         }
                     }
@@ -897,8 +895,7 @@ public abstract class Robot {
                         damages[4]=rc.getType().getDamage(rc.getLevel());
                         for (RobotInfo robot: myRobots){
                             if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
-                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
-                                damages[4]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                                damages[4]+=robot.getType().getDamage(robot.getLevel());
                             }
                         }
                     }
@@ -935,23 +932,18 @@ public abstract class Robot {
             turns[4] = soldier.getHealth()/damages[4];
         }
         if (archonTurns<=10){
-            targets.add(archon.getLocation());
             target = archon.getLocation();
         }
         else if (labTurns<=5){
-            targets.add(lab.getLocation());
             target = lab.getLocation();
         }
         else if (sageTurns<=5){
-            targets.add(sage.getLocation());
             target = sage.getLocation();
         }
         else if (watchtowerTurns<=5){
-            targets.add(watchtower.getLocation());
             target = watchtower.getLocation();
         }
         else if (soldierTurns<=5){
-            targets.add(soldier.getLocation());
             target = soldier.getLocation();
         }
         else{
@@ -962,18 +954,30 @@ public abstract class Robot {
                 }
             }
             if (turns[minIndex]<Integer.MAX_VALUE){
-                if (turns[minIndex]>15){
+                if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
-                        moveToLowPassability();
-                        tryAttack(target);
+                        if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
+                            tryMoveMultiple(pfs.getBestDir(target));
+                            tryAttack(target);
+                        }
+                        else{
+                            moveToLowPassability();
+                            tryAttack(target);
+                        }
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
-                        moveToLowPassability();
-                        tryAttack(target);
+                        if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
+                            tryMoveMultiple(pfs.getBestDir(target));
+                            tryAttack(target);
+                        }
+                        else{
+                            moveToLowPassability();
+                            tryAttack(target);
+                        }
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
@@ -1010,8 +1014,14 @@ public abstract class Robot {
             target=rc.getLocation();
         }
         if (target!=rc.getLocation()){
-            moveToLowPassability();
-            tryAttack(target);
+            if (!rc.getLocation().isWithinDistanceSquared(target,rc.getType().actionRadiusSquared)){
+                tryMoveMultiple(pfs.getBestDir(target));
+                tryAttack(target);
+            }
+            else{
+                moveToLowPassability();
+                tryAttack(target);
+            }
         }
         rc.setIndicatorString("target: "+target);
         return target;

@@ -1,16 +1,17 @@
-package bot6.robots.droids;
+package bot5_MC_pathfind.robots.droids;
+
+import bot5_MC_pathfind.util.PathFindingSoldier;
 import battlecode.common.*;
 
 public class Soldier extends Droid{
-    private MapLocation target = null;
+    private MapLocation target;
     private MapLocation archonLoc;
     private MapLocation [] corners = new MapLocation[4];
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private int globalSoldierCount = 0;
     private boolean defensive = false;
     private boolean reachedLocation = false;
-    private boolean shouldHeal = false;
-    private boolean shouldRun=false;
+    private PathFindingSoldier pfs;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -20,7 +21,7 @@ public class Soldier extends Droid{
         readArchonLocs();
         possibleArchonLocs();
         parseAnomalies();
-        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
+        RobotInfo [] r = rc.senseNearbyRobots();
         for (RobotInfo ro : r){
             if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
                 archonLoc = ro.getLocation();
@@ -31,6 +32,7 @@ public class Soldier extends Droid{
         corners[2]=new MapLocation(rc.getMapWidth(),0);
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
         defensive = isDefensive();
+        pfs = new PathFindingSoldier(rc);
     }
 
     @Override
@@ -38,10 +40,8 @@ public class Soldier extends Droid{
         reassignArchon();
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
+        //rc.setIndicatorString("archon: "+myArchonOrder);
         avoidCharge();
-        //stayAlive();
-        //rc.setIndicatorString(shouldRun+"");
-        if(shouldRun)return;
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -55,14 +55,8 @@ public class Soldier extends Droid{
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
-        }
-        chase();
-        int healCheck = rc.readSharedArray(31+myArchonOrder);
-        if(healCheck == 0 || healCheck == rc.getID()){
-            retreat();
-            if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
-                selectPriorityTarget();
-                return;
+            if (target!=rc.getLocation()){
+                moveToLowPassability();
             }
         }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
@@ -74,6 +68,7 @@ public class Soldier extends Droid{
             MapLocation two = new MapLocation(locs1%4096/256*4, locs1/4096*4);
             MapLocation three = new MapLocation(locs2%16*4, locs2%256/16*4);
             MapLocation four = new MapLocation(locs2%4096/256*4, locs2/4096*4);
+            rc.setIndicatorString(one+ " "+two+" "+three+" "+four);
             target = one;
             if (two.x!=0 && two.y!=0 && movementTileDistance(rc.getLocation(), two)<movementTileDistance(rc.getLocation(), target)){
                 target = two;
@@ -90,17 +85,23 @@ public class Soldier extends Droid{
             }
             else if (rc.isActionReady()){
                 intermediateMove(target);
+                //tryMoveMultiple(pfs.getBestDir(target));
+            }
+            if (Clock.getBytecodeNum()-bytecode>1000){
+                System.out.println("targetting BC: "+(Clock.getBytecodeNum()-bytecode));
             }
         }
-        else if(hasMapLocation(43) && globalSoldierCount > 12){
-            MapLocation target = decode(43);
-            if (rc.getLocation().distanceSquaredTo(target)<20){
-                if (nearbyBots.length <5){
-                    rc.writeSharedArray(43,0);
-                }
+        /*
+        else if (defensive){
+            if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
             }
-            intermediateMove(target);
-        }else if (hasMapLocation()){
+            else if (rc.getLocation().distanceSquaredTo(archonLoc)>20){
+                tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
+            }
+        }
+        */
+        else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
                 if (nearbyBots.length <5){
@@ -109,23 +110,16 @@ public class Soldier extends Droid{
             }
             if (rc.isActionReady()){
                 intermediateMove(target);
+                //tryMoveMultiple(pfs.getBestDir(target));
             }
-        }else if (hasMapLocation(41)){
-             MapLocation target = decode(41);
-             if (rc.getLocation().distanceSquaredTo(target)<20){
-                 if (nearbyBots.length <5){
-                     rc.writeSharedArray(41,0);
-                 }
-             }
-             if (rc.isActionReady()){
-                 intermediateMove(target);
-             }
-         } else{
+        }
+        else{
             if (!rc.isActionReady()){
                 return;
             }
             if(enemyArchon !=null){
                 intermediateMove(enemyArchon);
+                //tryMoveMultiple(pfs.getBestDir(enemyArchon));
             }
             MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
             for (int i = all.length; --i>=0;){
@@ -141,11 +135,11 @@ public class Soldier extends Droid{
                 tryMoveMultiple(d);
             }*/
             if(rc.readSharedArray(40) == 1){
-                /*if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
+                if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
                     Direction d = myLocation.directionTo(center);
                     tryMoveMultiple(d);
                 }
-                else*/ if(!tryMoveMultipleNew()){
+                else if(!tryMoveMultipleNew()){
                     tryMoveMultiple(initDirection);
                 }
             }else if(rc.senseNearbyRobots(2).length>2){
@@ -165,7 +159,8 @@ public class Soldier extends Droid{
                 }
             }
         }
-        if(rc.isActionReady())selectPriorityTarget();
+
+
     }
     public boolean isDefensive() throws GameActionException{
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
@@ -182,48 +177,5 @@ public class Soldier extends Droid{
 
         return false;
     }
-    public void stayAlive() throws GameActionException{
-        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam.opponent());
-        int net_health = 0;
-        int counter=0;
-        MapLocation m=null;
-        for (RobotInfo ro: r){
-            if(ro.getType()==RobotType.SOLDIER)
-                net_health=ro.getHealth()+net_health;
-                m=ro.getLocation();
-                counter++;
-        }
-        RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
-        for (RobotInfo ro:r){
-            if(ro.getType()==RobotType.SOLDIER)
-                net_health=net_health-ro.getHealth();
-        }
-        if (net_health>0){
-            shouldRun=true;
-            if(rc.canAttack(m))
-                rc.attack(m);
-            tryMoveMultiple(myLocation.directionTo(m).opposite());
-        }
-        else{
-            shouldRun=false;
-        }
-        rc.setIndicatorString(net_health+" ");
-    }
-    public void retreat() throws GameActionException{
-        if(rc.getHealth()>47){
-            shouldHeal=false;
-            rc.writeSharedArray(31+myArchonOrder,0);
-            return;
-        }
-        if(rc.getHealth()>10)return;
-        rc.writeSharedArray(31+myArchonOrder,rc.getID());
-        shouldHeal=true;
-        intermediateMove(archonLoc);
-    }
-    public void chase() throws GameActionException{
-        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
-        if(r.length==0) return;
-        Direction d = rc.getLocation().directionTo(r[0].getLocation());
-        tryMoveMultiple(d);
-    }
+
 }

@@ -1,4 +1,4 @@
-package bot6.robots.droids;
+package bot5_SL.robots.droids;
 import battlecode.common.*;
 
 public class Soldier extends Droid{
@@ -39,7 +39,7 @@ public class Soldier extends Droid{
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
-        //stayAlive();
+        stayAlive();
         //rc.setIndicatorString(shouldRun+"");
         if(shouldRun)return;
         // update shared array
@@ -56,7 +56,6 @@ public class Soldier extends Droid{
             //New targetting
             target = selectPriorityTarget();
         }
-        chase();
         int healCheck = rc.readSharedArray(31+myArchonOrder);
         if(healCheck == 0 || healCheck == rc.getID()){
             retreat();
@@ -111,16 +110,16 @@ public class Soldier extends Droid{
                 intermediateMove(target);
             }
         }else if (hasMapLocation(41)){
-             MapLocation target = decode(41);
-             if (rc.getLocation().distanceSquaredTo(target)<20){
-                 if (nearbyBots.length <5){
-                     rc.writeSharedArray(41,0);
-                 }
-             }
-             if (rc.isActionReady()){
-                 intermediateMove(target);
-             }
-         } else{
+            MapLocation target = decode(41);
+            if (rc.getLocation().distanceSquaredTo(target)<20){
+                if (nearbyBots.length <5){
+                    rc.writeSharedArray(41,0);
+                }
+            }
+            if (rc.isActionReady()){
+                intermediateMove(target);
+            }
+        } else{
             if (!rc.isActionReady()){
                 return;
             }
@@ -190,9 +189,12 @@ public class Soldier extends Droid{
         for (RobotInfo ro: r){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health=ro.getHealth()+net_health;
-                m=ro.getLocation();
-                counter++;
+            m=ro.getLocation();
+            counter++;
         }
+        if(net_health!=0)
+            System.out.println(net_health);
+        //rc.setIndicatorString(counter+"");
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro:r){
             if(ro.getType()==RobotType.SOLDIER)
@@ -220,10 +222,5 @@ public class Soldier extends Droid{
         shouldHeal=true;
         intermediateMove(archonLoc);
     }
-    public void chase() throws GameActionException{
-        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
-        if(r.length==0) return;
-        Direction d = rc.getLocation().directionTo(r[0].getLocation());
-        tryMoveMultiple(d);
-    }
+
 }

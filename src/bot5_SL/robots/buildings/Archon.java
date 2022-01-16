@@ -1,4 +1,4 @@
-package bot5_MC2.robots.buildings;
+package bot5_SL.robots.buildings;
 
 import battlecode.common.*;
 
