@@ -181,7 +181,7 @@ public class Soldier extends Droid{
                 net_health-=ro.getHealth();
         }
         if (net_health>0){
-            rc.
+            
         }
     }
     public void retreat() throws GameActionException{
