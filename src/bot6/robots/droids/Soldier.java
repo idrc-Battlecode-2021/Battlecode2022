@@ -52,9 +52,13 @@ public class Soldier extends Droid{
             //New targetting
             target = selectPriorityTarget();
         }
-        retreat();
-        if (shouldHeal){
-            return;
+        int healCheck = rc.readSharedArray(31+myArchonOrder);
+        if(healCheck == 0 || healCheck == rc.getID()){
+            retreat();
+            if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
+                selectPriorityTarget();
+                return;
+            }
         }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
@@ -105,8 +109,17 @@ public class Soldier extends Droid{
             if (rc.isActionReady()){
                 intermediateMove(target);
             }
-        }
-        else{
+        }else if (hasMapLocation(41)){
+             MapLocation target = decode(41);
+             if (rc.getLocation().distanceSquaredTo(target)<20){
+                 if (nearbyBots.length <5){
+                     rc.writeSharedArray(41,0);
+                 }
+             }
+             if (rc.isActionReady()){
+                 intermediateMove(target);
+             }
+         } else{
             if (!rc.isActionReady()){
                 return;
             }
@@ -127,11 +140,11 @@ public class Soldier extends Droid{
                 tryMoveMultiple(d);
             }*/
             if(rc.readSharedArray(40) == 1){
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
+                /*if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
                     Direction d = myLocation.directionTo(center);
                     tryMoveMultiple(d);
                 }
-                else if(!tryMoveMultipleNew()){
+                else*/ if(!tryMoveMultipleNew()){
                     tryMoveMultiple(initDirection);
                 }
             }else if(rc.senseNearbyRobots(2).length>2){
@@ -187,9 +200,11 @@ public class Soldier extends Droid{
     public void retreat() throws GameActionException{
         if(rc.getHealth()>47){
             shouldHeal=false;
+            rc.writeSharedArray(31+myArchonOrder,0);
             return;
         }
         if(rc.getHealth()>10)return;
+        rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
         intermediateMove(archonLoc);
     }
