@@ -1,4 +1,4 @@
-# Bot 5
+~~# Bot 5
 Uses bot 4 as a base
 - Builds 8 miners, then prioritizes soldiers
 
@@ -25,4 +25,4 @@ Miner Attacked
 - 44: global miner count
 48 - used to tell friendly soldiers possible enemy archon locations
 49 - locations of archon 0-1
-50 - locations of archon 2-3
+50 - locations of archon 2-3~~

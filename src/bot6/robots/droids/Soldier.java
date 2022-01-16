@@ -9,6 +9,7 @@ public class Soldier extends Droid{
     private int globalSoldierCount = 0;
     private boolean defensive = false;
     private boolean reachedLocation = false;
+    private boolean shouldHeal = false;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -36,7 +37,6 @@ public class Soldier extends Droid{
         reassignArchon();
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
-        //rc.setIndicatorString("archon: "+myArchonOrder);
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
@@ -51,9 +51,10 @@ public class Soldier extends Droid{
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
-            if (target!=rc.getLocation()){
-                moveToLowPassability();
-            }
+        }
+        retreat();
+        if (shouldHeal){
+            return;
         }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
@@ -86,16 +87,6 @@ public class Soldier extends Droid{
                 System.out.println("targetting BC: "+(Clock.getBytecodeNum()-bytecode));
             }
         }
-        /*
-        else if (defensive){
-            if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
-                tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
-            }
-            else if (rc.getLocation().distanceSquaredTo(archonLoc)>20){
-                tryMoveMultiple(rc.getLocation().directionTo(archonLoc));
-            }
-        }
-        */
         else if(hasMapLocation(43) && globalSoldierCount > 12){
             MapLocation target = decode(43);
             if (rc.getLocation().distanceSquaredTo(target)<20){
@@ -160,8 +151,7 @@ public class Soldier extends Droid{
                 }
             }
         }
-
-
+        if(rc.isActionReady())selectPriorityTarget();
     }
     public boolean isDefensive() throws GameActionException{
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
@@ -177,6 +167,15 @@ public class Soldier extends Droid{
         }
 
         return false;
+    }
+    public void retreat() throws GameActionException{
+        if(rc.getHealth()>47){
+            shouldHeal=false;
+            return;
+        }
+        if(rc.getHealth()>10)return;
+        shouldHeal=true;
+        intermediateMove(archonLoc);
     }
 
 }

@@ -833,7 +833,8 @@ public abstract class Robot {
     public MapLocation selectPriorityTarget() throws GameActionException {
         //returns location of target
         //returns own location if none
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+        moveToLowPassability();
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
@@ -954,14 +955,12 @@ public abstract class Robot {
                 if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
-                        moveToLowPassability();
                         tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
-                        moveToLowPassability();
                         tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
@@ -999,7 +998,6 @@ public abstract class Robot {
             target=rc.getLocation();
         }
         if (target!=rc.getLocation()){
-            moveToLowPassability();
             tryAttack(target);
         }
         rc.setIndicatorString("target: "+target);
@@ -1016,8 +1014,8 @@ public abstract class Robot {
         Direction lowest = Direction.CENTER;
         int lowest_rubble = rc.senseRubble(rc.getLocation());
         for (Direction d: Direction.allDirections()){
-            MapLocation adjacent=rc.getLocation().add(d);
-            if (rc.onTheMap(adjacent) && rc.canMove(d)){
+            MapLocation adjacent=rc.adjacentLocation(d);
+            if (rc.onTheMap(adjacent) && !rc.canSenseRobotAtLocation(adjacent) && rc.canMove(d)){
                 int rubble = rc.senseRubble(adjacent);
                 if (rubble<lowest_rubble){
                     lowest = d;
@@ -1028,9 +1026,12 @@ public abstract class Robot {
         if (lowest==Direction.CENTER){
             return false;
         }
-        rc.move(lowest);
+        if (rc.canMove(lowest)){
+            rc.move(lowest);
+            return true;
+        }
         myLocation = rc.getLocation();
-        return true;
+        return false;
     }
     
     private void updateInternalMap(){}

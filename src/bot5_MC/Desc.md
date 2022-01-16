@@ -1,4 +1,6 @@
-# ocasiybfrtiygn oataktc tt r eoee
+# o_MCcasiybfrrtyTwPassability mofeb dohteargetting usesoLoTevom  as a base
+
+seletiroirPtciygn oataktc tt r eoee
 
 slcPitttrroiygoapssibla e mvsowolt retn igarttTeeeagre s
 When miners find a de 41: minorLocation (Where enemy is)  (Not Used Currently)
