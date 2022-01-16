@@ -1,0 +1,163 @@
+bot5_JJ3
+Red  bot5_JJ3 (1) - bot6 (0) [colosseum]: bot5_JJ3 | Rounds: 1917
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (2) - bot6 (0) [colosseum]: bot5_JJ3 | Rounds: 1643
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (2) - bot6 (1) [eckleburg]: bot6 | Rounds: 1282
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (3) - bot6 (1) [eckleburg]: bot5_JJ3 | Rounds: 939
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (4) - bot6 (1) [fortress]: bot5_JJ3 | Rounds: 913
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (5) - bot6 (1) [fortress]: bot5_JJ3 | Rounds: 1063
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (6) - bot6 (1) [intersection]: bot5_JJ3 | Rounds: 727
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (7) - bot6 (1) [intersection]: bot5_JJ3 | Rounds: 502
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (7) - bot6 (2) [jellyfish]: bot6 | Rounds: 544
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (8) - bot6 (2) [jellyfish]: bot5_JJ3 | Rounds: 741
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (9) - bot6 (2) [maptestsmall]: bot5_JJ3 | Rounds: 290
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (10) - bot6 (2) [maptestsmall]: bot5_JJ3 | Rounds: 415
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (10) - bot6 (3) [nottestsmall]: bot6 | Rounds: 629
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (11) - bot6 (3) [nottestsmall]: bot5_JJ3 | Rounds: 605
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (12) - bot6 (3) [progress]: bot5_JJ3 | Rounds: 403
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (13) - bot6 (3) [progress]: bot5_JJ3 | Rounds: 544
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (14) - bot6 (3) [rivers]: bot5_JJ3 | Rounds: 1201
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (15) - bot6 (3) [rivers]: bot5_JJ3 | Rounds: 853
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (15) - bot6 (4) [sandwich]: bot6 | Rounds: 682
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (16) - bot6 (4) [sandwich]: bot5_JJ3 | Rounds: 759
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (16) - bot6 (5) [squer]: bot6 | Rounds: 366
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (17) - bot6 (5) [squer]: bot5_JJ3 | Rounds: 314
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (17) - bot6 (6) [uncomfortable]: bot6 | Rounds: 1358
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (17) - bot6 (7) [uncomfortable]: bot6 | Rounds: 842
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (18) - bot6 (7) [underground]: bot5_JJ3 | Rounds: 1059
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (18) - bot6 (8) [underground]: bot6 | Rounds: 755
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (19) - bot6 (8) [valley]: bot5_JJ3 | Rounds: 818
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (20) - bot6 (8) [valley]: bot5_JJ3 | Rounds: 729
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (21) - bot6_JJ (0) [colosseum]: bot5_JJ3 | Rounds: 1048
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (22) - bot6_JJ (0) [colosseum]: bot5_JJ3 | Rounds: 1722
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (23) - bot6_JJ (0) [eckleburg]: bot5_JJ3 | Rounds: 548
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (24) - bot6_JJ (0) [eckleburg]: bot5_JJ3 | Rounds: 782
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (25) - bot6_JJ (0) [fortress]: bot5_JJ3 | Rounds: 1164
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (25) - bot6_JJ (1) [fortress]: bot6_JJ | Rounds: 834
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (26) - bot6_JJ (1) [intersection]: bot5_JJ3 | Rounds: 651
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (27) - bot6_JJ (1) [intersection]: bot5_JJ3 | Rounds: 551
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (28) - bot6_JJ (1) [jellyfish]: bot5_JJ3 | Rounds: 1000
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (28) - bot6_JJ (2) [jellyfish]: bot6_JJ | Rounds: 476
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (29) - bot6_JJ (2) [maptestsmall]: bot5_JJ3 | Rounds: 168
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (30) - bot6_JJ (2) [maptestsmall]: bot5_JJ3 | Rounds: 273
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (31) - bot6_JJ (2) [nottestsmall]: bot5_JJ3 | Rounds: 324
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (32) - bot6_JJ (2) [nottestsmall]: bot5_JJ3 | Rounds: 552
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (33) - bot6_JJ (2) [progress]: bot5_JJ3 | Rounds: 352
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (34) - bot6_JJ (2) [progress]: bot5_JJ3 | Rounds: 428
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (35) - bot6_JJ (2) [rivers]: bot5_JJ3 | Rounds: 1267
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (36) - bot6_JJ (2) [rivers]: bot5_JJ3 | Rounds: 384
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (36) - bot6_JJ (3) [sandwich]: bot6_JJ | Rounds: 426
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (36) - bot6_JJ (4) [sandwich]: bot6_JJ | Rounds: 579
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (36) - bot6_JJ (5) [squer]: bot6_JJ | Rounds: 555
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (36) - bot6_JJ (6) [squer]: bot6_JJ | Rounds: 420
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (36) - bot6_JJ (7) [uncomfortable]: bot6_JJ | Rounds: 1175
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (36) - bot6_JJ (8) [uncomfortable]: bot6_JJ | Rounds: 1053
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (37) - bot6_JJ (8) [underground]: bot5_JJ3 | Rounds: 655
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (38) - bot6_JJ (8) [underground]: bot5_JJ3 | Rounds: 685
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+Red  bot5_JJ3 (39) - bot6_JJ (8) [valley]: bot5_JJ3 | Rounds: 755
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+Blue bot5_JJ3 (40) - bot6_JJ (8) [valley]: bot5_JJ3 | Rounds: 1001
+[server] Reason: The winning team won by annihilating the enemy team's Archons.
+
+
+Scoreboard: 
+bot5_JJ3: 40/364
+bot6: 8/28
+bot6_JJ: 8/28
+
+Map Losses
+colosseum: 0/26
+eckleburg: 1/26
+fortress: 1/26
+intersection: 0/26
+jellyfish: 2/26
+maptestsmall: 0/26
+nottestsmall: 1/26
+progress: 0/26
+rivers: 0/26
+sandwich: 3/26
+squer: 3/26
+uncomfortable: 4/26
+underground: 1/26
+valley: 0/26
+
