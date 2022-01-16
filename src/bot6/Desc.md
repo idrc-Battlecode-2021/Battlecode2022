@@ -2,9 +2,7 @@
 Uses bot 5 as a base
 - Builds 6 miners, then prioritizes soldiers
 - Added repairing for low health soldiers
-Added defense method back to archons
-spawns miners in 1 to 5 ratio to soldiers, changes to 0 to 1 once enemy has been sighted
-
+- Archon spawns on low rubble areas
 selectPriorityTargetting
 miners and builders are prioritized if the turns that it takes to kill the archon>25 (and no other troops are present)
 also makes soldiers move to low passability before attacking
