@@ -19,7 +19,7 @@ public class Soldier extends Droid{
         readArchonLocs();
         possibleArchonLocs();
         parseAnomalies();
-        RobotInfo [] r = rc.senseNearbyRobots();
+        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
         for (RobotInfo ro : r){
             if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
                 archonLoc = ro.getLocation();

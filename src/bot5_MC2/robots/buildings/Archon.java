@@ -2,6 +2,8 @@ package bot5_MC2.robots.buildings;
 
 import battlecode.common.*;
 
+import java.util.ArrayList;
+
 public class Archon extends Building{
     private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
     private static int count = 0;
@@ -15,6 +17,8 @@ public class Archon extends Building{
     private static int power = 0; // power of 16 that corresponds with archonOrder
 
     private static final int SURPLUS_THRESHOLD = 500;
+
+    private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
 
     private static String indicatorString = "";
 
@@ -122,6 +126,27 @@ public class Archon extends Building{
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
+        for (Direction d:Direction.allDirections()){
+            if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
+                continue;
+            }
+            if (passableDirections.size()==0){
+                passableDirections.add(d);
+                continue;
+            }
+            MapLocation location = rc.getLocation().add(d);
+            int rubble = rc.senseRubble(location);
+            for (int i=0;i<=passableDirections.size();i++){
+                if (i==passableDirections.size()){
+                    passableDirections.add(i,d);
+                    break;
+                }
+                if (rubble<rc.senseRubble(rc.getLocation().add(passableDirections.get(i)))){
+                    passableDirections.add(i,d);
+                    break;
+                }
+            }
+        }
     }
 
     // if enemies are near archon, spawn soldiers and inform other archons
@@ -293,12 +318,11 @@ public class Archon extends Building{
         }
         if (globalMinerCount < 6 || count%mod == 1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
-                Direction directions[] = Direction.allDirections();
                 int i=0;
-                while (!rc.canBuildRobot(type,directions[(minerIndex+i)%8]) && i<8){
+                while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
                     i++;
                 }
-                if (rc.canBuildRobot(type,directions[(minerIndex+i)%8])){
+                if (rc.canBuildRobot(type,passableDirections.get(i))){
                     if (diff==0){
                         if (archonBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
@@ -307,9 +331,7 @@ public class Archon extends Building{
                             rc.writeSharedArray(11,archonBuildStatus+1);
                         }
                     }
-                    minerIndex = (minerIndex+i)%8;
-                    rc.buildRobot(type,directions[minerIndex]);
-                    minerIndex++;
+                    rc.buildRobot(type,passableDirections.get(i));
                     minerCount++;
                     globalMinerCount++;
                     count++;
@@ -322,12 +344,11 @@ public class Archon extends Building{
             indicatorString += " soldiers";
             if (!checkBuildStatus(diff, cost)) return;
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
-                Direction directions[] = Direction.allDirections();
                 int i=0;
-                while (!rc.canBuildRobot(type,directions[(soldierIndex+i)%8]) && i<8){
+                while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
                     i++;
                 }
-                if (rc.canBuildRobot(type,directions[(soldierIndex+i)%8])){
+                if (rc.canBuildRobot(type,passableDirections.get(i))){
                     if (diff==0){
                         if (archonBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
@@ -336,9 +357,7 @@ public class Archon extends Building{
                             rc.writeSharedArray(11,archonBuildStatus+1);
                         }
                     }
-                    soldierIndex = (soldierIndex+i)%8;
-                    rc.buildRobot(type,directions[soldierIndex]);
-                    soldierIndex++;
+                    rc.buildRobot(type,passableDirections.get(i));
                     soldierCount++;
                     count++;
                 }

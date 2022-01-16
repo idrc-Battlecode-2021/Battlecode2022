@@ -10,6 +10,7 @@ public class Soldier extends Droid{
     private boolean defensive = false;
     private boolean reachedLocation = false;
     private boolean shouldHeal = false;
+    private boolean shouldRun=false;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -19,7 +20,7 @@ public class Soldier extends Droid{
         readArchonLocs();
         possibleArchonLocs();
         parseAnomalies();
-        RobotInfo [] r = rc.senseNearbyRobots();
+        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
         for (RobotInfo ro : r){
             if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
                 archonLoc = ro.getLocation();
@@ -38,6 +39,7 @@ public class Soldier extends Droid{
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
+        stayAlive();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -52,9 +54,13 @@ public class Soldier extends Droid{
             //New targetting
             target = selectPriorityTarget();
         }
-        retreat();
-        if (shouldHeal){
-            return;
+        int healCheck = rc.readSharedArray(31+myArchonOrder);
+        if(healCheck == 0 || healCheck == rc.getID()){
+            retreat();
+            if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
+                selectPriorityTarget();
+                return;
+            }
         }
         if (globalSoldierCount>10 && possibleLocation>0 && !reachedLocation){
             //Chooses the closest location where an enemy has been sighted
@@ -105,8 +111,17 @@ public class Soldier extends Droid{
             if (rc.isActionReady()){
                 intermediateMove(target);
             }
-        }
-        else{
+        }else if (hasMapLocation(41)){
+             MapLocation target = decode(41);
+             if (rc.getLocation().distanceSquaredTo(target)<20){
+                 if (nearbyBots.length <5){
+                     rc.writeSharedArray(41,0);
+                 }
+             }
+             if (rc.isActionReady()){
+                 intermediateMove(target);
+             }
+         } else{
             if (!rc.isActionReady()){
                 return;
             }
@@ -127,11 +142,11 @@ public class Soldier extends Droid{
                 tryMoveMultiple(d);
             }*/
             if(rc.readSharedArray(40) == 1){
-                if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
+                /*if (rc.getLocation().distanceSquaredTo(archonLoc)<4){
                     Direction d = myLocation.directionTo(center);
                     tryMoveMultiple(d);
                 }
-                else if(!tryMoveMultipleNew()){
+                else*/ if(!tryMoveMultipleNew()){
                     tryMoveMultiple(initDirection);
                 }
             }else if(rc.senseNearbyRobots(2).length>2){
@@ -171,25 +186,33 @@ public class Soldier extends Droid{
     public void stayAlive() throws GameActionException{
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
         int net_health = 0;
+        MapLocation m=null;
         for (RobotInfo ro: r){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health+=ro.getHealth();
+                m=ro.getLocation();
         }
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro:r){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health-=ro.getHealth();
         }
-        if (net_health>0){
-            
+        if (net_health>=0){
+            shouldRun=true;
+            tryMoveMultiple(myLocation.directionTo(m).opposite());
+        }
+        else{
+            shouldRun=false;
         }
     }
     public void retreat() throws GameActionException{
         if(rc.getHealth()>47){
             shouldHeal=false;
+            rc.writeSharedArray(31+myArchonOrder,0);
             return;
         }
         if(rc.getHealth()>10)return;
+        rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
         intermediateMove(archonLoc);
     }
