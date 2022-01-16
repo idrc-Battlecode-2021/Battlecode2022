@@ -1,7 +1,7 @@
 package bot5_MC2.robots;
 
 import battlecode.common.*;
-import bot5_MC2.util.Constants;
+import bot5_MC.util.Constants;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -962,7 +962,7 @@ public abstract class Robot {
                 }
             }
             if (turns[minIndex]<Integer.MAX_VALUE){
-                if (turns[minIndex]>15){
+                if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
                         moveToLowPassability();
