@@ -86,7 +86,7 @@ def main():
     for k,v in winCount.items():
         score = ""
         if k == primaryPlayers[0]:
-            score = f"{k}: {v}/{2*(len(players)-1) * len(maps)}"
+            score = f"{k}: {v}/{2*(len(primaryPlayers)-1) * len(maps)}"
         else:
             score = f"{k}: {v}/{2* len(maps)}"
         output += score + '\n'
@@ -95,7 +95,7 @@ def main():
     print("Map Losses")
     output += '\n' + "Map Losses" + '\n'
     for map,losses in mapLosses.items():
-        score = f"{map}: {losses}/{2*(len(players)-1)}"
+        score = f"{map}: {losses}/{2*(len(primaryPlayers)-1)}"
         output += score + '\n'
         print(score)
     file = open("scriptMatchLogs/matchLogs"+primaryPlayers[0]+".txt", "w")

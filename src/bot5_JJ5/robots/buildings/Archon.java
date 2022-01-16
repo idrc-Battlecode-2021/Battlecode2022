@@ -263,7 +263,7 @@ public class Archon extends Building{
                     counter++;
             }
         }
-        if(counter > 2){
+        if(counter > 2 && rc.readSharedArray(45) == 0){
             rc.writeSharedArray(45,4096+64*myLocation.x+myLocation.y);
         }else{
             if(decode(45) == myLocation){

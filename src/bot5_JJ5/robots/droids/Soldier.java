@@ -32,6 +32,7 @@ public class Soldier extends Droid{
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
         defensive = isDefensive();
         pfs = new PathFindingSoldier(rc);
+        prevLoc = myLocation;
     }
 
     @Override
@@ -89,14 +90,9 @@ public class Soldier extends Droid{
                 reachedLocation = true;
             }
             else if (rc.isActionReady()){
-                System.out.println("1: "+target);
                 soldierMove(target);
 
             }
-        }else if (hasMapLocation(45)){
-            MapLocation target = decode(45);
-            System.out.println("2: "+target);
-            soldierMove(archonLoc);
         }else if (hasMapLocation(43)){
             MapLocation target = decode(43);
             if (rc.getLocation().distanceSquaredTo(target)<20){
@@ -104,7 +100,6 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(43,0);
                 }
             }
-            System.out.println("3: "+target);
             soldierMove(target);
 
         }else if (hasMapLocation()){
@@ -114,7 +109,6 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(55,0);
                 }
             }
-            System.out.println("4: "+target);
             soldierMove(target);
 
         }else{
@@ -122,7 +116,6 @@ public class Soldier extends Droid{
                 return;
             }
             if(enemyArchon !=null){
-                System.out.println("5: "+enemyArchon);
                 soldierMove(enemyArchon);
             }
             MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
@@ -187,13 +180,27 @@ public class Soldier extends Droid{
         if(rc.getHealth()>15)return;
         rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
-        System.out.println("6: "+archonLoc);
         soldierMove(archonLoc);
     }
 
+    private int lastMoveRoundNum = -100;
+    private MapLocation prevLoc;
+    private boolean useIM = false;
     private void soldierMove(MapLocation target) throws GameActionException {
         Direction dir = pfs.getBestDir(target);
-        if(dir != null && rc.canMove(dir)){
+        int roundNum = rc.getRoundNum();
+        switch (roundNum%10){
+            case 0:
+                lastMoveRoundNum = roundNum;
+                prevLoc = myLocation; break;
+            case 8:
+                useIM = false;
+            case 9:
+                if(myLocation.distanceSquaredTo(prevLoc) < 4){
+                    useIM = true;
+                }
+        }
+        if(!useIM && dir != null && rc.canMove(dir)){
             tryMoveMultiple(dir);
         }else{
             intermediateMove(target);
