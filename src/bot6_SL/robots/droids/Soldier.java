@@ -1,4 +1,4 @@
-package bot6.robots.droids;
+package bot6_SL.robots.droids;
 import battlecode.common.*;
 
 public class Soldier extends Droid{
@@ -39,7 +39,7 @@ public class Soldier extends Droid{
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
-        //stayAlive();
+        stayAlive();
         //rc.setIndicatorString(shouldRun+"");
         if(shouldRun)return;
         // update shared array
