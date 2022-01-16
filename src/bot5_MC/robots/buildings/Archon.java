@@ -344,7 +344,20 @@ public class Archon extends Building{
                 }
             }
         }
-
+        if (rc.isActionReady()){
+            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+            int greatestHealthDifference = 0;
+            MapLocation location = null;
+            for (RobotInfo robot : robots){
+                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
+                    greatestHealthDifference=robot.getType().health-robot.getHealth();
+                    location = robot.getLocation();
+                }
+            }
+            if (location!=null && rc.canRepair(location)){
+                rc.repair(location);
+            }
+        }
         rc.setIndicatorString(indicatorString);
     }
 }
