@@ -1,5 +1,6 @@
 package bot5_SL.robots.droids;
 import battlecode.common.*;
+import bot5_SL.util.PathFindingSoldier;
 
 public class Soldier extends Droid{
     private MapLocation target = null;
@@ -11,12 +12,14 @@ public class Soldier extends Droid{
     private boolean reachedLocation = false;
     private boolean shouldHeal = false;
     private boolean shouldRun=false;
+    private PathFindingSoldier pfs;
     public Soldier(RobotController rc) {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
+        pfs=new PathFindingSoldier(rc);
         readArchonLocs();
         possibleArchonLocs();
         parseAnomalies();
@@ -88,7 +91,7 @@ public class Soldier extends Droid{
                 reachedLocation = true;
             }
             else if (rc.isActionReady()){
-                intermediateMove(target);
+                soldierMove(target);
             }
         }
         else if(hasMapLocation(43) && globalSoldierCount > 12){
@@ -98,7 +101,7 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(43,0);
                 }
             }
-            intermediateMove(target);
+            soldierMove(target);
         }else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
@@ -107,7 +110,7 @@ public class Soldier extends Droid{
                 }
             }
             if (rc.isActionReady()){
-                intermediateMove(target);
+                soldierMove(target);
             }
         }else if (hasMapLocation(41)){
             MapLocation target = decode(41);
@@ -117,14 +120,14 @@ public class Soldier extends Droid{
                 }
             }
             if (rc.isActionReady()){
-                intermediateMove(target);
+                soldierMove(target);
             }
         } else{
             if (!rc.isActionReady()){
                 return;
             }
             if(enemyArchon !=null){
-                intermediateMove(enemyArchon);
+                soldierMove(enemyArchon);
             }
             MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
             for (int i = all.length; --i>=0;){
@@ -192,8 +195,6 @@ public class Soldier extends Droid{
             m=ro.getLocation();
             counter++;
         }
-        if(net_health!=0)
-            System.out.println(net_health);
         //rc.setIndicatorString(counter+"");
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro:r){
@@ -220,7 +221,14 @@ public class Soldier extends Droid{
         if(rc.getHealth()>10)return;
         rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
-        intermediateMove(archonLoc);
+        soldierMove(archonLoc);
     }
-
+    private void soldierMove(MapLocation target) throws GameActionException {
+        Direction dir = pfs.getBestDir(target);
+        if(dir != null && rc.canMove(dir)){
+            tryMoveMultiple(dir);
+        }else{
+            intermediateMove(target);
+        }
+    }
 }
