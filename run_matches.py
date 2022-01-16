@@ -45,10 +45,10 @@ def main():
 
         print(player + ": ")
         for j in range(1,len(primaryPlayers)):
-            if (player == players[j]):
+            if (player == primaryPlayers[j]):
                 continue
             
-            opponent = players[j]
+            opponent = primaryPlayers[j]
             if opponent not in winCount:
                 winCount[opponent] = 0
 
