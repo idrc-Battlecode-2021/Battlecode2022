@@ -10,6 +10,11 @@ import bot5_MC2.robots.droids.Miner;
 import bot5_MC2.robots.droids.Sage;
 import bot5_MC2.robots.droids.Soldier;
 
+/*
+bot5_MC2 - copied from bot5_MC
+
+- Archon spawns toward lower passability tiles instead of rotating
+*/
 public strictfp class RobotPlayer {
     static RobotController rc;
     static Robot robot;

@@ -10,6 +10,7 @@ public class Soldier extends Droid{
     private boolean defensive = false;
     private boolean reachedLocation = false;
     private boolean shouldHeal = false;
+    private boolean shouldRun=false;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -19,7 +20,7 @@ public class Soldier extends Droid{
         readArchonLocs();
         possibleArchonLocs();
         parseAnomalies();
-        RobotInfo [] r = rc.senseNearbyRobots();
+        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
         for (RobotInfo ro : r){
             if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
                 archonLoc = ro.getLocation();
@@ -38,6 +39,7 @@ public class Soldier extends Droid{
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
+        stayAlive();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -184,17 +186,23 @@ public class Soldier extends Droid{
     public void stayAlive() throws GameActionException{
         RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
         int net_health = 0;
+        MapLocation m=null;
         for (RobotInfo ro: r){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health+=ro.getHealth();
+                m=ro.getLocation();
         }
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
         for (RobotInfo ro:r){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health-=ro.getHealth();
         }
-        if (net_health>0){
-            
+        if (net_health>=0){
+            shouldRun=true;
+            tryMoveMultiple(myLocation.directionTo(m).opposite());
+        }
+        else{
+            shouldRun=false;
         }
     }
     public void retreat() throws GameActionException{
