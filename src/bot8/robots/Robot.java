@@ -6,9 +6,6 @@ import bot8.util.Constants;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public abstract class Robot {
     protected RobotController rc;
@@ -981,14 +978,14 @@ public abstract class Robot {
                         target = miner.getLocation();
                         moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
+                        //rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
                         moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
+                        //rc.setIndicatorString("target: "+target);
                         return target;
                     }
                 }
@@ -1027,7 +1024,7 @@ public abstract class Robot {
             moveToLowPassability();
             tryAttack(target);
         }
-        rc.setIndicatorString("target: "+target);
+        //rc.setIndicatorString("target: "+target);
         return target;
         
     }

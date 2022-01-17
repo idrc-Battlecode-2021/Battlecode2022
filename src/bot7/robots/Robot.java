@@ -1067,7 +1067,7 @@ public abstract class Robot {
     }
 
     public void checkSymmetry() throws GameActionException {
-        
+
 
 
 
