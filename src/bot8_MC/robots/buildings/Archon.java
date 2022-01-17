@@ -9,7 +9,8 @@ public class Archon extends Building{
     private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
     private static int minersForNearbyLead;
-
+    private static int prevRobotHeal = 0;
+    private static int healCounter = 0;
     private static Integer minerIndex = 0; //spawning miners
     private static Integer soldierIndex = 0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
@@ -325,6 +326,19 @@ public class Archon extends Building{
         checkArchonsAlive();
         updateTroopCount();
         roundNum = rc.getRoundNum();
+        int healCheck = rc.readSharedArray(31+archonOrder);
+        if (healCheck!=prevRobotHeal){
+            prevRobotHeal = healCheck;
+            healCounter = 0;
+        }
+        else{
+            healCounter++;
+            if (healCounter>Math.max(rc.getMapHeight(),rc.getMapWidth())/2){
+                rc.writeSharedArray(31+archonOrder,0);
+                healCounter = 0;
+                prevRobotHeal = 0;
+            }
+        }
         if (defense()){
             repair();
             indicatorString += " defense";
@@ -344,6 +358,10 @@ public class Archon extends Building{
         int cost = RobotType.MINER.buildCostLead;
         RobotType type = RobotType.MINER;
         indicatorString+=" miners";
+        if (!checkBuildStatus(diff, cost)) {
+            repair();
+            return;
+        }
         int mod = 4;
         if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
             mod = 5;
@@ -354,10 +372,6 @@ public class Archon extends Building{
             mod = 2;
         }
         if (globalMinerCount < 6 || count%mod == 1){
-            if (!checkBuildStatus(diff, cost)){
-                repair();
-                return;
-            }
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){

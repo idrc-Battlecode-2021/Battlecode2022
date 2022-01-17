@@ -51,16 +51,18 @@ public class Soldier extends Droid{
         }
         broadcast();
         target = null;
-        //int healCheck = rc.readSharedArray(31+myArchonOrder);
-        retreat();
-        if (shouldHeal){
-            selectPriorityTarget();
-            return;
+
+        int healCheck = rc.readSharedArray(31+myArchonOrder);
+        if(healCheck == 0 || healCheck == rc.getID()){
+            retreat();
+            if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
+                selectPriorityTarget();
+                return;
+            }
         }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting
-            moveToLowPassability();
             target = selectPriorityTarget();
         }
         if (hasMapLocation(45)){
@@ -118,22 +120,19 @@ public class Soldier extends Droid{
                 }
             }
         }
-        if(rc.isActionReady()){
-            moveToLowPassability();
-            selectPriorityTarget();
-        }
+        if(rc.isActionReady())selectPriorityTarget();
     }
 
     public void retreat() throws GameActionException{
-        if(rc.getHealth()>=49){
+        if(rc.getHealth()>40){
             shouldHeal=false;
+            rc.writeSharedArray(31+myArchonOrder,0);
             return;
         }
-        if(rc.getHealth()>23)return;
+        if(rc.getHealth()>15)return;
+        rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
-        if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
-            soldierMove(archonLoc);
-        }
+        soldierMove(archonLoc);
     }
 
     private void soldierMove(MapLocation target) throws GameActionException {

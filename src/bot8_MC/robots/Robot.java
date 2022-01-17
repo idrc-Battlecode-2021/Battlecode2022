@@ -976,14 +976,14 @@ public abstract class Robot {
                 if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
-                        //moveToLowPassability();
+                        moveToLowPassability();
                         tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
-                        //moveToLowPassability();
+                        moveToLowPassability();
                         tryAttack(target);
                         rc.setIndicatorString("target: "+target);
                         return target;
@@ -1021,11 +1021,12 @@ public abstract class Robot {
             target=rc.getLocation();
         }
         if (target!=rc.getLocation()){
-            //moveToLowPassability();
+            moveToLowPassability();
             tryAttack(target);
         }
         rc.setIndicatorString("target: "+target);
         return target;
+        
     }
 
     public boolean moveToLowPassability() throws GameActionException{
