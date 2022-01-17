@@ -1,2 +1,4 @@
-# Bot5_SL
-Basically Bot5_MC but with better soldiers
+# Bot7
+Uses bot5_SL
+
+- archon prioritizes spawning troops on low rubble
