@@ -1,2 +1,2 @@
-# Bot5_SL
-Basically Bot5_MC but with better soldiers
+# Bot5_JJ7
+Modified soldiers from Bot5_SL
