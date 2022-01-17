@@ -355,7 +355,6 @@ public abstract class Robot {
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int num_enemies = enemies.length;
         if (enemies.length>0){
-            int bytecode = Clock.getBytecodeNum();
             int locs1 = rc.readSharedArray(12);
             int locs2 = rc.readSharedArray(13);
             MapLocation one = new MapLocation(locs1%16*4, locs1%256/16*4);
@@ -387,9 +386,6 @@ public abstract class Robot {
                     int y = rc.getLocation().y/4;
                     rc.writeSharedArray(13, rc.readSharedArray(13)+x*256+y*4096);
                 }
-            }
-            if (Clock.getBytecodeNum()-bytecode>1000){
-                System.out.println(" bytecode of broadcast "+(Clock.getBytecodeNum()-bytecode));
             }
 
         }
@@ -978,14 +974,12 @@ public abstract class Robot {
                         target = miner.getLocation();
                         moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
                         moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
                         return target;
                     }
                 }
@@ -1024,7 +1018,6 @@ public abstract class Robot {
             moveToLowPassability();
             tryAttack(target);
         }
-        rc.setIndicatorString("target: "+target);
         return target;
         
     }

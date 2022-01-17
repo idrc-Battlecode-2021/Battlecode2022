@@ -35,7 +35,6 @@ public class Lab extends Building{
 		int bin = rc.readSharedArray(9);
 		minLead = bin % 4096; //need to have a factor multiplied to cover larger lead mins?
 		maxRate = bin / 4096 + 5;
-		rc.setIndicatorString(Integer.toString(maxRate));
     }
 
     private boolean canMakeGold() throws GameActionException {

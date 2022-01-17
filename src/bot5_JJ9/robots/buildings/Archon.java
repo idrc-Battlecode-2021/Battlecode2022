@@ -77,10 +77,7 @@ public class Archon extends Building{
                 x = temp%4096/256*4;
                 y = temp/4096*4;
                 MapLocation two = new MapLocation(x,y);
-                System.out.println(one);
-                System.out.println(two);
                 rc.writeSharedArray(14, movementTileDistance(one, two));
-                System.out.println("average: "+movementTileDistance(one, two));
             }
             else if (archonOrder==2){
                 int temp = rc.readSharedArray(49);
@@ -96,7 +93,6 @@ public class Archon extends Building{
                 MapLocation three = new MapLocation(x,y);
                 int average = (movementTileDistance(one, two)+movementTileDistance(one, three)+movementTileDistance(three, two))/3;
                 rc.writeSharedArray(14, average);
-                System.out.println("average: "+average);
             }
             else{
                 int temp = rc.readSharedArray(49);
@@ -115,7 +111,6 @@ public class Archon extends Building{
                 MapLocation four = new MapLocation(x,y);
                 int average = (movementTileDistance(one, two)+movementTileDistance(one, three)+movementTileDistance(one, four)+movementTileDistance(three, two)+movementTileDistance(four, two)+movementTileDistance(three, four))/6;
                 rc.writeSharedArray(14, average);
-                System.out.println("average: "+average);
             }
         }
         rc.writeSharedArray(63-archonOrder,rc.getID()+1);
@@ -229,7 +224,6 @@ public class Archon extends Building{
                 rc.writeSharedArray(63-archonOrder,rc.getID()+1);
             }
             power = (int)Math.pow(16,archonOrder);
-            System.out.println("Reassigning archonOrder "+archonOrder);
             initialArchons = rc.getArchonCount();
         }
     }
@@ -268,14 +262,12 @@ public class Archon extends Building{
         // next archon to spawn, otherwise don't spawn anything (return false).
         if (diff<0){
             if (rc.getTeamLeadAmount(rc.getTeam())-cost*-1*diff<cost){
-                rc.setIndicatorString(indicatorString);
                 return false;
             }
         }
         if (diff>0){
             int space = rc.getArchonCount()-diff;
             if (rc.getTeamLeadAmount(rc.getTeam())-cost*space<cost){
-                rc.setIndicatorString(indicatorString);
                 return false;
             }
         }
@@ -320,21 +312,16 @@ public class Archon extends Building{
 
     @Override
     public void run() throws GameActionException {
-        indicatorString = "";
         checkEnemies();
         checkArchonsAlive();
         updateTroopCount();
         roundNum = rc.getRoundNum();
         if (defense()){
             repair();
-            indicatorString += " defense";
-            rc.setIndicatorString(indicatorString);
             return;
         }
         /*
         if (!canProceed()){
-            indicatorString += " can't proceed";
-            rc.setIndicatorString(indicatorString);
             return;
         }
         */
@@ -343,7 +330,6 @@ public class Archon extends Building{
         int diff = archonBuildStatus - archonOrder;
         int cost = RobotType.MINER.buildCostLead;
         RobotType type = RobotType.MINER;
-        indicatorString+=" miners";
         if (!checkBuildStatus(diff, cost)) {
             repair();
             return;
@@ -382,7 +368,6 @@ public class Archon extends Building{
         else /*if (count %mod==1)*/{
             cost = RobotType.SOLDIER.buildCostLead;
             type = RobotType.SOLDIER;
-            indicatorString += " soldiers";
             if (!checkBuildStatus(diff, cost)){
                 repair();
                 return;
@@ -408,6 +393,5 @@ public class Archon extends Building{
             }
         }
         repair();
-        rc.setIndicatorString(indicatorString);
     }
 }

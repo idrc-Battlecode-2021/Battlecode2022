@@ -31,7 +31,6 @@ public class Builder extends Droid{
     public void run() throws GameActionException {
         int builderCount = 1;
         reassignArchon();
-        rc.setIndicatorString("archon: "+myArchonOrder);
         //System.out.println(Clock.getBytecodesLeft());
         startingBit = 2*myArchonOrder;
         avoidCharge();
@@ -232,7 +231,6 @@ public class Builder extends Droid{
         if (k!=null) {
             rc.buildRobot(r, k);
             finishPrototype = rc.getLocation().add(k);
-            //rc.setIndicatorString("prototype");
             if (r == RobotType.WATCHTOWER) addTowers();
             else addLabs();
             return true;
