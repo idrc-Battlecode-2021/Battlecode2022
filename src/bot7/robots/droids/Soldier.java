@@ -43,6 +43,7 @@ public class Soldier extends Droid{
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
         stayAlive();
+        //chase();
         //rc.setIndicatorString(shouldRun+"");
         if(shouldRun)return;
         // update shared array
@@ -90,7 +91,7 @@ public class Soldier extends Droid{
             if (rc.canSenseLocation(target) && rc.getLocation().isWithinDistanceSquared(target, 8)){
                 reachedLocation = true;
             }
-            else if (rc.isActionReady()){
+            else if (rc.isMovementReady()){
                 soldierMove(target);
             }
         }
@@ -101,7 +102,9 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(43,0);
                 }
             }
-            soldierMove(target);
+            if (rc.isMovementReady()){
+                soldierMove(target);
+            }
         }else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.getLocation().distanceSquaredTo(target)<20){
@@ -109,7 +112,7 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(55,0);
                 }
             }
-            if (rc.isActionReady()){
+            if (rc.isMovementReady()){
                 soldierMove(target);
             }
         }else if (hasMapLocation(41)){
@@ -119,7 +122,7 @@ public class Soldier extends Droid{
                     rc.writeSharedArray(41,0);
                 }
             }
-            if (rc.isActionReady()){
+            if (rc.isMovementReady()){
                 soldierMove(target);
             }
         } else{
@@ -127,7 +130,9 @@ public class Soldier extends Droid{
                 return;
             }
             if(enemyArchon !=null){
-                soldierMove(enemyArchon);
+                if (rc.isMovementReady()){
+                    soldierMove(enemyArchon);
+                }
             }
             MapLocation [] all = rc.getAllLocationsWithinRadiusSquared(myLocation, 20);
             for (int i = all.length; --i>=0;){
@@ -221,7 +226,9 @@ public class Soldier extends Droid{
         if(rc.getHealth()>10)return;
         rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
-        soldierMove(archonLoc);
+        if (rc.isMovementReady()){
+            soldierMove(archonLoc);
+        }
     }
 
     private void soldierMove(MapLocation target) throws GameActionException {
@@ -231,5 +238,11 @@ public class Soldier extends Droid{
         }else{
             intermediateMove(target);
         }
+    }
+    public void chase() throws GameActionException{
+        RobotInfo [] r = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        if(r.length==0) return;
+        Direction d = rc.getLocation().directionTo(r[0].getLocation());
+        tryMoveMultiple(d);
     }
 }

@@ -24,7 +24,9 @@ public abstract class Robot {
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
-    //protected
+    protected ArrayList<MapLocation> xflip = new ArrayList<>();
+    protected ArrayList<MapLocation> yflip = new ArrayList<>();
+    protected ArrayList<MapLocation> rotate = new ArrayList<>();
     //OLD Movement Method Fields
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
@@ -1113,17 +1115,16 @@ public abstract class Robot {
     public void possibleArchonLocs() throws GameActionException{
         MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         int centerX = center.x, centerY=center.y;
-        ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
         for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
-            if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
+            if (!enemyArchons.contains(new MapLocation(2*centerX-x, y))){
                 enemyArchons.add(new MapLocation(2*centerX -x, y));
             }
-            if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
+            if (!enemyArchons.contains(new MapLocation(x, 2*centerY-y))){
                 enemyArchons.add(new MapLocation( x, 2*centerY-y));
             }
-            if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
+            if (!enemyArchons.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
                 enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
             }
         }
