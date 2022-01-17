@@ -1310,5 +1310,10 @@ public abstract class Robot {
             yflip.add(new MapLocation(x, 2 * centerY - y));
             rotate.add(new MapLocation(2 * centerX - x, 2 * centerY - y));
         }
+        for (MapLocation m: myArchons){
+            xflip.remove(m);
+            yflip.remove(m);
+            rotate.remove(m);
+        }
     }
 }

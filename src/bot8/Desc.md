@@ -1,8 +1,9 @@
-# Bot5_JJ8
+# Bot8
 
-Bot5_SL but with an altered pathfinding algorithm
-- uses doubles rather than ints
+Bot5_JJ8 
 
+archon repairs if it can't build any troops because of checkbuildstatus()
+set cost to appropriate value before checkbuildstatus() in archon
 
 - 31: Soldier Healing
 - 32: Solider Healing
