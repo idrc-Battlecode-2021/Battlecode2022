@@ -254,7 +254,7 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
-                checkMiners();
+                checkMiners(); //may end up forcing miners to the edge of the map
                 if(!tryMoveMultipleNew()){
                    tryMoveMultiple(initDirection);
                 }
@@ -397,7 +397,7 @@ public class Miner extends Droid{
         return false;
     }
 
-    public void checkMiners() throws GameActionException{
+    public void checkMiners() { //Repel against other miners
         int momentumVectorX = initDirection.getDeltaX();
         int momentumVectorY = initDirection.getDeltaY();
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,myTeam);
@@ -410,7 +410,7 @@ public class Miner extends Droid{
         if(momentumVectorX != 0 || momentumVectorY != 0){
             updateDirection(selectDirection(momentumVectorX,momentumVectorY));
         }
-        
+
     }
 }
 
