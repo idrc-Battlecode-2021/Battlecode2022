@@ -205,10 +205,12 @@ public class Soldier extends Droid{
         }
         if (net_health>0){
             shouldRun=true;
-            if(rc.canAttack(m))
-                rc.attack(m);
-            if (rc.isMovementReady()){
-                tryMoveMultiple(myLocation.directionTo(m).opposite());
+            if (m!=null){
+                if(rc.canAttack(m))
+                    rc.attack(m);
+                if (rc.isMovementReady()){
+                    tryMoveMultiple(myLocation.directionTo(m).opposite());
+                }
             }
         }
         else{

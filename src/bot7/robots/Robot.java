@@ -1118,16 +1118,10 @@ public abstract class Robot {
         for (MapLocation m: myArchons){
             int x = m.x;
             int y = m.y;
-            if (!enemyArchons.contains(new MapLocation(2*centerX-x, y))){
-                enemyArchons.add(new MapLocation(2*centerX -x, y));
+            xflip.add(new MapLocation(2*centerX -x, y));
+            yflip.add(new MapLocation( x, 2*centerY-y));
+            rotate.add(new MapLocation(2*centerX -x, 2*centerY-y));
 
-            }
-            if (!enemyArchons.contains(new MapLocation(x, 2*centerY-y))){
-                enemyArchons.add(new MapLocation( x, 2*centerY-y));
-            }
-            if (!enemyArchons.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
-                enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
-            }
         }
         Set<MapLocation> s = new LinkedHashSet<MapLocation>();
         s.addAll(enemyArchons);
