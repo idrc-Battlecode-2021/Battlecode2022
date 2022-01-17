@@ -22,7 +22,7 @@ public abstract class Robot {
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> xflip = new ArrayList<MapLocation>();
     protected ArrayList<MapLocation> yflip = new ArrayList<>();
-    protected ArrayList<MapLocation> rotate = new ArrayList<>
+    protected ArrayList<MapLocation> rotate = new ArrayList<>();
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
