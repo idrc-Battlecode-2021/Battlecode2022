@@ -8,8 +8,8 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private MapLocation target;
-    private int exploreDirIndex;
     private int targetType = 0;
+    private int momentumVectorX,momentumVectorY;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
     public Miner(RobotController rc) {
@@ -20,11 +20,10 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         parseAnomalies();
         target = null;
-        //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
-        //exploreDirIndex = (int)(8*Math.random());
-        //tryMoveMultipleNew();
         viewResources();
         detectArchon();
+        momentumVectorX = initDirection.getDeltaX();
+        momentumVectorY = initDirection.getDeltaY();
     }
 
     @Override
@@ -371,13 +370,13 @@ public class Miner extends Droid{
         if(robots.length > 0){
             rc.writeSharedArray(42,1);
             int xMove = 0, yMove = 0;
-            for (RobotInfo robot : robots){
-                switch(robot.getType()){
+            for (int i = robots.length; --i>=0;){
+                switch(robots[i].getType()){
                     case SAGE:
                     case ARCHON:
                     case SOLDIER:
                     case WATCHTOWER:
-                        switch (myLocation.directionTo(robot.getLocation())){
+                        switch (myLocation.directionTo(robots[i].getLocation())){
                             case EAST:      xMove--;                break;
                             case WEST:      xMove++;                break;
                             case NORTH:                 yMove--;    break;
@@ -398,6 +397,17 @@ public class Miner extends Droid{
 
         }
         return false;
+    }
+
+    public MapLocation checkMiners() throws GameActionException{
+        RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,myTeam);
+        for(int i = nearbyBots.length; --i>=0;){
+            if(nearbyBots[i].getType()==RobotType.MINER){
+                momentumVectorX += nearbyBots[i].getLocation().x-myLocation.x;
+                momentumVectorY += nearbyBots[i].getLocation().y-myLocation.y;
+            }
+        }
+        return null;
     }
 }
 

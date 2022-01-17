@@ -56,7 +56,8 @@ public class Soldier extends Droid{
         if(healCheck == 0 || healCheck == rc.getID()){
             retreat();
             if(shouldHeal){
-                selectPriorityTarget();
+                priorityTarget();
+                //selectPriorityTarget();
                 return;
             }
         }

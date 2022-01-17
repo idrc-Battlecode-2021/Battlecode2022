@@ -1029,6 +1029,194 @@ public abstract class Robot {
         
     }
 
+    public MapLocation priorityTarget() throws GameActionException {
+        //returns location of target
+        //returns own location if none
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
+        RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
+        int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
+        ArrayList<MapLocation> targets = new ArrayList<MapLocation>();
+        int bytecode = Clock.getBytecodeNum();
+        MapLocation target = rc.getLocation();
+        for (RobotInfo r : enemyRobots) {
+            RobotType type = r.getType();
+            switch (type){
+                case ARCHON:
+                    if (archon == null || archon.getHealth() > r.getHealth()) {
+                        archon = r;
+                        damages[0]=rc.getType().getDamage(rc.getLevel());
+                        for (RobotInfo robot: myRobots){
+                            if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
+                                damages[0]+=(robot.getType().getDamage(robot.getLevel()))/cooldown;
+                            }
+                        }
+                    }
+                    break;
+                case SAGE:
+                    if (sage == null || sage.getHealth() > r.getHealth()) {
+                        sage = r;
+                        damages[1]=rc.getType().getDamage(rc.getLevel());
+                        for (RobotInfo robot: myRobots){
+                            if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
+                                damages[1]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                            }
+                        }
+                    }
+                    break;
+                case LABORATORY:
+                    if (lab == null || lab.getHealth() > r.getHealth()) {
+                        lab = r;
+                        damages[2]=rc.getType().getDamage(rc.getLevel());
+                        for (RobotInfo robot: myRobots){
+                            if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
+                                damages[2]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                            }
+                        }
+                    }
+                    break;
+                case WATCHTOWER:
+                    if (watchtower == null || watchtower.getHealth() > r.getHealth()) {
+                        watchtower = r;
+                        damages[3]=rc.getType().getDamage(rc.getLevel());
+                        for (RobotInfo robot: myRobots){
+                            if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
+                                damages[3]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                            }
+                        }
+                    }
+                    break;
+                case SOLDIER:
+                    if (soldier == null || soldier.getHealth() > r.getHealth()) {
+                        soldier = r;
+                        damages[4]=rc.getType().getDamage(rc.getLevel());
+                        for (RobotInfo robot: myRobots){
+                            if (robot.getLocation().distanceSquaredTo(r.getLocation())<=robot.getType().actionRadiusSquared){
+                                int cooldown = 1+rc.senseRubble(robot.getLocation())/10;
+                                damages[4]+=robot.getType().getDamage(robot.getLevel())/cooldown;
+                            }
+                        }
+                    }
+                    break;
+                case MINER:
+                    if (miner == null || miner.getHealth() > r.getHealth()) {
+                        miner = r;
+                    }
+                    break;
+                case BUILDER:
+                    if (builder == null || builder.getHealth() > r.getHealth()) {
+                        builder = r;
+                    }
+                    break;
+            }
+        }
+        int archonTurns = Integer.MAX_VALUE, sageTurns = Integer.MAX_VALUE, labTurns = Integer.MAX_VALUE,
+                watchtowerTurns = Integer.MAX_VALUE, soldierTurns = Integer.MAX_VALUE;
+        int[] turns = {archonTurns, sageTurns, labTurns, watchtowerTurns, soldierTurns};
+        //MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
+        if (archon!=null){
+            turns[0] = archon.getHealth()/damages[0];
+        }
+        if (sage!=null){
+            turns[1] = sage.getHealth()/damages[1];
+        }
+        if (lab!=null){
+            turns[2] = lab.getHealth()/damages[2];
+        }
+        if (watchtower!=null){
+            turns[3] = watchtower.getHealth()/damages[3];
+        }
+        if (soldier!=null){
+            turns[4] = soldier.getHealth()/damages[4];
+        }
+        if (archonTurns<=10){
+            targets.add(archon.getLocation());
+            target = archon.getLocation();
+        }
+        else if (labTurns<=5){
+            targets.add(lab.getLocation());
+            target = lab.getLocation();
+        }
+        else if (sageTurns<=5){
+            targets.add(sage.getLocation());
+            target = sage.getLocation();
+        }
+        else if (watchtowerTurns<=5){
+            targets.add(watchtower.getLocation());
+            target = watchtower.getLocation();
+        }
+        else if (soldierTurns<=5){
+            targets.add(soldier.getLocation());
+            target = soldier.getLocation();
+        }
+        else{
+            int minIndex = 0;
+            for (int i=1;i<5;i++){
+                if (turns[i]<turns[minIndex]){
+                    minIndex = i;
+                }
+            }
+            if (turns[minIndex]<Integer.MAX_VALUE){
+                if (turns[minIndex]>25){
+                    if (miner!=null){
+                        target = miner.getLocation();
+                        //moveToLowPassability();
+                        tryAttack(target);
+                        rc.setIndicatorString("target: "+target);
+                        return target;
+                    }
+                    else if (builder!=null){
+                        target = builder.getLocation();
+                        //moveToLowPassability();
+                        tryAttack(target);
+                        rc.setIndicatorString("target: "+target);
+                        return target;
+                    }
+                }
+                switch(minIndex){
+                    case 0:
+                        target = archon.getLocation();
+                        break;
+                    case 1:
+                        target = sage.getLocation();
+                        break;
+                    case 2:
+                        target = lab.getLocation();
+                        break;
+                    case 3:
+                        target = watchtower.getLocation();
+                        break;
+                    case 4:
+                        target = soldier.getLocation();
+                        break;
+                }
+            }
+            else{
+                if (miner!=null){
+                    target = miner.getLocation();
+                }
+                else if (builder!=null){
+                    target = builder.getLocation();
+                }
+            }
+        }
+        //Maximum bytecode seems to be ~2000 on maptestsmall
+        if (target==null){
+            target=rc.getLocation();
+        }
+        if (target!=rc.getLocation()){
+            //moveToLowPassability();
+            tryAttack(target);
+        }
+        rc.setIndicatorString("target: "+target);
+        return target;
+
+    }
+
     public boolean moveToLowPassability() throws GameActionException{
         //TODO: doesn't guarantee that the target will be attacked
         //moves to lowest passability nearby
