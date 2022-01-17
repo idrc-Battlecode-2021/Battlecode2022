@@ -1,4 +1,4 @@
-package bot5_SL.robots.buildings;
+package bot7.robots.buildings;
 
 import battlecode.common.*;
 import java.util.*;

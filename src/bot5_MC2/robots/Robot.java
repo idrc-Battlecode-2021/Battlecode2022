@@ -1,7 +1,7 @@
 package bot5_MC2.robots;
 
 import battlecode.common.*;
-import bot5_MC2.util.Constants;
+import bot5_MC.util.Constants;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -934,23 +934,23 @@ public abstract class Robot {
         if (soldier!=null){
             turns[4] = soldier.getHealth()/damages[4];
         }
-        if (archonTurns<=10){
+        if (turns[0]<=10){
             targets.add(archon.getLocation());
             target = archon.getLocation();
         }
-        else if (labTurns<=5){
+        else if (turns[2]<=5){
             targets.add(lab.getLocation());
             target = lab.getLocation();
         }
-        else if (sageTurns<=5){
+        else if (turns[1]<=5){
             targets.add(sage.getLocation());
             target = sage.getLocation();
         }
-        else if (watchtowerTurns<=5){
+        else if (turns[3]<=5){
             targets.add(watchtower.getLocation());
             target = watchtower.getLocation();
         }
-        else if (soldierTurns<=5){
+        else if (turns[4]<=5){
             targets.add(soldier.getLocation());
             target = soldier.getLocation();
         }
@@ -962,7 +962,7 @@ public abstract class Robot {
                 }
             }
             if (turns[minIndex]<Integer.MAX_VALUE){
-                if (turns[minIndex]>15){
+                if (turns[minIndex]>25){
                     if (miner!=null){
                         target = miner.getLocation();
                         moveToLowPassability();
