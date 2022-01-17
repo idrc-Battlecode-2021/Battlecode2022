@@ -311,6 +311,7 @@ public class Archon extends Building{
         checkArchonsAlive();
         updateTroopCount();
         roundNum = rc.getRoundNum();
+        avoidFury();
         if (defense()){
             repair();
             indicatorString += " defense";
