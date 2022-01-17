@@ -1,6 +1,6 @@
-package bot5_JJ8.robots.droids;
+package bot5_JJ9.robots.droids;
 import battlecode.common.*;
-import bot5_JJ8.util.PathFindingSoldier;
+import bot5_JJ9.util.PathFindingSoldier;
 
 public class Soldier extends Droid{
     private MapLocation target = null;
@@ -39,6 +39,7 @@ public class Soldier extends Droid{
         prevLoc = myLocation;
     }
 
+    static boolean heal = true;
     @Override
     public void run() throws GameActionException {
         reassignArchon();
@@ -51,16 +52,21 @@ public class Soldier extends Droid{
         }
         broadcast();
         target = null;
-
+        RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
+        /*for(int i = nearbyBots.length; --i>=0;){
+            if(nearbyBots[i].getType()==RobotType.SOLDIER){
+                heal = false;
+                break;
+            }
+        }*/
         int healCheck = rc.readSharedArray(31+myArchonOrder);
-        if(healCheck == 0 || healCheck == rc.getID()){
+        if((healCheck == 0 && heal)|| healCheck == rc.getID()){
             retreat();
             if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
                 selectPriorityTarget();
                 return;
             }
         }
-        RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
@@ -105,11 +111,9 @@ public class Soldier extends Droid{
                 }
             }
         }else if(rc.senseNearbyRobots(2).length>2){
-            //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
-            //tryMoveMultiple(initDirection);
             MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
             int start = (int) (local.length * Math.random());
-            loop1: for (int i = start; i < start + local.length; i++) {
+            for (int i = start; i < start + local.length; i++) {
                 int j = i % local.length;
                 Direction dirTo = myLocation.directionTo(local[j]);
                 if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
@@ -124,12 +128,12 @@ public class Soldier extends Droid{
     }
 
     public void retreat() throws GameActionException{
-        if(rc.getHealth()>40){
+        if(rc.getHealth()>49){
             shouldHeal=false;
             rc.writeSharedArray(31+myArchonOrder,0);
             return;
         }
-        if(rc.getHealth()>15)return;
+        if(rc.getHealth()>25)return;
         rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
         soldierMove(archonLoc);
