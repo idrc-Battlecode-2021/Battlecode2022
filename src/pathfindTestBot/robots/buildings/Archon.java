@@ -1,4 +1,4 @@
-package bot5_JJ4.robots.buildings;
+package pathfindTestBot.robots.buildings;
 
 import battlecode.common.*;
 

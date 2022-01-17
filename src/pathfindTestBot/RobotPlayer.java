@@ -1,14 +1,14 @@
-package bot5_JJ4;
+package pathfindTestBot;
 
 import battlecode.common.*;
-import bot5_JJ4.robots.Robot;
-import bot5_JJ4.robots.buildings.Archon;
-import bot5_JJ4.robots.buildings.Lab;
-import bot5_JJ4.robots.buildings.Watchtower;
-import bot5_JJ4.robots.droids.Builder;
-import bot5_JJ4.robots.droids.Miner;
-import bot5_JJ4.robots.droids.Sage;
-import bot5_JJ4.robots.droids.Soldier;
+import pathfindTestBot.robots.Robot;
+import pathfindTestBot.robots.buildings.Archon;
+import pathfindTestBot.robots.buildings.Lab;
+import pathfindTestBot.robots.buildings.Watchtower;
+import pathfindTestBot.robots.droids.Builder;
+import pathfindTestBot.robots.droids.Miner;
+import pathfindTestBot.robots.droids.Sage;
+import pathfindTestBot.robots.droids.Soldier;
 
 public strictfp class RobotPlayer {
     static RobotController rc;

@@ -1,4 +1,4 @@
-package bot5_JJ4.util;
+package pathfindTestBot.util;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;

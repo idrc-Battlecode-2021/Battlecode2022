@@ -17,7 +17,7 @@ public class Archon extends Building{
 
     private static final int SURPLUS_THRESHOLD = 500;
 
-    private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
+    private static ArrayList<Direction> passableDirections = new ArrayList<>();
 
     private static String indicatorString = "";
 
@@ -127,14 +127,14 @@ public class Archon extends Building{
         //labBuild = rc.getMapHeight()/40+1;
 
         for (Direction d:Direction.allDirections()){
-            if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
+            if (!rc.onTheMap(rc.adjacentLocation(d)) || d==Direction.CENTER){
                 continue;
             }
             if (passableDirections.size()==0){
                 passableDirections.add(d);
                 continue;
             }
-            MapLocation location = rc.getLocation().add(d);
+            MapLocation location = rc.adjacentLocation(d);
             int rubble = rc.senseRubble(location);
             for (int i=0;i<=passableDirections.size();i++){
                 if (i==passableDirections.size()){
@@ -175,20 +175,6 @@ public class Archon extends Building{
             }
             if (rc.canBuildRobot(RobotType.SOLDIER,passableDirections.get(i))){
                 rc.buildRobot(RobotType.SOLDIER,passableDirections.get(i));
-            }
-        }
-        if (rc.isActionReady()){
-            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
-            int greatestHealthDifference = 0;
-            MapLocation location = null;
-            for (RobotInfo robot : robots){
-                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
-                    greatestHealthDifference=robot.getType().health-robot.getHealth();
-                    location = robot.getLocation();
-                }
-            }
-            if (location!=null && rc.canRepair(location)){
-                rc.repair(location);
             }
         }
         return true;
@@ -339,12 +325,6 @@ public class Archon extends Building{
         }
         */
         // START SPAWNING
-        int archonBuildStatus = rc.readSharedArray(11);
-        int diff = archonBuildStatus - archonOrder;
-        int cost = RobotType.MINER.buildCostLead;
-        RobotType type = RobotType.MINER;
-        indicatorString+=" miners";
-        if (!checkBuildStatus(diff, cost)) return;
         int mod = 4;
         if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
             mod = 5;
@@ -354,7 +334,20 @@ public class Archon extends Building{
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
             mod = 2;
         }
+        int archonBuildStatus = rc.readSharedArray(11);
+        int diff = archonBuildStatus - archonOrder;
+        int cost = RobotType.MINER.buildCostLead;
+        RobotType type = RobotType.MINER;
+        if (globalMinerCount>=6 && count%mod!=1){
+            cost = RobotType.SOLDIER.buildCostLead;
+            type = RobotType.SOLDIER;
+        }
+        if (!checkBuildStatus(diff, cost)){
+            repair();
+            return;
+        }
         if (globalMinerCount < 6 || count%mod == 1){
+            indicatorString+=" miners";
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
@@ -380,7 +373,10 @@ public class Archon extends Building{
             cost = RobotType.SOLDIER.buildCostLead;
             type = RobotType.SOLDIER;
             indicatorString += " soldiers";
-            if (!checkBuildStatus(diff, cost)) return;
+            if (!checkBuildStatus(diff, cost)) {
+                repair();
+                return;
+            }
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){

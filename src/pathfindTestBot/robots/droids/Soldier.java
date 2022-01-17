@@ -1,6 +1,6 @@
-package bot5_JJ4.robots.droids;
+package pathfindTestBot.robots.droids;
 import battlecode.common.*;
-import bot5_JJ4.util.PathFindingSoldier;
+import pathfindTestBot.util.PathFindingSoldier;
 
 public class Soldier extends Droid{
     private MapLocation target;

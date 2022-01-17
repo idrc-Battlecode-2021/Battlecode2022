@@ -1,5 +1,5 @@
-# bot5 JJ4
-Not A real bot, tests pathfinding for soldiers
+# pathfindTestBot
+Not A real bot, tests pathfinding for soldiers. Formerly called bot5_JJ4
 - 31: Soldier Healing
 - 32: Solider Healing
 - 33: Soldier Healing

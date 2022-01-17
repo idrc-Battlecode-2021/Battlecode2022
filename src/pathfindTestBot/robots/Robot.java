@@ -1,7 +1,7 @@
-package bot5_JJ4.robots;
+package pathfindTestBot.robots;
 
 import battlecode.common.*;
-import bot5_JJ4.util.Constants;
+import pathfindTestBot.util.Constants;
 
 import java.util.HashMap;
 import java.util.ArrayList;

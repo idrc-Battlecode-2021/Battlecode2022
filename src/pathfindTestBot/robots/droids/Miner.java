@@ -1,4 +1,4 @@
-package bot5_JJ4.robots.droids;
+package pathfindTestBot.robots.droids;
 
 import battlecode.common.*;
 

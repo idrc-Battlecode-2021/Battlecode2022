@@ -55,7 +55,7 @@ public class Soldier extends Droid{
         int healCheck = rc.readSharedArray(31+myArchonOrder);
         if(healCheck == 0 || healCheck == rc.getID()){
             retreat();
-            if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
+            if(shouldHeal){
                 selectPriorityTarget();
                 return;
             }
@@ -124,7 +124,7 @@ public class Soldier extends Droid{
     }
 
     public void retreat() throws GameActionException{
-        if(rc.getHealth()>40){
+        if(rc.getHealth()>47){
             shouldHeal=false;
             rc.writeSharedArray(31+myArchonOrder,0);
             return;
@@ -135,6 +135,7 @@ public class Soldier extends Droid{
         soldierMove(archonLoc);
     }
 
+    //Still sometimes moves back and forth between 3 tiles
     private void soldierMove(MapLocation target) throws GameActionException {
         Direction dir = pfs.getBestDir(target);
         MapLocation temp = myLocation;

@@ -1,7 +1,7 @@
-package bot5_JJ4.robots.buildings;
+package pathfindTestBot.robots.buildings;
 
 import battlecode.common.*;
-import bot5_JJ4.robots.Robot;
+import pathfindTestBot.robots.Robot;
 
 import java.util.ArrayList;
 
