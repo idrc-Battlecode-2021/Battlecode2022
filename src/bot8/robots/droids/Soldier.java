@@ -64,6 +64,7 @@ public class Soldier extends Droid{
                 return;
             }
         }
+        rc.setIndicatorString(indicatorString);
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting
