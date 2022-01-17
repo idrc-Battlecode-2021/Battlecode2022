@@ -1,6 +1,7 @@
 package bot5_SL.robots.buildings;
 
 import battlecode.common.*;
+import java.util.*;
 
 public class Archon extends Building{
     private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
@@ -15,6 +16,8 @@ public class Archon extends Building{
     private static int power = 0; // power of 16 that corresponds with archonOrder
 
     private static final int SURPLUS_THRESHOLD = 500;
+
+    private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
 
     private static String indicatorString = "";
 
@@ -122,6 +125,28 @@ public class Archon extends Building{
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
+
+        for (Direction d:Direction.allDirections()){
+            if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
+                continue;
+            }
+            if (passableDirections.size()==0){
+                passableDirections.add(d);
+                continue;
+            }
+            MapLocation location = rc.getLocation().add(d);
+            int rubble = rc.senseRubble(location);
+            for (int i=0;i<=passableDirections.size();i++){
+                if (i==passableDirections.size()){
+                    passableDirections.add(i,d);
+                    break;
+                }
+                if (rubble<rc.senseRubble(rc.getLocation().add(passableDirections.get(i)))){
+                    passableDirections.add(i,d);
+                    break;
+                }
+            }
+        }
     }
 
     // if enemies are near archon, spawn soldiers and inform other archons
@@ -129,7 +154,14 @@ public class Archon extends Building{
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
-        if (enemies.length>0){
+        boolean isEnemy = false;
+        for (RobotInfo r:enemies){
+            if (r.getType()==RobotType.SOLDIER || r.getType()==RobotType.SAGE || r.getType()==RobotType.WATCHTOWER){
+                isEnemy = true;
+                break;
+            }
+        }
+        if (isEnemy){
             rc.writeSharedArray(56, current - myValue*power + power);
         }
         else{
@@ -137,28 +169,26 @@ public class Archon extends Building{
             return false;
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
-            Direction directions[] = closestDirections(rc.getLocation().directionTo(enemies[0].getLocation()));
             int i=0;
-            while (!rc.canBuildRobot(RobotType.SOLDIER,directions[i]) && i<8){
+            while (i<passableDirections.size()-1 && !rc.canBuildRobot(RobotType.SOLDIER,passableDirections.get(i))){
                 i++;
             }
-            if (rc.canBuildRobot(RobotType.SOLDIER,directions[i])){
-                rc.buildRobot(RobotType.SOLDIER,directions[i]);
+            if (rc.canBuildRobot(RobotType.SOLDIER,passableDirections.get(i))){
+                rc.buildRobot(RobotType.SOLDIER,passableDirections.get(i));
             }
         }
-        return true;
-    }
-
-    public boolean canProceed() throws GameActionException {
-        // Check if other archons are trying to defend
-        int defenseStatus = rc.readSharedArray(56);
-        for (int i=0;i<16;i+=4){
-            if (rc.readSharedArray(63-i/4)==0){break;} // don't check archons that don't exist
-            int temp = (int)Math.pow(2,i);
-            int thisDefense = (defenseStatus % (temp*16))/temp;
-            if (thisDefense > 0){
-                indicatorString += "defense";
-                return false;
+        if (rc.isActionReady()){
+            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+            int greatestHealthDifference = 0;
+            MapLocation location = null;
+            for (RobotInfo robot : robots){
+                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
+                    greatestHealthDifference=robot.getType().health-robot.getHealth();
+                    location = robot.getLocation();
+                }
+            }
+            if (location!=null && rc.canRepair(location)){
+                rc.repair(location);
             }
         }
         return true;
@@ -257,6 +287,23 @@ public class Archon extends Building{
     }
     
     private int roundNum = 0;
+
+    public void repair() throws GameActionException {
+        if (rc.isActionReady()){
+            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+            int greatestHealthDifference = 0;
+            MapLocation location = null;
+            for (RobotInfo robot : robots){
+                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
+                    greatestHealthDifference=robot.getType().health-robot.getHealth();
+                    location = robot.getLocation();
+                }
+            }
+            if (location!=null && rc.canRepair(location)){
+                rc.repair(location);
+            }
+        }
+    }
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
@@ -266,15 +313,18 @@ public class Archon extends Building{
         updateTroopCount();
         roundNum = rc.getRoundNum();
         if (defense()){
+            repair();
             indicatorString += " defense";
             rc.setIndicatorString(indicatorString);
             return;
         }
+        /*
         if (!canProceed()){
             indicatorString += " can't proceed";
             rc.setIndicatorString(indicatorString);
             return;
         }
+        */
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
@@ -293,12 +343,11 @@ public class Archon extends Building{
         }
         if (globalMinerCount < 6 || count%mod == 1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
-                Direction directions[] = Direction.allDirections();
                 int i=0;
-                while (!rc.canBuildRobot(type,directions[(minerIndex+i)%8]) && i<8){
+                while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
                     i++;
                 }
-                if (rc.canBuildRobot(type,directions[(minerIndex+i)%8])){
+                if (rc.canBuildRobot(type,passableDirections.get(i))){
                     if (diff==0){
                         if (archonBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
@@ -307,9 +356,7 @@ public class Archon extends Building{
                             rc.writeSharedArray(11,archonBuildStatus+1);
                         }
                     }
-                    minerIndex = (minerIndex+i)%8;
-                    rc.buildRobot(type,directions[minerIndex]);
-                    minerIndex++;
+                    rc.buildRobot(type,passableDirections.get(i));
                     minerCount++;
                     globalMinerCount++;
                     count++;
@@ -322,12 +369,11 @@ public class Archon extends Building{
             indicatorString += " soldiers";
             if (!checkBuildStatus(diff, cost)) return;
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
-                Direction directions[] = Direction.allDirections();
                 int i=0;
-                while (!rc.canBuildRobot(type,directions[(soldierIndex+i)%8]) && i<8){
+                while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
                     i++;
                 }
-                if (rc.canBuildRobot(type,directions[(soldierIndex+i)%8])){
+                if (rc.canBuildRobot(type,passableDirections.get(i))){
                     if (diff==0){
                         if (archonBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
@@ -336,28 +382,13 @@ public class Archon extends Building{
                             rc.writeSharedArray(11,archonBuildStatus+1);
                         }
                     }
-                    soldierIndex = (soldierIndex+i)%8;
-                    rc.buildRobot(type,directions[soldierIndex]);
-                    soldierIndex++;
+                    rc.buildRobot(type,passableDirections.get(i));
                     soldierCount++;
                     count++;
                 }
             }
         }
-        if (rc.isActionReady()){
-            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
-            int greatestHealthDifference = 0;
-            MapLocation location = null;
-            for (RobotInfo robot : robots){
-                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
-                    greatestHealthDifference=robot.getType().health-robot.getHealth();
-                    location = robot.getLocation();
-                }
-            }
-            if (location!=null && rc.canRepair(location)){
-                rc.repair(location);
-            }
-        }
+        repair();
         rc.setIndicatorString(indicatorString);
     }
 }

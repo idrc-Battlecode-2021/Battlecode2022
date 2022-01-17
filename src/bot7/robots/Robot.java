@@ -1067,6 +1067,11 @@ public abstract class Robot {
     }
 
     public void checkSymmetry() throws GameActionException {
+        
+
+
+
+
         for (MapLocation m : enemyArchons) {
             if (rc.canSenseLocation(m)) {
                 for (int i = 0; i < enemyArchons.size(); i++) {

@@ -6,4 +6,3 @@ Uses bot5_SL
 - improve symmetry calculations
 - archon only defends if soldier/sage/watchtower is within vision range rather than any enemy troop
 - archon repairs while defending
-- soldiers use stay alive method to retreat
