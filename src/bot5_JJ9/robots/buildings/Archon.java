@@ -121,7 +121,9 @@ public class Archon extends Building{
         rc.writeSharedArray(63-archonOrder,rc.getID()+1);
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
-        minersForNearbyLead = (int) Math.ceil(rc.senseNearbyLocationsWithLead(34).length/9.0);
+        minersForNearbyLead = rc.senseNearbyLocationsWithLead(34).length;
+        if(minersForNearbyLead == 0)minersForNearbyLead = 6;
+        minersForNearbyLead = (int)Math.max(minersForNearbyLead*((double)(mapWidth*mapHeight)/(136*rc.getArchonCount()*2)),minersForNearbyLead);
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
@@ -357,7 +359,7 @@ public class Archon extends Building{
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
             mod = 2;
         }
-        if (globalMinerCount < 6 || count%mod == 1){
+        if (globalMinerCount < 6 || (count%mod == 1 && globalMinerCount < 25)){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){

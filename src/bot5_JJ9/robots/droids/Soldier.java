@@ -98,13 +98,13 @@ public class Soldier extends Droid{
             if(rc.isActionReady()){
                 soldierMove(target);
             }
-        } else if(rc.readSharedArray(40) == 1) {
+        } else /*if(rc.readSharedArray(40) == 1) 8*/{
             if(rc.isActionReady()){
                 if (!tryMoveMultipleNew()) {
                     tryMoveMultiple(initDirection);
                 }
             }
-        }else if(rc.senseNearbyRobots(2).length>2){
+        }/*else if(rc.senseNearbyRobots(2).length>2){
             //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
             //tryMoveMultiple(initDirection);
             MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
@@ -119,7 +119,7 @@ public class Soldier extends Droid{
                     break;
                 }
             }
-        }
+        }*/
         if(rc.isActionReady())selectPriorityTarget();
     }
 
