@@ -60,11 +60,14 @@ public class Soldier extends Droid{
                 return;
             }
         }
-        RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
+        RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
+            rc.setIndicatorString("attacking");
+            return;
         }
+        rc.setIndicatorString("not attacking");
         if (hasMapLocation(45)){
             MapLocation target = decode(45);
             soldierMove(target);
