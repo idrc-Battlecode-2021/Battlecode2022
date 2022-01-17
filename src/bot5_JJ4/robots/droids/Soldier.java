@@ -36,7 +36,21 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
-        tryMoveMultiple(pfs.getBestDir(new MapLocation(40,20)));
+        Direction dir;
+        if(hasMapLocation(43)){
+            MapLocation target = decode(43);
+            if(rc.canSenseLocation(target)){
+                RobotInfo[] a = rc.senseNearbyRobots(20,myTeam.opponent());
+                if(a.length == 0)rc.writeSharedArray(43,0);
+            }
+            dir = pfs.getBestDir(target);
+            selectPriorityTarget();
+        }else{
+            dir = pfs.getBestDir(new MapLocation(40,20));
+        }
+        tryMoveMultiple(dir);
+        rc.setIndicatorString(dir+"");
+        if(rc.getRoundNum() == 700)rc.resign();
     }
     public boolean isDefensive() throws GameActionException{
         RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());

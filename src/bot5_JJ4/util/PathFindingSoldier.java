@@ -9,6 +9,7 @@ public class PathFindingSoldier {
     private final RobotController rc;
     public PathFindingSoldier(RobotController rc){
         this.rc = rc;
+        lastLoc = rc.getLocation();
     }
 
     static MapLocation l30;  static Direction d30;  static int v30;  static int p30;  static int dist30; static int dSQ30;
@@ -80,6 +81,7 @@ public class PathFindingSoldier {
     static MapLocation l136; static Direction d136; static int v136; static int p136; static int dist136; static int dSQ136;
     static MapLocation l137; static Direction d137; static int v137; static int p137; static int dist137; static int dSQ137;
     static MapLocation l138; static Direction d138; static int v138; static int p138; static int dist138; static int dSQ138;
+    static MapLocation lastLoc = null;
 
     public Direction getBestDir(MapLocation target){
         l84  = rc.getLocation();                 v84 = 0;
@@ -1408,148 +1410,150 @@ public class PathFindingSoldier {
             dSQ84 = l84.distanceSquaredTo(target);
 
             dSQ30 = l30.distanceSquaredTo(target);
-            dist30 = (int) Math.sqrt(dSQ30) + v30;
-            if(bestEstimation > dist30 && dSQ84 > dSQ30){
+            dist30 = (int) Math.sqrt(dSQ30)*2 + v30;
+            if(bestEstimation > dist30 && !lastLoc.equals(l84.add(d30)) && dSQ84 > dSQ30){
                 bestEstimation = dist30;
                 ans = d30;
             }
             dSQ31 = l31.distanceSquaredTo(target);
-            dist31 = (int) Math.sqrt(dSQ31) + v31;
-            if(bestEstimation > dist31 && dSQ84 > dSQ31){
+            dist31 = dSQ31 + v31;
+            if(bestEstimation > dist31 && !lastLoc.equals(l84.add(d31)) && dSQ84 > dSQ31){
             	bestEstimation = dist31;
             	ans = d31;
             }
             dSQ32 = l32.distanceSquaredTo(target);
-            dist32 = (int) Math.sqrt(dSQ32) + v32;
-            if(bestEstimation > dist32 && dSQ84 > dSQ32){
+            dist32 = dSQ32 + v32;
+            if(bestEstimation > dist32 && !lastLoc.equals(l84.add(d32)) && dSQ84 > dSQ32){
             	bestEstimation = dist32;
             	ans = d32;
             }
             dSQ33 = l33.distanceSquaredTo(target);
-            dist33 = (int) Math.sqrt(dSQ33) + v33;
-            if(bestEstimation > dist33 && dSQ84 > dSQ33){
+            dist33 = dSQ33 + v33;
+            if(bestEstimation > dist33 && !lastLoc.equals(l84.add(d33)) && dSQ84 > dSQ33){
             	bestEstimation = dist33;
             	ans = d33;
             }
             dSQ34 = l34.distanceSquaredTo(target);
-            dist34 = (int) Math.sqrt(dSQ34) + v34;
-            if(bestEstimation > dist34 && dSQ84 > dSQ34){
+            dist34 = dSQ34 + v34;
+            if(bestEstimation > dist34 && !lastLoc.equals(l84.add(d34)) && dSQ84 > dSQ34){
             	bestEstimation = dist34;
             	ans = d34;
             }
             dSQ42 = l42.distanceSquaredTo(target);
-            dist42 = (int) Math.sqrt(dSQ42) + v42;
-            if(bestEstimation > dist42 && dSQ84 > dSQ42){
+            dist42 = dSQ42 + v42;
+            if(bestEstimation > dist42 && !lastLoc.equals(l84.add(d42)) && dSQ84 > dSQ42){
             	bestEstimation = dist42;
             	ans = d42;
             }
             dSQ48 = l48.distanceSquaredTo(target);
-            dist48 = (int) Math.sqrt(dSQ48) + v48;
-            if(bestEstimation > dist48 && dSQ84 > dSQ48){
+            dist48 = dSQ48 + v48;
+            if(bestEstimation > dist48 && !lastLoc.equals(l84.add(d48)) && dSQ84 > dSQ48){
             	bestEstimation = dist48;
             	ans = d48;
             }
             dSQ54 = l54.distanceSquaredTo(target);
-            dist54 = (int) Math.sqrt(dSQ54) + v54;
-            if(bestEstimation > dist54 && dSQ84 > dSQ54){
+            dist54 = dSQ54 + v54;
+            if(bestEstimation > dist54 && !lastLoc.equals(l84.add(d54)) && dSQ84 > dSQ54){
             	bestEstimation = dist54;
             	ans = d54;
             }
             dSQ62 = l62.distanceSquaredTo(target);
-            dist62 = (int) Math.sqrt(dSQ62) + v62;
-            if(bestEstimation > dist62 && dSQ84 > dSQ62){
+            dist62 = dSQ62 + v62;
+            if(bestEstimation > dist62 && !lastLoc.equals(l84.add(d62)) && dSQ84 > dSQ62){
             	bestEstimation = dist62;
             	ans = d62;
             }
             dSQ67 = l67.distanceSquaredTo(target);
-            dist67 = (int) Math.sqrt(dSQ67) + v67;
-            if(bestEstimation > dist67 && dSQ84 > dSQ67){
+            dist67 = dSQ67 + v67;
+            if(bestEstimation > dist67 && !lastLoc.equals(l84.add(d67)) && dSQ84 > dSQ67){
             	bestEstimation = dist67;
             	ans = d67;
             }
             dSQ75 = l75.distanceSquaredTo(target);
-            dist75 = (int) Math.sqrt(dSQ75) + v75;
-            if(bestEstimation > dist75 && dSQ84 > dSQ75){
+            dist75 = dSQ75 + v75;
+            if(bestEstimation > dist75 && !lastLoc.equals(l84.add(d75)) && dSQ84 > dSQ75){
             	bestEstimation = dist75;
             	ans = d75;
             }
             dSQ80 = l80.distanceSquaredTo(target);
-            dist80 = (int) Math.sqrt(dSQ80) + v80;
-            if(bestEstimation > dist80 && dSQ84 > dSQ80){
+            dist80 = dSQ80 + v80;
+            if(bestEstimation > dist80 && !lastLoc.equals(l84.add(d80)) && dSQ84 > dSQ80){
             	bestEstimation = dist80;
             	ans = d80;
             }
             dSQ88 = l88.distanceSquaredTo(target);
-            dist88 = (int) Math.sqrt(dSQ88) + v88;
-            if(bestEstimation > dist88 && dSQ84 > dSQ88){
+            dist88 = dSQ88 + v88;
+            if(bestEstimation > dist88 && !lastLoc.equals(l84.add(d88)) && dSQ84 > dSQ88){
             	bestEstimation = dist88;
             	ans = d88;
             }
             dSQ93 = l93.distanceSquaredTo(target);
-            dist93 = (int) Math.sqrt(dSQ93) + v93;
-            if(bestEstimation > dist93 && dSQ84 > dSQ93){
+            dist93 = dSQ93 + v93;
+            if(bestEstimation > dist93 && !lastLoc.equals(l84.add(d93)) && dSQ84 > dSQ93){
             	bestEstimation = dist93;
             	ans = d93;
             }
             dSQ101 = l101.distanceSquaredTo(target);
-            dist101 = (int) Math.sqrt(dSQ101) + v101;
-            if(bestEstimation > dist101 && dSQ84 > dSQ101){
+            dist101 = dSQ101 + v101;
+            if(bestEstimation > dist101 && !lastLoc.equals(l84.add(d101)) && dSQ84 > dSQ101){
             	bestEstimation = dist101;
             	ans = d101;
             }
             dSQ106 = l106.distanceSquaredTo(target);
-            dist106 = (int) Math.sqrt(dSQ106) + v106;
-            if(bestEstimation > dist106 && dSQ84 > dSQ106){
+            dist106 = dSQ106 + v106;
+            if(bestEstimation > dist106 && !lastLoc.equals(l84.add(d106)) && dSQ84 > dSQ106){
             	bestEstimation = dist106;
             	ans = d106;
             }
             dSQ114 = l114.distanceSquaredTo(target);
-            dist114 = (int) Math.sqrt(dSQ114) + v114;
-            if(bestEstimation > dist114 && dSQ84 > dSQ114){
+            dist114 = dSQ114 + v114;
+            if(bestEstimation > dist114 && !lastLoc.equals(l84.add(d114)) && dSQ84 > dSQ114){
             	bestEstimation = dist114;
             	ans = d114;
             }
             dSQ120 = l120.distanceSquaredTo(target);
-            dist120 = (int) Math.sqrt(dSQ120) + v120;
-            if(bestEstimation > dist120 && dSQ84 > dSQ120){
+            dist120 = dSQ120 + v120;
+            if(bestEstimation > dist120 && !lastLoc.equals(l84.add(d120)) && dSQ84 > dSQ120){
             	bestEstimation = dist120;
             	ans = d120;
             }
             dSQ126 = l126.distanceSquaredTo(target);
-            dist126 = (int) Math.sqrt(dSQ126) + v126;
-            if(bestEstimation > dist126 && dSQ84 > dSQ126){
+            dist126 = dSQ126 + v126;
+            if(bestEstimation > dist126 && !lastLoc.equals(l84.add(d126)) && dSQ84 > dSQ126){
             	bestEstimation = dist126;
             	ans = d126;
             }
             dSQ134 = l134.distanceSquaredTo(target);
-            dist134 = (int) Math.sqrt(dSQ134) + v134;
-            if(bestEstimation > dist134 && dSQ84 > dSQ134){
+            dist134 = dSQ134 + v134;
+            if(bestEstimation > dist134 && !lastLoc.equals(l84.add(d134)) && dSQ84 > dSQ134){
             	bestEstimation = dist134;
             	ans = d134;
             }
             dSQ135 = l135.distanceSquaredTo(target);
-            dist135 = (int) Math.sqrt(dSQ135) + v135;
-            if(bestEstimation > dist135 && dSQ84 > dSQ135){
+            dist135 = dSQ135 + v135;
+            if(bestEstimation > dist135 && !lastLoc.equals(l84.add(d135)) && dSQ84 > dSQ135){
             	bestEstimation = dist135;
             	ans = d135;
             }
             dSQ136 = l136.distanceSquaredTo(target);
-            dist136 = (int) Math.sqrt(dSQ136) + v136;
-            if(bestEstimation > dist136 && dSQ84 > dSQ136){
+            dist136 = dSQ136 + v136;
+            if(bestEstimation > dist136 && !lastLoc.equals(l84.add(d136)) && dSQ84 > dSQ136){
             	bestEstimation = dist136;
             	ans = d136;
             }
             dSQ137 = l137.distanceSquaredTo(target);
-            dist137 = (int) Math.sqrt(dSQ137) + v137;
-            if(bestEstimation > dist137 && dSQ84 > dSQ137){
+            dist137 = dSQ137 + v137;
+            if(bestEstimation > dist137 && !lastLoc.equals(l84.add(d137)) && dSQ84 > dSQ137){
             	bestEstimation = dist137;
             	ans = d137;
             }
             dSQ138 = l138.distanceSquaredTo(target);
-            dist138 = (int) Math.sqrt(dSQ138) + v138;
-            if(bestEstimation > dist138 && dSQ84 > dSQ138){
+            dist138 = dSQ138 + v138;
+            if(bestEstimation > dist138 && !lastLoc.equals(l84.add(d138)) && dSQ84 > dSQ138){
             	ans = d138;
             }
+
+            lastLoc = l84.add(ans);
             return ans;
 
         }catch(Exception e){
