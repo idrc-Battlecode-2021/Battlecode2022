@@ -198,7 +198,7 @@ public class Soldier extends Droid{
             m=ro.getLocation();
             counter++;
         }
-        RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+        RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam);
         for (RobotInfo ro:friends){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health=net_health-ro.getHealth();
