@@ -43,8 +43,6 @@ public class Soldier extends Droid{
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
         stayAlive();
-        //chase();
-        //rc.setIndicatorString(shouldRun+"");
         if(shouldRun)return;
         // update shared array
         if (rc.getRoundNum()%3==2){
@@ -200,9 +198,8 @@ public class Soldier extends Droid{
             m=ro.getLocation();
             counter++;
         }
-        //rc.setIndicatorString(counter+"");
         RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
-        for (RobotInfo ro:r){
+        for (RobotInfo ro:friends){
             if(ro.getType()==RobotType.SOLDIER)
                 net_health=net_health-ro.getHealth();
         }
@@ -210,7 +207,9 @@ public class Soldier extends Droid{
             shouldRun=true;
             if(rc.canAttack(m))
                 rc.attack(m);
-            tryMoveMultiple(myLocation.directionTo(m).opposite());
+            if (rc.isMovementReady()){
+                tryMoveMultiple(myLocation.directionTo(m).opposite());
+            }
         }
         else{
             shouldRun=false;
