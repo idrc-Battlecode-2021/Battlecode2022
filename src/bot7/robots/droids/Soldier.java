@@ -42,7 +42,7 @@ public class Soldier extends Droid{
         checkSymmetry();
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
-        stayAlive();
+        //stayAlive();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
