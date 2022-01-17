@@ -2,11 +2,9 @@
 
 copied from bot5_JJ8
 
-archons repair if checkbuildstatus is false
-
 soldiers
 when retreating they stay within action radius of archon
-retreats when health<23
+retreats when health<17
 stays until health>=49
 doesn't broadcast ID to array
 
