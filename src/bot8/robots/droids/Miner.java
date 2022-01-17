@@ -9,7 +9,7 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private MapLocation target;
     private int targetType = 0;
-    private int momentumVectorX,momentumVectorY;
+    protected int momentumVectorX,momentumVectorY;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
     public Miner(RobotController rc) {
@@ -399,7 +399,7 @@ public class Miner extends Droid{
         return false;
     }
 
-    public MapLocation checkMiners() throws GameActionException{
+    public void checkMiners() throws GameActionException{
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,myTeam);
         for(int i = nearbyBots.length; --i>=0;){
             if(nearbyBots[i].getType()==RobotType.MINER){
@@ -407,7 +407,16 @@ public class Miner extends Droid{
                 momentumVectorY += nearbyBots[i].getLocation().y-myLocation.y;
             }
         }
-        return null;
+        if(momentumVectorX < -10){
+            momentumVectorX = -10;
+        }else if(momentumVectorX > 10){
+            momentumVectorX = 10;
+        }
+        if(momentumVectorY < -10){
+            momentumVectorY = -10;
+        }else if(momentumVectorY > 10){
+            momentumVectorY = 10;
+        }
     }
 }
 

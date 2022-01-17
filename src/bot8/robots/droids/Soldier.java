@@ -133,6 +133,7 @@ public class Soldier extends Droid{
         if(rc.getHealth()>15)return;
         rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
+        rc.setIndicatorString("going to heal");
         soldierMove(archonLoc);
     }
 
