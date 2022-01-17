@@ -21,6 +21,7 @@ public abstract class Robot {
     protected int initialArchons;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> xflip = new ArrayList<MapLocation>();
+    protected ArrayList<MapLocation> enemyArchons = new ArrayList<>();
     protected ArrayList<MapLocation> yflip = new ArrayList<>();
     protected ArrayList<MapLocation> rotate = new ArrayList<>();
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
@@ -1299,7 +1300,6 @@ public abstract class Robot {
         }
         return returnLocs;
     }
-
     public void possibleArchonLocs() throws GameActionException {
         MapLocation center = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
         int centerX = center.x, centerY = center.y;
