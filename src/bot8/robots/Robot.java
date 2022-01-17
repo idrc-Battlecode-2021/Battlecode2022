@@ -20,7 +20,9 @@ public abstract class Robot {
     protected int mapWidth,mapHeight;
     protected int initialArchons;
     protected boolean archonWait = false;
-    protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
+    protected ArrayList <MapLocation> xflip = new ArrayList<MapLocation>();
+    protected ArrayList<MapLocation> yflip = new ArrayList<>();
+    protected ArrayList<MapLocation> rotate = new ArrayList<>
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
@@ -1166,14 +1168,14 @@ public abstract class Robot {
                         target = miner.getLocation();
                         //moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
+                        //rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
                         //moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
+                        //rc.setIndicatorString("target: "+target);
                         return target;
                     }
                 }
@@ -1298,30 +1300,15 @@ public abstract class Robot {
         return returnLocs;
     }
 
-    public void possibleArchonLocs() throws GameActionException{
-        MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-        int centerX = center.x, centerY=center.y;
-        ArrayList<MapLocation> enemyLocations = new ArrayList<MapLocation>();
-        for (MapLocation m: myArchons){
+    public void possibleArchonLocs() throws GameActionException {
+        MapLocation center = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
+        int centerX = center.x, centerY = center.y;
+        for (MapLocation m : myArchons) {
             int x = m.x;
             int y = m.y;
-            if (!enemyLocations.contains(new MapLocation(2*centerX-x, y))){
-                enemyArchons.add(new MapLocation(2*centerX -x, y));
-            }
-            if (!enemyLocations.contains(new MapLocation(x, 2*centerY-y))){
-                enemyArchons.add(new MapLocation( x, 2*centerY-y));
-            }
-            if (!enemyLocations.contains(new MapLocation(2*centerX-x, 2*centerY-y))){
-                enemyArchons.add(new MapLocation(2*centerX -x, 2*centerY-y));
-            }
-        }
-        Set<MapLocation> s = new LinkedHashSet<MapLocation>();
-        s.addAll(enemyArchons);
-        enemyArchons.clear();
-        enemyArchons.addAll(s);
-        Collections.sort(enemyArchons);
-        for (MapLocation m: myArchons){
-            enemyArchons.remove(m);
+            xflip.add(new MapLocation(2 * centerX - x, y));
+            yflip.add(new MapLocation(x, 2 * centerY - y));
+            rotate.add(new MapLocation(2 * centerX - x, 2 * centerY - y));
         }
     }
 }
