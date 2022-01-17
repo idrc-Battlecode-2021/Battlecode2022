@@ -1,4 +1,4 @@
-package bot5_JJ8.robots.buildings;
+package bot8_MC.robots.buildings;
 
 import battlecode.common.*;
 import java.util.*;
@@ -344,10 +344,6 @@ public class Archon extends Building{
         int cost = RobotType.MINER.buildCostLead;
         RobotType type = RobotType.MINER;
         indicatorString+=" miners";
-        if (!checkBuildStatus(diff, cost)) {
-            repair();
-            return;
-        }
         int mod = 4;
         if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
             mod = 5;
@@ -358,6 +354,10 @@ public class Archon extends Building{
             mod = 2;
         }
         if (globalMinerCount < 6 || count%mod == 1){
+            if (!checkBuildStatus(diff, cost)){
+                repair();
+                return;
+            }
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
