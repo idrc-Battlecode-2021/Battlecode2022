@@ -203,7 +203,7 @@ public class Soldier extends Droid{
             if(ro.getType()==RobotType.SOLDIER)
                 net_health=net_health-ro.getHealth();
         }
-        if (net_health>25){
+        if (net_health>0){
             shouldRun=true;
             if (m!=null){
                 if(rc.canAttack(m))

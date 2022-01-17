@@ -177,6 +177,20 @@ public class Archon extends Building{
                 rc.buildRobot(RobotType.SOLDIER,passableDirections.get(i));
             }
         }
+        if (rc.isActionReady()){
+            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+            int greatestHealthDifference = 0;
+            MapLocation location = null;
+            for (RobotInfo robot : robots){
+                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
+                    greatestHealthDifference=robot.getType().health-robot.getHealth();
+                    location = robot.getLocation();
+                }
+            }
+            if (location!=null && rc.canRepair(location)){
+                rc.repair(location);
+            }
+        }
         return true;
     }
 
@@ -273,6 +287,23 @@ public class Archon extends Building{
     }
     
     private int roundNum = 0;
+
+    public void repair() throws GameActionException {
+        if (rc.isActionReady()){
+            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+            int greatestHealthDifference = 0;
+            MapLocation location = null;
+            for (RobotInfo robot : robots){
+                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
+                    greatestHealthDifference=robot.getType().health-robot.getHealth();
+                    location = robot.getLocation();
+                }
+            }
+            if (location!=null && rc.canRepair(location)){
+                rc.repair(location);
+            }
+        }
+    }
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
@@ -282,6 +313,7 @@ public class Archon extends Building{
         updateTroopCount();
         roundNum = rc.getRoundNum();
         if (defense()){
+            repair();
             indicatorString += " defense";
             rc.setIndicatorString(indicatorString);
             return;
@@ -356,20 +388,7 @@ public class Archon extends Building{
                 }
             }
         }
-        if (rc.isActionReady()){
-            RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
-            int greatestHealthDifference = 0;
-            MapLocation location = null;
-            for (RobotInfo robot : robots){
-                if (robot.getMode() == RobotMode.DROID && robot.getType().health-robot.getHealth()>greatestHealthDifference){
-                    greatestHealthDifference=robot.getType().health-robot.getHealth();
-                    location = robot.getLocation();
-                }
-            }
-            if (location!=null && rc.canRepair(location)){
-                rc.repair(location);
-            }
-        }
+        repair();
         rc.setIndicatorString(indicatorString);
     }
 }
