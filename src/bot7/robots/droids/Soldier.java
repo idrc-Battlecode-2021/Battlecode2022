@@ -43,7 +43,6 @@ public class Soldier extends Droid{
         MapLocation enemyArchon = readSymmetry();
         avoidCharge();
         stayAlive();
-        if(shouldRun)return;
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -51,6 +50,7 @@ public class Soldier extends Droid{
             globalSoldierCount = rc.readSharedArray(3);
         }
         broadcast();
+        if(shouldRun)return;
         target = null;
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,rc.getTeam().opponent());
         int possibleLocation = rc.readSharedArray(12);
@@ -203,7 +203,7 @@ public class Soldier extends Droid{
             if(ro.getType()==RobotType.SOLDIER)
                 net_health=net_health-ro.getHealth();
         }
-        if (net_health>0){
+        if (net_health>25){
             shouldRun=true;
             if (m!=null){
                 if(rc.canAttack(m))
