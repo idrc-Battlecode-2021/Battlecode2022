@@ -41,6 +41,7 @@ public class Soldier extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        String indicatorString = "";
         reassignArchon();
         avoidCharge();
         // update shared array
@@ -53,11 +54,13 @@ public class Soldier extends Droid{
         target = null;
 
         int healCheck = rc.readSharedArray(31+myArchonOrder);
+        indicatorString+=" hc: "+healCheck;
         if(healCheck == 0 || healCheck == rc.getID()){
             retreat();
             if(shouldHeal){
                 priorityTarget();
                 //selectPriorityTarget();
+                rc.setIndicatorString(indicatorString+" going to heal");
                 return;
             }
         }
@@ -133,7 +136,6 @@ public class Soldier extends Droid{
         if(rc.getHealth()>15)return;
         rc.writeSharedArray(31+myArchonOrder,rc.getID());
         shouldHeal=true;
-        rc.setIndicatorString("going to heal");
         soldierMove(archonLoc);
     }
 
