@@ -154,7 +154,14 @@ public class Archon extends Building{
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
-        if (enemies.length>0){
+        boolean isEnemy = false;
+        for (RobotInfo r:enemies){
+            if (r.getType()==RobotType.SOLDIER || r.getType()==RobotType.SAGE || r.getType()==RobotType.WATCHTOWER){
+                isEnemy = true;
+                break;
+            }
+        }
+        if (isEnemy){
             rc.writeSharedArray(56, current - myValue*power + power);
         }
         else{

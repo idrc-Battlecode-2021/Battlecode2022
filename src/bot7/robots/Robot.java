@@ -24,6 +24,7 @@ public abstract class Robot {
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
+    //protected
     //OLD Movement Method Fields
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
