@@ -14,7 +14,7 @@ public class Soldier extends Droid{
     private boolean reachedLocation = false;
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
-    //private MapLocation centralArchon = new MapLocation(2000,2000);
+    private MapLocation centralArchon;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -35,13 +35,13 @@ public class Soldier extends Droid{
         corners[2]=new MapLocation(rc.getMapWidth(),0);
         corners[3]=new MapLocation(rc.getMapWidth(),rc.getMapHeight());
         defensive = isDefensive();
-        /*archonLocs = getArchonLocs();
+        archonLocs = getArchonLocs();
         for(int i = 0; i < archonLocs.length; i++){ //needs to start at 0
             if(archonLocs[i] == null)break;
             if(archonLocs[i].distanceSquaredTo(center) < centralArchon.distanceSquaredTo(center)){
                 centralArchon = archonLocs[i];
             }
-        }*/
+        }
     }
 
     @Override
