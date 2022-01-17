@@ -3,6 +3,7 @@ package bot8.robots.droids;
 import battlecode.common.*;
 import bot8.robots.Robot;
 import bot8.util.Constants;
+import scala.collection.parallel.ParIterableLike;
 
 import java.util.ArrayList;
 
@@ -130,109 +131,55 @@ public abstract class Droid extends Robot {
         }
         if(!rc.onTheMap(myLocation.add(initDirection))){
             int x = myLocation.x, y = myLocation.y;
-            if(this instanceof Miner){
-                ((Miner) this).momentumVectorX = 0;
-                switch (initDirection){
-                    case SOUTHWEST:
-                        if(x == 0){
-                            if(y == 0){
-                                updateDirection(Direction.NORTHEAST);
-                            }else{
-                                updateDirection(Direction.SOUTHEAST);
-                            }
+            switch (initDirection){
+                case SOUTHWEST:
+                    if(x == 0){
+                        if(y == 0){
+                            updateDirection(Direction.NORTHEAST);
                         }else{
-                            if(y == 0){
-                                updateDirection(Direction.NORTHWEST);
-                            }
-                        }break;
-                    case NORTHEAST:
-                        if(x == mapWidth-1){
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHWEST);
-                            }else{
-                                updateDirection(Direction.NORTHWEST);
-                            }
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }else{
+                        if(y == 0){
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }break;
+                case NORTHEAST:
+                    if(x == mapWidth-1){
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHWEST);
                         }else{
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHEAST);
-                            }
-                        }break;
-                    case NORTHWEST:
-                        if(x == 0){
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHEAST);
-                            }else{
-                                updateDirection(Direction.NORTHEAST);
-                            }
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }else{
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }break;
+                case NORTHWEST:
+                    if(x == 0){
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHEAST);
                         }else{
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHWEST);
-                            }
-                        }break;
-                    case SOUTHEAST:
-                        if(x == mapWidth-1){
-                            if(y == 0){
-                                updateDirection(Direction.NORTHWEST);
-                            }else{
-                                updateDirection(Direction.SOUTHWEST);
-                            }
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }else{
+                        if(y == mapHeight-1){
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }break;
+                case SOUTHEAST:
+                    if(x == mapWidth-1){
+                        if(y == 0){
+                            updateDirection(Direction.NORTHWEST);
                         }else{
-                            if(y == 0){
-                                updateDirection(Direction.NORTHEAST);
-                            }
-                        }break;
-                }
-            }else{
-                switch (initDirection){
-                    case SOUTHWEST:
-                        if(x == 0){
-                            if(y == 0){
-                                updateDirection(Direction.NORTHEAST);
-                            }else{
-                                updateDirection(Direction.SOUTHEAST);
-                            }
-                        }else{
-                            if(y == 0){
-                                updateDirection(Direction.NORTHWEST);
-                            }
-                        }break;
-                    case NORTHEAST:
-                        if(x == mapWidth-1){
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHWEST);
-                            }else{
-                                updateDirection(Direction.NORTHWEST);
-                            }
-                        }else{
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHEAST);
-                            }
-                        }break;
-                    case NORTHWEST:
-                        if(x == 0){
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHEAST);
-                            }else{
-                                updateDirection(Direction.NORTHEAST);
-                            }
-                        }else{
-                            if(y == mapHeight-1){
-                                updateDirection(Direction.SOUTHWEST);
-                            }
-                        }break;
-                    case SOUTHEAST:
-                        if(x == mapWidth-1){
-                            if(y == 0){
-                                updateDirection(Direction.NORTHWEST);
-                            }else{
-                                updateDirection(Direction.SOUTHWEST);
-                            }
-                        }else{
-                            if(y == 0){
-                                updateDirection(Direction.NORTHEAST);
-                            }
-                        }break;
-                }
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }else{
+                        if(y == 0){
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }break;
             }
         }
         if(priorityMoveNew2()) return true;

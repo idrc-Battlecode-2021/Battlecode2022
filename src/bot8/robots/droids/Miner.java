@@ -9,7 +9,6 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private MapLocation target;
     private int targetType = 0;
-    protected int momentumVectorX,momentumVectorY;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
     public Miner(RobotController rc) {
@@ -22,8 +21,6 @@ public class Miner extends Droid{
         target = null;
         viewResources();
         detectArchon();
-        momentumVectorX = initDirection.getDeltaX();
-        momentumVectorY = initDirection.getDeltaY();
     }
 
     @Override
@@ -257,6 +254,7 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
+                checkMiners();
                 if(!tryMoveMultipleNew()){
                    tryMoveMultiple(initDirection);
                 }
@@ -400,23 +398,19 @@ public class Miner extends Droid{
     }
 
     public void checkMiners() throws GameActionException{
+        int momentumVectorX = initDirection.getDeltaX();
+        int momentumVectorY = initDirection.getDeltaY();
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,myTeam);
         for(int i = nearbyBots.length; --i>=0;){
             if(nearbyBots[i].getType()==RobotType.MINER){
-                momentumVectorX += nearbyBots[i].getLocation().x-myLocation.x;
-                momentumVectorY += nearbyBots[i].getLocation().y-myLocation.y;
+                momentumVectorX -= nearbyBots[i].getLocation().x-myLocation.x;
+                momentumVectorY -= nearbyBots[i].getLocation().y-myLocation.y;
             }
         }
-        if(momentumVectorX < -10){
-            momentumVectorX = -10;
-        }else if(momentumVectorX > 10){
-            momentumVectorX = 10;
+        if(momentumVectorX != 0 || momentumVectorY != 0){
+            updateDirection(selectDirection(momentumVectorX,momentumVectorY));
         }
-        if(momentumVectorY < -10){
-            momentumVectorY = -10;
-        }else if(momentumVectorY > 10){
-            momentumVectorY = 10;
-        }
+        
     }
 }
 

@@ -1212,7 +1212,7 @@ public abstract class Robot {
             //moveToLowPassability();
             tryAttack(target);
         }
-        rc.setIndicatorString("target: "+target);
+        //rc.setIndicatorString("target: "+target);
         return target;
 
     }
