@@ -1559,7 +1559,7 @@ public class PathFindingSoldier {
     }
 
     //If too much bytecode, remove this method and directly put the switch statement into every if statement
-    private int turnsToMove(MapLocation loc) throws GameActionException { //make sure these are actually right
+    private int turnsToMove(MapLocation loc) throws GameActionException {
         switch(rc.senseRubble(loc)){
             case 0: case 1: case 2: case 3: return 2;
             case 4: case 5: case 6: case 7: case 8: case 9: return 3;
@@ -1583,68 +1583,27 @@ public class PathFindingSoldier {
 
     private int turnsToMoveMiner(MapLocation loc) throws GameActionException {//Edit to make into miner
         switch(rc.senseRubble(loc)){
-            case 0: case 1: case 2: case 3: case 4: return 2;
-            case 5: case 6: case 7: case 8: case 9: return 3;
-            case 10: case 11: case 12: case 13: case 14: case 15: return 4;
-            case 16: case 17: case 18: case 19: case 20: case 21: return 5;
-            case 22: case 23: case 24: case 25: case 26: case 27: case 28: return 6;
-            case 29: case 30: case 31: case 32: case 33: case 34: return 7;
-            case 35: case 36: case 37: case 38: case 39: case 40: return 8;
-            case 41: case 42: case 43: case 44: case 45: case 46: return 9;
-            case 47: case 48: case 49: case 50: case 51: case 52: case 53: return 10;
-            case 54: case 55: case 56: case 57: case 58: case 59: return 11;
-            case 60: case 61: case 62: case 63: case 64: case 65: return 12;
-            case 66: case 67: case 68: case 69: case 70: case 71: return 13;
-            case 72: case 73: case 74: case 75: case 76: case 77: case 78: return 14;
-            case 79: case 80: case 81: case 82: case 83: case 84: return 15;
-            case 85: case 86: case 87: case 88: case 89: case 90: return 16;
-            case 91: case 92: case 93: case 94: case 95: case 96: return 17;
-            default: return 18;
+            case 0: return 2;
+            case 1: case 2: case 3: case 4: case 5: return 3;
+            case 6: case 7: case 8: case 9: case 10: return 4;
+            case 11: case 12: case 13: case 14: case 15: return 5;
+            case 16: case 17: case 18: case 19: case 20: return 6;
+            case 21: case 22: case 23: case 24: case 25: return 7;
+            case 26: case 27: case 28: case 29: case 30: return 8;
+            case 31: case 32: case 33: case 34: case 35: return 9;
+            case 36: case 37: case 38: case 39: case 40: return 10;
+            case 41: case 42: case 43: case 44: case 45: return 11;
+            case 46: case 47: case 48: case 49: case 50: return 12;
+            case 51: case 52: case 53: case 54: case 55: return 13;
+            case 56: case 57: case 58: case 59: case 60: return 14;
+            case 61: case 62: case 63: case 64: case 65: return 15;
+            case 66: case 67: case 68: case 69: case 70: return 16;
+            case 71: case 72: case 73: case 74: case 75: return 17;
+            case 76: case 77: case 78: case 79: case 80: return 18;
+            case 81: case 82: case 83: case 84: case 85: return 19;
+            case 86: case 87: case 88: case 89: case 90: return 20;
+            case 91: case 92: case 93: case 94: case 95: return 21;
+            default: return 22;
         }
     }
 }
-/*
- * Test different turnsToMove to see if they are correct
- * Soldier
- *
-    1 1
-    8 2
-    14 3
-    20 4
-    26 5
-    33 6
-    39 7
-    45 8
-    51 9
-    58 10
-    64 11
-    70 12
-    76 13
-    83 14
-    89 15
-    95 16
-    100 17
- * Miner
- *
-    4 2
-    9 3
-    14 4
-    19 5
-    24 6
-    29 7
-    34 8
-    39 9
-    44 10
-    49 11
-    54 12
-    59 13
-    64 14
-    69 15
-    74 16
-    79 17
-    84 18
-    89 19
-    94 20
-    99 21
-    100 22
- */
