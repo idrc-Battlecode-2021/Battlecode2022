@@ -2,6 +2,8 @@ package bot5_JJ9.robots.droids;
 import battlecode.common.*;
 import bot5_JJ9.util.PathFindingSoldier;
 
+import java.util.HashSet;
+
 public class Soldier extends Droid{
     private MapLocation target = null;
     private MapLocation archonLoc;
@@ -10,7 +12,6 @@ public class Soldier extends Droid{
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
-    private MapLocation prevLoc;
     private PathFindingSoldier pfs;
     public Soldier(RobotController rc) {
         super(rc);
@@ -36,7 +37,6 @@ public class Soldier extends Droid{
             y += archonLocs[i].y;
         }
         centralArchon = new MapLocation(x/archonCount,y/archonCount);
-        prevLoc = myLocation;
     }
 
     static boolean heal = true;
@@ -139,16 +139,22 @@ public class Soldier extends Droid{
         soldierMove(archonLoc);
     }
 
+    private MapLocation pastTarget = null;
+    private HashSet<MapLocation> pastLocations = new HashSet<>();
     private void soldierMove(MapLocation target) throws GameActionException {
+        if(target != pastTarget){
+            pastTarget = target;
+            pastLocations = new HashSet<>();
+        }
         Direction dir = pfs.getBestDir(target);
         MapLocation temp = myLocation;
-        if(dir != null && rc.canMove(dir) && !myLocation.add(dir).equals(prevLoc)){
+        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
             if(tryMoveMultiple(dir)){
-                prevLoc = temp;
+                pastLocations.add(temp);
             }
         }else{
+            pastLocations.add(temp);
             intermediateMove(target);
-            prevLoc = temp;
         }
     }
 }
