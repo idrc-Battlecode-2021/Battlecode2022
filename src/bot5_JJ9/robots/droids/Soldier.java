@@ -142,7 +142,7 @@ public class Soldier extends Droid{
     private MapLocation pastTarget = null;
     private HashSet<MapLocation> pastLocations = new HashSet<>();
     private void soldierMove(MapLocation target) throws GameActionException {
-        if(target != pastTarget){
+        if(!target.equals(pastTarget)){
             pastTarget = target;
             pastLocations = new HashSet<>();
         }
