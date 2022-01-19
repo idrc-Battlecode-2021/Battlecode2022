@@ -1561,8 +1561,8 @@ public class PathFindingSoldier {
     //If too much bytecode, remove this method and directly put the switch statement into every if statement
     private int turnsToMove(MapLocation loc) throws GameActionException {
         switch(rc.senseRubble(loc)){
-            case 0: case 1: case 2: case 3: return 2;
-            case 4: case 5: case 6: case 7: case 8: case 9: return 3;
+            case  0: case  1: case  2: case  3: return 2;
+            case  4: case  5: case  6: case  7: case  8: case  9: return 3;
             case 10: case 11: case 12: case 13: case 14: case 15: return 4;
             case 16: case 17: case 18: case 19: case 20: case 21: return 5;
             case 22: case 23: case 24: case 25: case 26: case 27: case 28: return 6;
@@ -3060,14 +3060,14 @@ public class PathFindingSoldier {
 
     private int turnsToMoveMiner(MapLocation loc) throws GameActionException {//Edit to make into miner
         switch(rc.senseRubble(loc)){
-            case 0: return 2;
-            case 1: case 2: case 3: case 4: case 5: return 3;
-            case 6: case 7: case 8: case 9: case 10: return 4;
-            case 11: case 12: case 13: case 14: case 15: return 5;
-            case 16: case 17: case 18: case 19: case 20: return 6;
-            case 21: case 22: case 23: case 24: case 25: return 7;
-            case 26: case 27: case 28: case 29: case 30: return 8;
-            case 31: case 32: case 33: case 34: case 35: return 9;
+            case  0:                                     return  2;
+            case  1: case  2: case  3: case  4: case  5: return  3;
+            case  6: case  7: case  8: case  9: case 10: return  4;
+            case 11: case 12: case 13: case 14: case 15: return  5;
+            case 16: case 17: case 18: case 19: case 20: return  6;
+            case 21: case 22: case 23: case 24: case 25: return  7;
+            case 26: case 27: case 28: case 29: case 30: return  8;
+            case 31: case 32: case 33: case 34: case 35: return  9;
             case 36: case 37: case 38: case 39: case 40: return 10;
             case 41: case 42: case 43: case 44: case 45: return 11;
             case 46: case 47: case 48: case 49: case 50: return 12;
@@ -3080,7 +3080,7 @@ public class PathFindingSoldier {
             case 81: case 82: case 83: case 84: case 85: return 19;
             case 86: case 87: case 88: case 89: case 90: return 20;
             case 91: case 92: case 93: case 94: case 95: return 21;
-            default: return 22;
+            default:                                     return 22;
         }
     }
 }
