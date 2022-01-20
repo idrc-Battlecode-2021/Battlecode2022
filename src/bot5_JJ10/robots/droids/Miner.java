@@ -268,14 +268,11 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
-                if(Clock.getBytecodesLeft() > 6000){
-                    minerExplore();
-                }else{
-                    checkMiners();
-                    if(!tryMoveMultipleNew()){
-                        tryMoveMultiple(initDirection);
-                    }
+                checkMiners();
+                if(!tryMoveMultipleNew()){
+                    tryMoveMultiple(initDirection);
                 }
+
                 if(!prev.equals(myLocation)) viewResources();
             }
         }
