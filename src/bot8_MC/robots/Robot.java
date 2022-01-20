@@ -978,14 +978,14 @@ public abstract class Robot {
                         target = miner.getLocation();
                         moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
+                        //rc.setIndicatorString("target: "+target);
                         return target;
                     }
                     else if (builder!=null){
                         target = builder.getLocation();
                         moveToLowPassability();
                         tryAttack(target);
-                        rc.setIndicatorString("target: "+target);
+                        //rc.setIndicatorString("target: "+target);
                         return target;
                     }
                 }
@@ -1024,7 +1024,7 @@ public abstract class Robot {
             moveToLowPassability();
             tryAttack(target);
         }
-        rc.setIndicatorString("target: "+target);
+        //rc.setIndicatorString("target: "+target);
         return target;
         
     }
@@ -1051,6 +1051,7 @@ public abstract class Robot {
             return false;
         }
         if(rc.canMove(lowest)){
+            rc.setIndicatorString(lowest.toString());
             rc.move(lowest);
             myLocation = rc.getLocation();
         }
