@@ -1,8 +1,6 @@
-package bot9.robots.droids;
+package bot5_JJ8.robots.droids;
 import battlecode.common.*;
-import bot9.util.PathFindingSoldier;
-
-import java.util.HashSet;
+import bot5_JJ8.util.PathFindingSoldier;
 
 public class Soldier extends Droid{
     private MapLocation target = null;
@@ -12,6 +10,7 @@ public class Soldier extends Droid{
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
+    private MapLocation prevLoc;
     private PathFindingSoldier pfs;
     public Soldier(RobotController rc) {
         super(rc);
@@ -28,7 +27,6 @@ public class Soldier extends Droid{
                 archonLoc = ro.getLocation();
             }
         }
-        detectArchon();
         int archonCount = rc.getArchonCount();
         archonLocs = getArchonLocs();
         int x = 0, y = 0;
@@ -38,34 +36,12 @@ public class Soldier extends Droid{
             y += archonLocs[i].y;
         }
         centralArchon = new MapLocation(x/archonCount,y/archonCount);
-    }
-
-    public void setArchonLocation() throws GameActionException{
-        int location = 0;
-        switch (myArchonOrder){
-            case 0:
-                location = rc.readSharedArray(15);
-                break;
-            case 1:
-                location = rc.readSharedArray(16);
-                break;
-            case 2:
-                location = rc.readSharedArray(49);
-                break;
-            case 3:
-                location = rc.readSharedArray(50);
-                break;
-        }
-        int x = location%256;
-        int y = location/256;
-        archonLoc = new MapLocation(x,y);
-        rc.setIndicatorString(myArchonOrder+" "+archonLoc.toString());
+        prevLoc = myLocation;
     }
 
     @Override
     public void run() throws GameActionException {
         reassignArchon();
-        setArchonLocation();
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
@@ -76,10 +52,13 @@ public class Soldier extends Droid{
         broadcast();
         target = null;
 
-        retreat();
-        if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
-            selectPriorityTarget();
-            return;
+        int healCheck = rc.readSharedArray(31+myArchonOrder);
+        if(healCheck == 0 || healCheck == rc.getID()){
+            retreat();
+            if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
+                selectPriorityTarget();
+                return;
+            }
         }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
@@ -146,47 +125,27 @@ public class Soldier extends Droid{
     }
 
     public void retreat() throws GameActionException{
-        if(rc.getHealth()>=49){
+        if(rc.getHealth()>40){
             shouldHeal=false;
+            rc.writeSharedArray(31+myArchonOrder,0);
             return;
         }
-        if (rc.getHealth()<=18){
-            shouldHeal = true;
-        }
-        if (shouldHeal){
-            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
-                //rc.setIndicatorString("going to heal");
-                soldierMove(archonLoc);
-            }
-            //TODO: try this code after archon moves to low passability?
-            /*
-            else if (rc.isMovementReady()){
-                RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
-                if (nearbyBots.length>0){
-                    tryMoveMultiple(rc.getLocation().directionTo(nearbyBots[0].getLocation()).opposite());
-                }
-            }
-            */
-            
-        }
+        if(rc.getHealth()>15)return;
+        rc.writeSharedArray(31+myArchonOrder,rc.getID());
+        shouldHeal=true;
+        soldierMove(archonLoc);
     }
 
-    private MapLocation pastTarget = null;
-    private HashSet<MapLocation> pastLocations = new HashSet<>();
     private void soldierMove(MapLocation target) throws GameActionException {
-        if(!target.equals(pastTarget)){
-            pastTarget = target;
-            pastLocations.clear();
-        }
         Direction dir = pfs.getBestDir(target);
         MapLocation temp = myLocation;
-        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
+        if(dir != null && rc.canMove(dir) && !myLocation.add(dir).equals(prevLoc)){
             if(tryMoveMultiple(dir)){
-                pastLocations.add(temp);
+                prevLoc = temp;
             }
         }else{
             intermediateMove(target);
-            pastLocations.add(temp);
+            prevLoc = temp;
         }
     }
 }
