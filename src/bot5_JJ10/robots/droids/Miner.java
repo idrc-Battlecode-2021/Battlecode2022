@@ -8,7 +8,7 @@ import java.util.*;
 public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
-    private MapLocation target,exploreTarget;
+    private MapLocation target;
     private PathFindingSoldier pfs;
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
@@ -268,9 +268,13 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
-                checkMiners();
-                if(!tryMoveMultipleNew()){
-                   tryMoveMultiple(initDirection);
+                if(Clock.getBytecodesLeft() > 6000){
+                    minerExplore();
+                }else{
+                    checkMiners();
+                    if(!tryMoveMultipleNew()){
+                        tryMoveMultiple(initDirection);
+                    }
                 }
                 if(!prev.equals(myLocation)) viewResources();
             }
@@ -404,6 +408,7 @@ public class Miner extends Droid{
                 rc.writeSharedArray(40,1);
                 target = null;
                 targetType = 2;
+                pfs.newExploreLocation();
                 return tryMoveMultiple(selectDirection(xMove,yMove));
             }
 
@@ -426,22 +431,23 @@ public class Miner extends Droid{
 
     }
 
-    private MapLocation pastTarget = null;
-    private HashSet<MapLocation> pastLocations = new HashSet<>();
-    private void soldierMove(MapLocation target) throws GameActionException {
-        if(!target.equals(pastTarget)){
-            pastTarget = target;
-            pastLocations.clear();
+    private MapLocation pastExploreTarget = null;
+    private HashSet<MapLocation> pastExploreLocations = new HashSet<>();
+    private void minerExplore() throws GameActionException{
+        MapLocation exploreTarget = pfs.getExploreTarget();
+        if(!exploreTarget.equals(pastExploreTarget)){
+            pastExploreTarget = exploreTarget;
+            pastExploreLocations.clear();
         }
-        Direction dir = pfs.getBestDir(target,pastLocations);
+        Direction dir = pfs.getBestDirMiner(exploreTarget);
         MapLocation temp = myLocation;
-        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
+        if(dir != null && rc.canMove(dir) && !pastExploreLocations.contains(myLocation.add(dir))){
             if(tryMoveMultiple(dir)){
-                pastLocations.add(temp);
+                pastExploreLocations.add(temp);
             }
         }else{
-            intermediateMove(target);
-            pastLocations.add(temp);
+            intermediateMove(exploreTarget);
+            pastExploreLocations.add(temp);
         }
     }
 }
