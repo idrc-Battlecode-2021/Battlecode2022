@@ -33,9 +33,6 @@ public class Miner extends Droid{
         reassignArchon();
         avoidCharge();
         // update shared array
-        if(myLocation.equals(target)){
-            rc.writeSharedArray(31+myArchonOrder,rc.readSharedArray(31+myArchonOrder)+1);
-        }
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {
             if (myArchonOrder <= 1) {
@@ -261,6 +258,7 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
+                checkMiners();
                 if(!tryMoveMultipleNew()){
                    tryMoveMultiple(initDirection);
                 }
@@ -401,6 +399,21 @@ public class Miner extends Droid{
 
         }
         return false;
+    }
+    private void checkMiners() { //Repel against other miners
+        int momentumVectorX = initDirection.getDeltaX();
+        int momentumVectorY = initDirection.getDeltaY();
+        RobotInfo[] nearbyBots = rc.senseNearbyRobots(20,myTeam);
+        for(int i = nearbyBots.length; --i>=0;){
+            if(nearbyBots[i].getType()==RobotType.MINER){
+                momentumVectorX -= nearbyBots[i].getLocation().x-myLocation.x;
+                momentumVectorY -= nearbyBots[i].getLocation().y-myLocation.y;
+            }
+        }
+        if(momentumVectorX != 0 || momentumVectorY != 0){
+            updateDirection(selectDirection(momentumVectorX,momentumVectorY));
+        }
+
     }
 }
 
