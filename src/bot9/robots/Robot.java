@@ -60,10 +60,15 @@ public abstract class Robot {
         }
         initialArchons = rc.getArchonCount();
         archonWait = false;
+        boolean archonFound = false;
         for(int i=63; i>59; i--){
             if (rc.readSharedArray(i)==myArchonID+1){
+                archonFound = true;
                 myArchonOrder=63-i;
             }
+        }
+        if (!archonFound){
+            myArchonOrder = (int)(Math.random()*rc.getArchonCount());
         }
         
     }

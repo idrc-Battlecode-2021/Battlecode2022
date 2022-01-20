@@ -110,28 +110,27 @@ public class Archon extends Building{
     public void setTargetLocation() throws GameActionException{
         int rubble = rc.senseRubble(rc.getLocation());
         ArrayList<MapLocation> lowPass = new ArrayList<>();
+        int minDist=rc.getType().visionRadiusSquared+1;
         target=myLocation;
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+            int dist = rc.getLocation().distanceSquaredTo(m);
             int r=rc.senseRubble(m);
             if(r<rubble){
+                minDist = dist;
+                lowPass.clear();
+                lowPass.add(m);
                 rubble=r;
                 target=m;
             }
-        }
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
-            if(rc.senseRubble(m)==rubble){
+            if (r==rubble){
                 lowPass.add(m);
+                if (dist<minDist){
+                    minDist = dist;
+                    target = m;
+                }
             }
         }
-        int minDist=rc.getType().visionRadiusSquared+1;
-        for (MapLocation m: lowPass){
-            int dist = rc.getLocation().distanceSquaredTo(m);
-            if(dist<minDist){
-                minDist=dist;
-                target=m;
-            }
-        }
-        if(!target.equals(myLocation)){
+        if(!target.equals(myLocation) && rc.getMode()==RobotMode.TURRET){
             if(rc.canTransform()){
                 rc.transform();
             }
@@ -163,6 +162,7 @@ public class Archon extends Building{
                 rc.transform();
             if (rc.isMovementReady())
                 intermediateMove(target);
+            passableDirections.clear();
             setPassableDirections();
             writeLocationToArray();
             indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
@@ -194,6 +194,9 @@ public class Archon extends Building{
             rc.writeSharedArray(56, current - myValue*power);
             return false;
         }
+        if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+            rc.transform();
+        }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             int i=0;
             while (i<passableDirections.size()-1 && !rc.canBuildRobot(RobotType.SOLDIER,passableDirections.get(i))){
@@ -206,7 +209,6 @@ public class Archon extends Building{
         return true;
     }
 
-    // NOT substitute for build watchtower code in run(), only used when surplus of lead is achieved
     public void buildWatchtower() throws GameActionException {
         int temp = (int)Math.pow(4,archonOrder);
         int currentValue = rc.readSharedArray(58);
@@ -402,13 +404,6 @@ public class Archon extends Building{
             passableDirections.clear();
             setPassableDirections();
         }
-        /*
-        if (!canProceed()){
-            indicatorString += " can't proceed";
-            rc.setIndicatorString(indicatorString);
-            return;
-        }
-        */
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;

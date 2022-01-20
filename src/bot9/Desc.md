@@ -1,7 +1,10 @@
-# Bot5_JJ8
+# Bot9
 
-Bot5_SL but with an altered pathfinding algorithm
-- uses doubles rather than ints
+- Different archon healing method
+- Different soldier retreat method
+- Archon moves to low passability every turn (might want to change for only after vortex anomaly)
+- robots get reassigned to a random archon after its archon has died
+
 
 
 - 31: Soldier Healing
@@ -16,5 +19,7 @@ Bot5_SL but with an altered pathfinding algorithm
 - 46: soldier flag
 - 47: soldier move central
   48 - used to tell friendly soldiers possible enemy archon locations
-  49 - locations of archon 0-1
-  50 - locations of archon 2-3
+  15 - location of archon 0
+  16 - location of archon 1
+  49 - locations of archon 2
+  50 - locations of archon 3
