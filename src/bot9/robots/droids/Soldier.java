@@ -13,6 +13,7 @@ public class Soldier extends Droid{
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
     private PathFindingSoldier pfs;
+    private boolean reachedArchon;
     public Soldier(RobotController rc) {
         super(rc);
     }
@@ -157,12 +158,18 @@ public class Soldier extends Droid{
         }
         if (rc.getHealth()<=18){
             shouldHeal = true;
+            reachedArchon = false;
         }
         if (shouldHeal){
             if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
                 //rc.setIndicatorString("going to heal");
                 soldierMove(archonLoc);
             }
+            else{
+                reachedArchon = true;
+
+            }
+
             //TODO: try this code after archon moves to low passability?
             /*
             else if (rc.isMovementReady()){

@@ -159,9 +159,12 @@ public class Archon extends Building{
     }
     public void move() throws GameActionException{
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET)
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
                 rc.transform();
-            intermediateMove(target);
+            if (rc.isMovementReady())
+                intermediateMove(target);
+            setPassableDirections();
+            writeLocationToArray();
             indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
         }
         else{
@@ -171,7 +174,6 @@ public class Archon extends Building{
                 }
             }
         }
-        writeLocationToArray();
     }
     // if enemies are near archon, spawn soldiers and inform other archons
     public boolean defense() throws GameActionException {
@@ -394,6 +396,7 @@ public class Archon extends Building{
             return;
         }
         //add check here for miners
+        setTargetLocation();
         move();
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){
             passableDirections.clear();

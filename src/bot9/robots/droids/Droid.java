@@ -266,38 +266,38 @@ public abstract class Droid extends Robot {
         intermediateMove(exploreTarget);
     }
     public void parseAnomalies() {
-            for (AnomalyScheduleEntry a : anomaly) {
-                if (a.anomalyType == AnomalyType.CHARGE) {
-                    relevantAnomalies.add(a);
-                }
+        for (AnomalyScheduleEntry a : anomaly) {
+            if (a.anomalyType == AnomalyType.CHARGE) {
+                relevantAnomalies.add(a);
             }
         }
-        public void avoidCharge() throws GameActionException {
-            if(relevantAnomalies.isEmpty())return;
-            AnomalyScheduleEntry a = relevantAnomalies.get(0);
-            if (rc.getRoundNum()>a.roundNumber){
-                relevantAnomalies.remove(a);
-                return;
-            }
-            if(rc.getRoundNum()+10>a.roundNumber){
-                int x=0;
-                int y=0;
-                RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
-                for (RobotInfo r: friends){
-                    switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
-                    case NORTH:y+=1;break;
-                    case NORTHEAST: y+=1; x+=1; break;
-                    case NORTHWEST: y+=1; x-=1; break;
-                    case SOUTH: y-=1; break;
-                   case EAST: x+=1; break;
-                    case WEST: x-=1; break;
-                    case SOUTHEAST: y-=1; x+=1; break;
-                    case SOUTHWEST: y-=1; x-=1; break;
-                    }
-                }
-                Direction d = getDirection(x, y);
-                tryMoveMultiple(d);
-            }
+    }
+    public void avoidCharge() throws GameActionException {
+        if(relevantAnomalies.isEmpty())return;
+        AnomalyScheduleEntry a = relevantAnomalies.get(0);
+        if (rc.getRoundNum()>a.roundNumber){
+            relevantAnomalies.remove(a);
+            return;
         }
+        if(rc.getRoundNum()+10>a.roundNumber){
+            int x=0;
+            int y=0;
+            RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+            for (RobotInfo r: friends){
+                switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
+                case NORTH:y+=1;break;
+                case NORTHEAST: y+=1; x+=1; break;
+                case NORTHWEST: y+=1; x-=1; break;
+                case SOUTH: y-=1; break;
+                case EAST: x+=1; break;
+                case WEST: x-=1; break;
+                case SOUTHEAST: y-=1; x+=1; break;
+                case SOUTHWEST: y-=1; x-=1; break;
+                }
+            }
+            Direction d = getDirection(x, y);
+            tryMoveMultiple(d);
+        }
+    }
 
 }
