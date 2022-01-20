@@ -1,6 +1,6 @@
-package bot5_JJ8.robots.droids;
+package bot9.robots.droids;
 import battlecode.common.*;
-import bot5_JJ8.util.PathFindingSoldier;
+import bot9.util.PathFindingSoldier;
 
 import java.util.HashSet;
 

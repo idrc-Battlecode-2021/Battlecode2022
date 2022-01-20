@@ -1,8 +1,8 @@
-package bot5_JJ8.robots.droids;
+package bot9.robots.droids;
 
 import battlecode.common.*;
-import bot5_JJ8.robots.Robot;
-import bot5_JJ8.util.Constants;
+import bot9.robots.Robot;
+import bot9.util.Constants;
 
 import java.util.ArrayList;
 
