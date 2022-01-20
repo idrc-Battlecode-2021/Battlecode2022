@@ -144,7 +144,7 @@ public class Soldier extends Droid{
     private void soldierMove(MapLocation target) throws GameActionException {
         if(!target.equals(pastTarget)){
             pastTarget = target;
-            pastLocations = new HashSet<>();
+            pastLocations.clear();
         }
         Direction dir = pfs.getBestDir(target);
         MapLocation temp = myLocation;
