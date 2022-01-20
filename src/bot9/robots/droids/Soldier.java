@@ -101,9 +101,14 @@ public class Soldier extends Droid{
             }
         } else if(rc.readSharedArray(40) == 1) {
             if(rc.isActionReady()){
-                if (!tryMoveMultipleNew()) {
-                    tryMoveMultiple(initDirection);
+                if(Clock.getBytecodesLeft() > 6000){
+                    soldierExplore();
+                }else{
+                    if (!tryMoveMultipleNew()) {
+                        tryMoveMultiple(initDirection);
+                    }
                 }
+
             }
         }else if(rc.senseNearbyRobots(2).length>2){
             //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
@@ -152,6 +157,26 @@ public class Soldier extends Droid{
         }else{
             intermediateMove(target);
             pastLocations.add(temp);
+        }
+    }
+
+    private MapLocation pastExploreTarget = null;
+    private HashSet<MapLocation> pastExploreLocations = new HashSet<>();
+    private void soldierExplore() throws GameActionException{
+        MapLocation exploreTarget = pfs.getExploreTarget();
+        if(!exploreTarget.equals(pastExploreTarget)){
+            pastExploreTarget = exploreTarget;
+            pastExploreLocations.clear();
+        }
+        Direction dir = pfs.getBestDir(exploreTarget);
+        MapLocation temp = myLocation;
+        if(dir != null && rc.canMove(dir) && !pastExploreLocations.contains(myLocation.add(dir))){
+            if(tryMoveMultiple(dir)){
+                pastExploreLocations.add(temp);
+            }
+        }else{
+            intermediateMove(exploreTarget);
+            pastExploreLocations.add(temp);
         }
     }
 }

@@ -108,7 +108,7 @@ public class Soldier extends Droid{
                         tryMoveMultiple(initDirection);
                     }
                 }
-                
+
             }
         }else if(rc.senseNearbyRobots(2).length>2){
             //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
