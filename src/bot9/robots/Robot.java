@@ -1,9 +1,8 @@
-package bot5_JJ8.robots;
+package bot9.robots;
 
 import battlecode.common.*;
-import bot5_JJ8.util.Constants;
+import bot9.util.Constants;
 
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Collections;

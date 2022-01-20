@@ -1,4 +1,4 @@
-package bot5_JJ8.util;
+package bot9.util;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
