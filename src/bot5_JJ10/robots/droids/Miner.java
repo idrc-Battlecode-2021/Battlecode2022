@@ -1,14 +1,15 @@
 package bot5_JJ10.robots.droids;
 
 import battlecode.common.*;
+import bot5_JJ10.util.PathFindingSoldier;
 
 import java.util.*;
 
 public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
-    private MapLocation target;
-    private int exploreDirIndex;
+    private MapLocation target,exploreTarget;
+    private PathFindingSoldier pfs;
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
@@ -18,6 +19,7 @@ public class Miner extends Droid{
 
     @Override
     public void init() throws GameActionException {
+        pfs=new PathFindingSoldier(rc);
         parseAnomalies();
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
@@ -422,6 +424,25 @@ public class Miner extends Droid{
             updateDirection(selectDirection(momentumVectorX,momentumVectorY));
         }
 
+    }
+
+    private MapLocation pastTarget = null;
+    private HashSet<MapLocation> pastLocations = new HashSet<>();
+    private void soldierMove(MapLocation target) throws GameActionException {
+        if(!target.equals(pastTarget)){
+            pastTarget = target;
+            pastLocations.clear();
+        }
+        Direction dir = pfs.getBestDir(target,pastLocations);
+        MapLocation temp = myLocation;
+        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
+            if(tryMoveMultiple(dir)){
+                pastLocations.add(temp);
+            }
+        }else{
+            intermediateMove(target);
+            pastLocations.add(temp);
+        }
     }
 }
 
