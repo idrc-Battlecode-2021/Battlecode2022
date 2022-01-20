@@ -143,7 +143,7 @@ public class Soldier extends Droid{
             pastTarget = target;
             pastLocations.clear();
         }
-        Direction dir = pfs.getBestDir(target);
+        Direction dir = pfs.getBestDir(target,pastLocations);
         MapLocation temp = myLocation;
         if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
             if(tryMoveMultiple(dir)){
