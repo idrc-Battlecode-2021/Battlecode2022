@@ -394,22 +394,33 @@ public abstract class Robot {
 
         }
         int k=0;
-        boolean seesArchon = false;
-        for (RobotInfo r:enemies){
-            if (r.getType()== RobotType.ARCHON){
-                seesArchon=true;
-                k=4096+64*r.getLocation().x+r.getLocation().y;
+        boolean seesArchon = false, seesAttacker = false;
+        loop: for (RobotInfo r:enemies){
+            switch(r.getType()){
+                case ARCHON:
+                    seesArchon=true;
+                    k=64*r.getLocation().x+r.getLocation().y;
+                    break loop;
+                case SOLDIER:
+                case WATCHTOWER:
+                case SAGE:
+                    seesAttacker=true;
+                    k=64*r.getLocation().x+r.getLocation().y;
+                    break;
+                case MINER:
+                case BUILDER:
+                    if(!seesAttacker){
+                        k=64*r.getLocation().x+r.getLocation().y;
+                    }
+                    break;
             }
         }
-        if (seesArchon){
+        if (seesArchon && rc.readSharedArray(43)==0){
             rc.writeSharedArray(43, k);
         }
-        if (num_enemies>5){
-            MapLocation m = rc.getLocation();
-            int x = m.x, y=m.y;
-            k=x*64+y;
+        if (seesAttacker && rc.readSharedArray(55)==0){
             rc.writeSharedArray(55,k);
-        }else if(num_enemies>0){
+        }else if(num_enemies>0 && rc.readSharedArray(41)==0){
             rc.writeSharedArray(41,k);
         }
 
@@ -1079,36 +1090,26 @@ public abstract class Robot {
             }
         }
     }
-    public void readArchonLocs() throws GameActionException{
-        int n1 = rc.readSharedArray(49);
-        int x1=n1%16;
-        int y1=(n1/16)%16;
-        int x2=(n1/256)%16;
-        int y2=(n1/4096)%16;
-        MapLocation m1 = new MapLocation (x1*4, y1*4);
-        MapLocation m2 = new MapLocation (x2*4, y2*4);
-        MapLocation bad = new MapLocation (0,0);
-        if (m1!=bad){
-            myArchons.add(m1);
+    public MapLocation[] getArchonLocs() throws GameActionException{
+        int array1 = rc.readSharedArray(49);
+        int array2 = rc.readSharedArray(50);
+        int archons = rc.getArchonCount();
+        MapLocation[] locs = {new MapLocation((array1%16)*4,((array1/16)%16)*4),
+                new MapLocation(((array1/256)%16)*4,((array1/4096)%16)*4),
+                new MapLocation((array2%16)*4,((array2/16)%16)*4),
+                new MapLocation(((array2/256)%16)*4,((array2/4096)%16)*4)};
+        MapLocation[] returnLocs = new MapLocation[4];
+        MapLocation zeroPos = new MapLocation(0,0);
+        for(int i = 0; i < locs.length; i++){ //needs to start at 0
+            if(!locs[i].equals(zeroPos) || archons > i){
+                returnLocs[i] = locs[i];
+            }else{
+                break;
+            }
         }
-        if (m2!=bad){
-            myArchons.add(m2);
-        }
-        n1 = rc.readSharedArray(50);
-        x1=n1%16;
-        y1=(n1/16)%16;
-        x2=(n1/256)%16;
-        y2=(n1/4096)%16;
-        m1 = new MapLocation (x1*4, y1*4);
-        m2 = new MapLocation (x2*4, y2*4);
-        if (m1!=bad){
-            myArchons.add(m1);
-        }
-        if (m2!=bad){
-            myArchons.add(m2);
-        }
-        myArchons.removeAll(Collections.singleton(bad));
+        return returnLocs;
     }
+
     public void possibleArchonLocs() throws GameActionException{
         MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
         int centerX = center.x, centerY=center.y;
