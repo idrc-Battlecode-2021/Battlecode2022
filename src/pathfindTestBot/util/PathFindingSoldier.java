@@ -1,15 +1,18 @@
 package pathfindTestBot.util;
 
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
+import battlecode.common.*;
+
+import java.util.HashSet;
 
 public class PathFindingSoldier {
     private final RobotController rc;
+    private static int width,height;
+    private MapLocation exploreTarget;
     public PathFindingSoldier(RobotController rc){
         this.rc = rc;
-        lastLoc = rc.getLocation();
+        width = rc.getMapWidth();
+        height = rc.getMapHeight();
+        newExploreLocation();
     }
 
     static MapLocation l30;  static Direction d30;  static int v30;  static int p30;  static int dist30; static int dSQ30;
@@ -1583,5 +1586,19 @@ public class PathFindingSoldier {
             case 91: case 92: case 93: case 94: case 95: case 96:          return 17;
             default:                                                       return 18;
         }
+    }
+
+    HashSet<MapLocation> exploredLocations = new HashSet<>();
+    public void newExploreLocation(){
+        exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
+        while(exploredLocations.contains(exploreTarget) || Clock.getBytecodesLeft() > 5500){
+            exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
+        }
+        exploredLocations.add(exploreTarget);
+    }
+
+    public MapLocation getExploreTarget(){
+        if(rc.getLocation().equals(exploreTarget)) newExploreLocation();
+        return exploreTarget;
     }
 }
