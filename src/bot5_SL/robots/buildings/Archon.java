@@ -18,7 +18,7 @@ public class Archon extends Building{
     private static final int SURPLUS_THRESHOLD = 500;
 
     private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
-
+    private boolean hasUpdatedDirections = false;
     private static String indicatorString = "";
 
     public Archon(RobotController rc) {
@@ -125,7 +125,10 @@ public class Archon extends Building{
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
-
+        setTargetLocation();
+        setPassableDirections();
+    }
+    public void setPassableDirections() throws GameActionException{
         for (Direction d:Direction.allDirections()){
             if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
                 continue;
@@ -147,6 +150,8 @@ public class Archon extends Building{
                 }
             }
         }
+    }
+    public void setTargetLocation() throws GameActionException{
         int rubble = rc.senseRubble(rc.getLocation());
         ArrayList<MapLocation> lowPass = new ArrayList<>();
         target=myLocation;
@@ -170,14 +175,26 @@ public class Archon extends Building{
                 target=m;
             }
         }
-        if(target!=myLocation){
+        if(!target.equals(myLocation)){
             if(rc.canTransform()){
                 rc.transform();
             }
         }
     }
-    public boolean shouldmove() throws GameActionException{
-        return !(target.equals(rc.getLocation()));
+    public void move() throws GameActionException{
+        if(!target.equals(rc.getLocation())){
+            if(rc.getMode()==RobotMode.TURRET)
+                rc.transform();
+            intermediateMove(target);
+            indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
+        }
+        else{
+            if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE){
+                if(rc.canTransform()){
+                    rc.transform();
+                }
+            }
+        }
     }
     // if enemies are near archon, spawn soldiers and inform other archons
     public boolean defense() throws GameActionException {
@@ -355,24 +372,17 @@ public class Archon extends Building{
         checkArchonsAlive();
         updateTroopCount();
         roundNum = rc.getRoundNum();
-        if(shouldmove()){
-            if(rc.getMode()==RobotMode.TURRET)
-                rc.transform();
-            intermediateMove(target);
-            indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
-        }
-        else{
-            if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE){
-                if(rc.canTransform()){
-                    rc.transform();
-                }
-            }
-        }
         if (defense()){
             repair();
             indicatorString += " defense";
             rc.setIndicatorString(indicatorString);
             return;
+        }
+        //add check here for miners
+        move();
+        if(!hasUpdatedDirections && target.equals(rc.getLocation())){
+            passableDirections.clear();
+            setPassableDirections();
         }
         /*
         if (!canProceed()){
