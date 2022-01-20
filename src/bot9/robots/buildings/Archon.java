@@ -130,11 +130,6 @@ public class Archon extends Building{
                 }
             }
         }
-        if(!target.equals(myLocation) && rc.getMode()==RobotMode.TURRET){
-            if(rc.canTransform()){
-                rc.transform();
-            }
-        }
     }
     public void writeLocationToArray() throws GameActionException{
         //write archon location to array
@@ -160,18 +155,17 @@ public class Archon extends Building{
         if(!target.equals(rc.getLocation())){
             if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
                 rc.transform();
-            if (rc.isMovementReady())
+            if (rc.isMovementReady()){
                 intermediateMove(target);
-            passableDirections.clear();
-            setPassableDirections();
-            writeLocationToArray();
+                passableDirections.clear();
+                setPassableDirections();
+                writeLocationToArray();
+            }
             indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
         }
         else{
-            if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE){
-                if(rc.canTransform()){
-                    rc.transform();
-                }
+            if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+                rc.transform();
             }
         }
     }
@@ -398,12 +392,16 @@ public class Archon extends Building{
             return;
         }
         //add check here for miners
-        setTargetLocation();
-        move();
+        if (globalMinerCount>=6){
+            setTargetLocation();
+            move();
+        }
+        /*
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){
             passableDirections.clear();
             setPassableDirections();
         }
+        */
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
