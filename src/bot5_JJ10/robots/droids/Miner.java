@@ -65,8 +65,16 @@ public class Miner extends Droid{
             }
         }else{
             /*if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
-                target = getMaxLead();
+                MapLocation[] nearByLead = rc.senseNearbyLocationsWithLead(20,2+((20-(rc.getRoundNum()%20))/5));
+                if(nearByLead.length > 1){
+                    lead.remove(target);
+                    target = nearByLead[0];
+                    lead.put(target,rc.senseLead(target));
+                }
             }*/
+            if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
+                target = getMaxLead();
+            }
             if(gold.isEmpty()){
                 int amount = rc.senseLead(myLocation);
                 if(amount > 1){
