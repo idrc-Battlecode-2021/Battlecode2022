@@ -81,7 +81,6 @@ public class Archon extends Building{
         myArchonID = rc.getID();
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
-        setTargetLocation();
         setPassableDirections();
     }
     public void setPassableDirections() throws GameActionException{
@@ -130,6 +129,11 @@ public class Archon extends Building{
                 }
             }
         }
+        if(!target.equals(rc.getLocation())){
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+                rc.transform();
+        }
+
     }
     public void writeLocationToArray() throws GameActionException{
         //write archon location to array
@@ -395,6 +399,9 @@ public class Archon extends Building{
         if (globalMinerCount>=6){
             setTargetLocation();
             move();
+        }
+        else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){ 
+            rc.transform();
         }
         /*
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){
