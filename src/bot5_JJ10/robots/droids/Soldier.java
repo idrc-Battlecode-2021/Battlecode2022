@@ -39,9 +39,32 @@ public class Soldier extends Droid{
         centralArchon = new MapLocation(x/archonCount,y/archonCount);
     }
 
+    public void setArchonLocation() throws GameActionException{
+        int location = 0;
+        switch (myArchonOrder){
+            case 0:
+                location = rc.readSharedArray(15);
+                break;
+            case 1:
+                location = rc.readSharedArray(16);
+                break;
+            case 2:
+                location = rc.readSharedArray(49);
+                break;
+            case 3:
+                location = rc.readSharedArray(50);
+                break;
+        }
+        int x = location%256;
+        int y = location/256;
+        archonLoc = new MapLocation(x,y);
+        rc.setIndicatorString(myArchonOrder+" "+archonLoc.toString());
+    }
+
     @Override
     public void run() throws GameActionException {
         reassignArchon();
+        setArchonLocation();
         avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){

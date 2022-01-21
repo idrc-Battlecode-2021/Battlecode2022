@@ -14,9 +14,7 @@ public class Soldier extends Droid{
     private MapLocation centralArchon;
     private PathFindingSoldier pfs;
     private boolean reachedArchon;
-    public Soldier(RobotController rc) {
-        super(rc);
-    }
+    public Soldier(RobotController rc) {super(rc);}
 
     @Override
     public void init() throws GameActionException {

@@ -1,4 +1,4 @@
-# Bot5_JJ8
+# Bot5_JJ10
 
 Bot5_SL but with an altered pathfinding algorithm
 - uses doubles rather than ints
@@ -18,3 +18,4 @@ Bot5_SL but with an altered pathfinding algorithm
   48 - used to tell friendly soldiers possible enemy archon locations
   49 - locations of archon 0-1
   50 - locations of archon 2-3
+27: archons moving

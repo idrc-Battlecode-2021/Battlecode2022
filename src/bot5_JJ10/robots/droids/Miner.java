@@ -83,12 +83,6 @@ public class Miner extends Droid{
                     target = myLocation;
                     targetType = 1;
                     lead.put(target,amount);
-                    RobotInfo[] robots = rc.senseNearbyRobots(2);
-                    for(int i = robots.length; --i>=0;){
-                        if(robots[i].getType()==RobotType.ARCHON && rc.canMineLead(target)){
-                            rc.mineLead(target);
-                        }
-                    }
                     if(rc.senseLead(myLocation) > 1 && rc.canMineLead(target))rc.mineLead(myLocation);
                 }
             }
@@ -146,12 +140,6 @@ public class Miner extends Droid{
                                 }
                             }
                             if(rc.canMineLead(target)){
-                                RobotInfo[] robots = rc.senseNearbyRobots(2);
-                                for(int i = robots.length; --i>=0;){
-                                    if(robots[i].getType()==RobotType.ARCHON){
-                                        rc.mineLead(target);
-                                    }
-                                }
                                 if(!target.equals(myLocation) && rc.canSenseRobotAtLocation(target)){
                                     RobotInfo potentialMiner = rc.senseRobotAtLocation(target);
                                     if(!potentialMiner.getTeam().equals(myTeam) && potentialMiner.getType().equals(RobotType.MINER)){
