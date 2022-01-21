@@ -1,6 +1,7 @@
 package bot9.robots.droids;
 
 import battlecode.common.*;
+import bot9.util.PathFindingSoldier;
 
 import java.util.*;
 
@@ -8,7 +9,7 @@ public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
     private MapLocation target;
-    private int exploreDirIndex;
+    private PathFindingSoldier pfs;
     private int targetType = 0;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
@@ -18,6 +19,7 @@ public class Miner extends Droid{
 
     @Override
     public void init() throws GameActionException {
+        pfs=new PathFindingSoldier(rc);
         parseAnomalies();
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
@@ -64,6 +66,14 @@ public class Miner extends Droid{
                 }
             }
         }else{
+            /*if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
+                MapLocation[] nearByLead = rc.senseNearbyLocationsWithLead(20,2+((20-(rc.getRoundNum()%20))/5));
+                if(nearByLead.length > 1){
+                    lead.remove(target);
+                    target = nearByLead[0];
+                    lead.put(target,rc.senseLead(target));
+                }
+            }*/
             if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
                 target = getMaxLead();
             }
@@ -260,8 +270,9 @@ public class Miner extends Droid{
             if(target == null){
                 checkMiners();
                 if(!tryMoveMultipleNew()){
-                   tryMoveMultiple(initDirection);
+                    tryMoveMultiple(initDirection);
                 }
+
                 if(!prev.equals(myLocation)) viewResources();
             }
         }
@@ -394,6 +405,7 @@ public class Miner extends Droid{
                 rc.writeSharedArray(40,1);
                 target = null;
                 targetType = 2;
+                pfs.newExploreLocation();
                 return tryMoveMultiple(selectDirection(xMove,yMove));
             }
 
@@ -414,6 +426,26 @@ public class Miner extends Droid{
             updateDirection(selectDirection(momentumVectorX,momentumVectorY));
         }
 
+    }
+
+    private MapLocation pastExploreTarget = null;
+    private HashSet<MapLocation> pastExploreLocations = new HashSet<>();
+    private void minerExplore() throws GameActionException{
+        MapLocation exploreTarget = pfs.getExploreTarget();
+        if(!exploreTarget.equals(pastExploreTarget)){
+            pastExploreTarget = exploreTarget;
+            pastExploreLocations.clear();
+        }
+        Direction dir = pfs.getBestDirMiner(exploreTarget);
+        MapLocation temp = myLocation;
+        if(dir != null && rc.canMove(dir) && !pastExploreLocations.contains(myLocation.add(dir))){
+            if(tryMoveMultiple(dir)){
+                pastExploreLocations.add(temp);
+            }
+        }else{
+            intermediateMove(exploreTarget);
+            pastExploreLocations.add(temp);
+        }
     }
 }
 
