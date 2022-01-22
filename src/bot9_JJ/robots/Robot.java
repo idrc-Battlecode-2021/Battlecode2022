@@ -37,7 +37,7 @@ public abstract class Robot {
         
         mapWidth = rc.getMapWidth(); mapHeight = rc.getMapHeight();
         initialArchons = rc.getArchonCount();
-        updateDirection(myLocation.directionTo(new MapLocation(mapWidth/22,mapHeight/2)));
+        updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)));
         //Too Much Bytecode, 5000
         /*for(int i = mapWidth; --i>=0;){
             for(int j = mapHeight; --j>=0;){
