@@ -130,8 +130,9 @@ public class Archon extends Building{
             }
         }
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform())
                 rc.transform();
+                setTransformStatus();
         }
 
     }
@@ -157,19 +158,21 @@ public class Archon extends Building{
     }
     public void move() throws GameActionException{
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform())
                 rc.transform();
+                setTransformStatus();
             if (rc.isMovementReady()){
                 intermediateMove(target);
                 passableDirections.clear();
                 setPassableDirections();
                 writeLocationToArray();
             }
-            indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
+            //indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
         }
         else{
             if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
                 rc.transform();
+                setTransformStatus();
             }
         }
     }
@@ -194,6 +197,7 @@ public class Archon extends Building{
         }
         if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
             rc.transform();
+            setTransformStatus();
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             int i=0;
@@ -234,6 +238,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(63,rc.getID()+1);
                 rc.writeSharedArray(56,0);
                 rc.writeSharedArray(11,0);
+                rc.writeSharedArray(17,0);
             }
             else{
                 //set appropriate archonOrder
@@ -382,9 +387,39 @@ public class Archon extends Building{
         }
     }
 
+    public void setTransformStatus() throws GameActionException{
+        int currentStatus = rc.readSharedArray(17);
+        int power = (int)Math.pow(2,archonOrder);
+        int myStatus = (currentStatus%(power*2))/power;
+        if (rc.getMode()==RobotMode.PORTABLE){
+            rc.writeSharedArray(17,currentStatus-myStatus*power+power);
+        }
+        else{
+            rc.writeSharedArray(17,currentStatus-myStatus*power);
+        }
+    }
+
+    public boolean freeToTransform() throws GameActionException{
+        if (rc.getArchonCount()==1){
+            return true;
+        }
+        int currentStatus = rc.readSharedArray(17);
+        int transformed = 0;
+        for (int i=0;i<rc.getArchonCount();i++){
+            int value = (int)Math.pow(2,i);
+            transformed += (currentStatus%(value*2))/value;
+        }
+        if (transformed>=rc.getArchonCount()-1){
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
+        int currentStatus = rc.readSharedArray(17);
+        indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
         checkEnemies();
         checkArchonsAlive();
         updateTroopCount();
@@ -402,6 +437,7 @@ public class Archon extends Building{
         }
         else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){ 
             rc.transform();
+            setTransformStatus();
         }
         /*
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){
@@ -412,6 +448,15 @@ public class Archon extends Building{
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
+        if (rc.getMode()==RobotMode.PORTABLE && diff==0){
+            //skip turn if portable
+            if (archonBuildStatus == rc.getArchonCount()-1){
+                rc.writeSharedArray(11,0);
+            }
+            else{
+                rc.writeSharedArray(11,archonBuildStatus+1);
+            }
+        }
         int cost = RobotType.MINER.buildCostLead;
         RobotType type = RobotType.MINER;
         indicatorString+=" miners";
