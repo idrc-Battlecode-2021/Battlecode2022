@@ -14,6 +14,7 @@ public class Soldier extends Droid{
     private MapLocation centralArchon;
     private PathFindingSoldier pfs;
     private boolean reachedArchon;
+    private boolean addedToHeal = false;
     public Soldier(RobotController rc) {super(rc);}
 
     @Override
@@ -75,11 +76,22 @@ public class Soldier extends Droid{
         broadcast();
         target = null;
 
-        retreat();
-        if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
-            selectPriorityTarget();
-            return;
-        }
+        //int healCheck = rc.readSharedArray(31+myArchonOrder);
+        //if(healCheck < 24 || addedToHeal){
+            retreat();
+            if(shouldHeal){
+               // if(!addedToHeal){
+               //     rc.writeSharedArray(31+myArchonOrder,healCheck+1);
+               //     addedToHeal = true;
+               // }
+                selectPriorityTarget();
+                return;
+            }
+        //}
+       // if(addedToHeal){
+       //     rc.writeSharedArray(31+myArchonOrder,healCheck-1);
+       //     addedToHeal = false;
+      //  }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting

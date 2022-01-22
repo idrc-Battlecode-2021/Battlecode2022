@@ -84,7 +84,7 @@ public class Archon extends Building{
         setPassableDirections();
     }
     public void setPassableDirections() throws GameActionException{
-        for (Direction d:Direction.allDirections()){
+        for (Direction d:directions){
             if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
                 continue;
             }
