@@ -1,4 +1,4 @@
-package bot5_JJ10.util;
+package bot9_JJ.util;
 
 import battlecode.common.*;
 
@@ -12,7 +12,6 @@ public class PathFindingSoldier {
         this.rc = rc;
         width = rc.getMapWidth();
         height = rc.getMapHeight();
-        exploreTarget=rc.getLocation();
         newExploreLocation();
     }
 
@@ -3091,13 +3090,9 @@ public class PathFindingSoldier {
 
     HashSet<MapLocation> exploredLocations = new HashSet<>();
     public void newExploreLocation(){
-        int dx = (int) (Math.random()*width/4-width/2);
-        int dy = (int) (Math.random()*height/4-height/2);
-        exploreTarget = new MapLocation((exploreTarget.x+dx)%width,(exploreTarget.y+dy)%height);
-        while(exploredLocations.contains(exploreTarget) && Clock.getBytecodesLeft() > 5500){
-            dx = (int) (Math.random()*width/4-width/2);
-            dy = (int) (Math.random()*height/4-height/2);
-            exploreTarget = new MapLocation(((exploreTarget.x+dx)+width*20)%width,((exploreTarget.y+dy)+height*20)%height);
+        exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
+        while(exploredLocations.contains(exploreTarget) || Clock.getBytecodesLeft() > 5500){
+            exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
         }
         exploredLocations.add(exploreTarget);
     }
@@ -3106,11 +3101,4 @@ public class PathFindingSoldier {
         if(rc.getLocation().equals(exploreTarget)) newExploreLocation();
         return exploreTarget;
     }
-
-    public void setExploreTarget(MapLocation loc){
-        exploredLocations.remove(exploreTarget);
-        exploreTarget = loc;
-        exploredLocations.add(exploreTarget);
-    }
-
 }

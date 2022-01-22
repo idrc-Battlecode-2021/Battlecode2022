@@ -1,7 +1,7 @@
-package bot5_JJ10.robots.droids;
+package bot9_JJ.robots.droids;
 
 import battlecode.common.*;
-import bot5_JJ10.util.PathFindingSoldier;
+import bot9_JJ.util.PathFindingSoldier;
 
 import java.util.*;
 
@@ -199,7 +199,7 @@ public class Miner extends Droid{
                                     }
                                 }
                             }
-                            if(Clock.getBytecodesLeft() > 5500){
+                            if(Clock.getBytecodesLeft() > 5200){
                                 soldierMove(target);
                             }else{
                                 intermediateMove(target);
@@ -243,7 +243,7 @@ public class Miner extends Droid{
                         if(rc.canMineGold(target)){
                             rc.mineGold(target);
                         }
-                        if(Clock.getBytecodesLeft() > 5500){
+                        if(Clock.getBytecodesLeft() > 5200){
                             soldierMove(target);
                         }else{
                             intermediateMove(target);
@@ -266,13 +266,10 @@ public class Miner extends Droid{
             }
             if(target == null){
                 checkMiners();
-               // if(Clock.getBytecodesLeft() > 6000){
-             //       minerExplore();
-              //  }else{
-                    if(!tryMoveMultipleNew()){
-                        tryMoveMultiple(initDirection);
-                    }
-            //    }
+                if(!tryMoveMultipleNew()){
+                    tryMoveMultiple(initDirection);
+                }
+
                 if(!prev.equals(myLocation)) viewResources();
             }
         }
@@ -405,8 +402,7 @@ public class Miner extends Droid{
                 rc.writeSharedArray(40,1);
                 target = null;
                 targetType = 2;
-                MapLocation prev = pfs.getExploreTarget();
-                pfs.setExploreTarget(new MapLocation(((prev.x+xMove)+mapWidth*20)%mapWidth,((prev.y+yMove)+mapHeight*20)%mapHeight));
+                pfs.newExploreLocation();
                 return tryMoveMultiple(selectDirection(xMove,yMove));
             }
 
@@ -425,8 +421,6 @@ public class Miner extends Droid{
         }
         if(momentumVectorX != 0 || momentumVectorY != 0){
             updateDirection(selectDirection(momentumVectorX,momentumVectorY));
-            MapLocation prev = pfs.getExploreTarget();
-            pfs.setExploreTarget(new MapLocation(((prev.x+momentumVectorX)+mapWidth*20)%mapWidth,((prev.y+momentumVectorY)+mapHeight*20)%mapHeight));
         }
 
     }
@@ -448,7 +442,6 @@ public class Miner extends Droid{
         }else{
             intermediateMove(exploreTarget);
             pastExploreLocations.add(temp);
-
         }
     }
 

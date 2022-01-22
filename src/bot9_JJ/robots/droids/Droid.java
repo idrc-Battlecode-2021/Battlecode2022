@@ -1,8 +1,8 @@
-package bot5_JJ10.robots.droids;
+package bot9_JJ.robots.droids;
 
 import battlecode.common.*;
-import bot5_JJ10.robots.Robot;
-import bot5_JJ10.util.Constants;
+import bot9_JJ.robots.Robot;
+import bot9_JJ.util.Constants;
 
 import java.util.ArrayList;
 
@@ -43,25 +43,21 @@ public abstract class Droid extends Robot {
             rc.move(dir2);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
-            //updateDirection(dir2);
             return true;
         }else if(rubble3 <= rubble4 && rubble3 <= rubble5 && rc.canMove(dir3)){
             rc.move(dir3);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
-            //updateDirection(dir3);
             return true;
         }else if(rubble4 <= rubble5 && rc.canMove(dir4)){
             rc.move(dir4);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
-            updateDirection(dir2);
             return true;
         }else if(rc.canMove(dir5)){
             rc.move(dir5);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
-            updateDirection(dir3);
             return true;
         }
         return false;
@@ -270,38 +266,38 @@ public abstract class Droid extends Robot {
         intermediateMove(exploreTarget);
     }
     public void parseAnomalies() {
-            for (AnomalyScheduleEntry a : anomaly) {
-                if (a.anomalyType == AnomalyType.CHARGE) {
-                    relevantAnomalies.add(a);
-                }
+        for (AnomalyScheduleEntry a : anomaly) {
+            if (a.anomalyType == AnomalyType.CHARGE) {
+                relevantAnomalies.add(a);
             }
         }
-        public void avoidCharge() throws GameActionException {
-            if(relevantAnomalies.isEmpty())return;
-            AnomalyScheduleEntry a = relevantAnomalies.get(0);
-            if (rc.getRoundNum()>a.roundNumber){
-                relevantAnomalies.remove(a);
-                return;
-            }
-            if(rc.getRoundNum()+10>a.roundNumber){
-                int x=0;
-                int y=0;
-                RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
-                for (RobotInfo r: friends){
-                    switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
-                    case NORTH:y+=1;break;
-                    case NORTHEAST: y+=1; x+=1; break;
-                    case NORTHWEST: y+=1; x-=1; break;
-                    case SOUTH: y-=1; break;
-                   case EAST: x+=1; break;
-                    case WEST: x-=1; break;
-                    case SOUTHEAST: y-=1; x+=1; break;
-                    case SOUTHWEST: y-=1; x-=1; break;
-                    }
-                }
-                Direction d = getDirection(x, y);
-                tryMoveMultiple(d);
-            }
+    }
+    public void avoidCharge() throws GameActionException {
+        if(relevantAnomalies.isEmpty())return;
+        AnomalyScheduleEntry a = relevantAnomalies.get(0);
+        if (rc.getRoundNum()>a.roundNumber){
+            relevantAnomalies.remove(a);
+            return;
         }
+        if(rc.getRoundNum()+10>a.roundNumber){
+            int x=0;
+            int y=0;
+            RobotInfo [] friends = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam);
+            for (RobotInfo r: friends){
+                switch (rc.getLocation().directionTo(r.getLocation()).opposite()){
+                case NORTH:y+=1;break;
+                case NORTHEAST: y+=1; x+=1; break;
+                case NORTHWEST: y+=1; x-=1; break;
+                case SOUTH: y-=1; break;
+                case EAST: x+=1; break;
+                case WEST: x-=1; break;
+                case SOUTHEAST: y-=1; x+=1; break;
+                case SOUTHWEST: y-=1; x-=1; break;
+                }
+            }
+            Direction d = getDirection(x, y);
+            tryMoveMultiple(d);
+        }
+    }
 
 }
