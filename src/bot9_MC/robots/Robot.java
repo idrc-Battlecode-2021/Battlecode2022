@@ -650,9 +650,24 @@ public abstract class Robot {
         }
         Direction lowest = Direction.CENTER;
         int lowest_rubble = rc.senseRubble(rc.getLocation());
+        /*
+        RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
+        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
+        int health = 0;
+        for (RobotInfo robot:enemyBots){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
+                continue;
+            }
+            health+=robot.getHealth();
+        }
+        for (RobotInfo robot:allyBots){
+            health-=robot.getHealth();
+        }
+        */
         if(rc.canSenseRobotAtLocation(target)){
             RobotInfo robot = rc.senseRobotAtLocation(target);
-            if(robot.getType() != RobotType.SOLDIER){
+            if(robot.getType() != RobotType.SOLDIER || rc.getHealth()>rc.senseRobot(target).getHealth()){
+                /*
                 for (Direction d: Direction.allDirections()){
                     MapLocation adjacent=rc.adjacentLocation(d);
                     if(adjacent.distanceSquaredTo(target) > rc.getType().actionRadiusSquared)continue;
@@ -671,6 +686,9 @@ public abstract class Robot {
                     rc.move(lowest);
                     myLocation = rc.getLocation();
                 }
+                return true;
+                */
+                soldierMove(target);
                 return true;
             }
         }

@@ -85,11 +85,12 @@ public class Soldier extends Droid{
             return;
         }
         RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam().opponent());
-        //RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
+        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
         if(enemyBots.length >= 1){
             if (rc.getHealth()<prevHealth){
                 rc.setIndicatorString("kite");
-                kite(enemyBots);
+                soldierMove(archonLoc);
+                //kite();
             }
             //New targetting
             target = selectPriorityTarget();
@@ -191,12 +192,15 @@ public class Soldier extends Droid{
         }
     }
 
-    public void kite(RobotInfo[] enemyBots) throws GameActionException{
+    public void kite() throws GameActionException{
         if (!rc.isMovementReady()){
             return;
         }
+        RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
+        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
         int diff_x=0,diff_y=0;
         myLocation = rc.getLocation();
+        int health = 0;
         for (RobotInfo robot:enemyBots){
             if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
                 continue;
@@ -204,7 +208,16 @@ public class Soldier extends Droid{
             MapLocation location = robot.getLocation();
             diff_x+=myLocation.x-location.x;
             diff_y+=myLocation.y-location.y;
+            health+=robot.getHealth();
         }
+        for (RobotInfo robot:allyBots){
+            health-=robot.getHealth();
+        }
+        if (health>0){
+            //maybe always retreat
+            soldierMove(archonLoc);
+        }
+        /*
         ArrayList<Direction> directions = new ArrayList<Direction>();
         Direction away = getDirection(diff_x,diff_y);
         rc.setIndicatorString(away.toString());
@@ -239,6 +252,7 @@ public class Soldier extends Droid{
                 rc.move(d);
             }
         }
+        */
     }
 
     private MapLocation pastTarget = null;
