@@ -1,9 +1,6 @@
-# Bot9
+# Bot9_MC
 
-- Different archon healing method
-- Different soldier retreat method
-- Archon tries moves to low passability every turn after minerCount>6 (might want to change for only after vortex anomaly)
-- robots get reassigned to a random archon after its archon has died
+- experimenting with soldier kiting
 
 
 
@@ -21,6 +18,5 @@
   48 - used to tell friendly soldiers possible enemy archon locations
   15 - location of archon 0
   16 - location of archon 1
-  17 - transform status of all archons
   49 - locations of archon 2
   50 - locations of archon 3

@@ -1,4 +1,4 @@
-package bot9.robots.buildings;
+package bot9_MC.robots.buildings;
 
 import battlecode.common.*;
 import java.util.*;
@@ -400,18 +400,15 @@ public class Archon extends Building{
     }
 
     public boolean freeToTransform() throws GameActionException{
-        if (rc.getArchonCount()==1 && rc.getTeamLeadAmount(rc.getTeam())<RobotType.SOLDIER.buildCostLead){
+        if (rc.getArchonCount()==1){
             return true;
         }
         int currentStatus = rc.readSharedArray(17);
-        indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
         int transformed = 0;
         for (int i=0;i<rc.getArchonCount();i++){
             int value = (int)Math.pow(2,i);
             transformed += (currentStatus%(value*2))/value;
         }
-        System.out.println(" transformStatus: "+Integer.toBinaryString(currentStatus)+" transformed: "+transformed);
-        indicatorString+=" transformed: "+transformed;
         if (transformed>=rc.getArchonCount()-1){
             return false;
         }
