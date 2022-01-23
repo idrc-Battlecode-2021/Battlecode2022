@@ -440,7 +440,7 @@ public class Archon extends Building{
             return;
         }
         //add check here for miners
-        if (globalMinerCount>=6 && freeToTransform() && (transforms+1)*75<rc.getTeamLeadAmount(myTeam)){
+        if (globalMinerCount>=6 && freeToTransform() && (transforms+1)*75>rc.getTeamLeadAmount(myTeam)){
             if(!movingToAttackPosition) setTargetLocation();
             if(hasMapLocation(35)){
                 enemyArchonLoc = decode(35);
@@ -479,9 +479,6 @@ public class Archon extends Building{
             return;
         }
         int mod = 4;
-        if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
-            mod = 5;
-        }
         if(rc.readSharedArray(40) !=0){
             mod = 1;
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted

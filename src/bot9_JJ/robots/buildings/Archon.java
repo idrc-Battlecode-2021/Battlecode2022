@@ -190,6 +190,7 @@ public class Archon extends Building{
         }
     }
 
+    private int transforms = 0;
     public boolean freeToTransform() throws GameActionException{
         if (rc.getArchonCount()==1){
             return false;
@@ -203,6 +204,7 @@ public class Archon extends Building{
         }
         //System.out.println(" transformStatus: "+Integer.toBinaryString(currentStatus)+" transformed: "+transformed);
         indicatorString+=" transformed: "+transformed;
+        transforms = transformed;
         if (transformed>=rc.getArchonCount()-1){
             return false;
         }
@@ -432,7 +434,7 @@ public class Archon extends Building{
             return;
         }
         //add check here for miners
-        if (globalMinerCount>=6){
+        if (globalMinerCount>=6 && freeToTransform() && (transforms+1)*75 > rc.getTeamLeadAmount(myTeam)){
             setTargetLocation();
             move();
         } else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
@@ -456,9 +458,6 @@ public class Archon extends Building{
             return;
         }
         int mod = 4;
-        if (rc.getTeamLeadAmount(rc.getTeam())>1000 && builderCount<7){
-            mod = 5;
-        }
         if(rc.readSharedArray(40) !=0){
             mod = 1;
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
