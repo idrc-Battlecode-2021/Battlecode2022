@@ -685,6 +685,7 @@ public abstract class Robot {
             }
         }
         if (lowest==Direction.CENTER){
+            //Moves away from soldier if the soldier is on a better tile and it
             if(escape != Direction.CENTER && rc.canMove(escape) && rubbleActionTurnDiff(myLocation) > rubbleActionTurnDiff(target)){
                 rc.move(escape);
                 myLocation = rc.getLocation();
