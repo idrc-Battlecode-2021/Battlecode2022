@@ -1,7 +1,7 @@
-package bot9_MC.robots.droids;
+package bot9_SL.robots.droids;
 
 import battlecode.common.*;
-import bot9_MC.util.PathFindingSoldier;
+import bot9_SL.util.PathFindingSoldier;
 
 import java.util.*;
 

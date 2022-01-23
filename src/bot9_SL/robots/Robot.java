@@ -1,7 +1,7 @@
-package bot9_MC.robots;
+package bot9_SL.robots;
 
 import battlecode.common.*;
-import bot9_MC.util.Constants;
+import bot9_SL.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -537,19 +537,19 @@ public abstract class Robot {
                 watchtowerTurns = Integer.MAX_VALUE, soldierTurns = Integer.MAX_VALUE;
         int[] turns = {archonTurns, sageTurns, labTurns, watchtowerTurns, soldierTurns};
         //MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
-        if (archon!=null){
+        if (archon!=null && damages[0]>0){
             turns[0] = archon.getHealth()/damages[0];
         }
-        if (sage!=null){
+        if (sage!=null&& damages[1]>0){
             turns[1] = sage.getHealth()/damages[1];
         }
-        if (lab!=null){
+        if (lab!=null&& damages[2]>0){
             turns[2] = lab.getHealth()/damages[2];
         }
-        if (watchtower!=null){
+        if (watchtower!=null&& damages[3]>0){
             turns[3] = watchtower.getHealth()/damages[3];
         }
-        if (soldier!=null){
+        if (soldier!=null&& damages[4]>0){
             turns[4] = soldier.getHealth()/damages[4];
         }
         if (archonTurns<=10){
@@ -631,12 +631,6 @@ public abstract class Robot {
             moveToLowPassability(target);
             tryAttack(target);
         }
-        if (target==rc.getLocation()){
-            enemyRobots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
-            if (enemyRobots.length>0){
-                moveToLowPassability(target);
-            }
-        }
         //rc.setIndicatorString("target: "+target);
         return target;
         
@@ -650,24 +644,9 @@ public abstract class Robot {
         }
         Direction lowest = Direction.CENTER;
         int lowest_rubble = rc.senseRubble(rc.getLocation());
-        /*
-        RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
-        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
-        int health = 0;
-        for (RobotInfo robot:enemyBots){
-            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
-                continue;
-            }
-            health+=robot.getHealth();
-        }
-        for (RobotInfo robot:allyBots){
-            health-=robot.getHealth();
-        }
-        */
         if(rc.canSenseRobotAtLocation(target)){
             RobotInfo robot = rc.senseRobotAtLocation(target);
-            if(robot.getType() != RobotType.SOLDIER || rc.getHealth()>rc.senseRobot(target).getHealth()){
-                /*
+            if(rubbleActionTurnDiff(myLocation) < rubbleActionTurnDiff(target) || robot.getType() != RobotType.SOLDIER){
                 for (Direction d: Direction.allDirections()){
                     MapLocation adjacent=rc.adjacentLocation(d);
                     if(adjacent.distanceSquaredTo(target) > rc.getType().actionRadiusSquared)continue;
@@ -687,11 +666,9 @@ public abstract class Robot {
                     myLocation = rc.getLocation();
                 }
                 return true;
-                */
-                soldierMove(target);
-                return true;
             }
         }
+
         for (Direction d: Direction.allDirections()){
             MapLocation adjacent=rc.adjacentLocation(d);
             if (rc.onTheMap(adjacent) && rc.canMove(d)){

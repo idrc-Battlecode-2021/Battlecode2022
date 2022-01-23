@@ -1,4 +1,4 @@
-package bot9_MC.util;
+package bot9_SL.util;
 
 import battlecode.common.Direction;
 

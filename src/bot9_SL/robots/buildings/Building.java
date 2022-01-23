@@ -1,7 +1,7 @@
-package bot9_MC.robots.buildings;
+package bot9_SL.robots.buildings;
 
 import battlecode.common.*;
-import bot9_MC.robots.Robot;
+import bot9_SL.robots.Robot;
 
 import java.util.ArrayList;
 

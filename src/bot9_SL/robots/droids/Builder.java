@@ -1,7 +1,8 @@
-package bot9_MC.robots.droids;
+package bot9_SL.robots.droids;
 
 import battlecode.common.*;
-import bot9_MC.util.Constants;
+import bot9_SL.robots.Robot;
+import bot9_SL.util.Constants;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,96 +30,55 @@ public class Builder extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        avoidCharge();
         int builderCount = 1;
         reassignArchon();
-        rc.setIndicatorString("archon: "+myArchonOrder);
-        //System.out.println(Clock.getBytecodesLeft());
-        startingBit = 2*myArchonOrder;
-        avoidCharge();
+       startingBit = 2*myArchonOrder;
         // update shared array
+        //build();
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(1, rc.readSharedArray(1)+(int)Math.pow(16,myArchonOrder));
-        }else if(rc.getRoundNum()%3 == 0){
-            int power = (int)Math.pow(16,myArchonOrder);
-            builderCount = (rc.readSharedArray(1)%(power*16))/(power);
         }
-        int numTowers = rc.readSharedArray(myArchonOrder+5);
-        if (numTowers==2){
-            isDefensive=false;
+        if(rc.getLocation().distanceSquaredTo(archonLoc)<2){
+            tryMoveMultiple(rc.getLocation().directionTo(archonLoc).opposite());
         }
-        if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){ //repairs prototypes
-            RobotInfo prototype = rc.senseRobotAtLocation(finishPrototype);
-            if (prototype.getHealth()==prototype.getType().health){
-                finishPrototype=null;
-            }
-            else{
-                if(rc.canRepair(finishPrototype)){
-                    rc.repair(finishPrototype);
-                }
-                return;
-            }
+        if(rc.getLocation().distanceSquaredTo(archonLoc)>rc.getType().actionRadiusSquared){
+            intermediateMove(archonLoc);
         }
-        //Moves away from archons to not distrub its spawning rates
-        RobotInfo[] checkArchons = rc.senseNearbyRobots(Math.max(builderCount,8),myTeam);
-        for(int i = checkArchons.length; --i>=0;){
-            if(checkArchons[i].getType().equals(RobotType.ARCHON)){
-                tryMoveMultiple(myLocation.directionTo(checkArchons[i].getLocation()).opposite());
-            }
-        }
-
-        boolean built = false;
-        if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180){
-            built = build(2);
-        }
-        
-        boolean nearPrototype = false;
-        MapLocation prototypeLoc = null;
-        RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);
-        for (int i = robots.length; --i>=0;){
-            if (robots[i].getMode() == RobotMode.PROTOTYPE){
-                if (rc.canRepair(robots[i].getLocation())){
-                    nearPrototype=true;
-                    prototypeLoc = robots[i].getLocation();
-                }
-            }
-        }
-        
-        //System.out.println("After repair: "+Clock.getBytecodesLeft());
-        if (built){
-            for (int i = robots.length; --i>=0;){
-                if (robots[i].getMode()==RobotMode.PROTOTYPE){
-                    MapLocation target = robots[i].getLocation();
-                    rc.writeSharedArray(59, myArchonOrder*128+target.x*64+target.y);
+        RobotInfo[] friends = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, myTeam);
+        for (RobotInfo r: friends){
+            if(r.getType()==RobotType.ARCHON){
+                if (r.getHealth()!=RobotType.ARCHON.health){
+                    if(rc.canRepair(r.getLocation())){
+                        rc.repair(r.getLocation());
                     }
                 }
-                //System.out.println("After built: "+Clock.getBytecodesLeft());
             }
-            
-        else if (nearPrototype){
-            rc.repair(prototypeLoc);
-            //System.out.println("After nearPrototype: "+Clock.getBytecodesLeft());
         }
-        else if (isDefensive){
-            intermediateMove(archonLoc);
-            if (rc.getLocation().distanceSquaredTo(archonLoc)<=2){
-                intermediateMove(rc.getLocation().add(rc.getLocation().directionTo(archonLoc).opposite()));
-            }
-            else{
-                intermediateMove(archonLoc);
-            }
-            //System.out.println("After isDefensive: "+Clock.getBytecodesLeft());
-        }
-            else{
-                int randint = rand.nextInt(8);
-                Direction d = Constants.DIRECTIONS[randint];
-                if(rc.canMove(d)){
-                    rc.move(d);
-                    myLocation = rc.getLocation();
+        RobotInfo [] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, myTeam.opponent());
+        if(enemies.length==0) return;
+        for (RobotInfo r: enemies){
+            if(r.getType()==RobotType.SOLDIER || rc.getType()==RobotType.SAGE || rc.getType()==RobotType.WATCHTOWER){
+                if(rc.canMove(r.getLocation().directionTo(rc.getLocation()).opposite())){
+                    rc.move(r.getLocation().directionTo(rc.getLocation()).opposite());
                 }
-                //System.out.println("After random: "+Clock.getBytecodesLeft());
             }
-
+        }
     }
+    public void build() throws GameActionException{
+        if(rc.getTeamLeadAmount(myTeam)<RobotType.WATCHTOWER.buildCostLead){
+            return;
+        }
+        for (Direction d: Direction.allDirections()){
+            if(rc.canBuildRobot(RobotType.LABORATORY, d)){
+                rc.buildRobot(RobotType.LABORATORY, d);
+            }
+            else if(rc.canBuildRobot(RobotType.WATCHTOWER, d)){
+                rc.buildRobot(RobotType.WATCHTOWER, d);
+            }
+        }
+    }
+
     public boolean canHeal() throws GameActionException{
         if(rc.readSharedArray(59)==0){
             return false;

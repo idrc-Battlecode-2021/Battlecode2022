@@ -1,4 +1,4 @@
-package bot9_MC.robots.buildings;
+package bot9_SL.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
