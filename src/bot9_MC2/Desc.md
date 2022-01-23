@@ -1,6 +1,6 @@
 # Bot9_MC
 
-- main difference is that if soldiers sense troops outside of vision radius it moves to low passability
+- experimenting with soldier kiting
 
 
 
