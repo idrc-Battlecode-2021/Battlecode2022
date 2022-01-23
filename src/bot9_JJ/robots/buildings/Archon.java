@@ -411,7 +411,7 @@ public class Archon extends Building{
                     counter++;
             }
         }
-        if(counter > 3 && rc.readSharedArray(45) == 0){
+        if(counter > 3 && rc.readSharedArray(45) == 0 && rc.getHealth() > 60){
             rc.writeSharedArray(45,64*myLocation.x+myLocation.y);
         }else if(rc.readSharedArray(45)== 64*myLocation.x+myLocation.y){
             rc.writeSharedArray(45,0);
