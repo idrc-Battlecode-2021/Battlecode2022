@@ -118,8 +118,9 @@ public class Soldier extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length ==0){
-                    rc.writeSharedArray(43,0);
+                    if(target.equals(temp)) rc.writeSharedArray(43,0);
                     target = null;
                     targetType = 0;
                 }
@@ -134,8 +135,9 @@ public class Soldier extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length == 0){
-                    rc.writeSharedArray(55,0);
+                    if(target.equals(temp))rc.writeSharedArray(55,0);
                     target = null;
                     targetType = 0;
                 }
@@ -149,8 +151,9 @@ public class Soldier extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length == 0){
-                    rc.writeSharedArray(41,0);
+                    if(target.equals(temp)) rc.writeSharedArray(41,0);
                     target = null;
                     targetType = 0;
                 }
