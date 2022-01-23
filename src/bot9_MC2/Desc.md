@@ -1,6 +1,6 @@
-# Bot9_MC
+# Bot9_MC2
 
-- experimenting with soldier kiting
+- Bot9_MC but with kiting and other soldier micro
 
 
 

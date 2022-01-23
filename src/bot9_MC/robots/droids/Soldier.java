@@ -169,6 +169,8 @@ public class Soldier extends Droid{
         }
         if (enemyBotsInVision.length>0){
             moveToLowRubble();
+            attackTarget = selectActionTarget();
+            tryAttack(attackTarget);
             prevHealth = rc.getHealth();
             return;
         }

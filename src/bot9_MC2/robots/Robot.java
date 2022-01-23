@@ -793,7 +793,6 @@ public abstract class Robot {
         int lowest_rubble = prioritizeMove ? 99:rc.senseRubble(rc.getLocation());
         for (Direction d: Direction.allDirections()){
             MapLocation adjacent=rc.adjacentLocation(d);
-            if(adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy))continue;
             if(rc.canMove(d)){
                 int rubbleAtLoc = rc.senseRubble(adjacent);
                 if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy)){
