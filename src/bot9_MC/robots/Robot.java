@@ -1,7 +1,7 @@
-package bot9_SL.robots;
+package bot9_MC.robots;
 
 import battlecode.common.*;
-import bot9_SL.util.Constants;
+import bot9_MC.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -700,23 +700,32 @@ public abstract class Robot {
                 watchtowerTurns = Integer.MAX_VALUE, soldierTurns = Integer.MAX_VALUE;
         int[] turns = {archonTurns, sageTurns, labTurns, watchtowerTurns, soldierTurns};
         //MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
-        if (archon!=null && damages[0]>0){
+        if (archon!=null){
             turns[0] = archon.getHealth()/damages[0];
         }
+<<<<<<< HEAD:src/bot9_SL/robots/Robot.java
 <<<<<<< Updated upstream:src/bot9_SL/robots/Robot.java
         if (sage!=null&& damages[1]>0){
+=======
+        if (sage!=null){
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/Robot.java
             turns[1] = sage.getHealth()/damages[1];
         }
-        if (lab!=null&& damages[2]>0){
+        if (lab!=null){
             turns[2] = lab.getHealth()/damages[2];
         }
-        if (watchtower!=null&& damages[3]>0){
+        if (watchtower!=null){
             turns[3] = watchtower.getHealth()/damages[3];
         }
+<<<<<<< HEAD:src/bot9_SL/robots/Robot.java
         if (soldier!=null&& damages[4]>0){
 =======
         if (sage!=null && damages[1]>0){
             turns[1] = sage.getHealth()/damages[1];
+=======
+        if (soldier!=null){
+            turns[4] = soldier.getHealth()/damages[4];
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/Robot.java
         }
         if (lab!=null && damages[2]>0){
             turns[2] = lab.getHealth()/damages[2];
@@ -773,8 +782,17 @@ public abstract class Robot {
             moveToLowPassability(target);
             tryAttack(target);
         }
+<<<<<<< HEAD:src/bot9_SL/robots/Robot.java
 =======
 >>>>>>> Stashed changes:src/bot9_MC/robots/Robot.java
+=======
+        if (target==rc.getLocation()){
+            enemyRobots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
+            if (enemyRobots.length>0){
+                moveToLowPassability(target);
+            }
+        }
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/Robot.java
         //rc.setIndicatorString("target: "+target);
         return target;
         
@@ -812,10 +830,28 @@ public abstract class Robot {
         }
         Direction lowest = Direction.CENTER;
         int lowest_rubble = rc.senseRubble(rc.getLocation());
+<<<<<<< HEAD:src/bot9_SL/robots/Robot.java
 <<<<<<< Updated upstream:src/bot9_SL/robots/Robot.java
+=======
+        /*
+        RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
+        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
+        int health = 0;
+        for (RobotInfo robot:enemyBots){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
+                continue;
+            }
+            health+=robot.getHealth();
+        }
+        for (RobotInfo robot:allyBots){
+            health-=robot.getHealth();
+        }
+        */
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/Robot.java
         if(rc.canSenseRobotAtLocation(target)){
             RobotInfo robot = rc.senseRobotAtLocation(target);
-            if(rubbleActionTurnDiff(myLocation) < rubbleActionTurnDiff(target) || robot.getType() != RobotType.SOLDIER){
+            if(robot.getType() != RobotType.SOLDIER || rc.getHealth()>rc.senseRobot(target).getHealth()){
+                /*
                 for (Direction d: Direction.allDirections()){
                     MapLocation adjacent=rc.adjacentLocation(d);
                     if(adjacent.distanceSquaredTo(target) > rc.getType().actionRadiusSquared)continue;
@@ -835,8 +871,12 @@ public abstract class Robot {
                     myLocation = rc.getLocation();
                 }
                 return true;
+                */
+                soldierMove(target);
+                return true;
             }
         }
+<<<<<<< HEAD:src/bot9_SL/robots/Robot.java
 
 =======
         /*
@@ -854,6 +894,8 @@ public abstract class Robot {
         }
         */
 >>>>>>> Stashed changes:src/bot9_MC/robots/Robot.java
+=======
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/Robot.java
         for (Direction d: Direction.allDirections()){
             MapLocation adjacent=rc.adjacentLocation(d);
             if (rc.onTheMap(adjacent) && rc.canMove(d)){

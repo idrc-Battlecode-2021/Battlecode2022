@@ -30,17 +30,3 @@ battlecode-scaffold.iws
 .classpath
 .project
 .settings/
-src/bot9_MC/Desc.md
-src/bot9_MC/RobotPlayer.java
-src/bot9_MC/robots/buildings/Archon.java
-src/bot9_MC/robots/buildings/Building.java
-src/bot9_MC/robots/buildings/Lab.java
-src/bot9_MC/robots/buildings/Watchtower.java
-src/bot9_MC/robots/droids/Builder.java
-src/bot9_MC/robots/droids/Droid.java
-src/bot9_MC/robots/droids/Miner.java
-src/bot9_MC/robots/droids/Sage.java
-src/bot9_MC/robots/droids/Soldier.java
-src/bot9_MC/robots/Robot.java
-src/bot9_MC/util/Constants.java
-src/bot9_MC/util/PathFindingSoldier.java

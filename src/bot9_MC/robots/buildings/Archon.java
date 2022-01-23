@@ -1,4 +1,4 @@
-package bot9_SL.robots.buildings;
+package bot9_MC.robots.buildings;
 
 import battlecode.common.*;
 import java.util.*;
@@ -9,16 +9,14 @@ public class Archon extends Building{
     private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
     private static int minersForNearbyLead;
+
     private static Integer minerIndex = 0; //spawning miners
     private static Integer soldierIndex = 0;
-    private static int minerLimit=0;
-    private static int builderLimit=3;
-    private int numBuildersSpawned=0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
     private static int power = 0; // power of 16 that corresponds with archonOrder
     private MapLocation target = null;
     private static final int SURPLUS_THRESHOLD = 500;
-    private int activeSoldiers =0;
+
     private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
     private boolean hasUpdatedDirections = false;
 
@@ -26,7 +24,6 @@ public class Archon extends Building{
     private static int soldierToHeal = 0;
 
     private static String indicatorString = "";
-    private static int mapSize=0;
 
     public Archon(RobotController rc) {
         super(rc);
@@ -48,11 +45,7 @@ public class Archon extends Building{
 
     @Override
     public void init() throws GameActionException {
-        mapSize=rc.getMapHeight()*rc.getMapWidth();
-        mapSize=(int)Math.sqrt(mapSize);
-        minerLimit=mapSize/5+2;
         initialArchons = rc.getArchonCount();
-        indicatorString+=minerLimit;
         parseAnomalies();
         // write Archon ID to shared array
         if (rc.getArchonCount()==1){
@@ -137,8 +130,9 @@ public class Archon extends Building{
             }
         }
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform())
                 rc.transform();
+                setTransformStatus();
         }
 
     }
@@ -164,19 +158,21 @@ public class Archon extends Building{
     }
     public void move() throws GameActionException{
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform())
                 rc.transform();
+                setTransformStatus();
             if (rc.isMovementReady()){
                 intermediateMove(target);
                 passableDirections.clear();
                 setPassableDirections();
                 writeLocationToArray();
             }
-            indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
+            //indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
         }
         else{
             if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
                 rc.transform();
+                setTransformStatus();
             }
         }
     }
@@ -201,6 +197,7 @@ public class Archon extends Building{
         }
         if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
             rc.transform();
+            setTransformStatus();
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             int i=0;
@@ -241,6 +238,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(63,rc.getID()+1);
                 rc.writeSharedArray(56,0);
                 rc.writeSharedArray(11,0);
+                rc.writeSharedArray(17,0);
             }
             else{
                 //set appropriate archonOrder
@@ -268,7 +266,7 @@ public class Archon extends Building{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
             if(minerCount > minerCountMax)minerCountMax = minerCount;
-            builderCount = rc.readSharedArray(1);
+            builderCount = (rc.readSharedArray(1)%(power*16))/(power);
             globalSageCount = rc.readSharedArray(2);
             globalMinerCount = rc.readSharedArray(44);
             globalSoldierCount = rc.readSharedArray(3);
@@ -278,10 +276,6 @@ public class Archon extends Building{
             watchtowerCount = rc.readSharedArray(archonOrder+5);
             labCount = (rc.readSharedArray(4) % (power*16))/power;
         }
-         activeSoldiers=globalSoldierCount;
-         for (RobotInfo r: rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam())){
-             activeSoldiers--;
-         }
     }
 
     public boolean checkBuildStatus(int diff, int cost) throws GameActionException{ //controls the order of archons building troops so troops are spawned evenly
@@ -393,8 +387,11 @@ public class Archon extends Building{
         }
     }
 
+<<<<<<< HEAD:src/bot9_SL/robots/buildings/Archon.java
 <<<<<<< Updated upstream:src/bot9_SL/robots/buildings/Archon.java
 =======
+=======
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/buildings/Archon.java
     public void setTransformStatus() throws GameActionException{
         int currentStatus = rc.readSharedArray(17);
         int power = (int)Math.pow(2,archonOrder);
@@ -409,7 +406,11 @@ public class Archon extends Building{
 
     public boolean freeToTransform() throws GameActionException{
         if (rc.getArchonCount()==1){
+<<<<<<< HEAD:src/bot9_SL/robots/buildings/Archon.java
             return false;
+=======
+            return true;
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/buildings/Archon.java
         }
         int currentStatus = rc.readSharedArray(17);
         int transformed = 0;
@@ -423,14 +424,15 @@ public class Archon extends Building{
         return true;
     }
 
+<<<<<<< HEAD:src/bot9_SL/robots/buildings/Archon.java
 >>>>>>> Stashed changes:src/bot9_MC/robots/buildings/Archon.java
+=======
+>>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/buildings/Archon.java
     @Override
     public void run() throws GameActionException {
-        if(activeSoldiers>100){
-            repair();
-            return;
-        }
         indicatorString = "";
+        int currentStatus = rc.readSharedArray(17);
+        indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
         checkEnemies();
         checkArchonsAlive();
         updateTroopCount();
@@ -448,6 +450,7 @@ public class Archon extends Building{
         }
         else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){ 
             rc.transform();
+            setTransformStatus();
         }
         /*
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){
@@ -458,6 +461,15 @@ public class Archon extends Building{
         // START SPAWNING
         int archonBuildStatus = rc.readSharedArray(11);
         int diff = archonBuildStatus - archonOrder;
+        if (rc.getMode()==RobotMode.PORTABLE && diff==0){
+            //skip turn if portable
+            if (archonBuildStatus == rc.getArchonCount()-1){
+                rc.writeSharedArray(11,0);
+            }
+            else{
+                rc.writeSharedArray(11,archonBuildStatus+1);
+            }
+        }
         int cost = RobotType.MINER.buildCostLead;
         RobotType type = RobotType.MINER;
         indicatorString+=" miners";
@@ -474,7 +486,7 @@ public class Archon extends Building{
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
             mod = 2;
         }
-        if (globalMinerCount < minerLimit || count%mod == 1){
+        if (globalMinerCount < 6 || count%mod == 1){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
@@ -496,17 +508,6 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (rc.getHealth()<RobotType.ARCHON.health && numBuildersSpawned<builderLimit && rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent()).length==0){
-            int i=0;
-            while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
-                i++;
-            }
-            if(rc.canBuildRobot(RobotType.BUILDER,passableDirections.get(i))){
-                rc.buildRobot(RobotType.BUILDER, passableDirections.get(i));
-                numBuildersSpawned++;
-            }
-        }
-
         else /*if (count %mod==1)*/{
             cost = RobotType.SOLDIER.buildCostLead;
             type = RobotType.SOLDIER;

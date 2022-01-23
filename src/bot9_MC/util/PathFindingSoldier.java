@@ -1,4 +1,4 @@
-package bot9_SL.util;
+package bot9_MC.util;
 
 import battlecode.common.*;
 
