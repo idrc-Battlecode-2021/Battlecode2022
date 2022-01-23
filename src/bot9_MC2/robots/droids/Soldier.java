@@ -21,6 +21,10 @@ public class Soldier extends Droid{
     private RobotInfo[] enemyBotsInVision;
     private RobotInfo[] allyBotsInAction;
     private RobotInfo[] allyBotsInVision;
+    private String indicatorString = "";
+
+    private MapLocation closestArchon;
+
     public Soldier(RobotController rc) {super(rc);}
 
     @Override
@@ -74,14 +78,13 @@ public class Soldier extends Droid{
     }
 
     public void attack() throws GameActionException{
-
         int health = 0;
-        boolean containsSoldier = false;
+        int soldierCount = 0;
         for (RobotInfo robot:enemyBotsInVision){
-            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && robot.getType()!=RobotType.ARCHON){
                 continue;
             }
-            containsSoldier = true;
+            soldierCount++;
             health+=robot.getHealth();
         }
         for (RobotInfo robot:allyBotsInAction){
@@ -90,12 +93,11 @@ public class Soldier extends Droid{
         MapLocation attackTarget = selectVisionTarget();
         if (attackTarget!=rc.getLocation()){
             RobotInfo robot = rc.senseRobotAtLocation(attackTarget);
-            //rc.setIndicatorString("vision target: "+attackTarget.toString());
-            if(robot.getType() != RobotType.SOLDIER && robot.getType()!= RobotType.SAGE && !containsSoldier){ //TODO: try buffer between health
-                if (!rc.getLocation().isWithinDistanceSquared(attackTarget, RobotType.SOLDIER.actionRadiusSquared)){
+            int enemyHealth = robot.getHealth();
+            if((enemyHealth<13 && health<-10*soldierCount) || ((robot.getType()==RobotType.MINER || robot.getType()==RobotType.BUILDER || robot.getType()==RobotType.LABORATORY) && soldierCount==0)){ 
+                if (rc.getLocation().distanceSquaredTo(attackTarget) >= RobotType.SOLDIER.actionRadiusSquared-2){
                     soldierMove(attackTarget);
                 }
-                //TODO: experiment by replacing with alternate mtlp code
                 tryAttack(attackTarget);
             }
             else{
@@ -108,8 +110,9 @@ public class Soldier extends Droid{
             attackTarget = selectActionTarget();
             //rc.setIndicatorString("action target: "+attackTarget.toString());
             RobotInfo robot = rc.senseRobotAtLocation(attackTarget);
+            int enemyHealth = robot.getHealth();
             if (attackTarget!=rc.getLocation()){
-                if(robot.getType() != RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && !containsSoldier){ //TODO: try buffer between health
+                if((enemyHealth<13 && health<-10*soldierCount) || ((robot.getType()==RobotType.MINER || robot.getType()==RobotType.BUILDER || robot.getType()==RobotType.LABORATORY) && soldierCount==0)){ //TODO: try buffer between health
                     //soldierMove(attackTarget);
                     //TODO: experiment by replacing with alternate movetolowrubble code
                     tryAttack(attackTarget);
@@ -121,13 +124,20 @@ public class Soldier extends Droid{
                 }
             }
         }
+        if (rc.isActionReady()){
+            attackTarget = selectActionTarget();
+            tryAttack(attackTarget);
+        }
+        
         if (rc.isMovementReady() && enemyBotsInVision.length>0){
             moveToLowRubble();
         }
+        
     }
 
     @Override
     public void run() throws GameActionException {
+        indicatorString = "";
         reassignArchon();
         setArchonLocation();
         enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
@@ -144,11 +154,50 @@ public class Soldier extends Droid{
         broadcast();
         target = null;
 
-        retreat();
+        int location = rc.readSharedArray(15);
+        closestArchon = new MapLocation(location%256,location/256);
+        myLocation = rc.getLocation();
+        for (int i=1;i<rc.getArchonCount();i++){
+            switch (i){
+                case 1:
+                    location = rc.readSharedArray(16);
+                    break;
+                case 2:
+                    location = rc.readSharedArray(49);
+                    break;
+                case 3:
+                    location = rc.readSharedArray(50);
+                    break;
+            }
+            int x = location%256;
+            int y = location/256;
+            MapLocation archonLoc = new MapLocation(x,y);
+            if (movementTileDistance(myLocation,archonLoc)<movementTileDistance(myLocation,closestArchon)){
+                closestArchon = archonLoc;
+            }
+        }
+        archonLocs = getArchonLocs();
+        setHealStatus();
         MapLocation attackTarget;
-        if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
-            attackTarget = selectVisionTarget();
-            tryAttack(attackTarget);
+        // Prioritize running away and healing if health<18
+        if (rc.getHealth()<=18){
+            /* Stay alive method
+            if (enemyBotsInVision.length>0 && rc.getLocation().distanceSquaredTo(archonLoc)>4){
+                kite();
+            }  
+            else */
+            
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                soldierMove(archonLoc);
+            }
+            else if (enemyBotsInVision.length>0 && rc.isMovementReady()){
+                if (rc.getLocation().isWithinDistanceSquared(archonLoc, 2)){
+                    kite();
+                }
+                else{
+                    soldierMove(archonLoc);
+                }
+            }
             if (rc.isActionReady()){
                 attackTarget = selectActionTarget();
                 tryAttack(attackTarget);
@@ -156,18 +205,55 @@ public class Soldier extends Droid{
             prevHealth = rc.getHealth();
             return;
         }
-        boolean nearArchon = false;
-        for(RobotInfo robot:allyBotsInVision){
-            if (robot.getType()==RobotType.ARCHON){
-                nearArchon = true;
-                break;
+        // defend if archon is being attacked
+        if (enemyBotsInVision.length>0){
+            //TODO: prioritize soldier attacking archon?
+            attackTarget = selectVisionTarget();
+            if (attackTarget.isWithinDistanceSquared(closestArchon, RobotType.ARCHON.visionRadiusSquared) && rc.getLocation().distanceSquaredTo(attackTarget) >= RobotType.SOLDIER.actionRadiusSquared-2){
+                rc.setIndicatorString(indicatorString+" defend");
+                moveTowardToLowRubble(attackTarget, false);
+                attack();
+                prevHealth = rc.getHealth();
+                return;
             }
         }
+        // go to heal if it needs to
+        if (shouldHeal){
+            if (!rc.getLocation().isWithinDistanceSquared(closestArchon, RobotType.ARCHON.actionRadiusSquared)){
+                soldierMove(closestArchon);
+            }
+            if (rc.isActionReady()){
+                attackTarget = selectActionTarget();
+                tryAttack(attackTarget);
+            }
+            prevHealth = rc.getHealth();
+            return;
+        }
+        // attack
+        int health = 0;
+        int soldierCount = 0;
+        for (RobotInfo robot:enemyBotsInVision){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && robot.getType()!=RobotType.ARCHON){
+                continue;
+            }
+            soldierCount++;
+            health+=robot.getHealth();
+        }
+        for (RobotInfo robot:allyBotsInAction){
+            health-=robot.getHealth();
+        }
         if(enemyBotsInAction.length >= 1){
-            if (rc.getHealth()<prevHealth){
-                rc.setIndicatorString("kite");
-                //soldierMove(archonLoc);
-                kite();
+            attackTarget = selectActionTarget();
+            int enemyHealth = rc.senseRobotAtLocation(attackTarget).getHealth();
+            // defend 
+            if (attackTarget.isWithinDistanceSquared(closestArchon, RobotType.ARCHON.actionRadiusSquared) && rc.getLocation().distanceSquaredTo(attackTarget) >= RobotType.SOLDIER.actionRadiusSquared-2){
+                rc.setIndicatorString(indicatorString+" defend");
+                moveTowardToLowRubble(attackTarget, false);
+            }
+            else if (rc.getHealth()<prevHealth && !(enemyHealth<13 && health<-10*soldierCount)){
+                rc.setIndicatorString(indicatorString+" kite");
+                soldierMove(archonLoc);
+                //kite();
             }
             //New targetting
             attack();
@@ -175,19 +261,20 @@ public class Soldier extends Droid{
             return;
         }
         if (enemyBotsInVision.length>0){
+            //TODO: prioritize soldier attacking archon?
             attackTarget = selectVisionTarget();
-            if (nearArchon){
-                rc.setIndicatorString("near archon");
-                moveTowardToLowRubble(attackTarget, true);
-            }
-            if (allyBotsInVision.length>=8){
-                rc.setIndicatorString("move toward");
+            int enemyHealth = rc.senseRobotAtLocation(attackTarget).getHealth();
+            indicatorString+=" vision target: "+attackTarget;
+            //defend
+            if (attackTarget.isWithinDistanceSquared(closestArchon, RobotType.ARCHON.visionRadiusSquared) && rc.getLocation().distanceSquaredTo(attackTarget) >= RobotType.SOLDIER.actionRadiusSquared-2){
+                rc.setIndicatorString(indicatorString+" defend");
                 moveTowardToLowRubble(attackTarget, false);
             }
-            else{
-                rc.setIndicatorString("regular move");
-                moveToLowRubble();
+            else if (allyBotsInVision.length>=8 || health<-10*soldierCount){
+                rc.setIndicatorString(indicatorString+" confident");
+                moveTowardToLowRubble(attackTarget, false);
             }
+            attack();
             prevHealth = rc.getHealth();
             return;
         }
@@ -255,28 +342,13 @@ public class Soldier extends Droid{
         prevHealth = rc.getHealth();
     }
 
-    public void retreat() throws GameActionException{
+    public void setHealStatus() throws GameActionException{
         if(rc.getHealth()>=49){
             shouldHeal=false;
             return;
         }
         if (rc.getHealth()<=18){
             shouldHeal = true;
-            reachedArchon = false;
-        }
-        if (shouldHeal){
-            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
-                //rc.setIndicatorString("going to heal");
-                soldierMove(archonLoc);
-            }
-            else if (rc.isMovementReady()){
-                reachedArchon = true;
-                if (enemyBotsInVision.length>1){
-                    kite();
-                }
-            }
-            
-            
         }
     }
     public void kite() throws GameActionException{
@@ -287,8 +359,8 @@ public class Soldier extends Droid{
         int average_x=0,average_y=0;
         myLocation = rc.getLocation();
         int enemyCount = 0;
-        for (RobotInfo robot:enemyBotsInVision){
-            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
+        for (RobotInfo robot:enemyBotsInAction){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && robot.getType()!=RobotType.ARCHON){
                 continue;
             }
             enemyCount++;
@@ -296,12 +368,16 @@ public class Soldier extends Droid{
             average_x+=location.x;
             average_y+=location.y;
         }
+        if (enemyCount==0){
+            soldierMove(archonLoc);
+            return;
+        }
         average_x/=enemyCount;
         average_y/=enemyCount;
         Direction lowest = Direction.CENTER;
         int lowest_rubble = 99;
         MapLocation enemy = new MapLocation(average_x,average_y);
-        moveAwayToLowRubble(enemy, true);
+        moveAwayToLowRubble(enemy, false);
         
     }
 

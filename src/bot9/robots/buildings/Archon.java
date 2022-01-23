@@ -400,8 +400,8 @@ public class Archon extends Building{
     }
 
     public boolean freeToTransform() throws GameActionException{
-        if (rc.getArchonCount()==1 && rc.getTeamLeadAmount(rc.getTeam())<RobotType.SOLDIER.buildCostLead){
-            return true;
+        if (rc.getArchonCount()==1){
+            return false;
         }
         int currentStatus = rc.readSharedArray(17);
         indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
