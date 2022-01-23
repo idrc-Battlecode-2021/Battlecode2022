@@ -15,18 +15,12 @@ public class Soldier extends Droid{
     private MapLocation centralArchon;
     private PathFindingSoldier pfs;
     private boolean reachedArchon;
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-=======
+
     private int prevHealth = 0;
     private RobotInfo[] enemyBotsInAction;
     private RobotInfo[] enemyBotsInVision;
     private RobotInfo[] allyBotsInAction;
     private RobotInfo[] allyBotsInVision;
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-=======
-    private int prevHealth = 0;
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
     public Soldier(RobotController rc) {super(rc);}
 
     @Override
@@ -50,18 +44,11 @@ public class Soldier extends Droid{
             y += archonLocs[i].y;
         }
         centralArchon = new MapLocation(x/archonCount,y/archonCount);
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-=======
         prevHealth = rc.getHealth();
         enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared, rc.getTeam().opponent());
         enemyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
         allyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
         allyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam());
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-=======
-        prevHealth = rc.getHealth();
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
     }
 
     public void setArchonLocation() throws GameActionException{
@@ -160,29 +147,16 @@ public class Soldier extends Droid{
         retreat();
         MapLocation attackTarget;
         if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-            selectPriorityTarget();
+            attack();
             prevHealth = rc.getHealth();
             return;
         }
-        RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam().opponent());
-        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
-        if(enemyBots.length >= 1){
+        if(enemyBotsInAction.length >= 1){
             if (rc.getHealth()<prevHealth){
-                rc.setIndicatorString("kite");
-                soldierMove(archonLoc);
-                //kite();
+                kite();
             }
             //New targetting
-            target = selectPriorityTarget();
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-=======
-            attackTarget = selectVisionTarget();
-            tryAttack(attackTarget);
-            if (rc.isActionReady()){
-                attackTarget = selectActionTarget();
-                tryAttack(attackTarget);
-            }
+            attack();
             prevHealth = rc.getHealth();
             return;
         }
@@ -195,14 +169,11 @@ public class Soldier extends Droid{
             //New targetting
             attack();
             prevHealth = rc.getHealth();
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
             return;
         }
         if (enemyBotsInVision.length>0){
             moveToLowRubble();
-=======
             prevHealth = rc.getHealth();
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
             return;
         }
         if (hasMapLocation(45)){
@@ -211,15 +182,7 @@ public class Soldier extends Droid{
         }else if(hasMapLocation(43) && globalSoldierCount > 5){
             MapLocation target = decode(43);
             if (rc.canSenseLocation(target)){
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-                if (nearbyBots.length ==0){
-=======
                 if (enemyBotsInAction.length ==0){
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-=======
-                if (enemyBots.length ==0){
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
                     rc.writeSharedArray(43,0);
                 }
             }
@@ -229,15 +192,7 @@ public class Soldier extends Droid{
         }else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.canSenseLocation(target)){
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-                if (nearbyBots.length == 0){
-=======
                 if (enemyBotsInAction.length == 0){
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-=======
-                if (enemyBots.length == 0){
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
                     rc.writeSharedArray(55,0);
                 }
             }
@@ -247,15 +202,7 @@ public class Soldier extends Droid{
         }else if (hasMapLocation(41)){
             MapLocation target = decode(41);
             if (rc.canSenseLocation(target)){
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-                if (nearbyBots.length == 0){
-=======
                 if (enemyBotsInAction.length == 0){
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-=======
-                if (enemyBots.length == 0){
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
                     rc.writeSharedArray(41,0);
                 }
             }
@@ -289,19 +236,8 @@ public class Soldier extends Droid{
                 }
             }
         }
-<<<<<<< HEAD:src/bot9_SL/robots/droids/Soldier.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-        if(rc.isActionReady()){
-            selectPriorityTarget();
-        }
-=======
         if(rc.isActionReady())attack();
         prevHealth = rc.getHealth();
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-=======
-        if(rc.isActionReady())selectPriorityTarget();
-        prevHealth = rc.getHealth();
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/droids/Soldier.java
     }
 
     public void retreat() throws GameActionException{
@@ -318,15 +254,6 @@ public class Soldier extends Droid{
                 //rc.setIndicatorString("going to heal");
                 soldierMove(archonLoc);
             }
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-            else{
-                reachedArchon = true;
-            }
-
-            //TODO: try this code after archon moves to low passability?
-            /*
-=======
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
             else if (rc.isMovementReady()){
                 reachedArchon = true;
                 if (enemyBotsInVision.length>1){
@@ -337,8 +264,6 @@ public class Soldier extends Droid{
             
         }
     }
-<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
-=======
     public void kite() throws GameActionException{
         //rc.setIndicatorString("kite1");
         if (!rc.isMovementReady()){
@@ -378,70 +303,6 @@ public class Soldier extends Droid{
             myLocation = rc.getLocation();
         }
         
-    }
->>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
-
-    public void kite() throws GameActionException{
-        if (!rc.isMovementReady()){
-            return;
-        }
-        RobotInfo[] enemyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
-        RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
-        int diff_x=0,diff_y=0;
-        myLocation = rc.getLocation();
-        int health = 0;
-        for (RobotInfo robot:enemyBots){
-            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
-                continue;
-            }
-            MapLocation location = robot.getLocation();
-            diff_x+=myLocation.x-location.x;
-            diff_y+=myLocation.y-location.y;
-            health+=robot.getHealth();
-        }
-        for (RobotInfo robot:allyBots){
-            health-=robot.getHealth();
-        }
-        if (health>0){
-            //maybe always retreat
-            soldierMove(archonLoc);
-        }
-        /*
-        ArrayList<Direction> directions = new ArrayList<Direction>();
-        Direction away = getDirection(diff_x,diff_y);
-        rc.setIndicatorString(away.toString());
-        if (rc.canMove(away)){
-            directions.add(away);
-        }
-
-        MapLocation tempLoc = myLocation.add(away.rotateLeft());
-        if (rc.canMove(away.rotateLeft())){
-            if (directions.size()==0 || rc.senseRubble(tempLoc)<rc.senseRubble(myLocation.add(away))){
-                directions.add(0,away.rotateLeft());
-            }
-            else{
-                directions.add(away.rotateLeft());
-            }
-        }
-        tempLoc = myLocation.add(away.rotateRight());
-        if (rc.canMove(away.rotateRight())){
-            if (directions.size()==0 || rc.senseRubble(tempLoc)<rc.senseRubble(myLocation.add(directions.get(0)))){
-                directions.add(0,away.rotateLeft());
-            }
-            else if (directions.size()==1 || rc.senseRubble(tempLoc)<rc.senseRubble(myLocation.add(directions.get(1)))){
-                directions.add(1,away.rotateLeft());
-            }
-            else{
-                directions.add(away.rotateLeft());
-            }
-        }
-        //rc.setIndicatorString(directions.size()+"");
-        for (Direction d:directions){
-            if (rc.canMove(d)){
-                rc.move(d);
-            }
-        }
-        */
     }
 
     private MapLocation pastTarget = null;

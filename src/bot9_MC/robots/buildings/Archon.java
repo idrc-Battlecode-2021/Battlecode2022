@@ -387,11 +387,6 @@ public class Archon extends Building{
         }
     }
 
-<<<<<<< HEAD:src/bot9_SL/robots/buildings/Archon.java
-<<<<<<< Updated upstream:src/bot9_SL/robots/buildings/Archon.java
-=======
-=======
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/buildings/Archon.java
     public void setTransformStatus() throws GameActionException{
         int currentStatus = rc.readSharedArray(17);
         int power = (int)Math.pow(2,archonOrder);
@@ -406,11 +401,7 @@ public class Archon extends Building{
 
     public boolean freeToTransform() throws GameActionException{
         if (rc.getArchonCount()==1){
-<<<<<<< HEAD:src/bot9_SL/robots/buildings/Archon.java
             return false;
-=======
-            return true;
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/buildings/Archon.java
         }
         int currentStatus = rc.readSharedArray(17);
         int transformed = 0;
@@ -424,10 +415,6 @@ public class Archon extends Building{
         return true;
     }
 
-<<<<<<< HEAD:src/bot9_SL/robots/buildings/Archon.java
->>>>>>> Stashed changes:src/bot9_MC/robots/buildings/Archon.java
-=======
->>>>>>> parent of be12927 (Create Bot9_SL):src/bot9_MC/robots/buildings/Archon.java
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
