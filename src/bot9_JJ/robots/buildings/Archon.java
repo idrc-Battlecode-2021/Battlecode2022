@@ -434,7 +434,7 @@ public class Archon extends Building{
             return;
         }
         //add check here for miners
-        if (globalMinerCount>=6 && freeToTransform() && (transforms+1)*75 > rc.getTeamLeadAmount(myTeam)){
+        if (globalMinerCount>=6){
             setTargetLocation();
             move();
         } else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){

@@ -440,19 +440,17 @@ public class Archon extends Building{
             return;
         }
         //add check here for miners
-        if (globalMinerCount>=6 && freeToTransform() && (transforms+1)*75>rc.getTeamLeadAmount(myTeam)){
+        if (globalMinerCount>=6){
             if(!movingToAttackPosition) setTargetLocation();
             if(hasMapLocation(35)){
                 enemyArchonLoc = decode(35);
                 if(myLocation.distanceSquaredTo(enemyArchonLoc) > 900){
                     target = enemyArchonLoc;
                     movingToAttackPosition = true;
-                }else if(myLocation.distanceSquaredTo(enemyArchonLoc) < 500){
-                    movingToAttackPosition = false;
-                    target = myLocation;
                 }
-            }else if(enemyArchonLoc != null){
-                if(myLocation.distanceSquaredTo(enemyArchonLoc) < 450){
+            }
+            if(enemyArchonLoc != null){
+                if(myLocation.distanceSquaredTo(enemyArchonLoc) < 600){
                     movingToAttackPosition = false;
                     target = myLocation;
                 }
@@ -556,4 +554,5 @@ public class Archon extends Building{
             pastLocations.add(temp);
         }
     }
+
 }
