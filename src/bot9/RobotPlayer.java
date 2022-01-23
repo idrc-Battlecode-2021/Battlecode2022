@@ -28,7 +28,11 @@ public strictfp class RobotPlayer {
         }
         robot.init();
         while (true) {
-            robot.run();
+            try{
+                robot.run();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             Clock.yield();
         }
     }

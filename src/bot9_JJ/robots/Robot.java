@@ -706,7 +706,7 @@ public abstract class Robot {
                     default: return 11;
                 }
         }
-        return 0;
+        return 100;
     }
     
     private void updateInternalMap(){}
