@@ -419,12 +419,12 @@ public abstract class Robot {
                     break;
             }
         }
-        if (seesArchon && rc.readSharedArray(43)==0){
+        if (seesArchon){
             rc.writeSharedArray(43, k);
         }
-        if (seesAttacker && rc.readSharedArray(55)==0){
+        if (seesAttacker){
             rc.writeSharedArray(55,k);
-        }else if(num_enemies>0 && rc.readSharedArray(41)==0){
+        }else if(num_enemies>0){
             rc.writeSharedArray(41,k);
         }
 
@@ -685,9 +685,11 @@ public abstract class Robot {
             }
         }
         if (lowest==Direction.CENTER){
-            if(escape != Direction.CENTER && rc.canMove(escape)){
+            if(escape != Direction.CENTER && rc.canMove(escape) && rubbleActionTurnDiff(myLocation) > rubbleActionTurnDiff(target)){
                 rc.move(escape);
                 myLocation = rc.getLocation();
+            }else{
+                return false;
             }
         }
         if(rc.canMove(lowest)){

@@ -16,6 +16,10 @@ public class Soldier extends Droid{
     private boolean reachedArchon;
     private boolean addedToHeal = false;
     public Soldier(RobotController rc) {super(rc);}
+    private int targetType = 0;
+    //0 = tier 1
+    //1 = tier 2
+    //2 = tier 3
 
     @Override
     public void init() throws GameActionException {
@@ -74,7 +78,7 @@ public class Soldier extends Droid{
             globalSoldierCount = rc.readSharedArray(3);
         }
         broadcast();
-        target = null;
+        //target = null;
 
         int healCheck = rc.readSharedArray(31+myArchonOrder);
         if(healCheck < 24 || addedToHeal){
@@ -99,35 +103,59 @@ public class Soldier extends Droid{
             return;
         }
         if (hasMapLocation(45)){
-            MapLocation target = decode(45);
+            MapLocation target/*temp*/ = decode(45);
+            /*if(target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)){
+                target = temp;
+            }*/
             soldierMove(target);
         }else if(hasMapLocation(43) && globalSoldierCount > 5){
-            MapLocation target = decode(43);
+            MapLocation temp = decode(43);
+            if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 2){
+                target = temp;
+                targetType = 2;
+            }
+            if(rc.isActionReady()){
+                soldierMove(target);
+            }
             if (rc.canSenseLocation(target)){
                 if (nearbyBots.length ==0){
                     rc.writeSharedArray(43,0);
+                    target = null;
+                    targetType = 0;
                 }
+            }
+        }else if (hasMapLocation()){
+            MapLocation temp = decode();
+            if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target))&& targetType <= 1){
+                target = temp;
+                targetType = 1;
             }
             if(rc.isActionReady()){
                 soldierMove(target);
             }
-        }else if (hasMapLocation()){
-            MapLocation target = decode();
             if (rc.canSenseLocation(target)){
                 if (nearbyBots.length == 0){
                     rc.writeSharedArray(55,0);
+                    target = null;
+                    targetType = 0;
                 }
+            }
+        }else if (hasMapLocation(41)){
+            MapLocation temp = decode(41);
+            if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 0){
+                target = temp;
             }
             if(rc.isActionReady()){
                 soldierMove(target);
-            };
-        }else if (hasMapLocation(41)){
-            MapLocation target = decode(41);
+            }
             if (rc.canSenseLocation(target)){
                 if (nearbyBots.length == 0){
                     rc.writeSharedArray(41,0);
+                    target = null;
+                    targetType = 0;
                 }
             }
+        } else if(target != null){
             if(rc.isActionReady()){
                 soldierMove(target);
             }
