@@ -410,7 +410,7 @@ public class Archon extends Building{
             int value = (int)Math.pow(2,i);
             transformed += (currentStatus%(value*2))/value;
         }
-        System.out.println(" transformStatus: "+Integer.toBinaryString(currentStatus)+" transformed: "+transformed);
+        //System.out.println(" transformStatus: "+Integer.toBinaryString(currentStatus)+" transformed: "+transformed);
         indicatorString+=" transformed: "+transformed;
         if (transformed>=rc.getArchonCount()-1){
             return false;

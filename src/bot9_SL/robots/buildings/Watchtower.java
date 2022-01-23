@@ -53,7 +53,7 @@ public class Watchtower extends Building {
                         }
                         else{
                             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
-                            MapLocation target = selectPriorityTarget();
+                            MapLocation target = selectActionTarget();
                             if (target!=rc.getLocation()){
                                 if (rc.canAttack(target)){
                                     rc.attack(target);
@@ -70,7 +70,7 @@ public class Watchtower extends Building {
             }
             else{
                 if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()) rc.transform();
-                MapLocation target = selectPriorityTarget();
+                MapLocation target = selectActionTarget();
                 if (target!=rc.getLocation()){
                     if (rc.canAttack(target)){
                         rc.attack(target);
@@ -85,7 +85,7 @@ public class Watchtower extends Building {
         }
         else{
             broadcast();
-            MapLocation target = selectPriorityTarget();
+            MapLocation target = selectActionTarget();
             if (target!=rc.getLocation()){
                 if (rc.canAttack(target)){
                     rc.attack(target);

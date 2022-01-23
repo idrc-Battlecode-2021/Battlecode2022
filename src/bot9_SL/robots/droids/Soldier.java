@@ -14,6 +14,14 @@ public class Soldier extends Droid{
     private MapLocation centralArchon;
     private PathFindingSoldier pfs;
     private boolean reachedArchon;
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
+=======
+    private int prevHealth = 0;
+    private RobotInfo[] enemyBotsInAction;
+    private RobotInfo[] enemyBotsInVision;
+    private RobotInfo[] allyBotsInAction;
+    private RobotInfo[] allyBotsInVision;
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
     public Soldier(RobotController rc) {super(rc);}
 
     @Override
@@ -37,6 +45,14 @@ public class Soldier extends Droid{
             y += archonLocs[i].y;
         }
         centralArchon = new MapLocation(x/archonCount,y/archonCount);
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
+=======
+        prevHealth = rc.getHealth();
+        enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared, rc.getTeam().opponent());
+        enemyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
+        allyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
+        allyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam());
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
     }
 
     public void setArchonLocation() throws GameActionException{
@@ -61,11 +77,68 @@ public class Soldier extends Droid{
         rc.setIndicatorString(myArchonOrder+" "+archonLoc.toString());
     }
 
+    public void attack() throws GameActionException{
+
+        int health = 0;
+        boolean containsSoldier = false;
+        for (RobotInfo robot:enemyBotsInVision){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
+                continue;
+            }
+            containsSoldier = true;
+            health+=robot.getHealth();
+        }
+        for (RobotInfo robot:allyBotsInAction){
+            health-=robot.getHealth();
+        }
+        MapLocation attackTarget = selectVisionTarget();
+        if (attackTarget!=rc.getLocation()){
+            RobotInfo robot = rc.senseRobotAtLocation(attackTarget);
+            //rc.setIndicatorString("vision target: "+attackTarget.toString());
+            if(robot.getType() != RobotType.SOLDIER && robot.getType()!= RobotType.SAGE && !containsSoldier){ //TODO: try buffer between health
+                if (!rc.getLocation().isWithinDistanceSquared(attackTarget, RobotType.SOLDIER.actionRadiusSquared)){
+                    soldierMove(attackTarget);
+                }
+                //TODO: experiment by replacing with alternate mtlp code
+                tryAttack(attackTarget);
+            }
+            else{
+                moveToLowRubble();
+                tryAttack(attackTarget);
+            }
+        }
+        
+        if (rc.isActionReady()){
+            attackTarget = selectActionTarget();
+            //rc.setIndicatorString("action target: "+attackTarget.toString());
+            RobotInfo robot = rc.senseRobotAtLocation(attackTarget);
+            if (attackTarget!=rc.getLocation()){
+                if(robot.getType() != RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && !containsSoldier){ //TODO: try buffer between health
+                    //soldierMove(attackTarget);
+                    //TODO: experiment by replacing with alternate movetolowrubble code
+                    tryAttack(attackTarget);
+                }
+                else{
+                    moveToLowRubble();
+                    //TODO: experiment with soldierMove(archonLoc) or movetolowrubble away from enemy
+                    tryAttack(attackTarget);
+                }
+            }
+        }
+        if (rc.isMovementReady() && enemyBotsInVision.length>0){
+            moveToLowRubble();
+        }
+    }
+
     @Override
     public void run() throws GameActionException {
         reassignArchon();
         setArchonLocation();
-        avoidCharge();
+        enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
+        enemyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared, rc.getTeam().opponent());
+        allyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
+        allyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam());
+        //avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
@@ -76,7 +149,9 @@ public class Soldier extends Droid{
         target = null;
 
         retreat();
+        MapLocation attackTarget;
         if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
             selectPriorityTarget();
             return;
         }
@@ -84,6 +159,30 @@ public class Soldier extends Droid{
         if(nearbyBots.length >= 1){
             //New targetting
             target = selectPriorityTarget();
+=======
+            attackTarget = selectVisionTarget();
+            tryAttack(attackTarget);
+            if (rc.isActionReady()){
+                attackTarget = selectActionTarget();
+                tryAttack(attackTarget);
+            }
+            prevHealth = rc.getHealth();
+            return;
+        }
+        if(enemyBotsInAction.length >= 1){
+            if (rc.getHealth()<prevHealth){
+                rc.setIndicatorString("kite");
+                //soldierMove(archonLoc);
+                kite();
+            }
+            //New targetting
+            attack();
+            prevHealth = rc.getHealth();
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
+            return;
+        }
+        if (enemyBotsInVision.length>0){
+            moveToLowRubble();
             return;
         }
         if (hasMapLocation(45)){
@@ -92,7 +191,11 @@ public class Soldier extends Droid{
         }else if(hasMapLocation(43) && globalSoldierCount > 5){
             MapLocation target = decode(43);
             if (rc.canSenseLocation(target)){
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
                 if (nearbyBots.length ==0){
+=======
+                if (enemyBotsInAction.length ==0){
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
                     rc.writeSharedArray(43,0);
                 }
             }
@@ -102,7 +205,11 @@ public class Soldier extends Droid{
         }else if (hasMapLocation()){
             MapLocation target = decode();
             if (rc.canSenseLocation(target)){
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
                 if (nearbyBots.length == 0){
+=======
+                if (enemyBotsInAction.length == 0){
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
                     rc.writeSharedArray(55,0);
                 }
             }
@@ -112,7 +219,11 @@ public class Soldier extends Droid{
         }else if (hasMapLocation(41)){
             MapLocation target = decode(41);
             if (rc.canSenseLocation(target)){
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
                 if (nearbyBots.length == 0){
+=======
+                if (enemyBotsInAction.length == 0){
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
                     rc.writeSharedArray(41,0);
                 }
             }
@@ -146,9 +257,14 @@ public class Soldier extends Droid{
                 }
             }
         }
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
         if(rc.isActionReady()){
             selectPriorityTarget();
         }
+=======
+        if(rc.isActionReady())attack();
+        prevHealth = rc.getHealth();
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
     }
 
     public void retreat() throws GameActionException{
@@ -165,6 +281,7 @@ public class Soldier extends Droid{
                 //rc.setIndicatorString("going to heal");
                 soldierMove(archonLoc);
             }
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
             else{
                 reachedArchon = true;
 
@@ -172,20 +289,68 @@ public class Soldier extends Droid{
 
             //TODO: try this code after archon moves to low passability?
             /*
+=======
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
             else if (rc.isMovementReady()){
-                RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
-                if (nearbyBots.length>0){
-                    tryMoveMultiple(rc.getLocation().directionTo(nearbyBots[0].getLocation()).opposite());
+                reachedArchon = true;
+                if (enemyBotsInVision.length>1){
+                    kite();
                 }
             }
-            */
+            
             
         }
     }
+<<<<<<< Updated upstream:src/bot9_SL/robots/droids/Soldier.java
+=======
+    public void kite() throws GameActionException{
+        //rc.setIndicatorString("kite1");
+        if (!rc.isMovementReady()){
+            return;
+        }
+        //RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
+        int average_x=0,average_y=0;
+        myLocation = rc.getLocation();
+        int enemyCount = 0;
+        for (RobotInfo robot:enemyBotsInVision){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE){
+                continue;
+            }
+            enemyCount++;
+            MapLocation location = robot.getLocation();
+            average_x+=location.x;
+            average_y+=location.y;
+        }
+        average_x/=enemyCount;
+        average_y/=enemyCount;
+        Direction lowest = Direction.CENTER;
+        int lowest_rubble = rc.senseRubble(rc.getLocation());
+        MapLocation enemy = new MapLocation(average_x,average_y);
+        for (Direction d: Direction.allDirections()){
+            MapLocation adjacent=rc.adjacentLocation(d);
+            if(adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy))continue;
+            if(rc.canMove(d)){
+                int rubbleAtLoc = rc.senseRubble(adjacent);
+                if(rubbleAtLoc < lowest_rubble){
+                    lowest = d;
+                    lowest_rubble = rubbleAtLoc;
+                }
+            }
+        }
+        if(rc.canMove(lowest)){
+            rc.move(lowest);
+            myLocation = rc.getLocation();
+        }
+        
+    }
+>>>>>>> Stashed changes:src/bot9_MC/robots/droids/Soldier.java
 
     private MapLocation pastTarget = null;
     private HashSet<MapLocation> pastLocations = new HashSet<>();
     private void soldierMove(MapLocation target) throws GameActionException {
+        if (!rc.isMovementReady()){
+            return;
+        }
         if(!target.equals(pastTarget)){
             pastTarget = target;
             pastLocations.clear();

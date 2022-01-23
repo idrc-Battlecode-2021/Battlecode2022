@@ -393,6 +393,37 @@ public class Archon extends Building{
         }
     }
 
+<<<<<<< Updated upstream:src/bot9_SL/robots/buildings/Archon.java
+=======
+    public void setTransformStatus() throws GameActionException{
+        int currentStatus = rc.readSharedArray(17);
+        int power = (int)Math.pow(2,archonOrder);
+        int myStatus = (currentStatus%(power*2))/power;
+        if (rc.getMode()==RobotMode.PORTABLE){
+            rc.writeSharedArray(17,currentStatus-myStatus*power+power);
+        }
+        else{
+            rc.writeSharedArray(17,currentStatus-myStatus*power);
+        }
+    }
+
+    public boolean freeToTransform() throws GameActionException{
+        if (rc.getArchonCount()==1){
+            return false;
+        }
+        int currentStatus = rc.readSharedArray(17);
+        int transformed = 0;
+        for (int i=0;i<rc.getArchonCount();i++){
+            int value = (int)Math.pow(2,i);
+            transformed += (currentStatus%(value*2))/value;
+        }
+        if (transformed>=rc.getArchonCount()-1){
+            return false;
+        }
+        return true;
+    }
+
+>>>>>>> Stashed changes:src/bot9_MC/robots/buildings/Archon.java
     @Override
     public void run() throws GameActionException {
         if(activeSoldiers>100){
