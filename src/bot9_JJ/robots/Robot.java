@@ -668,7 +668,8 @@ public abstract class Robot {
                 return true;
             }
         }
-
+        Direction escape = Direction.CENTER;
+        int escape_Rubble = 101;
         for (Direction d: Direction.allDirections()){
             MapLocation adjacent=rc.adjacentLocation(d);
             if (rc.onTheMap(adjacent) && rc.canMove(d)){
@@ -677,10 +678,17 @@ public abstract class Robot {
                     lowest = d;
                     lowest_rubble = rubble;
                 }
+                if(rubble<escape_Rubble && target.distanceSquaredTo(adjacent) > target.distanceSquaredTo(myLocation)){
+                    escape = d;
+                    escape_Rubble = rubble;
+                }
             }
         }
         if (lowest==Direction.CENTER){
-            return false;
+            if(escape != Direction.CENTER && rc.canMove(escape)){
+                rc.move(escape);
+                myLocation = rc.getLocation();
+            }
         }
         if(rc.canMove(lowest)){
             rc.move(lowest);

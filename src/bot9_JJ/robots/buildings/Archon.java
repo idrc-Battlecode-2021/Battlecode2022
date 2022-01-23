@@ -130,8 +130,10 @@ public class Archon extends Building{
             }
         }
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
                 rc.transform();
+                setTransformStatus();
+            }
         }
 
     }
@@ -157,8 +159,10 @@ public class Archon extends Building{
     }
     public void move() throws GameActionException{
         if(!target.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()) {
                 rc.transform();
+                setTransformStatus();
+            }
             if (rc.isMovementReady()){
                 intermediateMove(target);
                 passableDirections.clear();
@@ -170,8 +174,39 @@ public class Archon extends Building{
         else{
             if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
                 rc.transform();
+                setTransformStatus();
             }
         }
+    }
+    public void setTransformStatus() throws GameActionException{
+        int currentStatus = rc.readSharedArray(17);
+        int power = (int)Math.pow(2,archonOrder);
+        int myStatus = (currentStatus%(power*2))/power;
+        if (rc.getMode()==RobotMode.PORTABLE){
+            rc.writeSharedArray(17,currentStatus-myStatus*power+power);
+        }
+        else{
+            rc.writeSharedArray(17,currentStatus-myStatus*power);
+        }
+    }
+
+    public boolean freeToTransform() throws GameActionException{
+        if (rc.getArchonCount()==1 && rc.getTeamLeadAmount(rc.getTeam())<RobotType.SOLDIER.buildCostLead){
+            return true;
+        }
+        int currentStatus = rc.readSharedArray(17);
+        indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
+        int transformed = 0;
+        for (int i=0;i<rc.getArchonCount();i++){
+            int value = (int)Math.pow(2,i);
+            transformed += (currentStatus%(value*2))/value;
+        }
+        //System.out.println(" transformStatus: "+Integer.toBinaryString(currentStatus)+" transformed: "+transformed);
+        indicatorString+=" transformed: "+transformed;
+        if (transformed>=rc.getArchonCount()-1){
+            return false;
+        }
+        return true;
     }
     // if enemies are near archon, spawn soldiers and inform other archons
     public boolean defense() throws GameActionException {
@@ -194,6 +229,7 @@ public class Archon extends Building{
         }
         if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
             rc.transform();
+            setTransformStatus();
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             int i=0;
@@ -399,9 +435,9 @@ public class Archon extends Building{
         if (globalMinerCount>=6){
             setTargetLocation();
             move();
-        }
-        else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){ 
+        } else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
             rc.transform();
+            setTransformStatus();
         }
         /*
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){

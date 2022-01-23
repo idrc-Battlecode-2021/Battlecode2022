@@ -76,22 +76,22 @@ public class Soldier extends Droid{
         broadcast();
         target = null;
 
-        //int healCheck = rc.readSharedArray(31+myArchonOrder);
-        //if(healCheck < 24 || addedToHeal){
+        int healCheck = rc.readSharedArray(31+myArchonOrder);
+        if(healCheck < 24 || addedToHeal){
             retreat();
             if(shouldHeal){
-               // if(!addedToHeal){
-               //     rc.writeSharedArray(31+myArchonOrder,healCheck+1);
-               //     addedToHeal = true;
-               // }
+                if(!addedToHeal){
+                    rc.writeSharedArray(31+myArchonOrder,healCheck+1);
+                    addedToHeal = true;
+                }
                 selectPriorityTarget();
                 return;
             }
-        //}
-       // if(addedToHeal){
-       //     rc.writeSharedArray(31+myArchonOrder,healCheck-1);
-       //     addedToHeal = false;
-      //  }
+        }
+        if(addedToHeal){
+            rc.writeSharedArray(31+myArchonOrder,healCheck-1);
+            addedToHeal = false;
+       }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting
