@@ -45,8 +45,8 @@ public class Soldier extends Droid{
         }
         centralArchon = new MapLocation(x/archonCount,y/archonCount);
         prevHealth = rc.getHealth();
-        enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared, rc.getTeam().opponent());
-        enemyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
+        enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
+        enemyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared, rc.getTeam().opponent());
         allyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
         allyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam());
     }
@@ -147,16 +147,12 @@ public class Soldier extends Droid{
         retreat();
         MapLocation attackTarget;
         if(shouldHeal){//Adding the if statement does make it lose one more game, but that would be stupid
-            attack();
-            prevHealth = rc.getHealth();
-            return;
-        }
-        if(enemyBotsInAction.length >= 1){
-            if (rc.getHealth()<prevHealth){
-                kite();
+            attackTarget = selectVisionTarget();
+            tryAttack(attackTarget);
+            if (rc.isActionReady()){
+                attackTarget = selectActionTarget();
+                tryAttack(attackTarget);
             }
-            //New targetting
-            attack();
             prevHealth = rc.getHealth();
             return;
         }
