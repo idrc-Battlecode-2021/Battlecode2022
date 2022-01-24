@@ -178,7 +178,7 @@ public class Soldier extends Droid{
             MapLocation miner = new MapLocation(10000,10000);
             for(int i = nearbyTeam.length; --i>=0;){
                 if(nearbyTeam[i].getType() == RobotType.MINER){
-                    if(nearbyTeam[i].location.distanceSquaredTo(centralArchon) < miner.distanceSquaredTo(centralArchon)){ //Try it with center, mylocation, and centralArchon
+                    if(nearbyTeam[i].location.distanceSquaredTo(centralArchon) < miner.distanceSquaredTo(centralArchon)){ //Try it with center, mylocation, centralArchon, archonLoc
                         miner = nearbyTeam[i].location;
                     }
                 }
@@ -209,7 +209,7 @@ public class Soldier extends Droid{
             }*/
         }
         else if(target != null){
-            MapLocation targetRetreat = null;
+            MapLocation targetRetreat = myLocation;
             for(int i = directions.length; --i>=0;){
                 MapLocation adjacent = rc.adjacentLocation(directions[i]);
                 if(adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target) && rc.canMove(directions[i])){
@@ -218,7 +218,7 @@ public class Soldier extends Droid{
                     }
                 }
             }
-            if(targetRetreat != null) intermediateMove(targetRetreat);
+            if(targetRetreat != null || !targetRetreat.equals(myLocation)) intermediateMove(targetRetreat);
         }
     }
 
