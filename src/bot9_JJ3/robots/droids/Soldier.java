@@ -162,6 +162,13 @@ public class Soldier extends Droid{
             if(rc.isActionReady()){
                 soldierMove(target);
             }
+            /*if(rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    target = null;
+                    targetType = 0;
+                }
+            }*/
         } else if(rc.readSharedArray(40) == 1) {
             if(rc.isActionReady()){
                 if(Clock.getBytecodesLeft() > 6000){
@@ -204,7 +211,26 @@ public class Soldier extends Droid{
         }
         if(rc.isActionReady()){
             MapLocation temp = selectPriorityTarget();
-            if(temp != null && !temp.equals(myLocation)){
+            if(temp != null && !temp.equals(myLocation) /*&& rc.canSenseRobotAtLocation(temp)*/){
+                /*switch (rc.senseRobotAtLocation(temp).getType()){
+                    case ARCHON:
+                        targetType = 2;
+                        target = temp;
+                        break;
+                    case SOLDIER:
+                    case WATCHTOWER:
+                    case SAGE:
+                        if(targetType < 2){
+                            targetType = 1;
+                            target = temp;
+                        }break;
+                    case BUILDER:
+                    case MINER:
+                    case LABORATORY:
+                        if(targetType < 1){
+                            target = temp;
+                        }break;
+                }*/
                 target = temp;
             }
         }
