@@ -98,7 +98,12 @@ public class Sage extends Droid{
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SAGE.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
             //New targetting
-            target = selectTargetKill();
+            if (!rc.isActionReady()){
+                soldierMove(archonLoc);
+            }
+            else{
+                target = selectTargetKill();
+            }
             return;
         }
         if (hasMapLocation(45)){
@@ -107,6 +112,8 @@ public class Sage extends Droid{
                 target = temp;
             }*/
             soldierMove(target);
+        }else if (rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent()).length>0 && !rc.isActionReady()){
+            soldierMove(archonLoc);
         }else if(hasMapLocation(43) && globalSageCount > 5){
             MapLocation temp = decode(43);
             if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 2){
@@ -250,7 +257,7 @@ public class Sage extends Droid{
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
-                    if (enemy.getHealth()*100/enemy.getType().health+charge>=100) chargePotential++;
+                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotential++;
                     break;
                 //TODO: calculate fury damage for lab and watchtower
                 case LABORATORY:
@@ -286,14 +293,14 @@ public class Sage extends Droid{
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
-                    if (enemy.getHealth()*100/enemy.getType().health+charge>=100) chargePotential++;
+                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotential++;
                     break;
                 case MINER:
                     for (RobotInfo ally: myRobots){
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
-                    if (enemy.getHealth()*100/enemy.getType().health+charge>=100) chargePotential++;
+                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotential++;
                     //TODO: target miner based on distance away/greater health since sages can one shot
                     if (miner == null) miner = enemy;
                     break;
@@ -302,7 +309,7 @@ public class Sage extends Droid{
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
-                    if (enemy.getHealth()*100/enemy.getType().health+charge>=100) chargePotential++;
+                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotential++;
                     //TODO: target builder based on distance away/greater health since sages can one shot
                     if (builder == null) builder = enemy;
                     break;

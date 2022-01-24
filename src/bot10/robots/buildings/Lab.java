@@ -4,8 +4,9 @@ import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
 
 public class Lab extends Building{
-    public int minLead;
-    public int maxRate;
+    private int minLead;
+    private int maxRate;
+    private int globalMinerCount;
 
     public Lab(RobotController rc) {
         super(rc);
@@ -25,7 +26,10 @@ public class Lab extends Building{
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(4, rc.readSharedArray(4)+1);
         }
-        if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute()){
+        if (rc.getRoundNum()%3==0){
+            globalMinerCount = rc.readSharedArray(44);
+        }
+        if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3){
             rc.transmute();
         }
         /*
