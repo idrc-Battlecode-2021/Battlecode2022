@@ -525,7 +525,7 @@ public class Archon extends Building{
                 }
             }
         }else if(isEdge && minerCount > 1000){
-            
+
         } else /*if (count %mod==1)*/{
             cost = RobotType.SOLDIER.buildCostLead;
             type = RobotType.SOLDIER;
@@ -561,11 +561,12 @@ public class Archon extends Building{
     private boolean isEdge = false;
     private void checkEdge() throws GameActionException {
         MapLocation[] archons = getArchonLocs();
+        if(archons.length == 0)return;
         MapLocation targetArchon = myLocation;
         int xCheck = Math.min(Math.abs(-targetArchon.x),Math.abs(mapWidth-1-targetArchon.x));
         int yCheck = Math.min(Math.abs(-targetArchon.y),Math.abs(mapHeight-1-targetArchon.y));
         for(int i = archons.length; --i>=0;){
-            if(targetArchon.equals(archons[i]))continue;
+            if(archons[i] == null || targetArchon.equals(archons[i]))continue;
             int xTemp = Math.min(Math.abs(-archons[i].x),Math.abs(mapWidth-1-archons[i].x));
             int yTemp = Math.min(Math.abs(-archons[i].y),Math.abs(mapHeight-1-archons[i].y));
             if(xTemp+yTemp < xCheck+yCheck){
