@@ -173,7 +173,7 @@ public class Soldier extends Droid{
                 }
 
             }
-        }else{
+        }else{ //Follows miners. If no miners stay near Archon
             RobotInfo[] nearbyTeam = rc.senseNearbyRobots(20,myTeam);
             MapLocation miner = new MapLocation(10000,10000);
             for(int i = nearbyTeam.length; --i>=0;){
@@ -227,7 +227,7 @@ public class Soldier extends Droid{
                 target = temp;
             }
         }
-        else if(target != null){
+        else if(target != null){ //Retreat If they can't attack
             MapLocation targetRetreat = myLocation;
             for(int i = directions.length; --i>=0;){
                 MapLocation adjacent = rc.adjacentLocation(directions[i]);
