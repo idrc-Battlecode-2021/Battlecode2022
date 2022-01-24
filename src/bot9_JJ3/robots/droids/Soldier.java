@@ -204,9 +204,9 @@ public class Soldier extends Droid{
         }
         if(rc.isActionReady()){
             MapLocation temp = selectPriorityTarget();
-            /*if(temp != null && !temp.equals(myLocation)){
+            if(temp != null && !temp.equals(myLocation)){
                 target = temp;
-            }*/
+            }
         }
         else if(target != null){
             MapLocation targetRetreat = myLocation;
