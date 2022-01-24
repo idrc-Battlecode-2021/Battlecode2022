@@ -84,6 +84,8 @@ public class Archon extends Building{
         myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
         setPassableDirections();
+        checkEdge();
+        System.out.println(isEdge);
     }
     public void setPassableDirections() throws GameActionException{
         for (Direction d:directions){
@@ -458,6 +460,7 @@ public class Archon extends Building{
         indicatorString = "";
         checkEnemies();
         checkArchonsAlive();
+        checkEdge(); //TODO: to optimize bytecode move this to init() and checkarchonsalive only
         updateTroopCount();
         roundNum = rc.getRoundNum();
         if (defense()){
@@ -518,7 +521,17 @@ public class Archon extends Building{
             int cost = RobotType.BUILDER.buildCostLead;
             RobotType type = RobotType.BUILDER;
             indicatorString += " builders";
-            if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
+            if (!isEdge){ // make the archon closest to the edge build a builder
+                if (diff==0){
+                    if (archonBuildStatus == rc.getArchonCount()-1){
+                        rc.writeSharedArray(11,0);
+                    }
+                    else{
+                        rc.writeSharedArray(11,archonBuildStatus+1);
+                    }
+                }
+            }
+            else if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
                     i++;
@@ -540,6 +553,7 @@ public class Archon extends Building{
                 }
             }
         }
+
         if (rc.getTeamGoldAmount(rc.getTeam())>RobotType.SAGE.buildCostGold) {
             int cost = RobotType.SAGE.buildCostGold;
             RobotType type = RobotType.SAGE;
@@ -623,5 +637,26 @@ public class Archon extends Building{
         }
         repair();
         rc.setIndicatorString(indicatorString);
+    }
+
+    private boolean isEdge = false;
+    private void checkEdge() throws GameActionException {
+        MapLocation[] archons = getArchonLocs();
+        if(archons.length == 0)return;
+        myLocation = rc.getLocation();
+        MapLocation targetArchon = myLocation;
+        int xCheck = Math.min(Math.abs(-targetArchon.x),Math.abs(mapWidth-1-targetArchon.x));
+        int yCheck = Math.min(Math.abs(-targetArchon.y),Math.abs(mapHeight-1-targetArchon.y));
+        for(int i = archons.length; --i>=0;){
+            if(archons[i] == null || targetArchon.equals(archons[i]))continue;
+            int xTemp = Math.min(Math.abs(-archons[i].x),Math.abs(mapWidth-1-archons[i].x));
+            int yTemp = Math.min(Math.abs(-archons[i].y),Math.abs(mapHeight-1-archons[i].y));
+            if(xTemp+yTemp < xCheck+yCheck){
+                targetArchon = archons[i];
+                xCheck = xTemp;
+                yCheck = yTemp;
+            }
+        }
+        if(targetArchon.equals(myLocation)) isEdge = true;
     }
 }
