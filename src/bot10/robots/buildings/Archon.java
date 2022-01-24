@@ -514,7 +514,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (globalBuilderCount < 1){
+        else if (globalBuilderCount < 1 && !isArchon){
             int cost = RobotType.BUILDER.buildCostLead;
             RobotType type = RobotType.BUILDER;
             indicatorString += " builders";
@@ -590,6 +590,33 @@ public class Archon extends Building{
                     //minerCount++;
                     globalMinerCount++;
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
+                    count++;
+                }
+            }
+        }else if(isArchon){
+            int cost = RobotType.SOLDIER.buildCostLead;
+            RobotType type = RobotType.SOLDIER;
+            indicatorString += " soldiers";
+            if (!checkBuildStatus(diff, cost)){
+                repair();
+                return;
+            }
+            if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
+                int i=0;
+                while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
+                    i++;
+                }
+                if (rc.canBuildRobot(type,passableDirections.get(i))){
+                    if (diff==0){
+                        if (archonBuildStatus == rc.getArchonCount()-1){
+                            rc.writeSharedArray(11,0);
+                        }
+                        else{
+                            rc.writeSharedArray(11,archonBuildStatus+1);
+                        }
+                    }
+                    rc.buildRobot(type,passableDirections.get(i));
+                    soldierCount++;
                     count++;
                 }
             }
