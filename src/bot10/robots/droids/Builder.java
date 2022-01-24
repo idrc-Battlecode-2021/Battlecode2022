@@ -45,11 +45,12 @@ public class Builder extends Droid{
             globalLabCount = rc.readSharedArray(4);
             builderCount = rc.readSharedArray(1);
         }
+        //TODO: change lab threshold based on income
         labThreshold = (globalLabCount+1)*180;
+
         //first repair prototype if it can
-        //TODO: navigate toward prototype location if not there, etc.
         if (finishPrototype!=null && !rc.getLocation().isWithinDistanceSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared)){
-            //shouldn't happen but program in case
+            intermediateMove(finishPrototype);
         }
         if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){
             MapLocation best_location = rc.getLocation();
@@ -197,6 +198,7 @@ public class Builder extends Droid{
         //rc.writeSharedArray(58, rc.readSharedArray(58) - (int)Math.pow(2,startingBit));
     }
     public boolean build(int id) throws GameActionException{
+        /*
         if(myLocation.x%2 == myLocation.y%2){
             boolean notMoved = true;
             List<Direction> basic = Arrays.asList(Constants.BASIC_DIRECTIONS);
@@ -211,6 +213,7 @@ public class Builder extends Droid{
             }
             if(notMoved || myLocation.x%2 == myLocation.y%2)return false;
         }
+        */
         RobotType r = RobotType.WATCHTOWER;
         if (id ==0){
             return false;
