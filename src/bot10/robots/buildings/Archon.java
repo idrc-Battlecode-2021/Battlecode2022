@@ -466,7 +466,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        minerThreshold = Math.max(230, 230+(globalMinerCount-3)*180/rc.getArchonCount());
+        minerThreshold = Math.max(230, 230+(globalMinerCount-3)/rc.getArchonCount()*180);
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
@@ -488,7 +488,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3 && !isArchon){
+        if (globalMinerCount < 3 && !isArchon && globalMinerCount<30){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -568,7 +568,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon){
+        else if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";

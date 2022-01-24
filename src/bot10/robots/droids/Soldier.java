@@ -260,17 +260,6 @@ public class Soldier extends Droid{
                 reachedArchon = true;
 
             }
-
-            //TODO: try this code after archon moves to low passability?
-            /*
-            else if (rc.isMovementReady()){
-                RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
-                if (nearbyBots.length>0){
-                    tryMoveMultiple(rc.getLocation().directionTo(nearbyBots[0].getLocation()).opposite());
-                }
-            }
-            */
-            
         }
     }
 

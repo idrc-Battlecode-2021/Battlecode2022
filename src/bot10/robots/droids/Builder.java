@@ -2,6 +2,7 @@ package bot10.robots.droids;
 
 import battlecode.common.*;
 import bot10.util.Constants;
+import bot10.util.PathFindingSoldier;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +16,8 @@ public class Builder extends Droid{
     private MapLocation finishPrototype = null;
     private int builderCount = 0;
     private int globalLabCount = 0;
-    private static int labThreshold = 360; //TODO: make this a shared array in case the builder dies, or make it based off of globallabcount
+    private PathFindingSoldier pfs;
+    private static int labThreshold = 180;
     
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
@@ -23,6 +25,7 @@ public class Builder extends Droid{
 
     @Override
     public void init() throws GameActionException {
+        pfs=new PathFindingSoldier(rc);
         detectArchon();
         archonLoc = rc.senseRobot(myArchonID).getLocation();
         startingBit = 2*myArchonOrder;
@@ -53,7 +56,7 @@ public class Builder extends Droid{
             int lowest_rubble = rc.senseRubble(best_location);
             MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared);
             for (MapLocation loc:locations){
-                if (!rc.canSenseLocation(loc))continue;
+                if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) )continue;
                 int rubble = rc.senseRubble(loc);
                 if (rubble<lowest_rubble){
                     lowest_rubble = rubble;
@@ -254,5 +257,23 @@ public class Builder extends Droid{
             return true;
         }
         return false;
+    }
+    private MapLocation pastTarget = null;
+    private HashSet<MapLocation> pastLocations = new HashSet<>();
+    private void soldierMove(MapLocation target) throws GameActionException {
+        if(!target.equals(pastTarget)){
+            pastTarget = target;
+            pastLocations.clear();
+        }
+        Direction dir = pfs.getBestDir(target);
+        MapLocation temp = myLocation;
+        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
+            if(tryMoveMultiple(dir)){
+                pastLocations.add(temp);
+            }
+        }else{
+            intermediateMove(target);
+            pastLocations.add(temp);
+        }
     }
 }
