@@ -243,6 +243,15 @@ public class Archon extends Building{
             rc.transform();
             setTransformStatus();
         }
+        if(rc.getTeamGoldAmount(myTeam)>=RobotType.SAGE.buildCostGold){
+            int i=0;
+            while (i<passableDirections.size()-1 && !rc.canBuildRobot(RobotType.SAGE,passableDirections.get(i))){
+                i++;
+            }
+            if (rc.canBuildRobot(RobotType.SAGE,passableDirections.get(i))){
+                rc.buildRobot(RobotType.SAGE,passableDirections.get(i));
+            }
+        }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             int i=0;
             while (i<passableDirections.size()-1 && !rc.canBuildRobot(RobotType.SOLDIER,passableDirections.get(i))){
