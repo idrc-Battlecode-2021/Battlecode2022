@@ -258,22 +258,4 @@ public class Builder extends Droid{
         }
         return false;
     }
-    private MapLocation pastTarget = null;
-    private HashSet<MapLocation> pastLocations = new HashSet<>();
-    private void soldierMove(MapLocation target) throws GameActionException {
-        if(!target.equals(pastTarget)){
-            pastTarget = target;
-            pastLocations.clear();
-        }
-        Direction dir = pfs.getBestDir(target);
-        MapLocation temp = myLocation;
-        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
-            if(tryMoveMultiple(dir)){
-                pastLocations.add(temp);
-            }
-        }else{
-            intermediateMove(target);
-            pastLocations.add(temp);
-        }
-    }
 }
