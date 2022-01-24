@@ -1,6 +1,6 @@
-package bot9_MC2.robots.droids;
+package bot9_MC3.robots.droids;
 import battlecode.common.*;
-import bot9_MC2.util.PathFindingSoldier;
+import bot9_MC3.util.PathFindingSoldier;
 
 import java.util.HashSet;
 import java.util.ArrayList;
@@ -22,6 +22,9 @@ public class Soldier extends Droid{
     private RobotInfo[] allyBotsInAction;
     private RobotInfo[] allyBotsInVision;
     private String indicatorString = "";
+
+    private int targetType = 0;
+    private boolean passedAttackPhase = false;
 
     private MapLocation closestArchon;
 
@@ -140,6 +143,7 @@ public class Soldier extends Droid{
         indicatorString = "";
         reassignArchon();
         setArchonLocation();
+        passedAttackPhase = false;
         enemyBotsInVision = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared, rc.getTeam().opponent());
         enemyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared, rc.getTeam().opponent());
         allyBotsInAction = rc.senseNearbyRobots(RobotType.SOLDIER.actionRadiusSquared,rc.getTeam());
@@ -171,9 +175,9 @@ public class Soldier extends Droid{
             }
             int x = location%256;
             int y = location/256;
-            MapLocation archonLoc = new MapLocation(x,y);
-            if (movementTileDistance(myLocation,archonLoc)<movementTileDistance(myLocation,closestArchon)){
-                closestArchon = archonLoc;
+            MapLocation thisArchon = new MapLocation(x,y);
+            if (movementTileDistance(myLocation,thisArchon)<movementTileDistance(myLocation,closestArchon)){
+                closestArchon = thisArchon;
             }
         }
         archonLocs = getArchonLocs();
@@ -279,36 +283,61 @@ public class Soldier extends Droid{
             prevHealth = rc.getHealth();
             return;
         }
+        passedAttackPhase = true;
         if (hasMapLocation(45)){
-            MapLocation target = decode(45);
+            MapLocation target/*temp*/ = decode(45);
+            /*if(target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)){
+                target = temp;
+            }*/
             soldierMove(target);
         }else if(hasMapLocation(43) && globalSoldierCount > 5){
-            MapLocation target = decode(43);
-            if (rc.canSenseLocation(target)){
-                if (enemyBotsInAction.length ==0){
-                    rc.writeSharedArray(43,0);
-                }
+            MapLocation temp = decode(43);
+            if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 2){
+                target = temp;
+                targetType = 2;
             }
             if(rc.isActionReady()){
                 soldierMove(target);
+            }
+            if (rc.canSenseLocation(target)){
+                if (enemyBotsInVision.length ==0){
+                    if(target.equals(temp)) rc.writeSharedArray(43,0);
+                    target = null;
+                    targetType = 0;
+                }
             }
         }else if (hasMapLocation()){
-            MapLocation target = decode();
-            if (rc.canSenseLocation(target)){
-                if (enemyBotsInAction.length == 0){
-                    rc.writeSharedArray(55,0);
-                }
+            MapLocation temp = decode();
+            if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target))&& targetType <= 1){
+                target = temp;
+                targetType = 1;
             }
             if(rc.isActionReady()){
                 soldierMove(target);
-            };
-        }else if (hasMapLocation(41)){
-            MapLocation target = decode(41);
+            }
             if (rc.canSenseLocation(target)){
-                if (enemyBotsInAction.length == 0){
-                    rc.writeSharedArray(41,0);
+                if (enemyBotsInVision.length == 0){
+                    if(target.equals(temp))rc.writeSharedArray(55,0);
+                    target = null;
+                    targetType = 0;
                 }
             }
+        }else if (hasMapLocation(41)){
+            MapLocation temp = decode(41);
+            if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 0){
+                target = temp;
+            }
+            if(rc.isActionReady()){
+                soldierMove(target);
+            }
+            if (rc.canSenseLocation(target)){
+                if (enemyBotsInVision.length == 0){
+                    if(target.equals(temp)) rc.writeSharedArray(41,0);
+                    target = null;
+                    targetType = 0;
+                }
+            }
+        } else if(target != null){
             if(rc.isActionReady()){
                 soldierMove(target);
             }
@@ -383,9 +412,6 @@ public class Soldier extends Droid{
     private MapLocation pastTarget = null;
     private HashSet<MapLocation> pastLocations = new HashSet<>();
     private void soldierMove(MapLocation target) throws GameActionException {
-        if (!rc.isMovementReady()){
-            return;
-        }
         if(!target.equals(pastTarget)){
             pastTarget = target;
             pastLocations.clear();

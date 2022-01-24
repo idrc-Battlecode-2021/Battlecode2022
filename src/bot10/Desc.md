@@ -1,10 +1,25 @@
-# Bot9 JJ
+# Bot10
 
-- Different archon healing method
-- Different soldier retreat method
-- Archon tries moves to low passability every turn after minerCount>6 (might want to change for only after vortex anomaly)
-- robots get reassigned to a random archon after its archon has died
-- Soldiers now stores targets instead of immediately overriding them.
+- copied from bot9_jj, experimenting with sages
+
+## Changelog
+
+### General
+- troops don't avoid charge
+- builder and lab count are now global
+
+### Archons:
+- first builds 3 miners
+- builds a builder
+- builds a lab
+- builds a sage whenever possible
+- build miners and labs once past a certain lead threshold, and the threshold should increase after every build (in progress)
+### Labs:
+- always try to generate gold per turn
+
+### Sages:
+- soldier code but updated action/vision radii
+- different targetting that accounts for charge damage
 
 
 - 31: Soldier Healing

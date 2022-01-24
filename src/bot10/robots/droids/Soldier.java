@@ -70,7 +70,7 @@ public class Soldier extends Droid{
     public void run() throws GameActionException {
         reassignArchon();
         setArchonLocation();
-        avoidCharge();
+        //avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);

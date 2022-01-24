@@ -1,4 +1,4 @@
-package bot10.robots.buildings;
+package bot9_MC3.robots.buildings;
 
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
@@ -22,18 +22,12 @@ public class Lab extends Building{
 
     @Override
     public void run() throws GameActionException {
-        if (rc.getRoundNum()%3==2){
-            rc.writeSharedArray(4, rc.readSharedArray(4)+1);
-        }
-        if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute()){
-            rc.transmute();
-        }
-        /*
+        avoidFury();
+        retransform();
 		readConstraints();
 		if (canMakeGold()){
             rc.transmute();
         }
-        */
     }
 
    	private void readConstraints() throws GameActionException {

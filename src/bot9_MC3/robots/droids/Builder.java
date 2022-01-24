@@ -1,7 +1,7 @@
-package bot10.robots.droids;
+package bot9_MC3.robots.droids;
 
 import battlecode.common.*;
-import bot10.util.Constants;
+import bot9_MC3.util.Constants;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,16 +13,14 @@ public class Builder extends Droid{
     private MapLocation archonLoc;
     private boolean isDefensive = true;
     private MapLocation finishPrototype = null;
-    private int builderCount = 0;
-    private int globalLabCount = 0;
-    private static int labThreshold = 360; //TODO: make this a shared array in case the builder dies, or make it based off of globallabcount
-    
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
     }
 
     @Override
     public void init() throws GameActionException {
+        parseAnomalies();
+        int archonID=0;
         detectArchon();
         archonLoc = rc.senseRobot(myArchonID).getLocation();
         startingBit = 2*myArchonOrder;
@@ -31,39 +29,24 @@ public class Builder extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        int builderCount = 1;
         reassignArchon();
+        rc.setIndicatorString("archon: "+myArchonOrder);
+        //System.out.println(Clock.getBytecodesLeft());
         startingBit = 2*myArchonOrder;
-
+        avoidCharge();
         // update shared array
         if (rc.getRoundNum()%3==2){
-            rc.writeSharedArray(1, rc.readSharedArray(1)+1);
+            rc.writeSharedArray(1, rc.readSharedArray(1)+(int)Math.pow(16,myArchonOrder));
+        }else if(rc.getRoundNum()%3 == 0){
+            int power = (int)Math.pow(16,myArchonOrder);
+            builderCount = (rc.readSharedArray(1)%(power*16))/(power);
         }
-        else if(rc.getRoundNum()%3 == 0){
-            globalLabCount = rc.readSharedArray(4);
-            builderCount = rc.readSharedArray(1);
+        int numTowers = rc.readSharedArray(myArchonOrder+5);
+        if (numTowers==2){
+            isDefensive=false;
         }
-
-        //first repair prototype if it can
-        //TODO: move to low passability, navigate toward prototype location if not there, etc.
-        if (finishPrototype!=null && !rc.getLocation().isWithinDistanceSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared)){
-            //shouldn't happen but program in case
-        }
-        if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){
-            MapLocation best_location = rc.getLocation();
-            int lowest_rubble = rc.senseRubble(best_location);
-            MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared);
-            for (MapLocation loc:locations){
-                if (!rc.canSenseLocation(loc))continue;
-                int rubble = rc.senseRubble(loc);
-                if (rubble<lowest_rubble){
-                    lowest_rubble = rubble;
-                    best_location = loc;
-                }
-            }
-            if (rc.isMovementReady() && rc.getLocation()!=best_location){
-                intermediateMove(best_location);
-                //TODO: replace with soldierMove?
-            }
+        if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){ //repairs prototypes
             RobotInfo prototype = rc.senseRobotAtLocation(finishPrototype);
             if (prototype.getHealth()==prototype.getType().health){
                 finishPrototype=null;
@@ -75,7 +58,7 @@ public class Builder extends Droid{
                 return;
             }
         }
-        //Moves away from archons to not disturb its spawning rates
+        //Moves away from archons to not distrub its spawning rates
         RobotInfo[] checkArchons = rc.senseNearbyRobots(Math.max(builderCount,8),myTeam);
         for(int i = checkArchons.length; --i>=0;){
             if(checkArchons[i].getType().equals(RobotType.ARCHON)){
@@ -84,8 +67,8 @@ public class Builder extends Droid{
         }
 
         boolean built = false;
-        if (rc.getTeamLeadAmount(rc.getTeam())>RobotType.LABORATORY.buildCostLead && globalLabCount==0 || rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
-            built = build(1);
+        if (rc.getTeamLeadAmount(rc.getTeam())>Constants.SURPLUS_THRESHOLD+180){
+            built = build(2);
         }
         
         boolean nearPrototype = false;
@@ -99,7 +82,6 @@ public class Builder extends Droid{
                 }
             }
         }
-        
         
         //System.out.println("After repair: "+Clock.getBytecodesLeft());
         if (built){
@@ -189,9 +171,11 @@ public class Builder extends Droid{
 
     }
     public void addLabs() throws GameActionException{
+        //System.out.println("Subtracting 800 from "+rc.readSharedArray(11));
+        //rc.writeSharedArray(11, rc.readSharedArray(11)-RobotType.LABORATORY.buildCostLead);
         int labCount = rc.readSharedArray(4);
-        rc.writeSharedArray(4, labCount + 1);
-        //rc.writeSharedArray(58, rc.readSharedArray(58) - (int)Math.pow(2,startingBit));
+        rc.writeSharedArray(4, labCount + (int)Math.pow(2,myArchonOrder*4));
+        rc.writeSharedArray(58, rc.readSharedArray(58) - (int)Math.pow(2,startingBit));
     }
     public boolean build(int id) throws GameActionException{
         if(myLocation.x%2 == myLocation.y%2){
@@ -246,9 +230,6 @@ public class Builder extends Droid{
             }
         }
         if (k!=null) {
-            if (r==RobotType.LABORATORY && rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
-                labThreshold+=180;
-            }
             rc.buildRobot(r, k);
             finishPrototype = rc.getLocation().add(k);
             //rc.setIndicatorString("prototype");
