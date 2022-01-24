@@ -30,6 +30,7 @@ public class Archon extends Building{
 
     private static String indicatorString = "";
     private PathFindingSoldier pfs;
+    private int maxArchons = 0;
 
     public Archon(RobotController rc) {
         super(rc);
@@ -53,6 +54,7 @@ public class Archon extends Building{
     public void init() throws GameActionException {
         pfs = new PathFindingSoldier(rc);
         initialArchons = rc.getArchonCount();
+        maxArchons = initialArchons;
         parseAnomalies();
         // write Archon ID to shared array
         if (rc.getArchonCount()==1){
@@ -446,7 +448,8 @@ public class Archon extends Building{
         //add check here for miners
         if (globalMinerCount>=6){
             if(!movingToAttackPosition) setTargetLocation();
-            if(hasMapLocation(35) && myLocation.equals(target)){
+            //The first one is just transforms+2 <= rc.getArchonCount()
+            if(hasMapLocation(35) && myLocation.equals(target) && freeToTransform() && transforms == 0 && maxArchons > 2){
                 enemyArchonLoc = decode(35);
                 if(myLocation.distanceSquaredTo(enemyArchonLoc) > 900){
                     for(MapLocation loc : potentialTargets){
@@ -458,7 +461,7 @@ public class Archon extends Building{
                 }
             }
             if(enemyArchonLoc != null){
-                if(myLocation.distanceSquaredTo(enemyArchonLoc) < 600){
+                if(myLocation.distanceSquaredTo(enemyArchonLoc) < 600 || (movingToAttackPosition && myLocation.equals(target))){
                     movingToAttackPosition = false;
                 }
             }
