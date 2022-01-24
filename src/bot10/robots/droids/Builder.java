@@ -42,9 +42,9 @@ public class Builder extends Droid{
             globalLabCount = rc.readSharedArray(4);
             builderCount = rc.readSharedArray(1);
         }
-
+        labThreshold = (globalLabCount+1)*180;
         //first repair prototype if it can
-        //TODO: move to low passability, navigate toward prototype location if not there, etc.
+        //TODO: navigate toward prototype location if not there, etc.
         if (finishPrototype!=null && !rc.getLocation().isWithinDistanceSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared)){
             //shouldn't happen but program in case
         }
@@ -84,7 +84,7 @@ public class Builder extends Droid{
         }
 
         boolean built = false;
-        if (rc.getTeamLeadAmount(rc.getTeam())>RobotType.LABORATORY.buildCostLead && globalLabCount==0 || rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
+        if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
             built = build(1);
         }
         
@@ -246,9 +246,6 @@ public class Builder extends Droid{
             }
         }
         if (k!=null) {
-            if (r==RobotType.LABORATORY && rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
-                labThreshold+=180;
-            }
             rc.buildRobot(r, k);
             finishPrototype = rc.getLocation().add(k);
             //rc.setIndicatorString("prototype");

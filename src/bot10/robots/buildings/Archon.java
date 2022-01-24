@@ -20,10 +20,10 @@ public class Archon extends Building{
     private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
     private boolean hasUpdatedDirections = false;
 
-    private static HashMap<Integer, Integer> soldierHealth = new HashMap<Integer,Integer>();
+    private static HashMap<Integer, Integer> nearbyTroopHealth = new HashMap<Integer,Integer>();
     private static int soldierToHeal = 0;
 
-    private static int minerThreshold = 190; //TODO: make miner and lab thresholds global
+    private static int minerThreshold = 230; //TODO: make miner and lab thresholds global
 
     private static String indicatorString = "";
 
@@ -361,48 +361,48 @@ public class Archon extends Building{
         if (!rc.isActionReady()){
             return;
         }
-        int leastAttackedHealth = RobotType.SOLDIER.health;
+        int leastAttackedHealth = Integer.MAX_VALUE;
         MapLocation attackedLocation = null;
 
         MapLocation continueHealLocation = null;
+        //TODO: prioritize healing sages no matter what
+        int greatestHealthDifference = 0;
+        MapLocation troopLocation = null;
+        int troopID = 0;
 
-        int leastSoldierHealth = RobotType.SOLDIER.health;
-        MapLocation soldierLocation = null;
-        int soldierID = 0;
-
-        int leastSupportHealth = 0; // miner/builder health
+        int greatestSupportHealthDifference = 0; // miner/builder health
         MapLocation supportLocation = null;
 
-        HashMap<Integer, Integer> newSoldierHealth = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> newTroopHealth = new HashMap<Integer, Integer>();
 
         RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
         for (RobotInfo robot: robots){
             MapLocation thisLocation = robot.getLocation();
             if (robot.type==RobotType.MINER || robot.type==RobotType.BUILDER){
-                if (robot.getType().health-robot.getHealth()>leastSupportHealth && rc.canRepair(thisLocation)){
-                    leastSupportHealth = robot.getType().health-robot.getHealth();
+                if (robot.getType().health-robot.getHealth()>greatestSupportHealthDifference && rc.canRepair(thisLocation)){
+                    greatestSupportHealthDifference = robot.getType().health-robot.getHealth();
                     supportLocation = thisLocation;
                 }
                 continue;
             }
-            if (soldierHealth.containsKey(robot.ID) && soldierHealth.get(robot.ID)>robot.getHealth() && robot.getHealth()<leastAttackedHealth && rc.canRepair(thisLocation)){
+            if (nearbyTroopHealth.containsKey(robot.ID) && nearbyTroopHealth.get(robot.ID)>robot.getHealth() && robot.getHealth()<leastAttackedHealth && rc.canRepair(thisLocation)){
                 //soldier is being attacked
                 attackedLocation = thisLocation;
                 leastAttackedHealth=robot.getHealth();
             }
-            if (soldierToHeal == robot.getID() && robot.getHealth()<49 && rc.canRepair(thisLocation)){
+            if (soldierToHeal == robot.getID() && robot.getHealth()<robot.getType().health-1 && rc.canRepair(thisLocation)){
                 //soldier that is currently being healed
                 continueHealLocation = thisLocation;
             }
-            if (robot.getHealth()<leastSoldierHealth && rc.canRepair(thisLocation)){
+            if (robot.getType().health-robot.getHealth()>greatestHealthDifference && rc.canRepair(thisLocation)){
                 //find soldier to heal
-                leastSoldierHealth = robot.getHealth();
-                soldierLocation = thisLocation;
-                soldierID = robot.ID;
+                greatestHealthDifference = robot.getType().health-robot.getHealth();
+                troopLocation = thisLocation;
+                troopID = robot.ID;
             }
-            newSoldierHealth.put(robot.ID, robot.getHealth());
+            newTroopHealth.put(robot.ID, robot.getHealth());
         }
-        soldierHealth = newSoldierHealth;
+        nearbyTroopHealth = newTroopHealth;
         if (attackedLocation!=null && rc.canRepair(attackedLocation)){
             indicatorString+=" healing attacked soldier";
             //repair soldier being attacked
@@ -414,10 +414,10 @@ public class Archon extends Building{
             rc.repair(continueHealLocation);
             return;
         }
-        if (soldierLocation!=null && rc.canRepair(soldierLocation)){
+        if (troopLocation!=null && rc.canRepair(troopLocation)){
             indicatorString+=" healing soldier";
-            soldierToHeal = soldierID;
-            rc.repair(soldierLocation);
+            soldierToHeal = troopID;
+            rc.repair(troopLocation);
             return;
         }
         if (supportLocation!=null && rc.canRepair(supportLocation)){
@@ -458,6 +458,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
+        minerThreshold = Math.max(230, 230+(minerCount-3)*180);
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
@@ -497,9 +498,6 @@ public class Archon extends Building{
                             rc.writeSharedArray(11,archonBuildStatus+1);
                         }
                     }
-                    if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold){
-                        minerThreshold+=180;
-                    }
                     rc.buildRobot(type,passableDirections.get(i));
                     minerCount++;
                     globalMinerCount++;
@@ -534,7 +532,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (rc.getTeamGoldAmount(rc.getTeam())>RobotType.SAGE.buildCostGold) {
+        if (rc.getTeamGoldAmount(rc.getTeam())>RobotType.SAGE.buildCostGold) {
             int cost = RobotType.SAGE.buildCostGold;
             RobotType type = RobotType.SAGE;
             indicatorString += " sages";
@@ -580,9 +578,6 @@ public class Archon extends Building{
                             rc.writeSharedArray(11,archonBuildStatus+1);
                         }
                     }
-                    if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold){
-                        minerThreshold+=180;
-                    }
                     rc.buildRobot(type,passableDirections.get(i));
                     minerCount++;
                     globalMinerCount++;
@@ -591,36 +586,6 @@ public class Archon extends Building{
                 }
             }
         }
-        /*
-        else {
-            int cost = RobotType.SOLDIER.buildCostLead;
-            RobotType type = RobotType.SOLDIER;
-            indicatorString += " soldiers";
-            if (!checkBuildStatus(diff, cost)){
-                repair();
-                return;
-            }
-            if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
-                int i=0;
-                while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
-                    i++;
-                }
-                if (rc.canBuildRobot(type,passableDirections.get(i))){
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
-                            rc.writeSharedArray(11,0);
-                        }
-                        else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
-                        }
-                    }
-                    rc.buildRobot(type,passableDirections.get(i));
-                    soldierCount++;
-                    count++;
-                }
-            }
-        }
-        */
         repair();
         rc.setIndicatorString(indicatorString);
     }
