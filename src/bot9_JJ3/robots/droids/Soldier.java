@@ -202,7 +202,24 @@ public class Soldier extends Droid{
                 soldierMove(miner);
             }
         }
-        if(rc.isActionReady())selectPriorityTarget();
+        if(rc.isActionReady()){
+            MapLocation temp = selectPriorityTarget();
+            /*if(temp != null && !temp.equals(myLocation)){
+                target = temp;
+            }*/
+        }
+        else if(target != null){
+            MapLocation targetRetreat = null;
+            for(int i = directions.length; --i>=0;){
+                MapLocation adjacent = rc.adjacentLocation(directions[i]);
+                if(adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target) && rc.canMove(directions[i])){
+                    if(targetRetreat == null || rc.senseRubble(adjacent) <= rc.senseRubble(targetRetreat)){
+                        targetRetreat = adjacent;
+                    }
+                }
+            }
+            if(targetRetreat != null) intermediateMove(targetRetreat);
+        }
     }
 
     public void retreat() throws GameActionException{
