@@ -18,6 +18,7 @@ public class Archon extends Building{
     private static int archonOrder = 0; //reverse position of archonID in shared array
     private static int power = 0; // power of 16 that corresponds with archonOrder
     private MapLocation target = null;
+    private HashSet<MapLocation> potentialTargets = new HashSet<>(100);
     private static final int SURPLUS_THRESHOLD = 500;
 
     private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
@@ -117,7 +118,7 @@ public class Archon extends Building{
         ArrayList<MapLocation> lowPass = new ArrayList<>();
         int minDist=rc.getType().visionRadiusSquared+1;
         target=myLocation;
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(myLocation, 34)){
             int dist = rc.getLocation().distanceSquaredTo(m);
             int r=rc.senseRubble(m);
             if(r<rubble){
@@ -126,6 +127,7 @@ public class Archon extends Building{
                 lowPass.add(m);
                 rubble=r;
                 target=m;
+                potentialTargets.add(m);
             }
             if (r==rubble){
                 lowPass.add(m);
@@ -133,6 +135,7 @@ public class Archon extends Building{
                     minDist = dist;
                     target = m;
                 }
+                potentialTargets.add(m);
             }
         }
         if(!target.equals(rc.getLocation())){
@@ -181,6 +184,7 @@ public class Archon extends Building{
             if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
                 rc.transform();
                 setTransformStatus();
+                potentialTargets.clear();
             }
         }
     }
@@ -442,23 +446,27 @@ public class Archon extends Building{
         //add check here for miners
         if (globalMinerCount>=6){
             if(!movingToAttackPosition) setTargetLocation();
-            if(hasMapLocation(35)){
+            if(hasMapLocation(35) && myLocation.equals(target)){
                 enemyArchonLoc = decode(35);
                 if(myLocation.distanceSquaredTo(enemyArchonLoc) > 900){
-                    target = enemyArchonLoc;
+                    for(MapLocation loc : potentialTargets){
+                        if(target.distanceSquaredTo(enemyArchonLoc) > loc.distanceSquaredTo(enemyArchonLoc)){
+                            target = loc;
+                        }
+                    }
                     movingToAttackPosition = true;
                 }
             }
             if(enemyArchonLoc != null){
                 if(myLocation.distanceSquaredTo(enemyArchonLoc) < 600){
                     movingToAttackPosition = false;
-                    target = myLocation;
                 }
             }
             move();
         } else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
             rc.transform();
             setTransformStatus();
+            potentialTargets.clear();
         }
         /*
         if(!hasUpdatedDirections && target.equals(rc.getLocation())){
