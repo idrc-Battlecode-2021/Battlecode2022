@@ -15,6 +15,7 @@ public class Soldier extends Droid{
     private PathFindingSoldier pfs;
     private boolean reachedArchon;
     private boolean addedToHeal = false;
+
     public Soldier(RobotController rc) {super(rc);}
     private int targetType = 0;
     //0 = tier 1

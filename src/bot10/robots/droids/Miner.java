@@ -11,6 +11,10 @@ public class Miner extends Droid{
     private MapLocation target;
     private PathFindingSoldier pfs;
     private int targetType = 0;
+    private boolean reachedArchon;
+    private boolean addedToHeal = false;
+    private MapLocation archonLoc;
+    private boolean shouldHeal = false;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
     public Miner(RobotController rc) {
@@ -21,6 +25,12 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         pfs=new PathFindingSoldier(rc);
         parseAnomalies();
+        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
+        for (RobotInfo ro : r){
+            if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
+                archonLoc = ro.getLocation();
+            }
+        }
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         //exploreDirIndex = (int)(8*Math.random());
@@ -68,6 +78,19 @@ public class Miner extends Droid{
                 }
             }
         }else{
+            MapLocation[] golds = rc.senseNearbyLocationsWithGold();
+            if(golds.length > 0){
+                target = golds[0];
+                targetType = 2;
+                gold.put(target,rc.senseGold(target));
+                if(rc.canMineGold(target))rc.mineGold(target);
+                if(Clock.getBytecodesLeft()>5200){
+                    soldierMove(target);
+                }else{
+                    intermediateMove(target);
+                }
+                return;
+            }
             /*if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
                 MapLocation[] nearByLead = rc.senseNearbyLocationsWithLead(20,2+((20-(rc.getRoundNum()%20))/5));
                 if(nearByLead.length > 1){
@@ -87,6 +110,7 @@ public class Miner extends Droid{
                     lead.put(target,amount);
                     if(rc.senseLead(myLocation) > 1 && rc.canMineLead(target))rc.mineLead(myLocation);
                 }
+
             }
             miningBlock:{
                 if(target != null){
@@ -463,6 +487,37 @@ public class Miner extends Droid{
         }else{
             intermediateMove(target);
             pastLocations.add(temp);
+        }
+    }
+    public void retreat() throws GameActionException{
+        if(rc.getHealth()>=49){
+            shouldHeal=false;
+            return;
+        }
+        if (rc.getHealth()<=18){
+            shouldHeal = true;
+            reachedArchon = false;
+        }
+        if (shouldHeal){
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                //rc.setIndicatorString("going to heal");
+                soldierMove(archonLoc);
+            }
+            else{
+                reachedArchon = true;
+
+            }
+
+            //TODO: try this code after archon moves to low passability?
+            /*
+            else if (rc.isMovementReady()){
+                RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
+                if (nearbyBots.length>0){
+                    tryMoveMultiple(rc.getLocation().directionTo(nearbyBots[0].getLocation()).opposite());
+                }
+            }
+            */
+
         }
     }
 }
