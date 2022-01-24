@@ -173,23 +173,72 @@ public class Soldier extends Droid{
                 }
 
             }
-        }else if(rc.senseNearbyRobots(2).length>2){
-            //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
-            //tryMoveMultiple(initDirection);
-            MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
-            int start = (int) (local.length * Math.random());
-            loop1: for (int i = start; i < start + local.length; i++) {
-                int j = i % local.length;
-                Direction dirTo = myLocation.directionTo(local[j]);
-                if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
-                    rc.move(dirTo);
-                    myLocation = rc.getLocation();
-                    prevLocs.add(local[j]);
-                    break;
+        }else{
+            RobotInfo[] nearbyTeam = rc.senseNearbyRobots(20,myTeam);
+            MapLocation miner = new MapLocation(10000,10000);
+            for(int i = nearbyTeam.length; --i>=0;){
+                if(nearbyTeam[i].getType() == RobotType.MINER){
+                    if(nearbyTeam[i].location.distanceSquaredTo(centralArchon) < miner.distanceSquaredTo(centralArchon)){ //Try it with center, mylocation, centralArchon, archonLoc
+                        miner = nearbyTeam[i].location;
+                    }
                 }
             }
+            if(miner.equals(new MapLocation(10000,10000)) && rc.senseNearbyRobots(2).length>2){
+                //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
+                //tryMoveMultiple(initDirection);
+                MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
+                int start = (int) (local.length * Math.random());
+                loop1: for (int i = start; i < start + local.length; i++) {
+                    int j = i % local.length;
+                    Direction dirTo = myLocation.directionTo(local[j]);
+                    if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
+                        rc.move(dirTo);
+                        myLocation = rc.getLocation();
+                        prevLocs.add(local[j]);
+                        break;
+                    }
+                }
+            }else{
+                soldierMove(miner);
+            }
         }
-        if(rc.isActionReady())selectPriorityTarget();
+        if(rc.isActionReady()){
+            MapLocation temp = selectPriorityTarget();
+            if(temp != null && !temp.equals(myLocation) /*&& rc.canSenseRobotAtLocation(temp)*/){
+                /*switch (rc.senseRobotAtLocation(temp).getType()){
+                    case ARCHON:
+                        targetType = 2;
+                        target = temp;
+                        break;
+                    case SOLDIER:
+                    case WATCHTOWER:
+                    case SAGE:
+                        if(targetType < 2){
+                            targetType = 1;
+                            target = temp;
+                        }break;
+                    case BUILDER:
+                    case MINER:
+                    case LABORATORY:
+                        if(targetType < 1){
+                            target = temp;
+                        }break;
+                }*/
+                target = temp;
+            }
+        }
+        else if(target != null){
+            MapLocation targetRetreat = myLocation;
+            for(int i = directions.length; --i>=0;){
+                MapLocation adjacent = rc.adjacentLocation(directions[i]);
+                if(adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target) && rc.canMove(directions[i])){
+                    if(targetRetreat == null || rc.senseRubble(adjacent) <= rc.senseRubble(targetRetreat)){
+                        targetRetreat = adjacent;
+                    }
+                }
+            }
+            if(targetRetreat != null || !targetRetreat.equals(myLocation)) intermediateMove(targetRetreat);
+        }
     }
 
     public void retreat() throws GameActionException{

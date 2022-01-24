@@ -213,15 +213,21 @@ public class Archon extends Building{
         return true;
     }
     // if enemies are near archon, spawn soldiers and inform other archons
+    private boolean isArchon = false;
     public boolean defense() throws GameActionException {
+        isArchon = false;
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
         boolean isEnemy = false;
-        for (RobotInfo r:enemies){
-            if (r.getType()==RobotType.SOLDIER || r.getType()==RobotType.SAGE || r.getType()==RobotType.WATCHTOWER){
-                isEnemy = true;
-                break;
+        loop1: for (RobotInfo r:enemies){
+            switch(r.getType()){
+                case SOLDIER:
+                case SAGE:
+                case WATCHTOWER:
+                    isEnemy = true; break loop1;
+                case ARCHON:
+                    isArchon = true;
             }
         }
         if (isEnemy){
@@ -480,7 +486,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3){
+        if (globalMinerCount < 3 && !isArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -560,7 +566,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold){
+        else if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
