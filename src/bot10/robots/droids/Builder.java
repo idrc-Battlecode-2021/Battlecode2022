@@ -19,6 +19,7 @@ public class Builder extends Droid{
     private int globalLabCount = 0;
     private PathFindingSoldier pfs;
     private static int labThreshold = 180;
+    private String indicatorString = "";
     
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
@@ -65,6 +66,7 @@ public class Builder extends Droid{
 
     @Override
     public void run() throws GameActionException {
+        indicatorString = "";
         reassignArchon();
         startingBit = 2*myArchonOrder;
 
@@ -113,6 +115,7 @@ public class Builder extends Droid{
         if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
             built = build(1);
         }
+        rc.setIndicatorString(indicatorString);
 
     }
 
@@ -120,6 +123,7 @@ public class Builder extends Droid{
         MapLocation best_location = target;
 
         if (!rc.getLocation().isWithinDistanceSquared(target, 2)){
+            indicatorString+="moving toward target";
             intermediateMove(target);
         }
         else{
@@ -127,23 +131,27 @@ public class Builder extends Droid{
             int lowest_rubble = 99;
             MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, 2);
             for (MapLocation loc:locations){
-                if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) || loc==target)continue;
+                if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) || loc.equals(target))continue;
                 int rubble = rc.senseRubble(loc);
                 if (best_location==null){
+                    indicatorString+="null: "+loc.toString();
                     best_location = loc;
                     lowest_rubble = rubble;
                     continue;
                 }
                 if (rubble<lowest_rubble){
+                    indicatorString+="better: "+loc.toString();
                     lowest_rubble = rubble;
                     best_location = loc;
                 }
+            }
+            if (best_location==null){
+                System.out.println("WTF");
             }
             if (rc.isMovementReady() && best_location!=target){
                 intermediateMove(best_location);
             }
         }
-
         return best_location;
     }
 
@@ -239,7 +247,7 @@ public class Builder extends Droid{
         }
         MapLocation target = findBestLabSpot();
         MapLocation myTarget = goToLabSpot(target);
-        rc.setIndicatorString("target: "+target.toString()+" mytarget: "+myTarget.toString());
+        indicatorString+=" target: "+target.toString()+" mytarget: "+myTarget.toString();
         if (!rc.getLocation().equals(myTarget)){
             return false;
         }
@@ -247,7 +255,6 @@ public class Builder extends Droid{
         if (rc.canBuildRobot(r, dir)){
             rc.buildRobot(r, dir);
             finishPrototype = rc.getLocation().add(dir);
-            //rc.setIndicatorString("prototype");
             if (r == RobotType.WATCHTOWER) addTowers();
             else addLabs();
             return true;
