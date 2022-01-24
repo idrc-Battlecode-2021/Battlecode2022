@@ -233,7 +233,7 @@ public class Archon extends Building{
                 break;
             }
         }
-        if (isEnemy){
+        if (isEnemy && rc.isActionReady()){
             rc.writeSharedArray(56, current - myValue*power + power);
         }
         else{
@@ -243,6 +243,15 @@ public class Archon extends Building{
         if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
             rc.transform();
             setTransformStatus();
+        }
+        if(rc.getTeamGoldAmount(myTeam)>20){
+            int i=0;
+            while (i<passableDirections.size()-1 && !rc.canBuildRobot(RobotType.SAGE,passableDirections.get(i))){
+                i++;
+            }
+            if(rc.canBuildRobot(RobotType.SAGE,passableDirections.get(i))){
+                rc.buildRobot(RobotType.SAGE,passableDirections.get(i));
+            }
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>=RobotType.SOLDIER.buildCostLead){
             int i=0;
@@ -474,7 +483,26 @@ public class Archon extends Building{
         }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
             mod = 2;
         }
-        if ((globalMinerCount < 6 || count%mod == 1)&&!isArchon){
+        if(rc.getTeamGoldAmount(myTeam) >= 20 && rc.isActionReady()){
+            int i=0;
+            while (i<passableDirections.size()-1 && !rc.canBuildRobot(RobotType.SAGE,passableDirections.get(i))){
+                i++;
+            }
+            if (rc.canBuildRobot(RobotType.SAGE,passableDirections.get(i))){
+                if (diff==0){
+                    if (archonBuildStatus == rc.getArchonCount()-1){
+                        rc.writeSharedArray(11,0);
+                    }
+                    else{
+                        rc.writeSharedArray(11,archonBuildStatus+1);
+                    }
+                }
+                rc.buildRobot(type,passableDirections.get(i));
+                minerCount++;
+                globalMinerCount++;
+                count++;
+            }
+        } else if ((globalMinerCount < 6 || count%mod == 1)&&!isArchon){
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
