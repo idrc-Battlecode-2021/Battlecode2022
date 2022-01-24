@@ -449,7 +449,7 @@ public class Archon extends Building{
         if (globalMinerCount>=6){
             if(!movingToAttackPosition) setTargetLocation();
             //The first one is just transforms+2 <= rc.getArchonCount()
-            if(hasMapLocation(35) && myLocation.equals(target) && freeToTransform() && transforms == 0 && maxArchons > 2){
+            if(hasMapLocation(35) && myLocation.equals(target) && freeToTransform() && transforms == 0 && rc.getArchonCount() > 2){
                 enemyArchonLoc = decode(35);
                 if(myLocation.distanceSquaredTo(enemyArchonLoc) > 900){
                     for(MapLocation loc : potentialTargets){
