@@ -37,11 +37,13 @@ public class Miner extends Droid{
         // update shared array
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {
+            /*
             if (myArchonOrder <= 1) {
                 rc.writeSharedArray(0, rc.readSharedArray(0) + (int) Math.pow(256, myArchonOrder));
             } else {
                 rc.writeSharedArray(10, rc.readSharedArray(10) + (int) Math.pow(256, myArchonOrder - 2));
             }
+            */
             rc.writeSharedArray(44,rc.readSharedArray(44)+1);
         }
         if(checkEnemy()){

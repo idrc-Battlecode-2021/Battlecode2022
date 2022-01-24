@@ -4,7 +4,7 @@ import battlecode.common.*;
 import java.util.*;
 
 public class Archon extends Building{
-    private static Integer minerCount = 0, minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
+    private static Integer  minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
     private static int count = 0;
     private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
@@ -294,13 +294,15 @@ public class Archon extends Building{
     // update troop count variables from shared array
     public void updateTroopCount() throws GameActionException{
         if (rc.getRoundNum()%3!=2){
+            /*
             if (archonOrder<=1){
                 minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);
             }
             else{
                 minerCount = (rc.readSharedArray(10)%((int)Math.pow(256,archonOrder-1)))/(int)Math.pow(256,archonOrder-2);
             }
-            if(minerCount > minerCountMax)minerCountMax = minerCount;
+            */
+            //if(minerCount > minerCountMax)minerCountMax = minerCount;
             builderCount = rc.readSharedArray(1);
             globalBuilderCount = builderCount;
             globalSageCount = rc.readSharedArray(2);
@@ -464,7 +466,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        minerThreshold = Math.max(230, 230+(minerCount-3)*180);
+        minerThreshold = Math.max(230, 230+(globalMinerCount-3)*180/rc.getArchonCount());
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
@@ -505,7 +507,7 @@ public class Archon extends Building{
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
-                    minerCount++;
+                    //minerCount++;
                     globalMinerCount++;
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
                     count++;
@@ -585,7 +587,7 @@ public class Archon extends Building{
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
-                    minerCount++;
+                    //minerCount++;
                     globalMinerCount++;
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
                     count++;

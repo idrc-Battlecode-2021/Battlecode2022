@@ -1,6 +1,6 @@
 package bot10.robots.droids;
 import battlecode.common.*;
-import bot10.util.PathFindingSoldier;
+import bot10.util.PathFinding30;
 
 import java.util.HashSet;
 
@@ -12,7 +12,7 @@ public class Sage extends Droid{
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
-    private PathFindingSoldier pfs;
+    private PathFinding30 pfs;
     private boolean reachedArchon;
     private boolean addedToHeal = false;
     public Sage(RobotController rc) {super(rc);}
@@ -23,7 +23,7 @@ public class Sage extends Droid{
 
     @Override
     public void init() throws GameActionException {
-        pfs=new PathFindingSoldier(rc);
+        pfs=new PathFinding30(rc);
         possibleArchonLocs();
         parseAnomalies();
         RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);

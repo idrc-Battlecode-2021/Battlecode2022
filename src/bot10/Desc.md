@@ -19,7 +19,8 @@
 
 ### Sages:
 - soldier code but updated action/vision radii
-- different targetting that accounts for charge damage
+- different targetting that accounts for mass charge damage
+- retreats if can sense bots in vision but action cooldown isn't up
 
 
 - 31: Soldier Healing
