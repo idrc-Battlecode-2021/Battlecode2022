@@ -106,6 +106,16 @@ public class Builder extends Droid{
         }
 
         //TODO: repair buildings that are missing health
+        for (int i = robots.length; --i>=0;){
+            if (robots[i].getMode() == RobotMode.PROTOTYPE){
+                prototypeLoc = robots[i].getLocation();
+                break;
+                //TODO: there really shouldn't be multiple prototypes but if there are go toward highest health one
+            }
+        }
+        if (prototypeLoc!=null){
+            repair(prototypeLoc);
+        }
 
         // prepare for building lab by going to the best lab spot
         MapLocation target = findBestLabSpot();
@@ -127,20 +137,21 @@ public class Builder extends Droid{
             intermediateMove(target);
         }
         else{
-            best_location = null;
-            int lowest_rubble = 99;
+            best_location = rc.getLocation();
+            if (rc.getLocation().equals(target)){
+                best_location = null;
+            }
+            int lowest_rubble = rc.senseRubble(rc.getLocation());
             MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, 2);
             for (MapLocation loc:locations){
                 if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) || loc.equals(target))continue;
                 int rubble = rc.senseRubble(loc);
                 if (best_location==null){
-                    indicatorString+="null: "+loc.toString();
                     best_location = loc;
                     lowest_rubble = rubble;
                     continue;
                 }
                 if (rubble<lowest_rubble){
-                    indicatorString+="better: "+loc.toString();
                     lowest_rubble = rubble;
                     best_location = loc;
                 }
