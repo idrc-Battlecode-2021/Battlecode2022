@@ -500,7 +500,8 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3 && !isArchon && globalMinerCount<30){
+        //TODO: Add dynamic miner ratios based on map size
+        if (globalMinerCount < 3 && !isArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -591,7 +592,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30){
+        else if (/*globalMinerCount < 6 ||*/ rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";

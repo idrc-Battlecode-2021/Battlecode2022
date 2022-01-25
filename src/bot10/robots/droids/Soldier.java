@@ -103,6 +103,7 @@ public class Soldier extends Droid{
             target = selectPriorityTarget();
             return;
         }
+        //TODO: Try to reduce times in which units go to previous targets if the enemy there is eliminated (if other stuff is done)
         if (hasMapLocation(45)){
             MapLocation target/*temp*/ = decode(45);
             /*if(target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)){
@@ -162,6 +163,13 @@ public class Soldier extends Droid{
         } else if(target != null){
             if(rc.isActionReady()){
                 soldierMove(target);
+            }
+            if(rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    target = null;
+                    targetType = 0;
+                }
             }
         } else if(rc.readSharedArray(40) == 1) {
             if(rc.isActionReady()){

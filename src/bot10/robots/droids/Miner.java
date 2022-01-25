@@ -8,7 +8,8 @@ import java.util.*;
 public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
-    private MapLocation target;
+    private MapLocation target/*, exploreTarget*/;
+    //private HashSet<MapLocation> pastExploreTargets = new HashSet<>();
     private PathFindingSoldier pfs;
     private int targetType = 0;
     private boolean reachedArchon;
@@ -56,6 +57,37 @@ public class Miner extends Droid{
             */
             rc.writeSharedArray(44,rc.readSharedArray(44)+1);
         }
+        /*if(target != null){
+            if(targetType == 1){
+                if(rc.canSenseLocation(target) && target.equals(decode(35))){
+                    if(rc.senseLead(target) <= 1){
+                        rc.writeSharedArray(35,0);
+                        lead.remove(target);
+                        target = null;
+                        targetType = 2;
+                    }
+                }
+            }else if(targetType == 2){
+                if(rc.canSenseLocation(target) && target.equals(decode(36))){
+                    if(rc.senseGold(target) == 0){
+                        rc.writeSharedArray(36,0);
+                        gold.remove(target);
+                        target = null;
+                    }
+                }
+            }
+        }*/
+        /*if(target == null){
+            if(hasMapLocation(36)){
+                target = decode(36);
+                targetType = 2;
+                gold.put(target, 2);
+            }else if(hasMapLocation(35)){
+                target = decode(35);
+                targetType = 1;
+                lead.put(target,2);
+            }
+        }*/
         if(checkEnemy()){
             MapLocation[] local = rc.senseNearbyLocationsWithGold(2);
             for(int i = local.length; --i >= 0;){
@@ -347,13 +379,45 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
-                checkMiners();
-                if(!tryMoveMultipleNew()){
-                    tryMoveMultiple(initDirection);
+                /*if(exploreTarget == null){
+                    if(hasMapLocation(36)){
+                        MapLocation temp = decode(36);
+                        // TODO: Test if dividing the locations by a factor before storing in pastExploreTargets would help (should limit the times a miner goes to a given region)
+                        if(!pastExploreTargets.contains(temp)){
+                            exploreTarget = temp;
+                            pastExploreTargets.add(temp);
+                        }
+                    }else if(hasMapLocation(35)){
+                        MapLocation temp = decode(35);
+                        // TODO: Test if dividing the locations by a factor before storing in pastExploreTargets would help (should limit the times a miner goes to a given region)
+                        if(!pastExploreTargets.contains(temp)){
+                            exploreTarget = temp;
+                            pastExploreTargets.add(temp);
+                        }
+                    }
                 }
+                if(exploreTarget != null){
+                    soldierMove(exploreTarget);
+                    //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
+                    if(rc.canSenseLocation(exploreTarget)){
+                        exploreTarget = null;
+                    }
+                } else{*/
+                    checkMiners();
+                    if(!tryMoveMultipleNew()){
+                        tryMoveMultiple(initDirection);
+                    }
+                //}
 
                 if(!prev.equals(myLocation)) viewResources();
-            }
+            }/*else{
+                int k=64*target.x+target.y;
+                if(targetType == 1){
+                    rc.writeSharedArray(35,k); //Check to see if this makes miners go to locations with 0 lead.
+                }else if(targetType == 2){
+                    rc.writeSharedArray(36,k);
+                }
+            }*/
         }
     }
 
@@ -507,7 +571,7 @@ public class Miner extends Droid{
 
     }
 
-    private MapLocation pastExploreTarget = null;
+    /*private MapLocation pastExploreTarget = null;
     private HashSet<MapLocation> pastExploreLocations = new HashSet<>();
     private void minerExplore() throws GameActionException{
         MapLocation exploreTarget = pfs.getExploreTarget();
@@ -525,7 +589,7 @@ public class Miner extends Droid{
             intermediateMove(exploreTarget);
             pastExploreLocations.add(temp);
         }
-    }
+    }*/
 
     private MapLocation pastTarget = null;
     private HashSet<MapLocation> pastLocations = new HashSet<>();

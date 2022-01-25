@@ -108,6 +108,7 @@ public class Sage extends Droid{
             }
             return;
         }
+        //TODO: Try to reduce times in which units go to previous targets if the enemy there is eliminated (if other stuff is done)
         if (hasMapLocation(45)){
             rc.setIndicatorString("map loc 45");
             MapLocation target/*temp*/ = decode(45);
@@ -175,6 +176,13 @@ public class Sage extends Droid{
             rc.setIndicatorString("no target");
             if(rc.isActionReady()){
                 soldierMove(target);
+            }
+            if(rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    target = null;
+                    targetType = 0;
+                }
             }
         } else if(rc.readSharedArray(40) == 1) {
             rc.setIndicatorString("40 == 1");
