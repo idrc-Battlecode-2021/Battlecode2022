@@ -6,7 +6,7 @@
 
 - sages retreat to low rubble once within archon action radius
 - lower initial miner threshold
-
+- seems to do better on nottestsmall
 
 - 31: Soldier Healing
 - 32: Solider Healing
