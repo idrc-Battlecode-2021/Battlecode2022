@@ -176,6 +176,13 @@ public class Sage extends Droid{
             if(rc.isActionReady()){
                 soldierMove(target);
             }
+            if(rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    target = null;
+                    targetType = 0;
+                }
+            }
         } else if(rc.readSharedArray(40) == 1) {
             rc.setIndicatorString("40 == 1");
             if(rc.isActionReady()){
