@@ -382,12 +382,14 @@ public class Miner extends Droid{
                 /*if(exploreTarget == null){
                     if(hasMapLocation(36)){
                         MapLocation temp = decode(36);
+                        // TODO: Test if dividing the locations by a factor before storing in pastExploreTargets would help (should limit the times a miner goes to a given region)
                         if(!pastExploreTargets.contains(temp)){
                             exploreTarget = temp;
                             pastExploreTargets.add(temp);
                         }
                     }else if(hasMapLocation(35)){
                         MapLocation temp = decode(35);
+                        // TODO: Test if dividing the locations by a factor before storing in pastExploreTargets would help (should limit the times a miner goes to a given region)
                         if(!pastExploreTargets.contains(temp)){
                             exploreTarget = temp;
                             pastExploreTargets.add(temp);
