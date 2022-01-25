@@ -3062,6 +3062,7 @@ public class PathFinding30 {
 
     HashSet<MapLocation> exploredLocations = new HashSet<>();
     public void newExploreLocation(){
+        //TODO: Could try multiplying generated x and y values by a factor so no two locations are as close
         exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
         while(exploredLocations.contains(exploreTarget) || Clock.getBytecodesLeft() > 5500){
             exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
