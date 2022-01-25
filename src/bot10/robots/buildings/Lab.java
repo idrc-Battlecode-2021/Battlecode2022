@@ -48,7 +48,7 @@ public class Lab extends Building{
 		rc.setIndicatorString(Integer.toString(maxRate));
     }
 
-    //TODO: Better Optimize gold production
+    //TODO: See if can better Optimize gold production
     private boolean canMakeGold() throws GameActionException {
         /*constraints:
         	current rate < maximum allwoed rate
