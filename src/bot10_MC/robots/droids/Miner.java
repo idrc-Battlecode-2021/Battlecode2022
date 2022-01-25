@@ -1,6 +1,7 @@
 package bot10_MC.robots.droids;
 
 import battlecode.common.*;
+import bot10_MC.util.Constants;
 import bot10_MC.util.PathFindingSoldier;
 
 import java.util.*;
@@ -575,6 +576,88 @@ public class Miner extends Droid{
             */
 
         }
+    }
+
+    @Override
+    public boolean tryMoveMultipleNew() throws GameActionException {
+        if(initDirection == null){
+            updateDirection(Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
+        }
+        switch(initDirection){
+            case SOUTHEAST:
+            case NORTHEAST:
+            case NORTHWEST:
+            case SOUTHWEST: break;
+            case SOUTH: updateDirection(Constants.SOUTHERN_DIR[(int) (Math.random()*2)]); break;
+            case NORTH: updateDirection(Constants.NORTHERN_DIR[(int) (Math.random()*2)]); break;
+            case WEST:  updateDirection(Constants.WESTERN_DIR[(int) (Math.random()*2)]);  break;
+            case EAST:  updateDirection(Constants.EASTERN_DIR[(int) (Math.random()*2)]);  break;
+        }
+        if(!rc.onTheMap(myLocation.add(initDirection))){
+            int x = myLocation.x, y = myLocation.y;
+            switch (initDirection){
+                case SOUTHWEST:
+                    if(x < 2){
+                        if(y < 2){
+                            updateDirection(Direction.NORTHEAST);
+                        }else{
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }else{
+                        if(y < 2){
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }break;
+                case NORTHEAST:
+                    if(x > mapWidth-3){
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHWEST);
+                        }else{
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }else{
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }break;
+                case NORTHWEST:
+                    if(x < 2){
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHEAST);
+                        }else{
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }else{
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }break;
+                case SOUTHEAST:
+                    if(x > mapWidth-3){
+                        if(y < 2){
+                            updateDirection(Direction.NORTHWEST);
+                        }else{
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }else{
+                        if(y < 2){
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }break;
+            }
+        }
+        if(priorityMoveNew2()) return true;
+        for(int i = 0; i < directions.length; i++){
+            int[] offsets = getDirectionOffsets(directions[i]);
+            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
+            if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
+                    !prevLocs.contains(myLocation) && rc.canMove(directions[i])){
+                updateDirection(directions[i]);
+                soldierMove(getExploreTargetFromInitDirection());
+                prevLocs.add(myLocation);
+            }
+        }
+        return false;
     }
 }
 
