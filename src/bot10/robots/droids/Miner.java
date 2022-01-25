@@ -78,7 +78,7 @@ public class Miner extends Droid{
                 }
             }
         }else{
-            MapLocation[] golds = rc.senseNearbyLocationsWithGold();
+            MapLocation[] golds = rc.senseNearbyLocationsWithGold(2);
             if(golds.length > 0){
                 target = golds[0];
                 targetType = 2;
@@ -90,7 +90,63 @@ public class Miner extends Droid{
                     intermediateMove(target);
                 }
                 return;
+            }else{
+                golds = rc.senseNearbyLocationsWithGold(20);
+                if(golds.length > 0){
+                    target = golds[golds.length-1];
+                    for(int i = golds.length-1; --i>=0;){
+                        if(myLocation.distanceSquaredTo(golds[i]) < myLocation.distanceSquaredTo(target)){
+                            target = golds[i];
+                        }
+                    }
+                    targetType = 2;
+                    gold.put(target,rc.senseGold(target));
+                    if(Clock.getBytecodesLeft()>5200){
+                        soldierMove(target);
+                    }else{
+                        intermediateMove(target);
+                    }
+                    return;
+                }/*else{
+                    MapLocation[] leads = rc.senseNearbyLocationsWithLead(2,2);
+                    if(leads.length > 0){
+                        for(int i = leads.length; --i>=0;){
+                            int amount = rc.senseLead(leads[i]);
+                            if(rc.canMineLead(leads[i]) && amount > 1){
+                                rc.mineLead(leads[i]);
+                                target = leads[i];
+                                targetType = 1;
+                                lead.put(target,amount);
+                                break;
+                            }
+                        }
+                    }else{
+                        leads = rc.senseNearbyLocationsWithLead(20,2);
+                        if(leads.length > 0){
+                            target = leads[leads.length-1];
+                            for(int i = leads.length-1; --i>=0;){
+                                if(myLocation.distanceSquaredTo(leads[i]) < myLocation.distanceSquaredTo(target)){
+                                    target = leads[i];
+                                }
+                            }
+                            targetType = 1;
+                            lead.put(target,rc.senseLead(target));
+                            if(Clock.getBytecodesLeft()>5200){
+                                soldierMove(target);
+                            }else{
+                                intermediateMove(target);
+                            }
+                            return;
+                        }else{
+                            checkMiners();
+                            if(!tryMoveMultipleNew()){
+                                tryMoveMultiple(initDirection);
+                            }
+                        }
+                    }
+                }*/
             }
+
             /*if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
                 MapLocation[] nearByLead = rc.senseNearbyLocationsWithLead(20,2+((20-(rc.getRoundNum()%20))/5));
                 if(nearByLead.length > 1){
