@@ -9,7 +9,7 @@ public class Archon extends Building{
     private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
     private static int minersForNearbyLead;
-
+    private MapLocation target = null;
     private static Integer minerIndex = 0; //spawning miners
     private static Integer soldierIndex = 0;
     private static int archonOrder = 0; //reverse position of archonID in shared array
@@ -162,6 +162,7 @@ public class Archon extends Building{
             }
         }
         if (isEnemy){
+            if(rc.getMode() == RobotMode.PORTABLE && rc.canTransform())rc.transform();
             rc.writeSharedArray(56, current - myValue*power + power);
         }
         else{
@@ -317,7 +318,98 @@ public class Archon extends Building{
             rc.writeSharedArray(45,0);
         }
     }
+    public void setTargetLocation() throws GameActionException{
+        int rubble = rc.senseRubble(rc.getLocation());
+        ArrayList<MapLocation> lowPass = new ArrayList<>();
+        int minDist=rc.getType().visionRadiusSquared+1;
+        target=myLocation;
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+            int dist = rc.getLocation().distanceSquaredTo(m);
+            int r=rc.senseRubble(m);
+            if(r<rubble){
+                minDist = dist;
+                lowPass.clear();
+                lowPass.add(m);
+                rubble=r;
+                target=m;
+            }
+            if (r==rubble){
+                lowPass.add(m);
+                if (dist<minDist){
+                    minDist = dist;
+                    target = m;
+                }
+            }
+        }
+        if(!target.equals(rc.getLocation())){
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+                rc.transform();
+        }
 
+    }
+    public void writeLocationToArray() throws GameActionException{
+        //write archon location to array
+        myLocation = rc.getLocation();
+        int x = myLocation.x;
+        int y = myLocation.y;
+        switch (archonOrder){
+            case 0:
+                rc.writeSharedArray(15, x+y*256);
+                break;
+            case 1:
+                rc.writeSharedArray(16, x+y*256);
+                break;
+            case 2:
+                rc.writeSharedArray(49, x+y*256);
+                break;
+            case 3:
+                rc.writeSharedArray(50, x+y*256);
+                break;
+        }
+    }
+    public void move() throws GameActionException{
+        if(!target.equals(rc.getLocation())){
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform())
+                rc.transform();
+            if (rc.isMovementReady()){
+                intermediateMove(target);
+                passableDirections.clear();
+                setPassableDirections();
+                writeLocationToArray();
+            }
+            indicatorString=rc.getLocation().toString()+target.toString()+(target.equals(rc.getLocation()));
+        }
+        else{
+            if(rc.getLocation().equals(target) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+                rc.transform();
+            }
+        }
+    }
+    public void setPassableDirections() throws GameActionException{
+        for (Direction d:Direction.allDirections()){
+            if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
+                continue;
+            }
+            if (passableDirections.size()==0){
+                passableDirections.add(d);
+                continue;
+            }
+            MapLocation location = rc.getLocation().add(d);
+            int rubble = rc.senseRubble(location);
+            for (int i=0;i<=passableDirections.size();i++){
+                if (i==passableDirections.size()){
+                    passableDirections.add(i,d);
+                    break;
+                }
+                if (rubble<rc.senseRubble(rc.getLocation().add(passableDirections.get(i)))){
+                    passableDirections.add(i,d);
+                    break;
+                }
+            }
+        }
+    }
+
+    boolean movingCheck = true;
     @Override
     public void run() throws GameActionException {
         indicatorString = "";
@@ -331,6 +423,20 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
+        //add check here for miners
+        if ((globalMinerCount>=6 && rc.getTeamLeadAmount(myTeam) < 75)){
+            setTargetLocation();
+            move();
+        }
+        else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+            rc.transform();
+        }
+        //Do later; check to see if not all archons are moving
+        /*  if(rc.getMode()==RobotMode.PORTABLE){
+            if(movingCheck){
+                rc.writeSharedArray(27,rc.readSharedArray(27)+1);
+            }
+        }*
         /*
         if (!canProceed()){
             indicatorString += " can't proceed";

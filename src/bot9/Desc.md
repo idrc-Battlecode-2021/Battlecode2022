@@ -21,5 +21,6 @@
   48 - used to tell friendly soldiers possible enemy archon locations
   15 - location of archon 0
   16 - location of archon 1
+  17 - transform status of all archons
   49 - locations of archon 2
   50 - locations of archon 3

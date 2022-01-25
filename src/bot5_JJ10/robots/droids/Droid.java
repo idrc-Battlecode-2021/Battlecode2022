@@ -43,21 +43,25 @@ public abstract class Droid extends Robot {
             rc.move(dir2);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
+            //updateDirection(dir2);
             return true;
         }else if(rubble3 <= rubble4 && rubble3 <= rubble5 && rc.canMove(dir3)){
             rc.move(dir3);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
+            //updateDirection(dir3);
             return true;
         }else if(rubble4 <= rubble5 && rc.canMove(dir4)){
             rc.move(dir4);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
+            updateDirection(dir2);
             return true;
         }else if(rc.canMove(dir5)){
             rc.move(dir5);
             myLocation = rc.getLocation();
             prevLocs.add(myLocation);
+            updateDirection(dir3);
             return true;
         }
         return false;
@@ -132,50 +136,50 @@ public abstract class Droid extends Robot {
             int x = myLocation.x, y = myLocation.y;
             switch (initDirection){
                 case SOUTHWEST:
-                    if(x == 0){
-                        if(y == 0){
+                    if(x < 2){
+                        if(y < 2){
                             updateDirection(Direction.NORTHEAST);
                         }else{
                             updateDirection(Direction.SOUTHEAST);
                         }
                     }else{
-                        if(y == 0){
+                        if(y < 2){
                             updateDirection(Direction.NORTHWEST);
                         }
                     }break;
                 case NORTHEAST:
-                    if(x == mapWidth-1){
-                        if(y == mapHeight-1){
+                    if(x > mapWidth-3){
+                        if(y > mapHeight-3){
                             updateDirection(Direction.SOUTHWEST);
                         }else{
                             updateDirection(Direction.NORTHWEST);
                         }
                     }else{
-                        if(y == mapHeight-1){
+                        if(y > mapHeight-3){
                             updateDirection(Direction.SOUTHEAST);
                         }
                     }break;
                 case NORTHWEST:
-                    if(x == 0){
-                        if(y == mapHeight-1){
+                    if(x < 2){
+                        if(y > mapHeight-3){
                             updateDirection(Direction.SOUTHEAST);
                         }else{
                             updateDirection(Direction.NORTHEAST);
                         }
                     }else{
-                        if(y == mapHeight-1){
+                        if(y > mapHeight-3){
                             updateDirection(Direction.SOUTHWEST);
                         }
                     }break;
                 case SOUTHEAST:
-                    if(x == mapWidth-1){
-                        if(y == 0){
+                    if(x > mapWidth-3){
+                        if(y < 2){
                             updateDirection(Direction.NORTHWEST);
                         }else{
                             updateDirection(Direction.SOUTHWEST);
                         }
                     }else{
-                        if(y == 0){
+                        if(y < 2){
                             updateDirection(Direction.NORTHEAST);
                         }
                     }break;

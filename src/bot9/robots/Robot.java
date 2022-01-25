@@ -537,19 +537,19 @@ public abstract class Robot {
                 watchtowerTurns = Integer.MAX_VALUE, soldierTurns = Integer.MAX_VALUE;
         int[] turns = {archonTurns, sageTurns, labTurns, watchtowerTurns, soldierTurns};
         //MapLocation[] locations = {archon.getLocation(), sage.getLocation(), lab.getLocation(), watchtower.getLocation(),soldier.getLocation()};
-        if (archon!=null){
+        if (archon!=null && damages[0]>0){
             turns[0] = archon.getHealth()/damages[0];
         }
-        if (sage!=null){
+        if (sage!=null && damages[1]>0){
             turns[1] = sage.getHealth()/damages[1];
         }
-        if (lab!=null){
+        if (lab!=null && damages[2]>0){
             turns[2] = lab.getHealth()/damages[2];
         }
-        if (watchtower!=null){
+        if (watchtower!=null && damages[3]>0){
             turns[3] = watchtower.getHealth()/damages[3];
         }
-        if (soldier!=null){
+        if (soldier!=null && damages[4]>0){
             turns[4] = soldier.getHealth()/damages[4];
         }
         if (archonTurns<=10){

@@ -1,14 +1,14 @@
-package bot4;
+package bot9_MC;
 
 import battlecode.common.*;
-import bot4.robots.Robot;
-import bot4.robots.buildings.Archon;
-import bot4.robots.buildings.Lab;
-import bot4.robots.buildings.Watchtower;
-import bot4.robots.droids.Builder;
-import bot4.robots.droids.Miner;
-import bot4.robots.droids.Sage;
-import bot4.robots.droids.Soldier;
+import bot9_MC.robots.Robot;
+import bot9_MC.robots.buildings.Archon;
+import bot9_MC.robots.buildings.Lab;
+import bot9_MC.robots.buildings.Watchtower;
+import bot9_MC.robots.droids.Builder;
+import bot9_MC.robots.droids.Miner;
+import bot9_MC.robots.droids.Sage;
+import bot9_MC.robots.droids.Soldier;
 
 public strictfp class RobotPlayer {
     static RobotController rc;
@@ -28,7 +28,11 @@ public strictfp class RobotPlayer {
         }
         robot.init();
         while (true) {
-            robot.run();
+            try{
+                robot.run();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             Clock.yield();
         }
     }
