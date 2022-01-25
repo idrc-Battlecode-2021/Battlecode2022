@@ -119,8 +119,9 @@ public class Builder extends Droid{
         }
 
         // prepare for building lab by going to the best lab spot
-        bestLabSpot = findBestLabSpot();
-        goToLabSpot(bestLabSpot);
+        //bestLabSpot = findBestLabSpot();
+        MapLocation target = findBestLabSpot();
+        goToLabSpot(target);
 
         boolean built = false;
         if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
@@ -165,10 +166,13 @@ public class Builder extends Droid{
     }
 
     public MapLocation findBestLabSpot() throws GameActionException{
+        /*
         MapLocation target = bestLabSpot;
         if (bestLabSpot==null){
             target = rc.getLocation();
         }
+        */
+        MapLocation target = rc.getLocation();
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
@@ -176,7 +180,7 @@ public class Builder extends Droid{
             if (!rc.canSenseLocation(m) || rc.canSenseRobotAtLocation(m) || m.isWithinDistanceSquared(archonLoc, 2))continue;
             int dist = rc.getLocation().distanceSquaredTo(m);
             int r=rc.senseRubble(m);
-            if(r<rubble){
+            if(rc.canSenseRobotAtLocation(target) || r<rubble){
                 rubble=r;
                 target=m;
             }
