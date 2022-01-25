@@ -15,6 +15,7 @@ public class Builder extends Droid{
     private MapLocation archonLoc;
     private boolean isDefensive = true;
     private MapLocation finishPrototype = null;
+    private MapLocation bestLabSpot = null;
     private int builderCount = 0;
     private int globalLabCount = 0;
     private PathFindingSoldier pfs;
@@ -118,8 +119,8 @@ public class Builder extends Droid{
         }
 
         // prepare for building lab by going to the best lab spot
-        MapLocation target = findBestLabSpot();
-        goToLabSpot(target);
+        bestLabSpot = findBestLabSpot();
+        goToLabSpot(bestLabSpot);
 
         boolean built = false;
         if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
@@ -164,7 +165,10 @@ public class Builder extends Droid{
     }
 
     public MapLocation findBestLabSpot() throws GameActionException{
-        MapLocation target = rc.getLocation();
+        MapLocation target = bestLabSpot;
+        if (bestLabSpot==null){
+            target = rc.getLocation();
+        }
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
