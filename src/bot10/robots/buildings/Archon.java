@@ -500,6 +500,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
+        //TODO: Add dynamic miner ratios based on map size
         if (globalMinerCount < 3 && !isArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;

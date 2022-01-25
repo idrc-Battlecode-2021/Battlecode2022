@@ -108,6 +108,7 @@ public class Sage extends Droid{
             }
             return;
         }
+        //TODO: Try to reduce times in which units go to previous targets if the enemy there is eliminated (if other stuff is done)
         if (hasMapLocation(45)){
             rc.setIndicatorString("map loc 45");
             MapLocation target/*temp*/ = decode(45);

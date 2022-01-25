@@ -398,6 +398,7 @@ public class Miner extends Droid{
                 }
                 if(exploreTarget != null){
                     soldierMove(exploreTarget);
+                    //TODO: See if maybe reducing the distance needed for a miner to be near a target to be deemed explored
                     if(rc.canSenseLocation(exploreTarget)){
                         exploreTarget = null;
                     }
