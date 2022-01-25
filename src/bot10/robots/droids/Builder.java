@@ -175,6 +175,22 @@ public class Builder extends Droid{
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
+        //TODO: the current code doesn't care if the labs are within archon vision radius and will always go toward corners
+        // commented out code makes sure labs are within archon vision radius
+        /*
+        HashSet<MapLocation> locations = new HashSet<MapLocation>();
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(archonLoc, RobotType.MINER.visionRadiusSquared)){
+            if (rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2)){
+                locations.add(m);
+            }
+        }
+        for (MapLocation m:rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
+            if (rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2) && m.isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){ //TODO: can try another threshold
+                locations.add(m);
+            }
+        }
+        for (MapLocation m: locations){
+        */
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
             if (!rc.canSenseLocation(m) || rc.canSenseRobotAtLocation(m) || m.isWithinDistanceSquared(archonLoc, 2))continue;
             int r=rc.senseRubble(m);
