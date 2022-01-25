@@ -34,6 +34,10 @@ public class Builder extends Droid{
     //moves toward low rubble location within target and repairs it
     public boolean repair(MapLocation target) throws GameActionException{
         indicatorString+=" repair";
+        if (!rc.canSenseRobotAtLocation(target)){
+            moveTowardToLowRubble(target);
+            return true;
+        }
         RobotInfo prototype = rc.senseRobotAtLocation(target);
         if (prototype.getHealth()==prototype.getType().health){
             return false;
@@ -200,7 +204,6 @@ public class Builder extends Droid{
             return null;
         }
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
-        //for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
             if (!(rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2) && m.isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared))){ //TODO: can try another threshold
                 continue;
             }
@@ -212,9 +215,6 @@ public class Builder extends Droid{
             else if (r==rubble){
                 int xTemp = Math.min(Math.abs(-m.x),Math.abs(mapWidth-1-m.x));
                 int yTemp = Math.min(Math.abs(-m.y),Math.abs(mapHeight-1-m.y));
-                if (rc.getRoundNum()>550 && rc.getRoundNum()<560){
-                    System.out.println(m+" "+(xTemp+yTemp)+" "+(xCheck+yCheck));
-                }
                 if(xTemp+yTemp < xCheck+yCheck){
                     target = m;
                     xCheck = xTemp;

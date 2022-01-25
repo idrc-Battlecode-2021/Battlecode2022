@@ -7,6 +7,7 @@
 - sages retreat to low rubble once within archon action radius
 - seems to do better on nottestsmall
 
+- 10: gold diff (11 but for gold)
 - 31: Soldier Healing
 - 32: Solider Healing
 - 33: Soldier Healing
