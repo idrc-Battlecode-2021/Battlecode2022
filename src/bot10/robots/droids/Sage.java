@@ -130,7 +130,6 @@ public class Sage extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
-                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length ==0){
                     if(target.equals(temp)) rc.writeSharedArray(43,0);
@@ -149,7 +148,6 @@ public class Sage extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
-                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp))rc.writeSharedArray(55,0);
@@ -167,7 +165,6 @@ public class Sage extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
-                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp)) rc.writeSharedArray(41,0);
@@ -181,7 +178,6 @@ public class Sage extends Droid{
                 soldierMove(target);
             }
             if(rc.canSenseLocation(target)){
-                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     target = null;
