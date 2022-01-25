@@ -2,12 +2,7 @@ package bot10_MC.robots.droids;
 
 import battlecode.common.*;
 import bot10_MC.util.Constants;
-import bot10_MC.util.PathFindingSoldier;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 public class Builder extends Droid{
     private int startingBit;
@@ -19,9 +14,9 @@ public class Builder extends Droid{
     private MapLocation bestLabSpot = null;
     private int builderCount = 0;
     private int globalLabCount = 0;
-    private PathFindingSoldier pfs;
     private static int labThreshold = 180;
     private String indicatorString = "";
+    private MapLocation healLocation = null;
     
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
@@ -29,7 +24,6 @@ public class Builder extends Droid{
 
     @Override
     public void init() throws GameActionException {
-        pfs=new PathFindingSoldier(rc);
         detectArchon();
         archonLoc = rc.senseRobot(myArchonID).getLocation();
         startingBit = 2*myArchonOrder;
@@ -86,10 +80,11 @@ public class Builder extends Droid{
         //TODO: discuss priority over repair and also change to better kite function
         RobotInfo[] enemyBotsInVision = rc.senseNearbyRobots(RobotType.BUILDER.visionRadiusSquared, rc.getTeam().opponent());
         if (enemyBotsInVision.length>0){
-            soldierMove(archonLoc);
+            intermediateMove(archonLoc);
         }
 
-        //first repair prototype if it can
+        //first repair prototype
+        indicatorString = "prototype";
         if (finishPrototype!=null && !rc.getLocation().isWithinDistanceSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared)){
             intermediateMove(finishPrototype);
         }
@@ -97,27 +92,26 @@ public class Builder extends Droid{
             if (repair(finishPrototype)){
                 return;
             }
-        }
-
-        
-        MapLocation prototypeLoc = null;
-        RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);
-        /*
-        for (int i = robots.length; --i>=0;){
-            if (robots[i].getMode() == RobotMode.PROTOTYPE){
-                prototypeLoc = robots[i].getLocation();
-                break;
-                //TODO: there really shouldn't be multiple prototypes but if there are go toward highest health one
+            else{
+                finishPrototype = null;
             }
         }
-        if (prototypeLoc!=null){
-            repair(prototypeLoc);
-        }
-        */
 
+        indicatorString = "heal";
+        //heal buildings
+        RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);
         int leastHealth = RobotType.ARCHON.health;
-        MapLocation healLocation = null;
         //TODO: repair buildings that are missing health
+        if (healLocation!=null){
+            //TODO: heal as far as possible in case archon needs to spawn (still prioritize low rubble)
+            if (repair(healLocation)){
+                rc.setIndicatorString(indicatorString);
+                return;
+            }
+            else{
+                healLocation = null;
+            }
+        }
         for (int i = robots.length; --i>=0;){
             if (robots[i].getMode()==RobotMode.DROID || rc.getType().health-rc.getHealth()==0){
                 continue;
@@ -128,13 +122,29 @@ public class Builder extends Droid{
         }
         if (healLocation!=null){
             //TODO: heal as far as possible in case archon needs to spawn (still prioritize low rubble)
-            repair(healLocation);
+            if (repair(healLocation)){
+                rc.setIndicatorString(indicatorString);
+                return;
+            }
+            else{
+                healLocation = null;
+            }
         }
 
         // prepare for building lab by going to the best lab spot
+        indicatorString+="finding ";
         bestLabSpot = findBestLabSpot();
+        if (bestLabSpot==null){
+            //builder has wandered away and is coming back
+            rc.setIndicatorString(indicatorString);
+            return;
+        }
         bestBuildSpot = goToLabSpot(bestLabSpot);
-
+        if (bestBuildSpot==bestLabSpot){
+            //going toward bestlabspot
+            rc.setIndicatorString(indicatorString);
+            return;
+        }
         if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
             build(1);
         }
@@ -169,37 +179,29 @@ public class Builder extends Droid{
                 }
             }
             if (rc.isMovementReady() && best_location != null && !best_location.equals(target)){
-                indicatorString = "best location: "+best_location;
                 intermediateMove(best_location);
             }
+            indicatorString = "best location: "+best_location;
         }
         return best_location;
     }
 
     public MapLocation findBestLabSpot() throws GameActionException{
-        indicatorString+=" archonLoc: "+archonLoc;
         MapLocation target = rc.getLocation();
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
-        //TODO: the current code doesn't care if the labs are within archon vision radius and will always go toward corners
-        // commented out code makes sure labs are within archon vision radius
-        /*
-        HashSet<MapLocation> locations = new HashSet<MapLocation>();
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(archonLoc, RobotType.MINER.visionRadiusSquared)){
-            if (rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2)){
-                locations.add(m);
-            }
+        //if builder isn't within archon radius come back
+        if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){
+            intermediateMove(archonLoc);
+            indicatorString+="going to archon: "+archonLoc;
+            return null;
         }
-        for (MapLocation m:rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
-            if (rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2) && m.isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){ //TODO: can try another threshold
-                locations.add(m);
-            }
-        }
-        for (MapLocation m: locations){
-        */
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
-            if (!rc.canSenseLocation(m) || rc.canSenseRobotAtLocation(m) || m.isWithinDistanceSquared(archonLoc, 2))continue;
+        //for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
+            if (!(rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2) && m.isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared))){ //TODO: can try another threshold
+                continue;
+            }
             int r=rc.senseRubble(m);
             if(r<rubble){
                 rubble=r;
@@ -215,6 +217,7 @@ public class Builder extends Droid{
                 }
             }
         }
+        indicatorString+="best lab: "+target;
         return target;
     }
 
@@ -297,22 +300,4 @@ public class Builder extends Droid{
         return false;
     }
 
-    private MapLocation pastTarget = null;
-    private HashSet<MapLocation> pastLocations = new HashSet<>();
-    private void soldierMove(MapLocation target) throws GameActionException {
-        if(!target.equals(pastTarget)){
-            pastTarget = target;
-            pastLocations.clear();
-        }
-        Direction dir = pfs.getBestDir(target);
-        MapLocation temp = myLocation;
-        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
-            if(tryMoveMultiple(dir)){
-                pastLocations.add(temp);
-            }
-        }else{
-            intermediateMove(target);
-            pastLocations.add(temp);
-        }
-    }
 }
