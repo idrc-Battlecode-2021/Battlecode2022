@@ -291,6 +291,7 @@ public class Archon extends Building{
                 rc.writeSharedArray(63,rc.getID()+1);
                 rc.writeSharedArray(56,0);
                 rc.writeSharedArray(11,0);
+                rc.writeSharedArray(10,0);
             }
             else{
                 //set appropriate archonOrder
@@ -325,7 +326,6 @@ public class Archon extends Building{
             labCount = (rc.readSharedArray(4) % (power*16))/power;
         }
         if (roundNum%3==1 && archonOrder==rc.getArchonCount()-1){ //Reset Troop Counts only if is last archon
-            rc.writeSharedArray(10, 0);
             for (int i=0;i<5;i++){
                 rc.writeSharedArray(i, 0);
             }
@@ -423,27 +423,27 @@ public class Archon extends Building{
         }
         nearbyTroopHealth = newTroopHealth;
         if (attackedLocation!=null && rc.canRepair(attackedLocation)){
-            indicatorString+=" healing attacked soldier";
+            //indicatorString+=" healing attacked soldier";
             //repair soldier being attacked
             rc.repair(attackedLocation);
             return;
         }
         if (continueHealLocation!=null && rc.canRepair(continueHealLocation)){
-            indicatorString+=" continue to heal soldier";
+            //indicatorString+=" continue to heal soldier";
             rc.repair(continueHealLocation);
             return;
         }
         if (troopLocation!=null && rc.canRepair(troopLocation)){
-            indicatorString+=" healing soldier";
+            //indicatorString+=" healing soldier";
             soldierToHeal = troopID;
             rc.repair(troopLocation);
             return;
         }
         if (supportLocation!=null && rc.canRepair(supportLocation)){
-            indicatorString+=" healing miner";
+            //indicatorString+=" healing miner";
             rc.repair(supportLocation);
         }
-        indicatorString+=" healing none";
+        //indicatorString+=" healing none";
     }
 
     private void checkEnemies() throws GameActionException{
@@ -489,9 +489,12 @@ public class Archon extends Building{
             setTransformStatus();
         }
         // START SPAWNING
-        int archonBuildStatus = rc.readSharedArray(11);
-        int diff = archonBuildStatus - archonOrder;
-        
+        int goldBuildStatus = rc.readSharedArray(10);
+        int leadBuildStatus = rc.readSharedArray(11);
+        int leadDiff = leadBuildStatus - archonOrder;
+        int goldDiff = goldBuildStatus - archonOrder;
+
+        indicatorString+="gs "+goldBuildStatus+" gd"+goldDiff;
         int mod = 4;
         /*
         if(rc.readSharedArray(40)!=0){
@@ -510,12 +513,12 @@ public class Archon extends Building{
                     i++;
                 }
                 if (rc.canBuildRobot(type,passableDirections.get(i))){
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
+                    if (leadDiff==0){
+                        if (leadBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
                         }
                         else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
+                            rc.writeSharedArray(11,leadBuildStatus+1);
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
@@ -531,12 +534,12 @@ public class Archon extends Building{
             RobotType type = RobotType.BUILDER;
             indicatorString += " builders";
             if (!isEdge){ // make the archon closest to the edge build a builder
-                if (diff==0){
-                    if (archonBuildStatus == rc.getArchonCount()-1){
+                if (leadDiff==0){
+                    if (leadBuildStatus == rc.getArchonCount()-1){
                         rc.writeSharedArray(11,0);
                     }
                     else{
-                        rc.writeSharedArray(11,archonBuildStatus+1);
+                        rc.writeSharedArray(11,leadBuildStatus+1);
                     }
                 }
             }
@@ -546,12 +549,12 @@ public class Archon extends Building{
                     i++;
                 }
                 if (rc.canBuildRobot(type,passableDirections.get(i))){
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
+                    if (leadDiff==0){
+                        if (leadBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
                         }
                         else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
+                            rc.writeSharedArray(11,leadBuildStatus+1);
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
@@ -567,7 +570,7 @@ public class Archon extends Building{
             int cost = RobotType.SAGE.buildCostGold;
             RobotType type = RobotType.SAGE;
             indicatorString += " sages";
-            if (!checkGoldBuildStatus(diff, cost)){
+            if (!checkGoldBuildStatus(goldDiff, cost)){
                 repair();
                 return;
             }
@@ -577,12 +580,12 @@ public class Archon extends Building{
                     i++;
                 }
                 if (rc.canBuildRobot(type,passableDirections.get(i))){
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
-                            rc.writeSharedArray(11,0);
+                    if (goldDiff==0){
+                        if (goldBuildStatus == rc.getArchonCount()-1){
+                            rc.writeSharedArray(10,0);
                         }
                         else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
+                            rc.writeSharedArray(10,goldBuildStatus+1);
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
@@ -601,12 +604,12 @@ public class Archon extends Building{
                     i++;
                 }
                 if (rc.canBuildRobot(type,passableDirections.get(i))){
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
+                    if (leadDiff==0){
+                        if (leadBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
                         }
                         else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
+                            rc.writeSharedArray(11,leadBuildStatus+1);
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
@@ -620,7 +623,7 @@ public class Archon extends Building{
             int cost = RobotType.SOLDIER.buildCostLead;
             RobotType type = RobotType.SOLDIER;
             indicatorString += " soldiers";
-            if (!checkBuildStatus(diff, cost)){
+            if (!checkBuildStatus(leadDiff, cost)){
                 repair();
                 return;
             }
@@ -630,12 +633,12 @@ public class Archon extends Building{
                     i++;
                 }
                 if (rc.canBuildRobot(type,passableDirections.get(i))){
-                    if (diff==0){
-                        if (archonBuildStatus == rc.getArchonCount()-1){
+                    if (leadDiff==0){
+                        if (leadBuildStatus == rc.getArchonCount()-1){
                             rc.writeSharedArray(11,0);
                         }
                         else{
-                            rc.writeSharedArray(11,archonBuildStatus+1);
+                            rc.writeSharedArray(11,leadBuildStatus+1);
                         }
                     }
                     rc.buildRobot(type,passableDirections.get(i));
