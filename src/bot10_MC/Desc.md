@@ -1,26 +1,11 @@
-# Bot10
+# Bot10_MC
 
-- copied from bot9_jj, experimenting with sages
+- copied from bot10
 
 ## Changelog
 
-### General
-- troops don't avoid charge
-- builder and lab count are now global
-
-### Archons:
-- first builds 3 miners
-- builds a builder
-- builds a lab
-- builds a sage whenever possible
-- build miners and labs once past a certain lead threshold, and the threshold should increase after every build (in progress)
-### Labs:
-- always try to generate gold per turn
-
-### Sages:
-- soldier code but updated action/vision radii
-- different targetting that accounts for mass charge damage
-- retreats if can sense bots in vision but action cooldown isn't up
+- sages retreat to low rubble once within archon action radius
+- lower initial miner threshold
 
 
 - 31: Soldier Healing

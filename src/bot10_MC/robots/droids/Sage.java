@@ -122,7 +122,12 @@ public class Sage extends Droid{
             soldierMove(target);
         }else if (rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent()).length>0 && !rc.isActionReady()){
             rc.setIndicatorString("vision retreat");
-            soldierMove(archonLoc);
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                soldierMove(archonLoc);
+            }
+            else{
+                kite();
+            }
         }else if(hasMapLocation(43) && globalSageCount > 5){
             rc.setIndicatorString("43");
             MapLocation temp = decode(43);

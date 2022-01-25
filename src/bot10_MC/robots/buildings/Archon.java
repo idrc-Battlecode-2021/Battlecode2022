@@ -23,7 +23,7 @@ public class Archon extends Building{
     private static HashMap<Integer, Integer> nearbyTroopHealth = new HashMap<Integer,Integer>();
     private static int soldierToHeal = 0;
 
-    private static int minerThreshold = 230; //TODO: make miner and lab thresholds global
+    private static int minerThreshold = 200; //TODO: make miner and lab thresholds global
 
     private static String indicatorString = "";
 
@@ -478,7 +478,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        minerThreshold = Math.max(230, 230+(globalMinerCount-3)/rc.getArchonCount()*180);
+        minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*180);
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
