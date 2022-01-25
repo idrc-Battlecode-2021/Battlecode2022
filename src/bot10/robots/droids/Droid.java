@@ -16,7 +16,7 @@ public abstract class Droid extends Robot {
         exploreTarget = myLocation;
     }
 
-    private boolean priorityMoveNew2() throws GameActionException{
+    protected boolean priorityMoveNew2() throws GameActionException{
         Direction dir2 = initDirection.rotateLeft(), dir3 = initDirection.rotateRight(),
             dir4 = dir2.rotateLeft(), dir5 = dir3.rotateRight();
         int rubble1 = rc.senseRubble(rc.adjacentLocation(initDirection)), rubble2 = 101, rubble3 = 101, rubble4 = 101, rubble5 = 101;
@@ -63,55 +63,74 @@ public abstract class Droid extends Robot {
         return false;
     }
 
-    public boolean priorityMoveNew() throws GameActionException {
+    public MapLocation getExploreTargetFromInitDirection() throws GameActionException {
         if(initDirection == null){
             updateDirection(Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
         }
-        if(myLocation.x == 0 || myLocation.y == 0 || myLocation.x == rc.getMapWidth()-1 || myLocation.y == rc.getMapHeight()){
-            updateDirection(initDirection.rotateLeft().rotateLeft());
+        switch(initDirection){
+            case SOUTHEAST:
+            case NORTHEAST:
+            case NORTHWEST:
+            case SOUTHWEST: break;
+            case SOUTH: updateDirection(Constants.SOUTHERN_DIR[(int) (Math.random()*2)]); break;
+            case NORTH: updateDirection(Constants.NORTHERN_DIR[(int) (Math.random()*2)]); break;
+            case WEST:  updateDirection(Constants.WESTERN_DIR[(int) (Math.random()*2)]);  break;
+            case EAST:  updateDirection(Constants.EASTERN_DIR[(int) (Math.random()*2)]);  break;
         }
-        Direction dir = null; int rubble = 101;
-        int[] offsets = new int[2];
-        if(rc.canMove(initDirection)){
-            offsets = getDirectionOffsets(initDirection);
-            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < mapWidth && yVal >= 0 && yVal < mapHeight &&
-                    !prevLocs.contains(myLocation)){
-                dir = initDirection;
-                rubble = rc.senseRubble(rc.adjacentLocation(initDirection));
+        if(!rc.onTheMap(myLocation.add(initDirection))){
+            int x = myLocation.x, y = myLocation.y;
+            switch (initDirection){
+                case SOUTHWEST:
+                    if(x < 2){
+                        if(y < 2){
+                            updateDirection(Direction.NORTHEAST);
+                        }else{
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }else{
+                        if(y < 2){
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }break;
+                case NORTHEAST:
+                    if(x > mapWidth-3){
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHWEST);
+                        }else{
+                            updateDirection(Direction.NORTHWEST);
+                        }
+                    }else{
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHEAST);
+                        }
+                    }break;
+                case NORTHWEST:
+                    if(x < 2){
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHEAST);
+                        }else{
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }else{
+                        if(y > mapHeight-3){
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }break;
+                case SOUTHEAST:
+                    if(x > mapWidth-3){
+                        if(y < 2){
+                            updateDirection(Direction.NORTHWEST);
+                        }else{
+                            updateDirection(Direction.SOUTHWEST);
+                        }
+                    }else{
+                        if(y < 2){
+                            updateDirection(Direction.NORTHEAST);
+                        }
+                    }break;
             }
-
         }
-        int rubble2;
-        if(rc.canMove(initDirection.rotateLeft())){
-            offsets = getDirectionOffsets(initDirection);
-            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    !prevLocs.contains(myLocation)){
-                rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateLeft()));
-                if(rubble2 < rubble){
-                    dir = initDirection.rotateLeft();
-                    rubble = rubble2;
-                }
-            }
-        }
-        if(rc.canMove(initDirection.rotateRight())){
-            offsets = getDirectionOffsets(initDirection);
-            int xVal = offsets[0]+myLocation.x, yVal = offsets[1]+myLocation.y;
-            if(xVal >= 0 && xVal < rc.getMapWidth() && yVal >= 0 && yVal < rc.getMapHeight() &&
-                    !prevLocs.contains(myLocation)){
-                rubble2 = rc.senseRubble(rc.adjacentLocation(initDirection.rotateRight()));
-                if(rubble2 < rubble){
-                    dir = initDirection.rotateLeft();
-                }
-            }
-        }
-        Direction temp = initDirection;
-        if(dir != null && tryMoveMultiple(dir)){
-            updateDirection(temp);
-            return true;
-        }
-        return false;
+        return new MapLocation(myLocation.x+initDirection.getDeltaX()*100,myLocation.y+initDirection.getDeltaY()*100);
     }
 
     public boolean tryMoveMultipleNew() throws GameActionException {

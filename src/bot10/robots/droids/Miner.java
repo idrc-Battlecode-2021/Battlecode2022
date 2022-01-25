@@ -404,9 +404,13 @@ public class Miner extends Droid{
                     }
                 } else{*/
                     checkMiners();
-                    if(!tryMoveMultipleNew()){
-                        tryMoveMultiple(initDirection);
+                    MapLocation exploreTarget = getExploreTargetFromInitDirection();
+                    if(!priorityMoveNew2()){
+                        soldierMove(exploreTarget);
                     }
+                    /*if(!tryMoveMultipleNew()){
+                        tryMoveMultiple(initDirection);
+                    }*/
                 //}
 
                 if(!prev.equals(myLocation)) viewResources();
