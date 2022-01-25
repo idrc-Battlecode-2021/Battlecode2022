@@ -120,6 +120,7 @@ public class Soldier extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
+                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length ==0){
                     if(target.equals(temp)) rc.writeSharedArray(43,0);
@@ -137,6 +138,7 @@ public class Soldier extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
+                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp))rc.writeSharedArray(55,0);
@@ -153,6 +155,7 @@ public class Soldier extends Droid{
                 soldierMove(target);
             }
             if (rc.canSenseLocation(target)){
+                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
                 nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp)) rc.writeSharedArray(41,0);
@@ -163,6 +166,14 @@ public class Soldier extends Droid{
         } else if(target != null){
             if(rc.isActionReady()){
                 soldierMove(target);
+            }
+            if(rc.canSenseLocation(target)){
+                //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    target = null;
+                    targetType = 0;
+                }
             }
         } else if(rc.readSharedArray(40) == 1) {
             if(rc.isActionReady()){
