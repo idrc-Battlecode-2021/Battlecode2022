@@ -15,6 +15,7 @@ public class Builder extends Droid{
     private MapLocation archonLoc;
     private boolean isDefensive = true;
     private MapLocation finishPrototype = null;
+    private MapLocation bestBuildSpot = null;
     private MapLocation bestLabSpot = null;
     private int builderCount = 0;
     private int globalLabCount = 0;
@@ -91,9 +92,10 @@ public class Builder extends Droid{
             }
         }
 
+        
         MapLocation prototypeLoc = null;
         RobotInfo[] robots = rc.senseNearbyRobots(20,myTeam);
-
+        /*
         for (int i = robots.length; --i>=0;){
             if (robots[i].getMode() == RobotMode.PROTOTYPE){
                 prototypeLoc = robots[i].getLocation();
@@ -104,6 +106,7 @@ public class Builder extends Droid{
         if (prototypeLoc!=null){
             repair(prototypeLoc);
         }
+        */
 
         int leastHealth = RobotType.ARCHON.health;
         MapLocation healLocation = null;
@@ -117,12 +120,13 @@ public class Builder extends Droid{
             }
         }
         if (healLocation!=null){
+            //TODO: heal as far as possible in case archon needs to spawn (still prioritize low rubble)
             repair(healLocation);
         }
 
         // prepare for building lab by going to the best lab spot
-        MapLocation target = findBestLabSpot();
-        goToLabSpot(target);
+        bestLabSpot = findBestLabSpot();
+        bestBuildSpot = goToLabSpot(bestLabSpot);
 
         if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
             build(1);
@@ -133,9 +137,8 @@ public class Builder extends Droid{
 
     public MapLocation goToLabSpot(MapLocation target) throws GameActionException{
         MapLocation best_location = target;
-
         if (!rc.getLocation().isWithinDistanceSquared(target, 2)){
-            indicatorString+="moving toward target";
+            indicatorString = "going to: "+target;
             intermediateMove(target);
         }
         else{
@@ -159,6 +162,7 @@ public class Builder extends Droid{
                 }
             }
             if (rc.isMovementReady() && best_location != null && !best_location.equals(target)){
+                indicatorString = "best location: "+best_location;
                 intermediateMove(best_location);
             }
         }
@@ -166,15 +170,15 @@ public class Builder extends Droid{
     }
 
     public MapLocation findBestLabSpot() throws GameActionException{
+        indicatorString+=" archonLoc: "+archonLoc;
         MapLocation target = rc.getLocation();
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
             if (!rc.canSenseLocation(m) || rc.canSenseRobotAtLocation(m) || m.isWithinDistanceSquared(archonLoc, 2))continue;
-            int dist = rc.getLocation().distanceSquaredTo(m);
             int r=rc.senseRubble(m);
-            if(rc.canSenseRobotAtLocation(target) || r<rubble){
+            if(r<rubble){
                 rubble=r;
                 target=m;
             }
@@ -255,13 +259,11 @@ public class Builder extends Droid{
         else if (id == 1) {
             r = RobotType.LABORATORY;
         }
-        MapLocation target = findBestLabSpot();
-        MapLocation myTarget = goToLabSpot(target);
-        indicatorString+=" target: "+target.toString()+" mytarget: "+myTarget.toString();
-        if (!rc.getLocation().equals(myTarget)){
+        //indicatorString+=" target: "+target.toString()+" mytarget: "+myTarget.toString();
+        if (!rc.getLocation().equals(bestBuildSpot)){
             return false;
         }
-        Direction dir = rc.getLocation().directionTo(target);
+        Direction dir = rc.getLocation().directionTo(bestLabSpot);
         if (rc.canBuildRobot(r, dir)){
             rc.buildRobot(r, dir);
             finishPrototype = rc.getLocation().add(dir);
