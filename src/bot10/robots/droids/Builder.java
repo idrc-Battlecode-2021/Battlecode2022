@@ -42,7 +42,7 @@ public class Builder extends Droid{
         int lowest_rubble = rc.senseRubble(best_location);
         MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, RobotType.BUILDER.actionRadiusSquared);
         for (MapLocation loc:locations){
-            if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) )continue;
+            if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc))continue;
             int rubble = rc.senseRubble(loc);
             if (rubble<lowest_rubble){
                 lowest_rubble = rubble;
@@ -51,7 +51,6 @@ public class Builder extends Droid{
         }
         if (rc.isMovementReady() && rc.getLocation()!=best_location){
             intermediateMove(best_location);
-            //TODO: replace with soldierMove?
         }
         RobotInfo prototype = rc.senseRobotAtLocation(target);
         if (prototype.getHealth()==prototype.getType().health){
@@ -106,26 +105,27 @@ public class Builder extends Droid{
             repair(prototypeLoc);
         }
 
+        int leastHealth = RobotType.ARCHON.health;
+        MapLocation healLocation = null;
         //TODO: repair buildings that are missing health
         for (int i = robots.length; --i>=0;){
-            if (robots[i].getMode() == RobotMode.PROTOTYPE){
-                prototypeLoc = robots[i].getLocation();
-                break;
-                //TODO: there really shouldn't be multiple prototypes but if there are go toward highest health one
+            if (robots[i].getMode()==RobotMode.DROID || rc.getType().health-rc.getHealth()==0){
+                continue;
+            }
+            if (robots[i].getHealth()<leastHealth){
+                healLocation = robots[i].getLocation();
             }
         }
-        if (prototypeLoc!=null){
-            repair(prototypeLoc);
+        if (healLocation!=null){
+            repair(healLocation);
         }
 
         // prepare for building lab by going to the best lab spot
-        //bestLabSpot = findBestLabSpot();
         MapLocation target = findBestLabSpot();
         goToLabSpot(target);
 
-        boolean built = false;
         if (rc.getTeamLeadAmount(rc.getTeam())>labThreshold){
-            built = build(1);
+            build(1);
         }
         rc.setIndicatorString(indicatorString);
 
@@ -166,12 +166,6 @@ public class Builder extends Droid{
     }
 
     public MapLocation findBestLabSpot() throws GameActionException{
-        /*
-        MapLocation target = bestLabSpot;
-        if (bestLabSpot==null){
-            target = rc.getLocation();
-        }
-        */
         MapLocation target = rc.getLocation();
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
