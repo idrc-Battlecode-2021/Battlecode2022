@@ -478,7 +478,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*180);
+        minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*180); //TODO: experiment with factor 
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
