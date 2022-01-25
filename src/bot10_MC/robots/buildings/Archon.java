@@ -503,7 +503,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3 && !isArchon && globalMinerCount<30){
+        if (globalMinerCount < 3 && !isArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
