@@ -1,8 +1,8 @@
-package bot10.robots.droids;
+package bot10_MC.robots.droids;
 
 import battlecode.common.*;
-import bot10.util.Constants;
-import bot10.util.PathFindingSoldier;
+import bot10_MC.util.Constants;
+import bot10_MC.util.PathFindingSoldier;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -184,7 +184,7 @@ public class Builder extends Droid{
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
         //TODO: the current code doesn't care if the labs are within archon vision radius and will always go toward corners
         // commented out code makes sure labs are within archon vision radius
-        /*
+        
         HashSet<MapLocation> locations = new HashSet<MapLocation>();
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(archonLoc, RobotType.MINER.visionRadiusSquared)){
             if (rc.canSenseLocation(m) && !rc.canSenseRobotAtLocation(m) && !m.isWithinDistanceSquared(archonLoc, 2)){
@@ -197,8 +197,7 @@ public class Builder extends Droid{
             }
         }
         for (MapLocation m: locations){
-        */
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
+        //for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), RobotType.MINER.visionRadiusSquared)){
             if (!rc.canSenseLocation(m) || rc.canSenseRobotAtLocation(m) || m.isWithinDistanceSquared(archonLoc, 2))continue;
             int r=rc.senseRubble(m);
             if(r<rubble){

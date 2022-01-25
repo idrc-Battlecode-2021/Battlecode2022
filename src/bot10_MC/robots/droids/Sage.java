@@ -1,6 +1,6 @@
-package bot10.robots.droids;
+package bot10_MC.robots.droids;
 import battlecode.common.*;
-import bot10.util.PathFinding30;
+import bot10_MC.util.PathFinding30;
 
 import java.util.HashSet;
 
@@ -101,7 +101,12 @@ public class Sage extends Droid{
             rc.setIndicatorString(archonLoc+" action radius");
             //New targetting
             if (!rc.isActionReady()){
-                soldierMove(archonLoc);
+                if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                    soldierMove(archonLoc);
+                }
+                else{
+                    kite();
+                }
             }
             else{
                 target = selectTargetKill();
@@ -244,6 +249,7 @@ public class Sage extends Droid{
                 target = temp;
             }
         }
+        /*
         else if(target != null){
             rc.setIndicatorString("target retreat "+target.toString());
             MapLocation targetRetreat = myLocation;
@@ -257,7 +263,7 @@ public class Sage extends Droid{
             }
             if(targetRetreat != null || !targetRetreat.equals(myLocation)) intermediateMove(targetRetreat);
         }
-        
+        */
     }
 
     public void retreat() throws GameActionException{
@@ -432,6 +438,49 @@ public class Sage extends Droid{
         }
     }
 
+    public void kite() throws GameActionException{
+        if (!rc.isMovementReady()){
+            return;
+        }
+        int average_x=0,average_y=0;
+        myLocation = rc.getLocation();
+        int enemyCount = 0;
+        RobotInfo[] enemyBotsInVision = rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent());
+        for (RobotInfo robot:enemyBotsInVision){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && robot.getType()!=RobotType.ARCHON){
+                continue;
+            }
+            enemyCount++;
+            MapLocation location = robot.getLocation();
+            average_x+=location.x;
+            average_y+=location.y;
+        }
+        if (enemyCount==0){
+            soldierMove(archonLoc);
+            return;
+        }
+        average_x/=enemyCount;
+        average_y/=enemyCount;
+        MapLocation enemy = new MapLocation(average_x,average_y);
+        Direction lowest = Direction.CENTER;
+        int lowest_rubble = rc.senseRubble(rc.getLocation());
+        for (Direction d: Direction.allDirections()){
+            MapLocation adjacent=rc.adjacentLocation(d);
+            if(adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy))continue;
+            if(rc.canMove(d)){
+                int rubbleAtLoc = rc.senseRubble(adjacent);
+                if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(enemy) > myLocation.distanceSquaredTo(enemy)){
+                    lowest = d;
+                    lowest_rubble = rubbleAtLoc;
+                }
+            }
+        }
+        if(rc.canMove(lowest)){
+            rc.move(lowest);
+            myLocation = rc.getLocation();
+        }
+        
+    }
 
     private MapLocation pastExploreTarget = null;
     private HashSet<MapLocation> pastExploreLocations = new HashSet<>();
