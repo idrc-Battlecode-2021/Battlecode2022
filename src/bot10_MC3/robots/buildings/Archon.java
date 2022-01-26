@@ -161,6 +161,9 @@ public class Archon extends Building{
             System.out.println("CANT SENSE BEST TARGET: "+bestTargetLocation);
             return;
         }
+        if (!bestTargetLocation.equals(rc.getLocation()) && rc.canSenseRobotAtLocation(bestTargetLocation) && rc.senseRobotAtLocation(bestTargetLocation).getMode()!=RobotMode.DROID){
+            bestTargetLocation = rc.getLocation();
+        }
         int xCheck = Math.abs(center.x-bestTargetLocation.x);
         int yCheck = Math.abs(center.y-bestTargetLocation.y);
         //TODO: prioritize number of tiles on the map around it
@@ -178,7 +181,7 @@ public class Archon extends Building{
             if (r>rubble)continue;
             int xTemp = Math.abs(center.x-m.x);
             int yTemp = Math.abs(center.y-m.y);
-            if (xTemp+yTemp > xCheck+yCheck)continue;
+            if (xTemp+yTemp > xCheck+yCheck+2)continue;
             if (rc.canSenseRobotAtLocation(m) && rc.senseRobotAtLocation(m).getMode()!=RobotMode.DROID)continue;
             int tempRubble = 0;
             int tempCount = 0;
@@ -266,7 +269,7 @@ public class Archon extends Building{
                 setPassableDirections();
                 writeLocationToArray();
             }
-            indicatorString=rc.getLocation().toString()+bestTargetLocation.toString()+(bestTargetLocation.equals(rc.getLocation()));
+            System.out.println(rc.getLocation().toString()+bestTargetLocation.toString()+(bestTargetLocation.equals(rc.getLocation())));
         }
         else{
             if(rc.getLocation().equals(bestTargetLocation) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
@@ -289,8 +292,11 @@ public class Archon extends Building{
 
     private int transforms = 0;
     public boolean freeToTransform() throws GameActionException{
-        if (rc.getArchonCount()==1 || rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent()).length>0){
+        if (rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent()).length>0){
             return false;
+        }
+        if (rc.getArchonCount()==1){
+            return true;
         }
         int currentStatus = rc.readSharedArray(17);
         indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
