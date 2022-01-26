@@ -211,7 +211,7 @@ public class Archon extends Building{
                     count = tempCount;
                 }
                 else if (tempCount==count){
-                    if(xTemp+yTemp<xCheck+yCheck){
+                    if(tempRubble<averageSurroundingRubble){
                         rubble = r;
                         bestTargetLocation = m;
                         xCheck = xTemp;
@@ -219,8 +219,8 @@ public class Archon extends Building{
                         averageSurroundingRubble = tempRubble;
                         count = tempCount;
                     }
-                    else if (xTemp+yTemp==xCheck+yCheck){
-                        if (tempRubble<averageSurroundingRubble){
+                    else if (tempRubble==averageSurroundingRubble){
+                        if (xTemp+yTemp<xCheck+yCheck){
                             rubble = r;
                             bestTargetLocation = m;
                             xCheck = xTemp;
