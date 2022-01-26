@@ -97,7 +97,6 @@ public class Sage extends Droid{
        }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SAGE.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
-            rc.setIndicatorString("action retreat");
             //New targetting
             if (!rc.isActionReady()){
                 rc.setIndicatorString("action retreat");
@@ -404,7 +403,7 @@ public class Sage extends Droid{
         }
         if (target==null) target = rc.getLocation();
 
-        if (chargePotentialKills>1 && rc.canEnvision(AnomalyType.CHARGE)){
+        if (chargePotentialKills>0 && rc.canEnvision(AnomalyType.CHARGE)){
             rc.envision(AnomalyType.CHARGE);
         }
         else if (chargePotentialDamage>45 && rc.canEnvision(AnomalyType.CHARGE)){
