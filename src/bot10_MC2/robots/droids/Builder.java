@@ -64,6 +64,11 @@ public class Builder extends Droid{
         for (MapLocation loc:locations){
             if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc))continue;
             int rubble = rc.senseRubble(loc);
+            if (best_location==null){
+                best_location = loc;
+                lowest_rubble = rubble;
+                continue;
+            }
             if (!best_location.isWithinDistanceSquared(target, RobotType.BUILDER.actionRadiusSquared) || rubble<lowest_rubble){
                 lowest_rubble = rubble;
                 best_location = loc;
