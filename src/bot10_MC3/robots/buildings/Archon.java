@@ -337,6 +337,11 @@ public class Archon extends Building{
         }
         else{
             rc.writeSharedArray(56, current - myValue*power);
+            if (nearEnemyArchon && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+                rc.transform();
+                pastLocations.clear();
+                setTransformStatus();
+            }
             return false;
         }
         if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
