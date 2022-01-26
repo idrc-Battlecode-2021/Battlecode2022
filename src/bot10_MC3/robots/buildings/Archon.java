@@ -1,6 +1,7 @@
 package bot10_MC3.robots.buildings;
 
 import battlecode.common.*;
+import bot10_MC3.util.Constants;
 import java.util.*;
 
 public class Archon extends Building{
@@ -144,30 +145,72 @@ public class Archon extends Building{
     }
 
     public void setOffensiveTarget() throws GameActionException{
+        int bytecode = Clock.getBytecodeNum();
         int rubble = rc.senseRubble(rc.getLocation());
         target=rc.getLocation();
         int xCheck = Math.abs(center.x-target.x);
         int yCheck = Math.abs(center.y-target.y);
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
-            int xTemp = Math.abs(center.x-target.x);
-            int yTemp = Math.abs(center.y-target.y);
-            //TODO: might want to change it from hard-coded
-            if (rc.canSenseRobotAtLocation(m) || rc.senseRubble(m)>30 || xTemp+yTemp>xCheck+yCheck)continue;
-            int dist = rc.getLocation().distanceSquaredTo(m);
+        //TODO: prioritize number of tiles on the map around it
+        int averageSurroundingRubble = 0;
+        int count = 0;
+        for (Direction d: Constants.DIRECTIONS ){
+            MapLocation thisLocation = rc.adjacentLocation(d);
+            if (!rc.onTheMap(thisLocation) || !rc.canSenseLocation(thisLocation))continue;
+            count++;
+            averageSurroundingRubble+=rc.senseRubble(thisLocation);
+        }
+        averageSurroundingRubble/=count;
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared-2)){
             int r=rc.senseRubble(m);
-            if(xTemp+yTemp<xCheck+yCheck){
-                rubble=r;
-                target=m;
+            if (r>rubble)continue;
+            int xTemp = Math.abs(center.x-m.x);
+            int yTemp = Math.abs(center.y-m.y);
+            if (xTemp+yTemp>xCheck+yCheck)continue;
+            if (rc.canSenseRobotAtLocation(m) && rc.senseRobotAtLocation(m).getMode()!=RobotMode.DROID)continue;
+            int tempRubble = 0;
+            int tempCount = 0;
+            for (Direction d: Constants.DIRECTIONS ){
+                MapLocation thisLocation = m.add(d);
+                if (!rc.canSenseLocation(thisLocation))continue;
+                tempCount++;
+                tempRubble+=rc.senseRubble(thisLocation);
+            }
+            tempRubble/=tempCount;
+            if (tempCount<count || tempRubble>averageSurroundingRubble)continue;
+            if (tempRubble<averageSurroundingRubble){
+                rubble = r;
+                target = m;
                 xCheck = xTemp;
                 yCheck = yTemp;
+                averageSurroundingRubble = tempRubble;
+                count = tempCount;
             }
-            if (xTemp+yTemp==xCheck+yCheck){
-                if (r<rubble){
-                    rubble = r;
-                    target = m;
-                }
+            else if (r<rubble){
+                rubble = r;
+                target = m;
+                xCheck = xTemp;
+                yCheck = yTemp;
+                averageSurroundingRubble = tempRubble;
+                count = tempCount;
+            }
+            else if (tempCount>count){
+                rubble = r;
+                target = m;
+                xCheck = xTemp;
+                yCheck = yTemp;
+                averageSurroundingRubble = tempRubble;
+                count = tempCount;
+            }
+            else if(xTemp+yTemp<xCheck+yCheck){
+                rubble = r;
+                target = m;
+                xCheck = xTemp;
+                yCheck = yTemp;
+                averageSurroundingRubble = tempRubble;
+                count = tempCount;
             }
         }
+        System.out.println(Clock.getBytecodeNum()-bytecode);
         if(!target.equals(rc.getLocation())){
             if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
                 rc.transform();
@@ -230,7 +273,7 @@ public class Archon extends Building{
 
     private int transforms = 0;
     public boolean freeToTransform() throws GameActionException{
-        if (rc.getArchonCount()==1){
+        if (rc.getArchonCount()==1 || rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent()).length>0){
             return false;
         }
         int currentStatus = rc.readSharedArray(17);
@@ -256,6 +299,7 @@ public class Archon extends Building{
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
         boolean isEnemy = false;
+        boolean isSupport = false;
         loop1: for (RobotInfo r:enemies){
             switch(r.getType()){
                 case SOLDIER:
@@ -729,13 +773,12 @@ public class Archon extends Building{
         for (Direction d: Direction.allDirections()){
             if (d==Direction.CENTER)continue;
             MapLocation adjacent=rc.adjacentLocation(d);
-            if(rc.canMove(d)){
-                int rubbleAtLoc = rc.senseRubble(adjacent);
-                if (adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target))continue;
-                if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(target) < lowest.distanceSquaredTo(target)){
-                    lowest = adjacent;
-                    lowest_rubble = rubbleAtLoc;
-                }
+            if (!rc.onTheMap(adjacent) || rc.canSenseRobotAtLocation(adjacent) && rc.senseRobotAtLocation(adjacent).getMode()!=RobotMode.DROID) continue;
+            int rubbleAtLoc = rc.senseRubble(adjacent);
+            if (adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target))continue;
+            if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(target) < lowest.distanceSquaredTo(target)){
+                lowest = adjacent;
+                lowest_rubble = rubbleAtLoc;
             }
         }
         Direction direction = rc.getLocation().directionTo(lowest);

@@ -34,6 +34,7 @@ public class Lab extends Building{
             globalLabCount = rc.readSharedArray(4);
             globalMinerCount = rc.readSharedArray(44);
         }
+        rc.setIndicatorString(globalMinerCount+"");
         
             /*
         RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.LABORATORY.visionRadiusSquared, rc.getTeam().opponent());
@@ -43,7 +44,7 @@ public class Lab extends Building{
             */
         int minerMod = globalMinerCount==0?1:(targetMinerCount-globalMinerCount)*targetMinerCount/globalMinerCount+1;
         int mod = Math.max(1,minerMod); //globalLabCount
-        if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 && rc.getRoundNum()%mod==0){
+        if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 /*&& rc.getRoundNum()%mod==0*/){
             rc.transmute();
         }
         /*
