@@ -470,12 +470,12 @@ public class Archon extends Building{
 
     @Override
     public void run() throws GameActionException {
+        roundNum = rc.getRoundNum();
         indicatorString = "";
         checkEnemies();
         checkArchonsAlive();
         checkEdge(); //TODO: to optimize bytecode move this to init() and checkarchonsalive only
         updateTroopCount();
-        roundNum = rc.getRoundNum();
         if (defense()){
             repair();
             indicatorString += " defense";
@@ -516,7 +516,8 @@ public class Archon extends Building{
                 }
             }
         }
-        indicatorString+="gs "+goldBuildStatus+" gd"+goldDiff;
+        indicatorString += "gbc: "+globalBuilderCount+" "+rc.readSharedArray(1);
+        //indicatorString+="gs "+goldBuildStatus+" gd"+goldDiff;
         int mod = 4;
         /*
         if(rc.readSharedArray(40)!=0){

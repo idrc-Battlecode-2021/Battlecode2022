@@ -473,12 +473,12 @@ public class Archon extends Building{
 
     @Override
     public void run() throws GameActionException {
+        roundNum = rc.getRoundNum();
         indicatorString = "";
         checkEnemies();
         checkArchonsAlive();
         checkEdge(); //TODO: to optimize bytecode move this to init() and checkarchonsalive only
         updateTroopCount();
-        roundNum = rc.getRoundNum();
         if (defense()){
             repair();
             indicatorString += " defense";
@@ -591,8 +591,8 @@ public class Archon extends Building{
                     }
                     rc.buildRobot(type,passableDirections.get(i));
                     rc.writeSharedArray(1, rc.readSharedArray(1)+1);
-                    builderCount++;
                     globalBuilderCount++;
+                    builderCount++;
                     count++;
                 }
             }

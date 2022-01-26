@@ -70,6 +70,9 @@ public class Builder extends Droid{
         reassignArchon();
         startingBit = 2*myArchonOrder;
 
+        if (rc.getRoundNum()<10){
+            System.out.println("builder: "+rc.readSharedArray(1));
+        }
         // update shared array
         if (rc.getRoundNum()%3==2){
             rc.writeSharedArray(1, rc.readSharedArray(1)+1);
