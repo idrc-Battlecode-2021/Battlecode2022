@@ -1,4 +1,4 @@
-package bot10_MC2.robots.droids;
+package bot10_MC3.robots.droids;
 
 import battlecode.common.*;
 
