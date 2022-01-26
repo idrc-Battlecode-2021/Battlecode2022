@@ -169,14 +169,27 @@ public class Builder extends Droid{
             builderMove(target);
         }
         else{
+            Direction targetToArchon = target.directionTo(archonLoc);
+            Direction mineToArchon = rc.getLocation().directionTo(archonLoc);
             best_location = rc.getLocation();
             if (rc.getLocation().equals(target)){
                 best_location = null;
             }
+            else if (!mineToArchon.equals(targetToArchon) && !mineToArchon.equals(targetToArchon.rotateLeft()) && !mineToArchon.equals(targetToArchon.rotateRight())){
+                best_location = null;
+            }
             int lowest_rubble = rc.senseRubble(rc.getLocation());
-            MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, 2);
+            MapLocation[] locations = {
+                target.add(targetToArchon),
+                target.add(targetToArchon.rotateLeft()),
+                target.add(targetToArchon.rotateRight()),
+                target.add(targetToArchon).add(targetToArchon),
+                target.add(targetToArchon.rotateLeft()).add(targetToArchon.rotateLeft()),
+                target.add(targetToArchon.rotateRight()).add(targetToArchon.rotateRight())
+            };
+            //MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, 2);
             for (MapLocation loc:locations){
-                if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) || loc.equals(target))continue;
+                if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc) || loc.equals(target) || !loc.isWithinDistanceSquared(target, 2))continue;
                 int rubble = rc.senseRubble(loc);
                 if (best_location==null){
                     best_location = loc;
