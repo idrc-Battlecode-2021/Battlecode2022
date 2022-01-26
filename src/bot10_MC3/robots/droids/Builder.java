@@ -107,8 +107,7 @@ public class Builder extends Droid{
 
         //retreat if detecting enemies
         //TODO: discuss priority over repair and also change to better kite function
-        RobotInfo[] enemyBotsInVision = rc.senseNearbyRobots(RobotType.BUILDER.visionRadiusSquared, rc.getTeam().opponent());
-        if (enemyBotsInVision.length>0){
+        if (checkEnemy()){
             if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.BUILDER.actionRadiusSquared)){
                 builderMove(archonLoc);
             }
@@ -455,6 +454,23 @@ public class Builder extends Droid{
             if (r == RobotType.WATCHTOWER) addTowers();
             else addLabs();
             return true;
+        }
+        return false;
+    }
+    public boolean checkEnemy() throws GameActionException {
+        //detect enemy muckraker
+        RobotInfo[] robots=rc.senseNearbyRobots(20,myTeam.opponent());
+        if(robots.length > 0){
+            rc.writeSharedArray(42,1);
+            for (RobotInfo robot : robots){
+                switch(robot.getType()){
+                    case SAGE:
+                    case SOLDIER:
+                    case WATCHTOWER:
+                        return true;
+                }
+            }
+
         }
         return false;
     }
