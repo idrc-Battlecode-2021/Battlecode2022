@@ -183,9 +183,6 @@ public class Builder extends Droid{
                 target.add(targetToArchon),
                 target.add(targetToArchon.rotateLeft()),
                 target.add(targetToArchon.rotateRight()),
-                target.add(targetToArchon).add(targetToArchon),
-                target.add(targetToArchon.rotateLeft()).add(targetToArchon.rotateLeft()),
-                target.add(targetToArchon.rotateRight()).add(targetToArchon.rotateRight())
             };
             //MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, 2);
             for (MapLocation loc:locations){
