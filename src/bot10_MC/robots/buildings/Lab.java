@@ -1,7 +1,6 @@
 package bot10_MC.robots.buildings;
 
-import battlecode.common.GameActionException;
-import battlecode.common.RobotController;
+import battlecode.common.*;
 
 public class Lab extends Building{
     private int minLead;
@@ -14,11 +13,13 @@ public class Lab extends Building{
 
     @Override
     public void init() throws GameActionException {
+        /*
         parseAnomalies();
 		readConstraints();
 		if (canMakeGold()){
             rc.transmute();
         }
+        */
     }
 
     @Override
@@ -30,6 +31,12 @@ public class Lab extends Building{
             globalMinerCount = rc.readSharedArray(44);
         }
         if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3){
+            /*
+        RobotInfo[] enemies = rc.senseNearbyRobots(RobotType.LABORATORY.visionRadiusSquared, rc.getTeam().opponent());
+        
+        int mod = Math.max(1, 2+enemies.length/3);
+        if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 && enemies.length==0){
+            */
             rc.transmute();
         }
         /*

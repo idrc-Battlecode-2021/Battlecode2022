@@ -109,7 +109,8 @@ public class Soldier extends Droid{
                 target = temp;
             }*/
             soldierMove(target);
-        }else if(hasMapLocation(43) && globalSoldierCount > 5){
+        }
+        else if(hasMapLocation(43) && globalSoldierCount > 5){
             MapLocation temp = decode(43);
             if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 2){
                 target = temp;
@@ -205,26 +206,7 @@ public class Soldier extends Droid{
         }
         if(rc.isActionReady()){
             MapLocation temp = selectPriorityTarget();
-            if(temp != null && !temp.equals(myLocation) /*&& rc.canSenseRobotAtLocation(temp)*/){
-                /*switch (rc.senseRobotAtLocation(temp).getType()){
-                    case ARCHON:
-                        targetType = 2;
-                        target = temp;
-                        break;
-                    case SOLDIER:
-                    case WATCHTOWER:
-                    case SAGE:
-                        if(targetType < 2){
-                            targetType = 1;
-                            target = temp;
-                        }break;
-                    case BUILDER:
-                    case MINER:
-                    case LABORATORY:
-                        if(targetType < 1){
-                            target = temp;
-                        }break;
-                }*/
+            if(temp != null && !temp.equals(myLocation)){
                 target = temp;
             }
         }
@@ -240,6 +222,7 @@ public class Soldier extends Droid{
             }
             if(targetRetreat != null || !targetRetreat.equals(myLocation)) intermediateMove(targetRetreat);
         }
+        
     }
 
     public void retreat() throws GameActionException{
@@ -247,7 +230,7 @@ public class Soldier extends Droid{
             shouldHeal=false;
             return;
         }
-        if (rc.getHealth()<=18){
+        if (rc.getHealth()<=8){
             shouldHeal = true;
             reachedArchon = false;
         }
