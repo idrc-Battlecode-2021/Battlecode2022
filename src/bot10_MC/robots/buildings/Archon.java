@@ -659,7 +659,7 @@ public class Archon extends Building{
         MapLocation[] archons = getArchonLocs();
         if(archons.length == 0)return;
         myLocation = rc.getLocation();
-        MapLocation targetArchon = myLocation;
+        MapLocation targetArchon = archons[0]; // if both archons are same distance apart, make sure the first archon always builds
         int xCheck = Math.min(Math.abs(-targetArchon.x),Math.abs(mapWidth-1-targetArchon.x));
         int yCheck = Math.min(Math.abs(-targetArchon.y),Math.abs(mapHeight-1-targetArchon.y));
         for(int i = archons.length; --i>=0;){
