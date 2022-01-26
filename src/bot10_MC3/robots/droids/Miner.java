@@ -292,7 +292,7 @@ public class Miner extends Droid{
                 if(!prev.equals(myLocation)) viewResourcesLite();
             }
         }
-        rc.setIndicatorString(""+target);
+        //rc.setIndicatorString(""+target);
     }
 
     public void viewResources() throws GameActionException {

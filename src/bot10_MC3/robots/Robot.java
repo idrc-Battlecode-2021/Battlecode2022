@@ -394,9 +394,9 @@ public abstract class Robot {
                     rc.writeSharedArray(13, rc.readSharedArray(13)+x*256+y*4096);
                 }
             }
-            if (Clock.getBytecodeNum()-bytecode>1000){
-                System.out.println(" bytecode of broadcast "+(Clock.getBytecodeNum()-bytecode));
-            }
+            //if (Clock.getBytecodeNum()-bytecode>1000){
+                //System.out.println(" bytecode of broadcast "+(Clock.getBytecodeNum()-bytecode));
+            //}
 
         }
         int k=0;

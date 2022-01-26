@@ -64,7 +64,7 @@ public class Soldier extends Droid{
         int x = location%256;
         int y = location/256;
         archonLoc = new MapLocation(x,y);
-        rc.setIndicatorString(myArchonOrder+" "+archonLoc.toString());
+        //rc.setIndicatorString(myArchonOrder+" "+archonLoc.toString());
     }
 
     @Override
