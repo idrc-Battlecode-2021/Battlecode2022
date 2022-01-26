@@ -530,7 +530,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3/*minerMin*/ && !nearEnemyArchon){
+        if (/*!(rc.readSharedArray(47)>=3 && rc.getRoundNum()<5) && */globalMinerCount < 3/*minerMin*/ && !nearEnemyArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -556,6 +556,7 @@ public class Archon extends Building{
                     //minerCount++;
                     globalMinerCount++;
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
+                    rc.writeSharedArray(47,rc.readSharedArray(47)+1);
                     peakMiner = Math.max(globalMinerCount, peakMiner);
                     count++;
                 }
