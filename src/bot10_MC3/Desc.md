@@ -12,6 +12,10 @@
 - 32: Solider Healing
 - 33: Soldier Healing
 - 34: Soldier Healing
+- 35: Cleared Support Enemy Unit Locations
+- 36: Cleared Low-density Enemy Attacker Locations
+- 37: Cleared High-density Enemy Attack Locations
+- 38: Cleared Enemy Archon Locations
   When miners find a de 41: minorLocation (Where enemy is)  (Not Used Currently)
 - 42: enemy seen
 - 43: Archon Locations
