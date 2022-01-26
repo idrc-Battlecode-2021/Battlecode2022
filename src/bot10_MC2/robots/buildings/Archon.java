@@ -171,7 +171,7 @@ public class Archon extends Building{
                 setTransformStatus();
             }
             if (rc.isMovementReady()){
-                intermediateMove(target);
+                archonMove(target);
                 passableDirections.clear();
                 setPassableDirections();
                 writeLocationToArray();
@@ -481,7 +481,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*90); //TODO: experiment with factor 
+        //minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*90); //TODO: experiment with factor 
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
@@ -497,7 +497,6 @@ public class Archon extends Building{
         int leadDiff = leadBuildStatus - archonOrder;
         int goldDiff = goldBuildStatus - archonOrder;
 
-        indicatorString+="gs "+goldBuildStatus+" gd"+goldDiff;
         int mod = 4;
         /*
         if(rc.readSharedArray(40)!=0){
@@ -597,7 +596,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (/*globalMinerCount < minerMin && globalLabCount > 0 ||*/ rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30 /*minerMax*/){
+        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !isArchon /*minerMax*/){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -652,6 +651,35 @@ public class Archon extends Building{
         }
         repair();
         rc.setIndicatorString(indicatorString);
+    }
+
+    public boolean archonMove(MapLocation target) throws GameActionException{
+        if (!rc.isMovementReady()){
+            return false;
+        }
+        MapLocation lowest = rc.getLocation();
+        int lowest_rubble = 99;
+        myLocation = rc.getLocation();
+        for (Direction d: Direction.allDirections()){
+            if (d==Direction.CENTER)continue;
+            MapLocation adjacent=rc.adjacentLocation(d);
+            if(rc.canMove(d)){
+                int rubbleAtLoc = rc.senseRubble(adjacent);
+                if (adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target))continue;
+                if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(target) < lowest.distanceSquaredTo(target)){
+                    lowest = adjacent;
+                    lowest_rubble = rubbleAtLoc;
+                }
+            }
+        }
+        Direction direction = rc.getLocation().directionTo(lowest);
+        indicatorString+=direction.toString();
+        if(rc.canMove(direction)){
+            rc.move(direction);
+            myLocation = rc.getLocation();
+            return true;
+        }
+        return false;
     }
 
     private boolean isEdge = false;

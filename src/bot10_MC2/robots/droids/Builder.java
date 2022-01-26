@@ -83,7 +83,7 @@ public class Builder extends Droid{
             builderCount = rc.readSharedArray(1);
         }
         //TODO: change lab threshold based on income
-        labThreshold = Math.min(1080,(globalLabCount+1)*180);
+        labThreshold = Math.min(360,(globalLabCount+1)*180);
 
         //retreat if detecting enemies
         //TODO: discuss priority over repair and also change to better kite function
