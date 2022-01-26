@@ -302,7 +302,8 @@ public class Miner extends Droid{
         MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
             nearbyLead = rc.senseNearbyLocationsWithLead(20,3); //change to (20,6)
         searchBlock:{
-            loop1: for(int i = nearbyLead.length; --i>=0;){
+            loop1: for(int i = nearbyLead.length; --i>=0 && Clock.getBytecodesLeft() > 400;){
+                if(lead.containsKey(nearbyLead[i]))continue;
                 RobotInfo robot;
                 MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
                 for(int j = nearbyLocs.length; --j>=0;){
@@ -332,7 +333,8 @@ public class Miner extends Droid{
         MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
                 nearbyLead = rc.senseNearbyLocationsWithLead(20,3); //change to (20,6)
         searchBlock:{
-            loop1: for(int i = nearbyLead.length; --i>=0;){
+            loop1: for(int i = nearbyLead.length; --i>=0 && Clock.getBytecodesLeft() > 400;){
+                if(lead.containsKey(nearbyLead[i]))continue;
                 RobotInfo robot;
                 MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
                 for(int j = nearbyLocs.length; --j>=0;){
