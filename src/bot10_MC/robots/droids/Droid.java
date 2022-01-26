@@ -64,7 +64,7 @@ public abstract class Droid extends Robot {
     }
     public MapLocation getExploreTargetFromInitDirection() throws GameActionException {
         if(initDirection == null){
-            updateDirection(bot10_MC.util.Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
+            updateDirection(Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
         }
         switch(initDirection){
             case SOUTHEAST:

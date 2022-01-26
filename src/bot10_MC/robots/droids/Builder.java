@@ -1,7 +1,6 @@
 package bot10_MC.robots.droids;
 
 import battlecode.common.*;
-import bot10_MC.util.Constants;
 
 import java.util.Random;
 public class Builder extends Droid{
