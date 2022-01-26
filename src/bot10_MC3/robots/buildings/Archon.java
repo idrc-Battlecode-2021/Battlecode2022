@@ -2,6 +2,8 @@ package bot10_MC3.robots.buildings;
 
 import battlecode.common.*;
 import bot10_MC3.util.Constants;
+import bot10_MC3.util.PathFinding30;
+
 import java.util.*;
 
 public class Archon extends Building{
@@ -29,6 +31,7 @@ public class Archon extends Building{
     private static int minerThreshold = 200; //TODO: make miner and lab thresholds global
 
     private static String indicatorString = "";
+    private PathFinding30 pfs;
 
     public Archon(RobotController rc) {
         super(rc);
@@ -50,6 +53,7 @@ public class Archon extends Building{
 
     @Override
     public void init() throws GameActionException {
+        pfs=new PathFinding30(rc);
         initialArchons = rc.getArchonCount();
         parseAnomalies();
         // write Archon ID to shared array
@@ -245,7 +249,8 @@ public class Archon extends Building{
                 setTransformStatus();
             }
             if (rc.isMovementReady()){
-                archonMove(target);
+                //archonMove(target);
+                soldierMove(target);
                 passableDirections.clear();
                 setPassableDirections();
                 writeLocationToArray();
@@ -810,5 +815,24 @@ public class Archon extends Building{
             }
         }
         if(targetArchon.equals(myLocation)) isEdge = true;
+    }
+
+    private MapLocation pastTarget = null;
+    private HashSet<MapLocation> pastLocations = new HashSet<>();
+    private void soldierMove(MapLocation target) throws GameActionException {
+        if(!target.equals(pastTarget)){
+            pastTarget = target;
+            pastLocations.clear();
+        }
+        Direction dir = pfs.getBestDir(target);
+        MapLocation temp = myLocation;
+        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
+            if(tryMoveMultiple(dir)){
+                pastLocations.add(temp);
+            }
+        }else{
+            intermediateMove(target);
+            pastLocations.add(temp);
+        }
     }
 }
