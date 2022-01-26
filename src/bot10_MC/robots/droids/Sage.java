@@ -297,14 +297,21 @@ public class Sage extends Droid{
         //TODO: experiment with action based on damage dealt or troops killed
         //TODO: experiment with abyss
         moveToLowRubble();
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
         RobotInfo archon=null, sage=null, lab=null, watchtower=null, soldier=null, miner=null, builder=null;
         int[] damages = {0,0,0,0,0}; //order corresponds with order of variables above
         MapLocation target = rc.getLocation();
         int chargePotential = 0;
+        boolean offensive = false;
         //TODO: doesn't account for soldier damage if we're spawning soldiers
         for (RobotInfo enemy : enemyRobots) {
+            if (!offensive && enemy.getType()==RobotType.SAGE || enemy.getType()==RobotType.SOLDIER || enemy.getType()==RobotType.WATCHTOWER){
+                offensive = true;
+            }
+            if (!enemy.getLocation().isWithinDistanceSquared(rc.getLocation(), RobotType.SAGE.actionRadiusSquared)){
+                continue;
+            }
             RobotType type = enemy.getType();
             int charge = 22;
             switch (type){
@@ -400,6 +407,9 @@ public class Sage extends Droid{
         }
         else if (watchtower!=null){
             target = watchtower.getLocation();
+        }
+        else if (offensive){
+            target = null;
         }
         else if (miner!=null){
             target = miner.getLocation();

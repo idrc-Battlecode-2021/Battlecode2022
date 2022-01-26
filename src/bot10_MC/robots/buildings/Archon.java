@@ -533,7 +533,7 @@ public class Archon extends Building{
             int cost = RobotType.BUILDER.buildCostLead;
             RobotType type = RobotType.BUILDER;
             indicatorString += " builders";
-            if (!isEdge || rc.getArchonCount() == 1){ // make the archon closest to the edge build a builder
+            if (!isEdge){ // make the archon closest to the edge build a builder
                 if (leadDiff==0){
                     if (leadBuildStatus == rc.getArchonCount()-1){
                         rc.writeSharedArray(11,0);

@@ -64,17 +64,17 @@ public abstract class Droid extends Robot {
     }
     public MapLocation getExploreTargetFromInitDirection() throws GameActionException {
         if(initDirection == null){
-            updateDirection(bot10.util.Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
+            updateDirection(bot10_MC.util.Constants.INTERMEDIATE_DIRECTIONS[(int) (Math.random()*4)]);
         }
         switch(initDirection){
             case SOUTHEAST:
             case NORTHEAST:
             case NORTHWEST:
             case SOUTHWEST: break;
-            case SOUTH: updateDirection(bot10.util.Constants.SOUTHERN_DIR[(int) (Math.random()*2)]); break;
-            case NORTH: updateDirection(bot10.util.Constants.NORTHERN_DIR[(int) (Math.random()*2)]); break;
-            case WEST:  updateDirection(bot10.util.Constants.WESTERN_DIR[(int) (Math.random()*2)]);  break;
-            case EAST:  updateDirection(bot10.util.Constants.EASTERN_DIR[(int) (Math.random()*2)]);  break;
+            case SOUTH: updateDirection(Constants.SOUTHERN_DIR[(int) (Math.random()*2)]); break;
+            case NORTH: updateDirection(Constants.NORTHERN_DIR[(int) (Math.random()*2)]); break;
+            case WEST:  updateDirection(Constants.WESTERN_DIR[(int) (Math.random()*2)]);  break;
+            case EAST:  updateDirection(Constants.EASTERN_DIR[(int) (Math.random()*2)]);  break;
         }
         if(!rc.onTheMap(myLocation.add(initDirection))){
             int x = myLocation.x, y = myLocation.y;
