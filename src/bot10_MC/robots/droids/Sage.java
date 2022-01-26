@@ -101,7 +101,7 @@ public class Sage extends Droid{
             //New targetting
             if (!rc.isActionReady()){
                 rc.setIndicatorString("action retreat");
-                if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 4)){
+                if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 9)){
                     soldierMove(archonLoc);
                 }
                 else{
@@ -122,7 +122,7 @@ public class Sage extends Droid{
             soldierMove(target);
         }else if (rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent()).length>0 && !rc.isActionReady()){
             rc.setIndicatorString("vision retreat");
-            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 4)){
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 9)){
                 soldierMove(archonLoc);
             }
             else{
@@ -444,8 +444,8 @@ public class Sage extends Droid{
         average_y/=enemyCount;
         MapLocation enemy = new MapLocation(average_x,average_y);
         Direction lowest = Direction.CENTER;
-        //int lowest_rubble = rc.senseRubble(rc.getLocation()); 
-        int lowest_rubble = 99; 
+        int lowest_rubble = rc.senseRubble(rc.getLocation()); 
+        //int lowest_rubble = 99; 
         for (Direction d: Direction.allDirections()){
             MapLocation adjacent=rc.adjacentLocation(d);
             if(adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy))continue;
