@@ -258,7 +258,7 @@ public class Sage extends Droid{
             shouldHeal=false;
             return;
         }
-        if (rc.getHealth()<=18){
+        if (rc.getHealth()<=26){
             shouldHeal = true;
             reachedArchon = false;
         }

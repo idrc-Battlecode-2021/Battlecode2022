@@ -7,6 +7,7 @@ public class Lab extends Building{
     private int maxRate;
     private int globalMinerCount;
     private int globalLabCount;
+    private int targetMinerCount;
 
     public Lab(RobotController rc) {
         super(rc);
@@ -14,6 +15,7 @@ public class Lab extends Building{
 
     @Override
     public void init() throws GameActionException {
+        targetMinerCount = 3+(Math.min(mapHeight, mapWidth)-20)/3;
         /*
         parseAnomalies();
 		readConstraints();
@@ -39,7 +41,7 @@ public class Lab extends Building{
         int mod = Math.max(1, 2+enemies.length/3);
         if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 && enemies.length==0){
             */
-        int minerMod = globalMinerCount==0?1:(5-globalMinerCount)*5/globalMinerCount+1;
+        int minerMod = globalMinerCount==0?1:(targetMinerCount-globalMinerCount)*targetMinerCount/globalMinerCount+1;
         int mod = Math.max(1,minerMod); //globalLabCount
         if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 && rc.getRoundNum()%mod==0){
             rc.transmute();

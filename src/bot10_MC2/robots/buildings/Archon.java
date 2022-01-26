@@ -87,7 +87,8 @@ public class Archon extends Building{
         //labBuild = rc.getMapHeight()/40+1;
         setPassableDirections();
         checkEdge();
-        System.out.println(isEdge);
+        //System.out.println(isEdge);
+        targetMinerCount = 3+(Math.min(mapHeight, mapWidth)-20)/3;
         minerMax = (int) Math.sqrt(mapHeight*mapWidth)/2;
         minerMin = minerMax/10*3;
     }
@@ -625,7 +626,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && (globalMinerCount<5 || peakMiner<10)/*minerMax*/){
+        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && (globalMinerCount<targetMinerCount || peakMiner<targetMinerCount*4/3)/*minerMax*/){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
