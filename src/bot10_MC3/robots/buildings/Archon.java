@@ -117,7 +117,6 @@ public class Archon extends Building{
     }
     public void setTargetLocation() throws GameActionException{
         int rubble = rc.senseRubble(rc.getLocation());
-        ArrayList<MapLocation> lowPass = new ArrayList<>();
         int minDist=0;
         target=myLocation;
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
@@ -126,13 +125,10 @@ public class Archon extends Building{
             int r=rc.senseRubble(m);
             if(r<rubble){
                 minDist = dist;
-                lowPass.clear();
-                lowPass.add(m);
                 rubble=r;
                 target=m;
             }
             if (r==rubble){
-                lowPass.add(m);
                 if (dist<minDist){
                     minDist = dist;
                     target = m;
@@ -145,7 +141,39 @@ public class Archon extends Building{
                 setTransformStatus();
             }
         }
+    }
 
+    public void setOffensiveTarget() throws GameActionException{
+        int rubble = rc.senseRubble(rc.getLocation());
+        target=rc.getLocation();
+        int xCheck = Math.abs(center.x-target.x);
+        int yCheck = Math.abs(center.y-target.y);
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+            int xTemp = Math.abs(center.x-target.x);
+            int yTemp = Math.abs(center.y-target.y);
+            //TODO: might want to change it from hard-coded
+            if (rc.canSenseRobotAtLocation(m) || rc.senseRubble(m)>30 || xTemp+yTemp>xCheck+yCheck)continue;
+            int dist = rc.getLocation().distanceSquaredTo(m);
+            int r=rc.senseRubble(m);
+            if(xTemp+yTemp<xCheck+yCheck){
+                rubble=r;
+                target=m;
+                xCheck = xTemp;
+                yCheck = yTemp;
+            }
+            if (xTemp+yTemp==xCheck+yCheck){
+                if (r<rubble){
+                    rubble = r;
+                    target = m;
+                }
+            }
+        }
+        if(!target.equals(rc.getLocation())){
+            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
+                rc.transform();
+                setTransformStatus();
+            }
+        }
     }
     public void writeLocationToArray() throws GameActionException{
         //write archon location to array
@@ -383,6 +411,7 @@ public class Archon extends Building{
     private int roundNum = 0;
 
     public void repair() throws GameActionException {
+        //TODO: optimize code
         //TODO: update for sages
         if (!rc.isActionReady()){
             return;
@@ -488,7 +517,8 @@ public class Archon extends Building{
         //minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*90); //TODO: experiment with factor 
         //don't move unless labs are built
         if (globalLabCount>0){ 
-            setTargetLocation();
+            setOffensiveTarget();
+            //setTargetLocation();
             move();
         } 
         else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){

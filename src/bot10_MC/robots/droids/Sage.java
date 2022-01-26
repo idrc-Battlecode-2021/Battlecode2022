@@ -284,9 +284,16 @@ public class Sage extends Droid{
         MapLocation target = rc.getLocation();
         int chargePotentialKills = 0;
         boolean offensive = false;
+        boolean containsBuilding = false;
         int chargePotentialDamage = 0;
         int furyPotentialKills = 0;
         int furyPotentialDamage = 0;
+        for (RobotInfo robot:myRobots){
+            if (robot.getMode()==RobotMode.TURRET){
+                containsBuilding = true;
+                break;
+            }
+        }
         //TODO: doesn't account for soldier damage if we're spawning soldiers
         for (RobotInfo enemy : enemyRobots) {
             if (!offensive && enemy.getType()==RobotType.SAGE || enemy.getType()==RobotType.SOLDIER || enemy.getType()==RobotType.WATCHTOWER){
@@ -301,48 +308,62 @@ public class Sage extends Droid{
             switch (type){
                 //TODO: calculate fury damage for buildings
                 case ARCHON:
-                    furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
                     if (archon == null || (enemy.getHealth() > archon.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<archon.getHealth() && archon.getHealth()>RobotType.SAGE.damage) {
                         archon = enemy;
                     }
-                    for (RobotInfo ally: myRobots){
-                        if (ally.getType()!=RobotType.SAGE) continue;
-                        if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
+                    if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
+                        furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
+                        /*
+                        for (RobotInfo ally: myRobots){
+                            if (ally.getType()!=RobotType.SAGE) continue;
+                            if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
+                        }
+                        */
+                        if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
                     }
-                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
                     break;
                 case SAGE:
                     chargePotentialDamage+=Math.min(enemy.getHealth(),22*enemy.getType().health/100);
                     if (sage == null || (enemy.getHealth() > sage.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<sage.getHealth() && sage.getHealth()>RobotType.SAGE.damage) {
                         sage = enemy;
                     }
+                    /*
                     for (RobotInfo ally: myRobots){
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
+                    */
                     if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotentialKills++;
                     break;
                 case LABORATORY:
-                    furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
+                    if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
+                        furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
+                        /*
+                        for (RobotInfo ally: myRobots){
+                            if (ally.getType()!=RobotType.SAGE) continue;
+                            if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
+                        }
+                        */
+                        if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
+                    }
                     if (lab == null || (enemy.getHealth() > lab.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<lab.getHealth() && lab.getHealth()>RobotType.SAGE.damage) {
                         lab = enemy;
                     }
-                    for (RobotInfo ally: myRobots){
-                        if (ally.getType()!=RobotType.SAGE) continue;
-                        if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
-                    }
-                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
                     break;
                 case WATCHTOWER:
-                    furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
+                    if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
+                        furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
+                        /*
+                        for (RobotInfo ally: myRobots){
+                            if (ally.getType()!=RobotType.SAGE) continue;
+                            if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
+                        }
+                        */
+                        if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
+                    }
                     if (watchtower == null || (enemy.getHealth() > watchtower.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<watchtower.getHealth() && watchtower.getHealth()>RobotType.SAGE.damage) {
                         watchtower = enemy;
                     }
-                    for (RobotInfo ally: myRobots){
-                        if (ally.getType()!=RobotType.SAGE) continue;
-                        if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
-                    }
-                    if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
                     break;
                 case SOLDIER:
                     //TODO: target soldier based on distance away?
@@ -350,27 +371,33 @@ public class Sage extends Droid{
                     if (soldier == null || (enemy.getHealth() > soldier.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<soldier.getHealth() && soldier.getHealth()>RobotType.SAGE.damage) {
                         soldier = enemy;
                     }
+                    /*
                     for (RobotInfo ally: myRobots){
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
+                    */
                     if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotentialKills++;
                     break;
                 case MINER:
                     chargePotentialDamage+=Math.min(enemy.getHealth(),22*enemy.getType().health/100);
+                    /*
                     for (RobotInfo ally: myRobots){
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
+                    */
                     if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotentialKills++;
                     if (miner == null || enemy.getHealth()>miner.getHealth()) miner = enemy;
                     break;
                 case BUILDER:
                     chargePotentialDamage+=Math.min(enemy.getHealth(),22*enemy.getType().health/100);
+                    /*
                     for (RobotInfo ally: myRobots){
                         if (ally.getType()!=RobotType.SAGE) continue;
                         if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) charge+=22;
                     }
+                    */
                     if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotentialKills++;
                     if (builder == null || enemy.getHealth()>builder.getHealth()) builder = enemy;
                     break;
@@ -409,13 +436,13 @@ public class Sage extends Droid{
         else if (chargePotentialDamage>45 && rc.canEnvision(AnomalyType.CHARGE)){
             rc.envision(AnomalyType.CHARGE);
         }
-        else if (furyPotentialKills>0 && rc.canEnvision(AnomalyType.FURY)){
+        else if (!containsBuilding && furyPotentialKills>0 && rc.canEnvision(AnomalyType.FURY)){
             rc.envision(AnomalyType.FURY);
         }
-        else if (furyPotentialDamage>45 && rc.canEnvision(AnomalyType.FURY)){
+        else if (!containsBuilding && furyPotentialDamage>45 && rc.canEnvision(AnomalyType.FURY)){
             rc.envision(AnomalyType.FURY);
         }
-        else if(archon!=null && target.equals(archon.getLocation()) && rc.canEnvision(AnomalyType.FURY)){
+        else if(!containsBuilding && archon!=null && archon.getMode()==RobotMode.TURRET && target.equals(archon.getLocation()) && rc.canEnvision(AnomalyType.FURY)){
             rc.envision(AnomalyType.FURY);
         }
         else{
