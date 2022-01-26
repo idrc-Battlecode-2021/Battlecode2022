@@ -116,9 +116,10 @@ public class Archon extends Building{
     public void setTargetLocation() throws GameActionException{
         int rubble = rc.senseRubble(rc.getLocation());
         ArrayList<MapLocation> lowPass = new ArrayList<>();
-        int minDist=rc.getType().visionRadiusSquared+1;
+        int minDist=0;
         target=myLocation;
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+            if (rc.canSenseRobotAtLocation(m))continue;
             int dist = rc.getLocation().distanceSquaredTo(m);
             int r=rc.senseRubble(m);
             if(r<rubble){
@@ -481,7 +482,7 @@ public class Archon extends Building{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        //minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*90); //TODO: experiment with factor 
+        minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*90); //TODO: experiment with factor 
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setTargetLocation();
@@ -497,6 +498,25 @@ public class Archon extends Building{
         int leadDiff = leadBuildStatus - archonOrder;
         int goldDiff = goldBuildStatus - archonOrder;
 
+        if (rc.getMode()==RobotMode.PORTABLE){
+            if (leadDiff==0){
+                if (leadBuildStatus == rc.getArchonCount()-1){
+                    rc.writeSharedArray(11,0);
+                }
+                else{
+                    rc.writeSharedArray(11,leadBuildStatus+1);
+                }
+            }
+            if (goldDiff==0){
+                if (goldBuildStatus == rc.getArchonCount()-1){
+                    rc.writeSharedArray(10,0);
+                }
+                else{
+                    rc.writeSharedArray(10,goldBuildStatus+1);
+                }
+            }
+        }
+        indicatorString+="gs "+goldBuildStatus+" gd"+goldDiff;
         int mod = 4;
         /*
         if(rc.readSharedArray(40)!=0){
@@ -596,7 +616,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !isArchon /*minerMax*/){
+        else if (/*globalMinerCount < minerMin && globalLabCount > 0 ||*/ rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30 /*minerMax*/){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -653,6 +673,27 @@ public class Archon extends Building{
         rc.setIndicatorString(indicatorString);
     }
 
+    private boolean isEdge = false;
+    private void checkEdge() throws GameActionException {
+        MapLocation[] archons = getArchonLocs();
+        if(archons.length == 0)return;
+        myLocation = rc.getLocation();
+        MapLocation targetArchon = archons[0]; // if both archons are same distance apart, make sure the first archon always builds
+        int xCheck = Math.min(Math.abs(-targetArchon.x),Math.abs(mapWidth-1-targetArchon.x));
+        int yCheck = Math.min(Math.abs(-targetArchon.y),Math.abs(mapHeight-1-targetArchon.y));
+        for(int i = archons.length; --i>=0;){
+            if(archons[i] == null || targetArchon.equals(archons[i]))continue;
+            int xTemp = Math.min(Math.abs(-archons[i].x),Math.abs(mapWidth-1-archons[i].x));
+            int yTemp = Math.min(Math.abs(-archons[i].y),Math.abs(mapHeight-1-archons[i].y));
+            if(xTemp+yTemp < xCheck+yCheck){
+                targetArchon = archons[i];
+                xCheck = xTemp;
+                yCheck = yTemp;
+            }
+        }
+        if(targetArchon.equals(myLocation)) isEdge = true;
+    }
+
     public boolean archonMove(MapLocation target) throws GameActionException{
         if (!rc.isMovementReady()){
             return false;
@@ -680,26 +721,5 @@ public class Archon extends Building{
             return true;
         }
         return false;
-    }
-
-    private boolean isEdge = false;
-    private void checkEdge() throws GameActionException {
-        MapLocation[] archons = getArchonLocs();
-        if(archons.length == 0)return;
-        myLocation = rc.getLocation();
-        MapLocation targetArchon = archons[0]; // if both archons are same distance apart, make sure the first archon always builds
-        int xCheck = Math.min(Math.abs(-targetArchon.x),Math.abs(mapWidth-1-targetArchon.x));
-        int yCheck = Math.min(Math.abs(-targetArchon.y),Math.abs(mapHeight-1-targetArchon.y));
-        for(int i = archons.length; --i>=0;){
-            if(archons[i] == null || targetArchon.equals(archons[i]))continue;
-            int xTemp = Math.min(Math.abs(-archons[i].x),Math.abs(mapWidth-1-archons[i].x));
-            int yTemp = Math.min(Math.abs(-archons[i].y),Math.abs(mapHeight-1-archons[i].y));
-            if(xTemp+yTemp < xCheck+yCheck){
-                targetArchon = archons[i];
-                xCheck = xTemp;
-                yCheck = yTemp;
-            }
-        }
-        if(targetArchon.equals(myLocation)) isEdge = true;
     }
 }

@@ -116,9 +116,10 @@ public class Archon extends Building{
     public void setTargetLocation() throws GameActionException{
         int rubble = rc.senseRubble(rc.getLocation());
         ArrayList<MapLocation> lowPass = new ArrayList<>();
-        int minDist=rc.getType().visionRadiusSquared+1;
+        int minDist=0;
         target=myLocation;
         for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+            if (rc.canSenseRobotAtLocation(m))continue;
             int dist = rc.getLocation().distanceSquaredTo(m);
             int r=rc.senseRubble(m);
             if(r<rubble){
@@ -218,9 +219,9 @@ public class Archon extends Building{
         return true;
     }
     // if enemies are near archon, spawn soldiers and inform other archons
-    private boolean isArchon = false;
+    private boolean nearEnemyArchon = false;
     public boolean defense() throws GameActionException {
-        isArchon = false;
+        nearEnemyArchon = false;
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
@@ -232,7 +233,7 @@ public class Archon extends Building{
                 case WATCHTOWER:
                     isEnemy = true; break loop1;
                 case ARCHON:
-                    isArchon = true;
+                    nearEnemyArchon = true;
             }
         }
         if (isEnemy){
@@ -491,12 +492,33 @@ public class Archon extends Building{
             rc.transform();
             setTransformStatus();
         }
+
         // START SPAWNING
         int goldBuildStatus = rc.readSharedArray(10);
         int leadBuildStatus = rc.readSharedArray(11);
         int leadDiff = leadBuildStatus - archonOrder;
         int goldDiff = goldBuildStatus - archonOrder;
 
+        if (rc.getMode()==RobotMode.PORTABLE){
+            if (leadDiff==0){
+                if (leadBuildStatus == rc.getArchonCount()-1){
+                    rc.writeSharedArray(11,0);
+                }
+                else{
+                    rc.writeSharedArray(11,leadBuildStatus+1);
+                }
+            }
+            if (goldDiff==0){
+                if (goldBuildStatus == rc.getArchonCount()-1){
+                    rc.writeSharedArray(10,0);
+                }
+                else{
+                    rc.writeSharedArray(10,goldBuildStatus+1);
+                }
+            }
+        }
+
+        indicatorString+="gd: "+goldDiff+" gs: "+goldBuildStatus;
         int mod = 4;
         /*
         if(rc.readSharedArray(40)!=0){
@@ -505,7 +527,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3/*minerMin*/ && !isArchon){
+        if (globalMinerCount < 3/*minerMin*/ && !nearEnemyArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -531,11 +553,11 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (globalBuilderCount < 1 && !isArchon){
+        else if (globalBuilderCount < 1 && !nearEnemyArchon){
             int cost = RobotType.BUILDER.buildCostLead;
             RobotType type = RobotType.BUILDER;
             indicatorString += " builders";
-            if (!isEdge){ // make the archon closest to the edge build a builder
+            if (!isEdge){ // pass the turn and make the archon closest to the edge build a builder
                 if (leadDiff==0){
                     if (leadBuildStatus == rc.getArchonCount()-1){
                         rc.writeSharedArray(11,0);
@@ -596,7 +618,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !isArchon /*minerMax*/){
+        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && globalMinerCount<25/*minerMax*/){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -621,7 +643,7 @@ public class Archon extends Building{
                     count++;
                 }
             }
-        }else if(isArchon){
+        }else if(nearEnemyArchon){
             int cost = RobotType.SOLDIER.buildCostLead;
             RobotType type = RobotType.SOLDIER;
             indicatorString += " soldiers";

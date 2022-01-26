@@ -62,9 +62,6 @@ public class Builder extends Droid{
                 rc.repair(target);
             }
         }
-        if (rc.getRoundNum()<200){
-            System.out.println(Clock.getBytecodeNum()-bytecode);
-        }
         return true;
     }
 
@@ -83,7 +80,7 @@ public class Builder extends Droid{
             builderCount = rc.readSharedArray(1);
         }
         //TODO: change lab threshold based on income
-        labThreshold = Math.min(360,(globalLabCount+1)*180);
+        labThreshold = Math.min(180,(globalLabCount+1)*180);
 
         //retreat if detecting enemies
         //TODO: discuss priority over repair and also change to better kite function
@@ -129,7 +126,6 @@ public class Builder extends Droid{
                 continue;
             }
             if (robots[i].getHealth()<leastHealth){
-                System.out.println(robots[i].getLocation());
                 leastHealth = robots[i].getHealth();
                 healLocation = robots[i].getLocation();
             }
