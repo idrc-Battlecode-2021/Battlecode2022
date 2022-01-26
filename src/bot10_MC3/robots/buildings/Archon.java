@@ -214,7 +214,7 @@ public class Archon extends Building{
                 count = tempCount;
             }
         }
-        System.out.println("0: "+ (Clock.getBytecodeNum()-bytecode));
+        //System.out.println("0: "+ (Clock.getBytecodeNum()-bytecode));
         if(!target.equals(rc.getLocation())){
             if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
                 rc.transform();
@@ -250,10 +250,10 @@ public class Archon extends Building{
             }
             if (rc.isMovementReady()){
                 //archonMove(target);
-                //System.out.println("1: "+Clock.getBytecodesLeft());
+                System.out.println("1: "+Clock.getBytecodesLeft());
                 //TODO: Check if Bytecode Permits
                 soldierMove(target);
-                //System.out.println("2: "+Clock.getBytecodesLeft());
+                System.out.println("2: "+Clock.getBytecodesLeft());
                 passableDirections.clear();
                 setPassableDirections();
                 writeLocationToArray();
