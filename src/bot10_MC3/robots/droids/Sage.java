@@ -79,7 +79,7 @@ public class Sage extends Droid{
         broadcast();
         //target = null;
         int healCheck = rc.readSharedArray(31+myArchonOrder);
-        if(healCheck < 24 || addedToHeal){
+        if(healCheck < 18 || addedToHeal){
             rc.setIndicatorString("heal");
             retreat();
             if(shouldHeal){

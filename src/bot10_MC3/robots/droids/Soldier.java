@@ -82,7 +82,7 @@ public class Soldier extends Droid{
         //target = null;
 
         int healCheck = rc.readSharedArray(31+myArchonOrder);
-        if(healCheck < 24 || addedToHeal){
+        if(healCheck < 18 || addedToHeal){
             retreat();
             if(shouldHeal){
                 if(!addedToHeal){
