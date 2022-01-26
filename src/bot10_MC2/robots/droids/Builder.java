@@ -33,6 +33,7 @@ public class Builder extends Droid{
     //moves toward low rubble location within target and repairs it
     public boolean repair(MapLocation target) throws GameActionException{
         indicatorString+=" repair";
+        int bytecode = Clock.getBytecodeNum();
         if (!rc.canSenseRobotAtLocation(target)){
             builderMove(target);
             return true;
@@ -60,6 +61,9 @@ public class Builder extends Droid{
             if(rc.canRepair(target)){
                 rc.repair(target);
             }
+        }
+        if (rc.getRoundNum()<200){
+            System.out.println(Clock.getBytecodeNum()-bytecode);
         }
         return true;
     }
@@ -198,6 +202,9 @@ public class Builder extends Droid{
 
     public MapLocation findBestLabSpot() throws GameActionException{
         MapLocation target = bestLabSpot==null?rc.getLocation():bestLabSpot;
+        if (!rc.canSenseLocation(target)){
+            return target;
+        }
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));

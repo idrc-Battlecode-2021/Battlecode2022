@@ -198,6 +198,9 @@ public class Builder extends Droid{
 
     public MapLocation findBestLabSpot() throws GameActionException{
         MapLocation target = bestLabSpot==null?rc.getLocation():bestLabSpot;
+        if (!rc.canSenseLocation(target)){
+            return target;
+        }
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
