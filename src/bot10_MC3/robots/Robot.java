@@ -415,6 +415,7 @@ public abstract class Robot {
                     break;
                 case MINER:
                 case BUILDER:
+                case LABORATORY:
                     if(!seesAttacker){
                         k=64*r.getLocation().x+r.getLocation().y;
                     }
