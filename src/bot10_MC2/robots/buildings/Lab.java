@@ -39,7 +39,8 @@ public class Lab extends Building{
         int mod = Math.max(1, 2+enemies.length/3);
         if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 && enemies.length==0){
             */
-        int mod = Math.max(1,globalMinerCount==0?1:(15-globalMinerCount)*5/globalMinerCount); //globalLabCount
+        int minerMod = globalMinerCount==0?1:(5-globalMinerCount)*5/globalMinerCount+1;
+        int mod = Math.max(1,minerMod); //globalLabCount
         if (rc.getTeamLeadAmount(rc.getTeam())>rc.getTransmutationRate() && rc.canTransmute() && globalMinerCount>=3 && rc.getRoundNum()%mod==0){
             rc.transmute();
         }

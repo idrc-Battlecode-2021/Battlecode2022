@@ -10,6 +10,7 @@ public class Archon extends Building{
     private static int targetMinerCount; //target # of miners to build across all archons
     private static int minersForNearbyLead;
     private static int minerMin, minerMax;
+    private static int peakMiner = 0;
 
     private static Integer minerIndex = 0; //spawning miners
     private static Integer soldierIndex = 0;
@@ -323,6 +324,7 @@ public class Archon extends Building{
             globalBuilderCount = builderCount;
             globalSageCount = rc.readSharedArray(2);
             globalMinerCount = rc.readSharedArray(44);
+            peakMiner = Math.max(globalMinerCount, peakMiner);
             globalSoldierCount = rc.readSharedArray(3);
             globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);
             globalLabCount = rc.readSharedArray(4);
@@ -553,6 +555,7 @@ public class Archon extends Building{
                     //minerCount++;
                     globalMinerCount++;
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
+                    peakMiner = Math.max(globalMinerCount, peakMiner);
                     count++;
                 }
             }
@@ -622,7 +625,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && globalMinerCount<15/*minerMax*/){
+        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && (globalMinerCount<5 || peakMiner<10)/*minerMax*/){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -648,6 +651,7 @@ public class Archon extends Building{
                     //minerCount++;
                     globalMinerCount++;
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
+                    peakMiner = Math.max(globalMinerCount, peakMiner);
                     count++;
                 }
             }
