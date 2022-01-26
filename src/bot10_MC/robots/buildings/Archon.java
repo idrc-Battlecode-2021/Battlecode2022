@@ -9,6 +9,7 @@ public class Archon extends Building{
     private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
     private static int minersForNearbyLead;
+    private static int minerMin, minerMax;
 
     private static Integer minerIndex = 0; //spawning miners
     private static Integer soldierIndex = 0;
@@ -86,6 +87,8 @@ public class Archon extends Building{
         setPassableDirections();
         checkEdge();
         System.out.println(isEdge);
+        minerMax = (int) Math.sqrt(mapHeight*mapWidth)/2;
+        minerMin = minerMax/10*3;
     }
     public void setPassableDirections() throws GameActionException{
         for (Direction d:directions){
@@ -503,7 +506,7 @@ public class Archon extends Building{
             mod = 2;
         }
         */
-        if (globalMinerCount < 3 && !isArchon){
+        if (globalMinerCount < 3/*minerMin*/ && !isArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
@@ -594,7 +597,7 @@ public class Archon extends Building{
                 }
             }
         }
-        else if (rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30){
+        else if (/*globalMinerCount < minerMin && globalLabCount > 0 ||*/ rc.getTeamLeadAmount(rc.getTeam())>minerThreshold && !isArchon && globalMinerCount<30 /*minerMax*/){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
