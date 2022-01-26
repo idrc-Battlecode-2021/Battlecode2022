@@ -48,13 +48,6 @@ public class Miner extends Droid{
         // update shared array
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {
-            /*
-            if (myArchonOrder <= 1) {
-                rc.writeSharedArray(0, rc.readSharedArray(0) + (int) Math.pow(256, myArchonOrder));
-            } else {
-                rc.writeSharedArray(10, rc.readSharedArray(10) + (int) Math.pow(256, myArchonOrder - 2));
-            }
-            */
             rc.writeSharedArray(44,rc.readSharedArray(44)+1);
         }
         if(checkEnemy()){
@@ -147,40 +140,20 @@ public class Miner extends Droid{
                     }
                 }*/
             }
-
-            /*if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
-                MapLocation[] nearByLead = rc.senseNearbyLocationsWithLead(20,2+((20-(rc.getRoundNum()%20))/5));
-                if(nearByLead.length > 1){
-                    lead.remove(target);
-                    target = nearByLead[0];
-                    lead.put(target,rc.senseLead(target));
-                }
-            }*/
+            if(targetType == 2 && target != null && rc.canSenseLocation(target) && rc.senseGold(target) == 0){
+                target = getMaxLead();
+                if(target != null)targetType = 1;
+                else targetType = 2;
+            }
             if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
                 target = getMaxLead();
-            }
-            if(gold.isEmpty()){
-                int amount = rc.senseLead(myLocation);
-                if(amount > 1){
-                    target = myLocation;
-                    targetType = 1;
-                    lead.put(target,amount);
-                    if(rc.senseLead(myLocation) > 1 && rc.canMineLead(target))rc.mineLead(myLocation);
-                }
-
+                if(target != null)targetType = 1;
+                else targetType = 2;
             }
             miningBlock:{
                 if(target != null){
                     leadBlock:{
                         if(targetType == 1){
-                            if(!gold.isEmpty()){ //prioritize gold over Lead
-                                MapLocation temp = getMaxGold();
-                                if(temp != null){
-                                    targetType = 2;
-                                    target = temp;
-                                    break leadBlock;
-                                }
-                            }
                             checkTargetBlock:{
                                 if(rc.canSenseLocation(target) && rc.senseLead(target) == 0){
                                     lead.remove(target);
@@ -301,50 +274,6 @@ public class Miner extends Droid{
 
                         }
                     }
-                    if(targetType == 2){
-                        if(rc.canSenseLocation(target) && rc.senseGold(target) == 0){
-                            gold.remove(target);
-                            if(gold.isEmpty()) target = null;
-                            else{
-                                target = getMaxGold();
-                                targetType = 2;
-                            }
-                            if(target == null) {
-                                if (lead.isEmpty()) target = null;
-                                else target = getMaxLead();
-                                if (target == null){
-                                    targetType = 2;
-                                    break miningBlock;
-                                }
-                                else {
-                                    targetType = 1;
-                                    run();
-                                    return;
-                                }
-                            }
-                        }
-                        if(rc.canMineGold(target)){
-                            rc.mineGold(target);
-                        }
-                        if(Clock.getBytecodesLeft() > 5200){
-                            soldierMove(target);
-                        }else{
-                            intermediateMove(target);
-                        }
-                        while(rc.isActionReady()){
-                            boolean mine = true;
-                            while(rc.isActionReady() && mine){
-                                mine = false;
-                                MapLocation[] nearbyLead = rc.senseNearbyLocationsWithLead(2);
-                                for(int i = nearbyLead.length; --i>=0;) {
-                                    if (rc.senseLead(nearbyLead[i]) > 1 && rc.canMineLead(nearbyLead[i])){
-                                        rc.mineLead(nearbyLead[i]);
-                                        mine = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
             if(target == null){
@@ -354,8 +283,16 @@ public class Miner extends Droid{
                 }
 
                 if(!prev.equals(myLocation)) viewResources();
+            }else{
+                if(Clock.getBytecodesLeft() > 5200){
+                    soldierMove(target);
+                }else{
+                    intermediateMove(target);
+                }
+                if(!prev.equals(myLocation)) viewResourcesLite();
             }
         }
+        rc.setIndicatorString(""+target);
     }
 
     public void viewResources() throws GameActionException {
@@ -365,10 +302,6 @@ public class Miner extends Droid{
         MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
             nearbyLead = rc.senseNearbyLocationsWithLead(20,3); //change to (20,6)
         searchBlock:{
-            for(int i = nearbyGold.length; --i>=0;){
-                gold.put(nearbyGold[i],rc.senseGold(nearbyGold[i]));
-                break searchBlock;
-            }
             loop1: for(int i = nearbyLead.length; --i>=0;){
                 RobotInfo robot;
                 MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
@@ -382,49 +315,46 @@ public class Miner extends Droid{
                 int amount = rc.senseLead(nearbyLead[i]);
                 if(amount > 5){
                     lead.put(nearbyLead[i],amount);
-                    break searchBlock;
+                    //break searchBlock;
                 }
             }
         }
-        if(!gold.isEmpty()){
-            target = getMaxGold();
-            targetType = 2;
-        }else if(!lead.isEmpty()){
+        if(!lead.isEmpty()){
             target = getMaxLead();
             if(target == null) targetType = 2;
             else targetType = 1;
         }
     }
-
-    public MapLocation getMaxGold() throws GameActionException { //location with Max amount of resources
-        //Currently choosing closest Location over Amount, may want to change.
-        MapLocation loc = null;
-        List<Map.Entry<MapLocation, Integer>> entries = new ArrayList<Map.Entry<MapLocation, Integer>>(gold.entrySet());
-        /*Collections.sort(entries, new Comparator<Map.Entry<MapLocation, Integer>>() {
-            public int compare(
-                    Map.Entry<MapLocation, Integer> entry1, Map.Entry<MapLocation, Integer> entry2) {
-                return ((Integer)movementTileDistance(entry1.getKey(),myLocation)).compareTo(movementTileDistance(entry2.getKey(),myLocation));
-            }
-        });*/
-        for(Map.Entry<MapLocation, Integer> entry : entries){
-            MapLocation location = entry.getKey();
-            if(rc.canSenseLocation(location)){
-                if(rc.senseGold(location) == 0){
-                    gold.remove(location);
-                }else{
-                    loc = location;break;
+    public void viewResourcesLite() throws GameActionException {
+        //TODO: Method currently doesn't consider if a previously checked location still has resources
+        //TODO: Could also check rubble amount
+        //Maybe change so that the closest location above the threshold is chosen as the target rather than
+        MapLocation[] nearbyGold = rc.senseNearbyLocationsWithGold(20),
+                nearbyLead = rc.senseNearbyLocationsWithLead(20,3); //change to (20,6)
+        searchBlock:{
+            loop1: for(int i = nearbyLead.length; --i>=0;){
+                RobotInfo robot;
+                MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
+                for(int j = nearbyLocs.length; --j>=0;){
+                    if(!myLocation.equals(nearbyLocs[j]) && rc.canSenseRobotAtLocation(nearbyLocs[j]) && (robot = rc.senseRobotAtLocation(nearbyLocs[j]))!=null){
+                        if(robot.getTeam() == myTeam && robot.getType() == myType){
+                            continue loop1;
+                        }
+                    }
                 }
-            }else{
-                loc = location;break;
+                int amount = rc.senseLead(nearbyLead[i]);
+                if(amount > 5){
+                    lead.put(nearbyLead[i],amount);
+                    //break searchBlock;
+                }
             }
         }
-
-        return loc;
     }
+
     public MapLocation getMaxLead() throws GameActionException { //location with Max amount of resources
         //Currently choosing closest Location over Amount, may want to change.
         MapLocation loc = null;
-        List<Map.Entry<MapLocation, Integer>> entries = new ArrayList<Map.Entry<MapLocation, Integer>>(lead.entrySet());
+        List<Map.Entry<MapLocation, Integer>> entries = new ArrayList<>(lead.entrySet());
         /*Collections.sort(entries, new Comparator<Map.Entry<MapLocation, Integer>>() {
             public int compare(
                     Map.Entry<MapLocation, Integer> entry1, Map.Entry<MapLocation, Integer> entry2) {
