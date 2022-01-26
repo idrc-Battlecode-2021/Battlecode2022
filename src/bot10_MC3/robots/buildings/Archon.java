@@ -192,7 +192,7 @@ public class Archon extends Building{
                 tempRubble+=rc.senseRubble(thisLocation);
             }
             tempRubble/=tempCount;
-            
+            if (tempCount<6)continue;
             if (r<rubble){
                 rubble = r;
                 bestTargetLocation = m;
@@ -202,7 +202,7 @@ public class Archon extends Building{
                 count = tempCount;
             }
             else if (r==rubble){
-                if (tempCount>count){
+                if(tempRubble<averageSurroundingRubble){
                     rubble = r;
                     bestTargetLocation = m;
                     xCheck = xTemp;
@@ -210,24 +210,14 @@ public class Archon extends Building{
                     averageSurroundingRubble = tempRubble;
                     count = tempCount;
                 }
-                else if (tempCount==count){
-                    if(tempRubble<averageSurroundingRubble){
+                else if (tempRubble==averageSurroundingRubble){
+                    if (xTemp+yTemp<xCheck+yCheck){
                         rubble = r;
                         bestTargetLocation = m;
                         xCheck = xTemp;
                         yCheck = yTemp;
                         averageSurroundingRubble = tempRubble;
                         count = tempCount;
-                    }
-                    else if (tempRubble==averageSurroundingRubble){
-                        if (xTemp+yTemp<xCheck+yCheck){
-                            rubble = r;
-                            bestTargetLocation = m;
-                            xCheck = xTemp;
-                            yCheck = yTemp;
-                            averageSurroundingRubble = tempRubble;
-                            count = tempCount;
-                        }
                     }
                 }
             }
