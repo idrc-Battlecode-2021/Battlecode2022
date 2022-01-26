@@ -176,7 +176,7 @@ public class Archon extends Building{
             averageSurroundingRubble+=rc.senseRubble(thisLocation);
         }
         averageSurroundingRubble/=count;
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared-2)){
             int r=rc.senseRubble(m);
             if (r>rubble)continue;
             int xTemp = Math.abs(center.x-m.x);
@@ -192,8 +192,8 @@ public class Archon extends Building{
                 tempRubble+=rc.senseRubble(thisLocation);
             }
             tempRubble/=tempCount;
-            if (tempRubble>averageSurroundingRubble)continue;
-            if (tempRubble<averageSurroundingRubble){
+            
+            if (r<rubble){
                 rubble = r;
                 bestTargetLocation = m;
                 xCheck = xTemp;
@@ -201,30 +201,37 @@ public class Archon extends Building{
                 averageSurroundingRubble = tempRubble;
                 count = tempCount;
             }
-            else if (r<rubble){
-                rubble = r;
-                bestTargetLocation = m;
-                xCheck = xTemp;
-                yCheck = yTemp;
-                averageSurroundingRubble = tempRubble;
-                count = tempCount;
+            else if (r==rubble){
+                if (tempCount>count){
+                    rubble = r;
+                    bestTargetLocation = m;
+                    xCheck = xTemp;
+                    yCheck = yTemp;
+                    averageSurroundingRubble = tempRubble;
+                    count = tempCount;
+                }
+                else if (tempCount==count){
+                    if(xTemp+yTemp<xCheck+yCheck){
+                        rubble = r;
+                        bestTargetLocation = m;
+                        xCheck = xTemp;
+                        yCheck = yTemp;
+                        averageSurroundingRubble = tempRubble;
+                        count = tempCount;
+                    }
+                    else if (xTemp+yTemp==xCheck+yCheck){
+                        if (tempRubble<averageSurroundingRubble){
+                            rubble = r;
+                            bestTargetLocation = m;
+                            xCheck = xTemp;
+                            yCheck = yTemp;
+                            averageSurroundingRubble = tempRubble;
+                            count = tempCount;
+                        }
+                    }
+                }
             }
-            else if (tempCount>count){
-                rubble = r;
-                bestTargetLocation = m;
-                xCheck = xTemp;
-                yCheck = yTemp;
-                averageSurroundingRubble = tempRubble;
-                count = tempCount;
-            }
-            else if(xTemp+yTemp<xCheck+yCheck){
-                rubble = r;
-                bestTargetLocation = m;
-                xCheck = xTemp;
-                yCheck = yTemp;
-                averageSurroundingRubble = tempRubble;
-                count = tempCount;
-            }
+            
         }
         if(!bestTargetLocation.equals(rc.getLocation())){
             if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
