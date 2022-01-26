@@ -311,7 +311,7 @@ public class Sage extends Droid{
                     if (archon == null || (enemy.getHealth() > archon.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<archon.getHealth() && archon.getHealth()>RobotType.SAGE.damage) {
                         archon = enemy;
                     }
-                    if (!containsBuilding){
+                    if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
                         furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
                         for (RobotInfo ally: myRobots){
                             if (ally.getType()!=RobotType.SAGE) continue;
@@ -332,7 +332,7 @@ public class Sage extends Droid{
                     if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+charge>=100) chargePotentialKills++;
                     break;
                 case LABORATORY:
-                    if (!containsBuilding){
+                    if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
                         furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
                         for (RobotInfo ally: myRobots){
                             if (ally.getType()!=RobotType.SAGE) continue;
@@ -345,7 +345,7 @@ public class Sage extends Droid{
                     }
                     break;
                 case WATCHTOWER:
-                    if (!containsBuilding){
+                    if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
                         furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
                         for (RobotInfo ally: myRobots){
                             if (ally.getType()!=RobotType.SAGE) continue;
@@ -428,7 +428,7 @@ public class Sage extends Droid{
         else if (!containsBuilding && furyPotentialDamage>45 && rc.canEnvision(AnomalyType.FURY)){
             rc.envision(AnomalyType.FURY);
         }
-        else if(!containsBuilding && archon!=null && target.equals(archon.getLocation()) && rc.canEnvision(AnomalyType.FURY)){
+        else if(!containsBuilding && archon!=null && archon.getMode()==RobotMode.TURRET && target.equals(archon.getLocation()) && rc.canEnvision(AnomalyType.FURY)){
             rc.envision(AnomalyType.FURY);
         }
         else{

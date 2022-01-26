@@ -101,7 +101,7 @@ public class Builder extends Droid{
         //TODO: discuss priority over repair and also change to better kite function
         RobotInfo[] enemyBotsInVision = rc.senseNearbyRobots(RobotType.BUILDER.visionRadiusSquared, rc.getTeam().opponent());
         if (enemyBotsInVision.length>0){
-            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.BUILDER.actionRadiusSquared)){
                 builderMove(archonLoc);
             }
             else{
