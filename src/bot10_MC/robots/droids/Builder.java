@@ -34,7 +34,7 @@ public class Builder extends Droid{
     public boolean repair(MapLocation target) throws GameActionException{
         indicatorString+=" repair";
         if (!rc.canSenseRobotAtLocation(target)){
-            moveTowardToLowRubble(target);
+            builderMove(target);
             return true;
         }
         RobotInfo prototype = rc.senseRobotAtLocation(target);
@@ -54,7 +54,7 @@ public class Builder extends Droid{
             }
         }
         if (rc.isMovementReady() && !rc.getLocation().equals(best_location)){
-            moveTowardToLowRubble(best_location);
+            builderMove(best_location);
         }
         else{
             if(rc.canRepair(target)){
@@ -79,19 +79,24 @@ public class Builder extends Droid{
             builderCount = rc.readSharedArray(1);
         }
         //TODO: change lab threshold based on income
-        labThreshold = (globalLabCount+1)*180;
+        labThreshold = Math.min(1080,(globalLabCount+1)*180);
 
         //retreat if detecting enemies
         //TODO: discuss priority over repair and also change to better kite function
         RobotInfo[] enemyBotsInVision = rc.senseNearbyRobots(RobotType.BUILDER.visionRadiusSquared, rc.getTeam().opponent());
         if (enemyBotsInVision.length>0){
-            moveTowardToLowRubble(archonLoc);
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                builderMove(archonLoc);
+            }
+            else{
+                kite();
+            }
         }
 
         //first repair prototype
         indicatorString = "prototype";
         if (finishPrototype!=null && !rc.getLocation().isWithinDistanceSquared(finishPrototype, RobotType.BUILDER.actionRadiusSquared)){
-            moveTowardToLowRubble(finishPrototype);
+            builderMove(finishPrototype);
         }
         if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){
             if (repair(finishPrototype)){
@@ -161,7 +166,7 @@ public class Builder extends Droid{
         MapLocation best_location = target;
         if (!rc.getLocation().isWithinDistanceSquared(target, 2)){
             indicatorString = "going to: "+target;
-            moveTowardToLowRubble(target);
+            builderMove(target);
         }
         else{
             best_location = rc.getLocation();
@@ -184,7 +189,7 @@ public class Builder extends Droid{
                 }
             }
             if (rc.isMovementReady() && best_location != null && !best_location.equals(target)){
-                moveTowardToLowRubble(best_location);
+                builderMove(best_location);
             }
             indicatorString += "best location: "+best_location;
         }
@@ -198,7 +203,7 @@ public class Builder extends Droid{
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
         //if builder isn't within archon radius come back
         if (bestLabSpot==null && !rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){
-            moveTowardToLowRubble(archonLoc);
+            builderMove(archonLoc);
             indicatorString+="going to archon: "+archonLoc;
             return null;
         }
@@ -225,7 +230,7 @@ public class Builder extends Droid{
         return target;
     }
 
-    public boolean moveTowardToLowRubble(MapLocation target) throws GameActionException{
+    public boolean builderMove(MapLocation target) throws GameActionException{
         if (!rc.isMovementReady()){
             return false;
         }
@@ -274,6 +279,52 @@ public class Builder extends Droid{
         }
 
     }
+
+    public void kite() throws GameActionException{
+        if (!rc.isMovementReady()){
+            return;
+        }
+        int average_x=0,average_y=0;
+        myLocation = rc.getLocation();
+        int enemyCount = 0;
+        RobotInfo[] enemyBotsInVision = rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent());
+        for (RobotInfo robot:enemyBotsInVision){
+            if (robot.getType()!=RobotType.SOLDIER && robot.getType()!=RobotType.SAGE && robot.getType()!=RobotType.ARCHON){
+                continue;
+            }
+            enemyCount++;
+            MapLocation location = robot.getLocation();
+            average_x+=location.x;
+            average_y+=location.y;
+        }
+        if (enemyCount==0){
+            builderMove(archonLoc);
+            return;
+        }
+        average_x/=enemyCount;
+        average_y/=enemyCount;
+        MapLocation enemy = new MapLocation(average_x,average_y);
+        Direction lowest = Direction.CENTER;
+        //int lowest_rubble = rc.senseRubble(rc.getLocation());
+        int lowest_rubble = 99;
+        for (Direction d: Direction.allDirections()){
+            MapLocation adjacent=rc.adjacentLocation(d);
+            if(adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy))continue;
+            if(rc.canMove(d)){
+                int rubbleAtLoc = rc.senseRubble(adjacent);
+                if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(enemy) > myLocation.distanceSquaredTo(enemy)){
+                    lowest = d;
+                    lowest_rubble = rubbleAtLoc;
+                }
+            }
+        }
+        if(rc.canMove(lowest)){
+            rc.move(lowest);
+            myLocation = rc.getLocation();
+        }
+        
+    }
+
     public void addLabs() throws GameActionException{
         int labCount = rc.readSharedArray(4);
         rc.writeSharedArray(4, labCount + 1);

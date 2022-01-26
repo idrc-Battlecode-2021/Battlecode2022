@@ -78,7 +78,6 @@ public class Sage extends Droid{
         }
         broadcast();
         //target = null;
-
         int healCheck = rc.readSharedArray(31+myArchonOrder);
         if(healCheck < 24 || addedToHeal){
             rc.setIndicatorString("heal");
@@ -98,10 +97,11 @@ public class Sage extends Droid{
        }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SAGE.actionRadiusSquared,rc.getTeam().opponent());
         if(nearbyBots.length >= 1){
-            rc.setIndicatorString(archonLoc+" action radius");
+            rc.setIndicatorString("action retreat");
             //New targetting
             if (!rc.isActionReady()){
-                if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                rc.setIndicatorString("action retreat");
+                if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 4)){
                     soldierMove(archonLoc);
                 }
                 else{
@@ -122,7 +122,7 @@ public class Sage extends Droid{
             soldierMove(target);
         }else if (rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent()).length>0 && !rc.isActionReady()){
             rc.setIndicatorString("vision retreat");
-            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 4)){
                 soldierMove(archonLoc);
             }
             else{
@@ -232,43 +232,9 @@ public class Sage extends Droid{
             rc.setIndicatorString("action ready kill");
             MapLocation temp = selectTargetKill();
             if(temp != null && !temp.equals(myLocation) /*&& rc.canSenseRobotAtLocation(temp)*/){
-                /*switch (rc.senseRobotAtLocation(temp).getType()){
-                    case ARCHON:
-                        targetType = 2;
-                        target = temp;
-                        break;
-                    case SOLDIER:
-                    case WATCHTOWER:
-                    case SAGE:
-                        if(targetType < 2){
-                            targetType = 1;
-                            target = temp;
-                        }break;
-                    case BUILDER:
-                    case MINER:
-                    case LABORATORY:
-                        if(targetType < 1){
-                            target = temp;
-                        }break;
-                }*/
                 target = temp;
             }
         }
-        /*
-        else if(target != null){
-            rc.setIndicatorString("target retreat "+target.toString());
-            MapLocation targetRetreat = myLocation;
-            for(int i = directions.length; --i>=0;){
-                MapLocation adjacent = rc.adjacentLocation(directions[i]);
-                if(adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target) && rc.canMove(directions[i])){
-                    if(targetRetreat == null || rc.senseRubble(adjacent) <= rc.senseRubble(targetRetreat)){
-                        targetRetreat = adjacent;
-                    }
-                }
-            }
-            if(targetRetreat != null || !targetRetreat.equals(myLocation)) intermediateMove(targetRetreat);
-        }
-        */
     }
 
     public void retreat() throws GameActionException{
@@ -365,8 +331,8 @@ public class Sage extends Droid{
                     }
                     break;
                 case SOLDIER:
-                    //TODO: target soldier based on distance away/greater health within one shot range
-                    if (soldier == null || soldier.getHealth() > enemy.getHealth()) {
+                    //TODO: target soldier based on distance away
+                    if (soldier == null || (enemy.getHealth() > soldier.getHealth() && enemy.getHealth()<=RobotType.SAGE.damage) || enemy.getHealth()<soldier.getHealth() && soldier.getHealth()>RobotType.SAGE.damage) {
                         soldier = enemy;
                     }
                     for (RobotInfo ally: myRobots){
@@ -478,7 +444,8 @@ public class Sage extends Droid{
         average_y/=enemyCount;
         MapLocation enemy = new MapLocation(average_x,average_y);
         Direction lowest = Direction.CENTER;
-        int lowest_rubble = rc.senseRubble(rc.getLocation());
+        //int lowest_rubble = rc.senseRubble(rc.getLocation()); 
+        int lowest_rubble = 99; 
         for (Direction d: Direction.allDirections()){
             MapLocation adjacent=rc.adjacentLocation(d);
             if(adjacent.distanceSquaredTo(enemy) < myLocation.distanceSquaredTo(enemy))continue;
