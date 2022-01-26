@@ -27,6 +27,7 @@ public abstract class Robot {
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
     protected ArrayList<MapLocation> myPath = new ArrayList<>();
+    protected MapLocation center;
     // -1 = unknown, otherwise amount of rubble
 
     public Robot( RobotController rc){
@@ -37,7 +38,8 @@ public abstract class Robot {
         
         mapWidth = rc.getMapWidth(); mapHeight = rc.getMapHeight();
         initialArchons = rc.getArchonCount();
-        updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)));
+        center = new MapLocation(mapWidth/2,mapHeight/2);
+        updateDirection(myLocation.directionTo(center));
         //Too Much Bytecode, 5000
         /*for(int i = mapWidth; --i>=0;){
             for(int j = mapHeight; --j>=0;){
@@ -778,10 +780,10 @@ public abstract class Robot {
         }
     }
     public MapLocation[] getArchonLocs() throws GameActionException{
-        int array1 = rc.readSharedArray(49);
-        int array2 = rc.readSharedArray(50);
-        int array3 = rc.readSharedArray(15);
-        int array4 = rc.readSharedArray(16);
+        int array1 = rc.readSharedArray(15);
+        int array2 = rc.readSharedArray(16);
+        int array3 = rc.readSharedArray(49);
+        int array4 = rc.readSharedArray(50);
         int archons = rc.getArchonCount();
         MapLocation[] locs = {
                 new MapLocation(array1%256,array1/256),
@@ -789,14 +791,9 @@ public abstract class Robot {
                 new MapLocation(array3%256,array3/256),
                 new MapLocation(array4%256,array4/256),
             };
-        MapLocation[] returnLocs = new MapLocation[4];
-        MapLocation zeroPos = new MapLocation(0,0);
-        for(int i = 0; i < locs.length; i++){ //needs to start at 0
-            if(!locs[i].equals(zeroPos) || archons > i){
-                returnLocs[i] = locs[i];
-            }else{
-                break;
-            }
+        MapLocation[] returnLocs = new MapLocation[archons];
+        for(int i = 0; i < archons; i++){ //needs to start at 0
+            returnLocs[i]=locs[i];
         }
         return returnLocs;
     }
@@ -827,4 +824,5 @@ public abstract class Robot {
             enemyArchons.remove(m);
         }
     }
+
 }

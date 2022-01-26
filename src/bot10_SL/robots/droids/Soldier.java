@@ -15,6 +15,7 @@ public class Soldier extends Droid{
     private PathFindingSoldier pfs;
     private boolean reachedArchon;
     private boolean addedToHeal = false;
+
     public Soldier(RobotController rc) {super(rc);}
     private int targetType = 0;
     //0 = tier 1
@@ -102,6 +103,7 @@ public class Soldier extends Droid{
             target = selectPriorityTarget();
             return;
         }
+        //TODO: Try to reduce times in which units go to previous targets if the enemy there is eliminated (if other stuff is done)
         if (hasMapLocation(45)){
             MapLocation target/*temp*/ = decode(45);
             /*if(target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)){
@@ -162,6 +164,13 @@ public class Soldier extends Droid{
             if(rc.isActionReady()){
                 soldierMove(target);
             }
+            if(rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    target = null;
+                    targetType = 0;
+                }
+            }
         } else if(rc.readSharedArray(40) == 1) {
             if(rc.isActionReady()){
                 if(Clock.getBytecodesLeft() > 6000){
@@ -173,23 +182,72 @@ public class Soldier extends Droid{
                 }
 
             }
-        }else if(rc.senseNearbyRobots(2).length>2){
-            //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
-            //tryMoveMultiple(initDirection);
-            MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
-            int start = (int) (local.length * Math.random());
-            loop1: for (int i = start; i < start + local.length; i++) {
-                int j = i % local.length;
-                Direction dirTo = myLocation.directionTo(local[j]);
-                if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
-                    rc.move(dirTo);
-                    myLocation = rc.getLocation();
-                    prevLocs.add(local[j]);
-                    break;
+        }else{ //Follows miners. If no miners stay near Archon
+            RobotInfo[] nearbyTeam = rc.senseNearbyRobots(20,myTeam);
+            MapLocation miner = new MapLocation(10000,10000);
+            for(int i = nearbyTeam.length; --i>=0;){
+                if(nearbyTeam[i].getType() == RobotType.MINER){
+                    if(nearbyTeam[i].location.distanceSquaredTo(centralArchon) < miner.distanceSquaredTo(centralArchon)){ //Try it with center, mylocation, centralArchon, archonLoc
+                        miner = nearbyTeam[i].location;
+                    }
                 }
             }
+            if(miner.equals(new MapLocation(10000,10000)) && rc.senseNearbyRobots(2).length>2){
+                //updateDirection(myLocation.directionTo(new MapLocation(mapWidth/2,mapHeight/2)).opposite());
+                //tryMoveMultiple(initDirection);
+                MapLocation[] local = rc.getAllLocationsWithinRadiusSquared(myLocation,2);
+                int start = (int) (local.length * Math.random());
+                loop1: for (int i = start; i < start + local.length; i++) {
+                    int j = i % local.length;
+                    Direction dirTo = myLocation.directionTo(local[j]);
+                    if(!myLocation.equals(local[j]) && rc.canMove(dirTo)){
+                        rc.move(dirTo);
+                        myLocation = rc.getLocation();
+                        prevLocs.add(local[j]);
+                        break;
+                    }
+                }
+            }else{
+                soldierMove(miner);
+            }
         }
-        if(rc.isActionReady())selectPriorityTarget();
+        if(rc.isActionReady()){
+            MapLocation temp = selectPriorityTarget();
+            if(temp != null && !temp.equals(myLocation) /*&& rc.canSenseRobotAtLocation(temp)*/){
+                /*switch (rc.senseRobotAtLocation(temp).getType()){
+                    case ARCHON:
+                        targetType = 2;
+                        target = temp;
+                        break;
+                    case SOLDIER:
+                    case WATCHTOWER:
+                    case SAGE:
+                        if(targetType < 2){
+                            targetType = 1;
+                            target = temp;
+                        }break;
+                    case BUILDER:
+                    case MINER:
+                    case LABORATORY:
+                        if(targetType < 1){
+                            target = temp;
+                        }break;
+                }*/
+                target = temp;
+            }
+        }
+        else if(target != null){ //Retreat If they can't attack
+            MapLocation targetRetreat = myLocation;
+            for(int i = directions.length; --i>=0;){
+                MapLocation adjacent = rc.adjacentLocation(directions[i]);
+                if(adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target) && rc.canMove(directions[i])){
+                    if(targetRetreat == null || rc.senseRubble(adjacent) <= rc.senseRubble(targetRetreat)){
+                        targetRetreat = adjacent;
+                    }
+                }
+            }
+            if(targetRetreat != null || !targetRetreat.equals(myLocation)) intermediateMove(targetRetreat);
+        }
     }
 
     public void retreat() throws GameActionException{
@@ -210,17 +268,6 @@ public class Soldier extends Droid{
                 reachedArchon = true;
 
             }
-
-            //TODO: try this code after archon moves to low passability?
-            /*
-            else if (rc.isMovementReady()){
-                RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
-                if (nearbyBots.length>0){
-                    tryMoveMultiple(rc.getLocation().directionTo(nearbyBots[0].getLocation()).opposite());
-                }
-            }
-            */
-            
         }
     }
 

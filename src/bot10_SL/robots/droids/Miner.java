@@ -1,16 +1,21 @@
 package bot10_SL.robots.droids;
 
 import battlecode.common.*;
-import bot10_SL.util.PathFindingSoldier;
+import bot10.util.PathFindingSoldier;
 
 import java.util.*;
 
 public class Miner extends Droid{
     private HashMap<MapLocation,Integer> gold = new HashMap<>();
     private HashMap<MapLocation,Integer> lead = new HashMap<>();
-    private MapLocation target;
+    private MapLocation target/*, exploreTarget*/;
+    //private HashSet<MapLocation> pastExploreTargets = new HashSet<>();
     private PathFindingSoldier pfs;
     private int targetType = 0;
+    private boolean reachedArchon;
+    private boolean addedToHeal = false;
+    private MapLocation archonLoc;
+    private boolean shouldHeal = false;
     //0 = exploreTarget, 1 = lead, 2 = null/gold
 
     public Miner(RobotController rc) {
@@ -21,6 +26,12 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         pfs=new PathFindingSoldier(rc);
         parseAnomalies();
+        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
+        for (RobotInfo ro : r){
+            if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
+                archonLoc = ro.getLocation();
+            }
+        }
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         //exploreDirIndex = (int)(8*Math.random());
@@ -37,13 +48,46 @@ public class Miner extends Droid{
         // update shared array
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {
+            /*
             if (myArchonOrder <= 1) {
                 rc.writeSharedArray(0, rc.readSharedArray(0) + (int) Math.pow(256, myArchonOrder));
             } else {
                 rc.writeSharedArray(10, rc.readSharedArray(10) + (int) Math.pow(256, myArchonOrder - 2));
             }
+            */
             rc.writeSharedArray(44,rc.readSharedArray(44)+1);
         }
+        /*if(target != null){
+            if(targetType == 1){
+                if(rc.canSenseLocation(target) && target.equals(decode(35))){
+                    if(rc.senseLead(target) <= 1){
+                        rc.writeSharedArray(35,0);
+                        lead.remove(target);
+                        target = null;
+                        targetType = 2;
+                    }
+                }
+            }else if(targetType == 2){
+                if(rc.canSenseLocation(target) && target.equals(decode(36))){
+                    if(rc.senseGold(target) == 0){
+                        rc.writeSharedArray(36,0);
+                        gold.remove(target);
+                        target = null;
+                    }
+                }
+            }
+        }*/
+        /*if(target == null){
+            if(hasMapLocation(36)){
+                target = decode(36);
+                targetType = 2;
+                gold.put(target, 2);
+            }else if(hasMapLocation(35)){
+                target = decode(35);
+                targetType = 1;
+                lead.put(target,2);
+            }
+        }*/
         if(checkEnemy()){
             MapLocation[] local = rc.senseNearbyLocationsWithGold(2);
             for(int i = local.length; --i >= 0;){
@@ -66,6 +110,75 @@ public class Miner extends Droid{
                 }
             }
         }else{
+            MapLocation[] golds = rc.senseNearbyLocationsWithGold(2);
+            if(golds.length > 0){
+                target = golds[0];
+                targetType = 2;
+                gold.put(target,rc.senseGold(target));
+                if(rc.canMineGold(target))rc.mineGold(target);
+                if(Clock.getBytecodesLeft()>5200){
+                    soldierMove(target);
+                }else{
+                    intermediateMove(target);
+                }
+                return;
+            }else{
+                golds = rc.senseNearbyLocationsWithGold(20);
+                if(golds.length > 0){
+                    target = golds[golds.length-1];
+                    for(int i = golds.length-1; --i>=0;){
+                        if(myLocation.distanceSquaredTo(golds[i]) < myLocation.distanceSquaredTo(target)){
+                            target = golds[i];
+                        }
+                    }
+                    targetType = 2;
+                    gold.put(target,rc.senseGold(target));
+                    if(Clock.getBytecodesLeft()>5200){
+                        soldierMove(target);
+                    }else{
+                        intermediateMove(target);
+                    }
+                    return;
+                }/*else{
+                    MapLocation[] leads = rc.senseNearbyLocationsWithLead(2,2);
+                    if(leads.length > 0){
+                        for(int i = leads.length; --i>=0;){
+                            int amount = rc.senseLead(leads[i]);
+                            if(rc.canMineLead(leads[i]) && amount > 1){
+                                rc.mineLead(leads[i]);
+                                target = leads[i];
+                                targetType = 1;
+                                lead.put(target,amount);
+                                break;
+                            }
+                        }
+                    }else{
+                        leads = rc.senseNearbyLocationsWithLead(20,2);
+                        if(leads.length > 0){
+                            target = leads[leads.length-1];
+                            for(int i = leads.length-1; --i>=0;){
+                                if(myLocation.distanceSquaredTo(leads[i]) < myLocation.distanceSquaredTo(target)){
+                                    target = leads[i];
+                                }
+                            }
+                            targetType = 1;
+                            lead.put(target,rc.senseLead(target));
+                            if(Clock.getBytecodesLeft()>5200){
+                                soldierMove(target);
+                            }else{
+                                intermediateMove(target);
+                            }
+                            return;
+                        }else{
+                            checkMiners();
+                            if(!tryMoveMultipleNew()){
+                                tryMoveMultiple(initDirection);
+                            }
+                        }
+                    }
+                }*/
+            }
+
             /*if(targetType == 1 && target != null && rc.canSenseLocation(target) && rc.senseLead(target) < 2){
                 MapLocation[] nearByLead = rc.senseNearbyLocationsWithLead(20,2+((20-(rc.getRoundNum()%20))/5));
                 if(nearByLead.length > 1){
@@ -85,6 +198,7 @@ public class Miner extends Droid{
                     lead.put(target,amount);
                     if(rc.senseLead(myLocation) > 1 && rc.canMineLead(target))rc.mineLead(myLocation);
                 }
+
             }
             miningBlock:{
                 if(target != null){
@@ -265,13 +379,49 @@ public class Miner extends Droid{
                 }
             }
             if(target == null){
-                checkMiners();
-                if(!tryMoveMultipleNew()){
-                    tryMoveMultiple(initDirection);
+                /*if(exploreTarget == null){
+                    if(hasMapLocation(36)){
+                        MapLocation temp = decode(36);
+                        // TODO: Test if dividing the locations by a factor before storing in pastExploreTargets would help (should limit the times a miner goes to a given region)
+                        if(!pastExploreTargets.contains(temp)){
+                            exploreTarget = temp;
+                            pastExploreTargets.add(temp);
+                        }
+                    }else if(hasMapLocation(35)){
+                        MapLocation temp = decode(35);
+                        // TODO: Test if dividing the locations by a factor before storing in pastExploreTargets would help (should limit the times a miner goes to a given region)
+                        if(!pastExploreTargets.contains(temp)){
+                            exploreTarget = temp;
+                            pastExploreTargets.add(temp);
+                        }
+                    }
                 }
+                if(exploreTarget != null){
+                    soldierMove(exploreTarget);
+                    //TODO: See if reducing the distance needed between unit and target for it to be deemed explored improves bot
+                    if(rc.canSenseLocation(exploreTarget)){
+                        exploreTarget = null;
+                    }
+                } else{*/
+                    checkMiners();
+                    MapLocation exploreTarget = getExploreTargetFromInitDirection();
+                    if(!priorityMoveNew2()){
+                        soldierMove(exploreTarget);
+                    }
+                    /*if(!tryMoveMultipleNew()){
+                        tryMoveMultiple(initDirection);
+                    }*/
+                //}
 
                 if(!prev.equals(myLocation)) viewResources();
-            }
+            }/*else{
+                int k=64*target.x+target.y;
+                if(targetType == 1){
+                    rc.writeSharedArray(35,k); //Check to see if this makes miners go to locations with 0 lead.
+                }else if(targetType == 2){
+                    rc.writeSharedArray(36,k);
+                }
+            }*/
         }
     }
 
@@ -425,7 +575,7 @@ public class Miner extends Droid{
 
     }
 
-    private MapLocation pastExploreTarget = null;
+    /*private MapLocation pastExploreTarget = null;
     private HashSet<MapLocation> pastExploreLocations = new HashSet<>();
     private void minerExplore() throws GameActionException{
         MapLocation exploreTarget = pfs.getExploreTarget();
@@ -443,7 +593,7 @@ public class Miner extends Droid{
             intermediateMove(exploreTarget);
             pastExploreLocations.add(temp);
         }
-    }
+    }*/
 
     private MapLocation pastTarget = null;
     private HashSet<MapLocation> pastLocations = new HashSet<>();
@@ -461,6 +611,37 @@ public class Miner extends Droid{
         }else{
             intermediateMove(target);
             pastLocations.add(temp);
+        }
+    }
+    public void retreat() throws GameActionException{
+        if(rc.getHealth()>=49){
+            shouldHeal=false;
+            return;
+        }
+        if (rc.getHealth()<=18){
+            shouldHeal = true;
+            reachedArchon = false;
+        }
+        if (shouldHeal){
+            if (!rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.actionRadiusSquared)){
+                //rc.setIndicatorString("going to heal");
+                soldierMove(archonLoc);
+            }
+            else{
+                reachedArchon = true;
+
+            }
+
+            //TODO: try this code after archon moves to low passability?
+            /*
+            else if (rc.isMovementReady()){
+                RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SOLDIER.visionRadiusSquared,rc.getTeam().opponent());
+                if (nearbyBots.length>0){
+                    tryMoveMultiple(rc.getLocation().directionTo(nearbyBots[0].getLocation()).opposite());
+                }
+            }
+            */
+
         }
     }
 }
