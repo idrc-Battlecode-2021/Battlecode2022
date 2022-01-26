@@ -103,6 +103,12 @@ public class Soldier extends Droid{
             target = selectPriorityTarget();
             return;
         }
+        if(target != null && hasMapLocation(35)){
+            if(decode(35).equals(target)){
+                target = null;
+                targetType = 0;
+            }
+        }
         if (hasMapLocation(45)){
             MapLocation target/*temp*/ = decode(45);
             /*if(target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)){
@@ -123,6 +129,7 @@ public class Soldier extends Droid{
                 nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length ==0){
                     if(target.equals(temp)) rc.writeSharedArray(43,0);
+                    rc.writeSharedArray(35,64*target.x+target.y);
                     target = null;
                     targetType = 0;
                 }
@@ -140,6 +147,7 @@ public class Soldier extends Droid{
                 nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp))rc.writeSharedArray(55,0);
+                    rc.writeSharedArray(35,64*target.x+target.y);
                     target = null;
                     targetType = 0;
                 }
@@ -156,6 +164,7 @@ public class Soldier extends Droid{
                 nearbyBots = rc.senseNearbyRobots(20,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp)) rc.writeSharedArray(41,0);
+                    rc.writeSharedArray(35,64*target.x+target.y);
                     target = null;
                     targetType = 0;
                 }
@@ -163,6 +172,14 @@ public class Soldier extends Droid{
         } else if(target != null){
             if(rc.isActionReady()){
                 soldierMove(target);
+            }
+            if (rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    rc.writeSharedArray(35,64*target.x+target.y);
+                    target = null;
+                    targetType = 0;
+                }
             }
         } else if(rc.readSharedArray(40) == 1) {
             if(rc.isActionReady()){

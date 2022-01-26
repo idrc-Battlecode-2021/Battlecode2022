@@ -112,13 +112,19 @@ public class Sage extends Droid{
             }
             return;
         }
+        if(target != null && hasMapLocation(35)){
+            if(decode(35).equals(target)){
+                target = null;
+                targetType = 0;
+            }
+        }
         if (hasMapLocation(45)){
             rc.setIndicatorString("map loc 45");
-            MapLocation target/*temp*/ = decode(45);
+            MapLocation temp = decode(45);
             /*if(target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)){
                 target = temp;
             }*/
-            soldierMove(target);
+            soldierMove(temp);
             if (rc.isActionReady()){
                 target = selectTargetKill();
             }
@@ -158,6 +164,7 @@ public class Sage extends Droid{
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length ==0){
                     if(target.equals(temp)) rc.writeSharedArray(43,0);
+                    rc.writeSharedArray(35,64*target.x+target.y);
                     target = null;
                     targetType = 0;
                 }
@@ -176,6 +183,7 @@ public class Sage extends Droid{
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp))rc.writeSharedArray(55,0);
+                    rc.writeSharedArray(35,64*target.x+target.y);
                     target = null;
                     targetType = 0;
                 }
@@ -193,6 +201,7 @@ public class Sage extends Droid{
                 nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
                 if (nearbyBots.length == 0){
                     if(target.equals(temp)) rc.writeSharedArray(41,0);
+                    rc.writeSharedArray(35,64*target.x+target.y);
                     target = null;
                     targetType = 0;
                 }
@@ -201,6 +210,14 @@ public class Sage extends Droid{
             rc.setIndicatorString("no target");
             if(rc.isActionReady()){
                 soldierMove(target);
+            }
+            if (rc.canSenseLocation(target)){
+                nearbyBots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared,myTeam.opponent());
+                if (nearbyBots.length == 0){
+                    rc.writeSharedArray(35,64*target.x+target.y);
+                    target = null;
+                    targetType = 0;
+                }
             }
         } else if(rc.readSharedArray(40) == 1) {
             rc.setIndicatorString("40 == 1");
