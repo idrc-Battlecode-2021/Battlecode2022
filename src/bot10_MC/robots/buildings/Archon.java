@@ -337,7 +337,7 @@ public class Archon extends Building{
         }
     }
 
-    public boolean checkBuildStatus(int diff, int cost) throws GameActionException{ //controls the order of archons building troops so troops are spawned evenly
+    public boolean checkLeadBuildStatus(int diff, int cost) throws GameActionException{ //controls the order of archons building troops so troops are spawned evenly
         // diff is the difference between the next archon to spawn and this archon's ID
         // if diff!=0, the archon is later in the order. Check if there are enough resources for this archon to build troops before the
         // next archon to spawn, otherwise don't spawn anything (return false).
@@ -529,6 +529,10 @@ public class Archon extends Building{
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
+            if (!checkLeadBuildStatus(leadDiff, cost)){
+                repair();
+                return;
+            }
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
@@ -620,6 +624,10 @@ public class Archon extends Building{
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
             indicatorString += " miners";
+            if (!checkLeadBuildStatus(leadDiff, cost)){
+                repair();
+                return;
+            }
             if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                 int i=0;
                 while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
@@ -645,7 +653,7 @@ public class Archon extends Building{
             int cost = RobotType.SOLDIER.buildCostLead;
             RobotType type = RobotType.SOLDIER;
             indicatorString += " soldiers";
-            if (!checkBuildStatus(leadDiff, cost)){
+            if (!checkLeadBuildStatus(leadDiff, cost)){
                 repair();
                 return;
             }
