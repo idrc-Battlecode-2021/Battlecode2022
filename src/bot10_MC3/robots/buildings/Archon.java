@@ -789,6 +789,33 @@ public class Archon extends Building{
                     count++;
                 }
             }
+        }else if (rc.getHealth()<RobotType.ARCHON.health){
+            boolean builder = false;
+            RobotInfo[] allyBots = rc.senseNearbyRobots(RobotType.BUILDER.visionRadiusSquared, rc.getTeam());
+            for (RobotInfo robot:allyBots){
+                if (robot.getType()==RobotType.BUILDER){
+                    builder = true;
+                    break;
+                }
+            }
+            if (!builder){
+                int cost = RobotType.BUILDER.buildCostLead;
+                RobotType type = RobotType.BUILDER;
+                indicatorString += " builders";
+                if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
+                    int i=0;
+                    while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
+                        i++;
+                    }
+                    if (rc.canBuildRobot(type,passableDirections.get(i))){
+                        rc.buildRobot(type,passableDirections.get(i));
+                        rc.writeSharedArray(1, rc.readSharedArray(1)+1);
+                        globalBuilderCount++;
+                        builderCount++;
+                        count++;
+                    }
+                }
+            }
         }
         repair();
         rc.setIndicatorString(indicatorString);
