@@ -38,13 +38,29 @@ public class Builder extends Droid{
             builderMove(target);
             return true;
         }
-        RobotInfo prototype = rc.senseRobotAtLocation(target);
-        if (prototype.getHealth()>=prototype.getType().health){
+        RobotInfo building = rc.senseRobotAtLocation(target);
+        if (building.getLevel()==1 && building.getHealth()>=building.getType().health || building.getLevel()==2 && building.getHealth()>=180){
             return false;
         }
         MapLocation best_location = rc.getLocation();
         int lowest_rubble = rc.senseRubble(best_location);
+
         MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(target, RobotType.BUILDER.actionRadiusSquared);
+
+        if (building.getType()!=RobotType.ARCHON){
+            Direction targetToArchon = target.directionTo(archonLoc);
+            Direction mineToArchon = rc.getLocation().directionTo(archonLoc);
+            if (!mineToArchon.equals(targetToArchon) && !mineToArchon.equals(targetToArchon.rotateLeft()) && !mineToArchon.equals(targetToArchon.rotateRight())){
+                best_location = null;
+            }
+            MapLocation[] new_locations = {
+                target.add(targetToArchon),
+                target.add(targetToArchon.rotateLeft()),
+                target.add(targetToArchon.rotateRight()),
+            };
+            locations = new_locations;
+        }
+        
         for (MapLocation loc:locations){
             if (!rc.canSenseLocation(loc) || rc.canSenseRobotAtLocation(loc))continue;
             int rubble = rc.senseRubble(loc);
