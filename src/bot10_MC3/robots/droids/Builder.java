@@ -16,6 +16,7 @@ public class Builder extends Droid{
     private static int labThreshold = 180;
     private String indicatorString = "";
     private MapLocation healLocation = null;
+    private boolean farthestBuilder = true;
     
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
@@ -94,13 +95,23 @@ public class Builder extends Droid{
         reassignArchon();
         startingBit = 2*myArchonOrder;
 
+        int builderInfo = rc.readSharedArray(28);
+        MapLocation builderLoc = new MapLocation(builderInfo%256, builderInfo/256);  
+
         // update shared array
         if (rc.getRoundNum()%3==2){
+            farthestBuilder = builderCount>1;
+            if (builderLoc.equals(new MapLocation(0,0)) || movementTileDistance(builderLoc,center)<movementTileDistance(rc.getLocation(), center)) {
+                rc.writeSharedArray(28, rc.getLocation().x+rc.getLocation().y*256);
+            }
             rc.writeSharedArray(1, rc.readSharedArray(1)+1);
         }
         else if(rc.getRoundNum()%3 == 0){
             globalLabCount = rc.readSharedArray(4);
             builderCount = rc.readSharedArray(1);
+            if (builderLoc.equals(rc.getLocation())){
+                farthestBuilder = true;
+            }
         }
         //TODO: change lab threshold based on income
         labThreshold = Math.min(180,(globalLabCount+1)*180);
@@ -187,7 +198,7 @@ public class Builder extends Droid{
             rc.setIndicatorString(indicatorString);
             return;
         }
-        if (rc.getTeamLeadAmount(rc.getTeam())>=labThreshold){
+        if (farthestBuilder && rc.getTeamLeadAmount(rc.getTeam())>=labThreshold){
             buildLab();
         }
         rc.setIndicatorString(indicatorString);
