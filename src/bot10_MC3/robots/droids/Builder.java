@@ -191,7 +191,7 @@ public class Builder extends Droid{
             }
         }
         // prepare for building lab by going to the best lab spot
-        rc.setIndicatorString("here");
+        rc.setIndicatorString("find");
         bestLabSpot = findBestLabSpot();
         if (bestLabSpot==null){
             //builder has wandered away and is coming back
@@ -204,7 +204,7 @@ public class Builder extends Droid{
             //rc.setIndicatorString(indicatorString);
             return;
         }
-        rc.setIndicatorString("here");
+        rc.setIndicatorString("build "+bestLabSpot+" "+bestBuildSpot+" "+archonLoc+" ");
         if (checkedFarthest && farthestBuilder && rc.getTeamLeadAmount(rc.getTeam())>=labThreshold){
             buildLab();
         }
@@ -261,15 +261,20 @@ public class Builder extends Droid{
         if (!rc.canSenseLocation(target)){
             return target;
         }
+        if (rc.canSenseRobotAtLocation(target)){
+            target = rc.getLocation();
+        }
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
         boolean isFirstLab = globalLabCount==0;
         int minRubble = 99;
         Direction toArchon = target.directionTo(archonLoc);
-        if (rc.canSenseLocation(target.add(toArchon))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon)));
-        if (rc.canSenseLocation(target.add(toArchon.rotateLeft()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateLeft())));
-        if (rc.canSenseLocation(target.add(toArchon.rotateRight()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateRight())));
+        if (isFirstLab){
+            if (rc.canSenseLocation(target.add(toArchon))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon)));
+            if (rc.canSenseLocation(target.add(toArchon.rotateLeft()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateLeft())));
+            if (rc.canSenseLocation(target.add(toArchon.rotateRight()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateRight())));
+        }
         //if builder isn't within archon radius come back
         if (bestLabSpot==null && !rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){
             builderMove(archonLoc);
