@@ -444,14 +444,16 @@ public class Archon extends Building{
         HashMap<Integer, Integer> newTroopHealth = new HashMap<Integer, Integer>();
 
         RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
-        for (RobotInfo robot: robots){
+        loop1: for (RobotInfo robot: robots){
             MapLocation thisLocation = robot.getLocation();
-            if (robot.type==RobotType.MINER || robot.type==RobotType.BUILDER){
-                if (robot.getType().health-robot.getHealth()>greatestSupportHealthDifference && rc.canRepair(thisLocation)){
-                    greatestSupportHealthDifference = robot.getType().health-robot.getHealth();
-                    supportLocation = thisLocation;
-                }
-                continue;
+            switch (robot.getType()){
+                case MINER:
+                case BUILDER:
+                    if (robot.getType().health-robot.getHealth()>greatestSupportHealthDifference && rc.canRepair(thisLocation)){
+                        greatestSupportHealthDifference = robot.getType().health-robot.getHealth();
+                        supportLocation = thisLocation;
+                    }
+                    continue loop1;
             }
             if (nearbyTroopHealth.containsKey(robot.ID) && nearbyTroopHealth.get(robot.ID)>robot.getHealth() && robot.getHealth()<leastAttackedHealth && rc.canRepair(thisLocation)){
                 //soldier is being attacked
