@@ -100,7 +100,7 @@ public class Builder extends Droid{
 
         // update shared array
         if (rc.getRoundNum()%3==2){
-            farthestBuilder = builderCount<1;
+            farthestBuilder = builderCount<2;
             if (builderLoc.equals(new MapLocation(0,0)) || movementTileDistance(builderLoc,center)<movementTileDistance(rc.getLocation(), center)) {
                 rc.writeSharedArray(28, rc.getLocation().x+rc.getLocation().y*256);
             }
