@@ -393,7 +393,7 @@ public abstract class Robot {
             //}
 
         }
-        int k=0;
+        int k=1;
         boolean seesArchon = false, seesAttacker = false;
         loop: for (RobotInfo r:enemies){
             switch(r.getType()){
