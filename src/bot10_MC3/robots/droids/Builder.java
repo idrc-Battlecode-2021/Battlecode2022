@@ -109,7 +109,7 @@ public class Builder extends Droid{
         else if(rc.getRoundNum()%3 == 0){
             globalLabCount = rc.readSharedArray(4);
             builderCount = rc.readSharedArray(1);
-            if (builderLoc.equals(rc.getLocation())){
+            if (builderLoc.equals(rc.getLocation()) || builderCount==1){
                 farthestBuilder = true;
             }
         }
