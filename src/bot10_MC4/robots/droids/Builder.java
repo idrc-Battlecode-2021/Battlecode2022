@@ -247,15 +247,20 @@ public class Builder extends Droid{
         if (!rc.canSenseLocation(target)){
             return target;
         }
+        if (rc.canSenseRobotAtLocation(target)){
+            target = rc.getLocation();
+        }
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
         boolean isFirstLab = globalLabCount==0;
         int minRubble = 99;
         Direction toArchon = target.directionTo(archonLoc);
-        if (rc.canSenseLocation(target.add(toArchon))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon)));
-        if (rc.canSenseLocation(target.add(toArchon.rotateLeft()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateLeft())));
-        if (rc.canSenseLocation(target.add(toArchon.rotateRight()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateRight())));
+        if (isFirstLab){
+            if (rc.canSenseLocation(target.add(toArchon))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon)));
+            if (rc.canSenseLocation(target.add(toArchon.rotateLeft()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateLeft())));
+            if (rc.canSenseLocation(target.add(toArchon.rotateRight()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateRight())));
+        }
         //if builder isn't within archon radius come back
         if (bestLabSpot==null && !rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){
             builderMove(archonLoc);
@@ -469,7 +474,7 @@ public class Builder extends Droid{
             if (rc.isMovementReady() && best_location != null && !best_location.equals(target)){
                 builderMove(best_location);
             }
-            if (best_location.equals(rc.getLocation())){
+            else if (best_location.equals(rc.getLocation())){
                 if (rc.canMutate(target)){
                     rc.mutate(target);
                 }
