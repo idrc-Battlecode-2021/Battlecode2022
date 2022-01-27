@@ -1,7 +1,6 @@
-package bot10_MC3.robots.droids;
+package bot10_MC4.robots.droids;
 import battlecode.common.*;
-import bot10_MC3.util.PathFinding30;
-import bot10_MC3.util.PathFinding30Lesser;
+import bot10_MC4.util.PathFinding30Lesser;
 
 import java.util.HashSet;
 
