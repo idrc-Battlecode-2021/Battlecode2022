@@ -91,7 +91,7 @@ public class Sage extends Droid{
         if(addedToHeal){
             rc.writeSharedArray(31+myArchonOrder,healCheck-1);
             addedToHeal = false;
-       }
+        }
         RobotInfo[] nearbyBots = rc.senseNearbyRobots(25,myTeam.opponent());
         if(nearbyBots.length >= 1){
             //New targetting
