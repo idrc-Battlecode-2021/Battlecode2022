@@ -3063,7 +3063,7 @@ public class PathFinding30 {
     HashSet<MapLocation> exploredLocations = new HashSet<>();
     public void newExploreLocation(){
         exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
-        while(exploredLocations.contains(exploreTarget) || Clock.getBytecodesLeft() > 5500){
+        while(exploredLocations.contains(exploreTarget) && Clock.getBytecodesLeft() > 5500){
             exploreTarget = new MapLocation((int)(Math.random()*width),(int)(Math.random()*height));
         }
         exploredLocations.add(exploreTarget);
