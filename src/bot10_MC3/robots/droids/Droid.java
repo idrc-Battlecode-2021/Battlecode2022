@@ -283,6 +283,7 @@ public abstract class Droid extends Robot {
         newLocation();
         intermediateMove(exploreTarget);
     }
+    /*
     public void parseAnomalies() {
         for (AnomalyScheduleEntry a : anomaly) {
             if (a.anomalyType == AnomalyType.CHARGE) {
@@ -290,6 +291,7 @@ public abstract class Droid extends Robot {
             }
         }
     }
+
     public void avoidCharge() throws GameActionException {
         if(relevantAnomalies.isEmpty())return;
         AnomalyScheduleEntry a = relevantAnomalies.get(0);
@@ -317,5 +319,5 @@ public abstract class Droid extends Robot {
             tryMoveMultiple(d);
         }
     }
-
+     */
 }

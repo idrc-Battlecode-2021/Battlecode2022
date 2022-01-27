@@ -26,12 +26,6 @@ public class Miner extends Droid{
     public void init() throws GameActionException {
         pfs=new PathFindingSoldier(rc);
         //parseAnomalies();
-        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
-        for (RobotInfo ro : r){
-            if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
-                archonLoc = ro.getLocation();
-            }
-        }
         target = null;
         //exploreTarget = new MapLocation((int)(rc.getMapWidth()*Math.random()),(int)(rc.getMapHeight()*Math.random()));
         //exploreDirIndex = (int)(8*Math.random());
