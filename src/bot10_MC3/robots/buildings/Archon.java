@@ -83,7 +83,6 @@ public class Archon extends Building{
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
         myArchonID = rc.getID();
-        //labBuild = rc.getMapHeight()/40+1;
         setPassableDirections();
         //checkEdge();
         targetMinerCount = 3+(Math.min(mapHeight, mapWidth)-20)/3;

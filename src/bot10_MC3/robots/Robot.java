@@ -23,6 +23,7 @@ public abstract class Robot {
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
     protected Direction initDirection;
     protected Direction[] directions;
+    protected MapLocation archonLoc;
     //OLD Movement Method Fields
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
@@ -70,10 +71,11 @@ public abstract class Robot {
 
     public void detectArchon() throws GameActionException{
         // detect and assign archon ID at spawn
-        RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam());
+        RobotInfo[] robots = rc.senseNearbyRobots(2, rc.getTeam());
         for (int i = robots.length; --i>=0;){
             if (robots[i].getType() == RobotType.ARCHON){
                 myArchonID = robots[i].getID();
+                archonLoc = robots[i].location;
                 break;
             }
         }

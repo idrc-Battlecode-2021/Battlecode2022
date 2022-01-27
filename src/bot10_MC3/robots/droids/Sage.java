@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class Sage extends Droid{
     private MapLocation target = null;
-    private MapLocation archonLoc;
+
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
     private int globalSageCount = 0;
     private boolean shouldHeal = false;
@@ -26,12 +26,6 @@ public class Sage extends Droid{
         pfs=new PathFinding30(rc);
         possibleArchonLocs();
         parseAnomalies();
-        RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
-        for (RobotInfo ro : r){
-            if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
-                archonLoc = ro.getLocation();
-            }
-        }
         detectArchon();
         int archonCount = rc.getArchonCount();
         archonLocs = getArchonLocs();
@@ -95,7 +89,7 @@ public class Sage extends Droid{
             rc.writeSharedArray(31+myArchonOrder,healCheck-1);
             addedToHeal = false;
        }
-        RobotInfo[] nearbyBots = rc.senseNearbyRobots(RobotType.SAGE.actionRadiusSquared,rc.getTeam().opponent());
+        RobotInfo[] nearbyBots = rc.senseNearbyRobots(25,myTeam.opponent());
         if(nearbyBots.length >= 1){
             //New targetting
             if (!rc.isActionReady()){
@@ -293,7 +287,6 @@ public class Sage extends Droid{
     }
 
     public MapLocation selectTargetKill() throws GameActionException{
-        int bytecode = Clock.getBytecodeNum();
         moveToLowRubble();
         RobotInfo[] enemyRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
         RobotInfo[] myRobots = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam());
