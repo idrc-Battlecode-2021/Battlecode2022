@@ -320,7 +320,6 @@ public abstract class Robot {
             if(rc.canMove(directions[i])){
                 rc.move(directions[i]);
                 myLocation = rc.getLocation();
-                updateInternalMap();
                 return true;
             }
         }
@@ -393,7 +392,7 @@ public abstract class Robot {
             //}
 
         }
-        int k=0;
+        int k=1;
         boolean seesArchon = false, seesAttacker = false;
         loop: for (RobotInfo r:enemies){
             switch(r.getType()){
@@ -433,10 +432,6 @@ public abstract class Robot {
             }
         }
         return false;
-    }
-
-    public int turnPenalty(int rubble){ //check if works
-        return (int) Math.ceil(Math.floor((1+rubble/(double)10)*myType.movementCooldown)/(double) 10);
     }
 
     public void tryAttack(MapLocation Loc) throws GameActionException {
@@ -639,8 +634,6 @@ public abstract class Robot {
         }
         return 100;
     }
-    
-    private void updateInternalMap(){}
 
     public MapLocation readSymmetry() throws GameActionException {
         int n = rc.readSharedArray(48);
