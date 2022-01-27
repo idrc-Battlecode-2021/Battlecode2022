@@ -19,6 +19,7 @@ public class Archon extends Building{
     private static int archonOrder = 0; //reverse position of archonID in shared array
     private static int power = 0; // power of 16 that corresponds with archonOrder
     private MapLocation bestTargetLocation = null;
+    private boolean comparedToBest = false;
     private static final int SURPLUS_THRESHOLD = 500;
 
     private static ArrayList<Direction> passableDirections = new ArrayList<Direction>();
@@ -128,22 +129,6 @@ public class Archon extends Building{
         int xCheck = Math.abs(center.x-bestTargetLocation.x);
         int yCheck = Math.abs(center.y-bestTargetLocation.y);
 
-        int arrLocation = rc.readSharedArray(29);
-        MapLocation otherTarget = new MapLocation(arrLocation%256,arrLocation/256);
-        if (!otherTarget.equals(new MapLocation(0,0)) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
-            //it's within and should run other functions to find the closest location next to the archon
-            int otherX = Math.abs(center.x-otherTarget.x);
-            int otherY = Math.abs(center.y-otherTarget.y);
-            if (otherX+otherY<xCheck+yCheck){
-                bestTargetLocation = otherTarget;
-                if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
-                    rc.transform();
-                    pastLocations.clear();
-                    setTransformStatus();
-                }
-            }
-        }
-
         int averageSurroundingRubble = 0;
         int count = 0;
         for (Direction d: Constants.DIRECTIONS ){
@@ -154,7 +139,10 @@ public class Archon extends Building{
         }
         averageSurroundingRubble/=count;
         MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 32);
-        if (rc.getLocation().isWithinDistanceSquared(otherTarget,2)){ // want archon to stay
+
+        int arrLocation = rc.readSharedArray(29);
+        MapLocation otherTarget = new MapLocation(arrLocation%256,arrLocation/256);
+        if (rc.getLocation().isWithinDistanceSquared(otherTarget,2) && comparedToBest){ // want archon to stay
             locations = rc.getAllLocationsWithinRadiusSquared(otherTarget, 2);
         }
         for (MapLocation m: locations){
@@ -197,6 +185,26 @@ public class Archon extends Building{
                 }
             }
             
+        }
+
+        if (!otherTarget.equals(new MapLocation(0,0)) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
+            //compare only if the best locations hasn't been set and the current location is far away, otherwise find the best within
+            int otherX = Math.abs(center.x-otherTarget.x);
+            int otherY = Math.abs(center.y-otherTarget.y);
+            if (otherX+otherY<xCheck+yCheck){
+                comparedToBest = true;
+                bestTargetLocation = otherTarget;
+                if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
+                    rc.transform();
+                    pastLocations.clear();
+                    setTransformStatus();
+                }
+                return;
+            }
+            if (otherX+otherY>xCheck+yCheck && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
+                comparedToBest = false;
+                rc.writeSharedArray(29,rc.getLocation().x+rc.getLocation().y*256);
+            }
         }
         if(!bestTargetLocation.equals(rc.getLocation())){
             if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
@@ -250,13 +258,12 @@ public class Archon extends Building{
         else{
             int arrLocation = rc.readSharedArray(29);
             MapLocation otherTarget = new MapLocation(arrLocation%256,arrLocation/256);
-            if(rc.getLocation().equals(bestTargetLocation) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
-                rc.writeSharedArray(29,rc.getLocation().x+rc.getLocation().y*256);
-                if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
-                    rc.transform();
-                    pastLocations.clear();
-                    setTransformStatus();
-                }
+            //if(rc.getLocation().equals(bestTargetLocation) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
+            rc.writeSharedArray(29,rc.getLocation().x+rc.getLocation().y*256);
+            if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+                rc.transform();
+                pastLocations.clear();
+                setTransformStatus();
             }
         }
     }
