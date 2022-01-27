@@ -8,12 +8,10 @@ import bot10_MC3.util.PathFindingSoldier;
 import java.util.*;
 
 public class Archon extends Building{
-    private static Integer  minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, watchtowerCount = 0, minerCountMax = 0;
+    private static Integer  minerFoundCount = 0, builderCount = 0, sageCount = 0, soldierCount = 0, labCount = 0, minerCountMax = 0;
     private static int count = 0;
-    private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalWatchtowerCount, globalLabCount;
+    private static int globalMinerCount = 0, globalBuilderCount, globalSageCount, globalSoldierCount, globalLabCount;
     private static int targetMinerCount; //target # of miners to build across all archons
-    private static int minersForNearbyLead;
-    private static int minerMin, minerMax;
     private static int peakMiner = 0;
 
     private static Integer minerIndex = 0; //spawning miners
@@ -31,7 +29,6 @@ public class Archon extends Building{
 
     private static int minerThreshold = 200; //TODO: make miner and lab thresholds global
 
-    private static String indicatorString = "";
     private PathFinding30 pfs;
 
     public Archon(RobotController rc) {
@@ -55,8 +52,7 @@ public class Archon extends Building{
     @Override
     public void init() throws GameActionException {
         pfs=new PathFinding30(rc);
-        initialArchons = rc.getArchonCount();
-        parseAnomalies();
+        //parseAnomalies();
         // write Archon ID to shared array
         if (rc.getArchonCount()==1){
             archonOrder = 0;
@@ -67,7 +63,6 @@ public class Archon extends Building{
             }
         }
         //write archon location to array
-        MapLocation myLocation = rc.getLocation();
         int x = myLocation.x;
         int y = myLocation.y;
         switch (archonOrder){
@@ -87,83 +82,47 @@ public class Archon extends Building{
         rc.writeSharedArray(63-archonOrder,rc.getID()+1);
         power = (int)Math.pow(16,archonOrder);
         // Choose # of miners to build based on lead in surroundings
-        minersForNearbyLead = (int) Math.ceil(rc.senseNearbyLocationsWithLead(34).length/9.0);
         myArchonID = rc.getID();
-        myArchonOrder = archonOrder;
         //labBuild = rc.getMapHeight()/40+1;
         setPassableDirections();
-        checkEdge();
-        //System.out.println(isEdge);
+        //checkEdge();
         targetMinerCount = 3+(Math.min(mapHeight, mapWidth)-20)/3;
-        minerMax = (int) Math.sqrt(mapHeight*mapWidth)/2;
-        minerMin = minerMax/10*3;
-        bestTargetLocation = rc.getLocation();
+        bestTargetLocation = myLocation;
     }
     public void setPassableDirections() throws GameActionException{
-        for (Direction d:directions){
-            if (!rc.onTheMap(rc.getLocation().add(d)) || d==Direction.CENTER){
+        for (int j = 0; j < directions.length; j++){
+            if (!rc.onTheMap(rc.getLocation().add(directions[j])) || directions[j]==Direction.CENTER){
                 continue;
             }
             if (passableDirections.size()==0){
-                passableDirections.add(d);
+                passableDirections.add(directions[j]);
                 continue;
             }
-            MapLocation location = rc.getLocation().add(d);
+            MapLocation location = myLocation.add(directions[j]);
             int rubble = rc.senseRubble(location);
             for (int i=0;i<=passableDirections.size();i++){
                 if (i==passableDirections.size()){
-                    passableDirections.add(i,d);
+                    passableDirections.add(i,directions[j]);
                     break;
                 }
-                if (rubble<rc.senseRubble(rc.getLocation().add(passableDirections.get(i)))){
-                    passableDirections.add(i,d);
+                if (rubble<rc.senseRubble(myLocation.add(passableDirections.get(i)))){
+                    passableDirections.add(i,directions[j]);
                     break;
                 }
             }
         }
     }
-    /*
-    public void setTargetLocation() throws GameActionException{
-        int rubble = rc.senseRubble(rc.getLocation());
-        int minDist=0;
-        bestTargetLocation=myLocation;
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared)){
-            if (rc.canSenseRobotAtLocation(m))continue;
-            int dist = rc.getLocation().distanceSquaredTo(m);
-            int r=rc.senseRubble(m);
-            if(r<rubble){
-                minDist = dist;
-                rubble=r;
-                bestTargetLocation=m;
-            }
-            if (r==rubble){
-                if (dist<minDist){
-                    minDist = dist;
-                    bestTargetLocation = m;
-                }
-            }
-        }
-        if(!bestTargetLocation.equals(rc.getLocation())){
-            if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
-                rc.transform();
-                setTransformStatus();
-            }
-        }
-    }
-    */
 
     public void setOffensiveTarget() throws GameActionException{
-        int bytecode = Clock.getBytecodeNum();
         int rubble = rc.senseRubble(rc.getLocation());
         if (bestTargetLocation==null){
             bestTargetLocation = rc.getLocation();
         }
         if (!rc.canSenseLocation(bestTargetLocation)){
-            System.out.println("CANT SENSE BEST TARGET: "+bestTargetLocation);
             return;
         }
-        if (!bestTargetLocation.equals(rc.getLocation()) && rc.canSenseRobotAtLocation(bestTargetLocation) && rc.senseRobotAtLocation(bestTargetLocation).getMode()!=RobotMode.DROID){
-            bestTargetLocation = rc.getLocation();
+        if (!bestTargetLocation.equals(myLocation) && rc.canSenseRobotAtLocation(bestTargetLocation) && rc.senseRobotAtLocation(bestTargetLocation).getMode()!=RobotMode.DROID){
+            bestTargetLocation = myLocation;
         }
         int xCheck = Math.abs(center.x-bestTargetLocation.x);
         int yCheck = Math.abs(center.y-bestTargetLocation.y);
@@ -177,7 +136,7 @@ public class Archon extends Building{
             averageSurroundingRubble+=rc.senseRubble(thisLocation);
         }
         averageSurroundingRubble/=count;
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), rc.getType().visionRadiusSquared-2)){
+        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 32)){
             int r=rc.senseRubble(m);
             if (r>rubble)continue;
             int xTemp = Math.abs(center.x-m.x);
@@ -200,25 +159,19 @@ public class Archon extends Building{
                 xCheck = xTemp;
                 yCheck = yTemp;
                 averageSurroundingRubble = tempRubble;
-                count = tempCount;
             }
-            else if (r==rubble){
+            else {
                 if(tempRubble<averageSurroundingRubble){
-                    rubble = r;
                     bestTargetLocation = m;
                     xCheck = xTemp;
                     yCheck = yTemp;
                     averageSurroundingRubble = tempRubble;
-                    count = tempCount;
                 }
                 else if (tempRubble==averageSurroundingRubble){
                     if (xTemp+yTemp<xCheck+yCheck){
-                        rubble = r;
                         bestTargetLocation = m;
                         xCheck = xTemp;
                         yCheck = yTemp;
-                        averageSurroundingRubble = tempRubble;
-                        count = tempCount;
                     }
                 }
             }
@@ -253,7 +206,7 @@ public class Archon extends Building{
         }
     }
     public void move() throws GameActionException{
-        if(!bestTargetLocation.equals(rc.getLocation())){
+        if(!bestTargetLocation.equals(myLocation)){
             if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()) {
                 rc.transform();
                 pastLocations.clear();
@@ -271,7 +224,6 @@ public class Archon extends Building{
                 setPassableDirections();
                 writeLocationToArray();
             }
-            System.out.println(rc.getLocation().toString()+bestTargetLocation.toString()+(bestTargetLocation.equals(rc.getLocation())));
         }
         else{
             if(rc.getLocation().equals(bestTargetLocation) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
@@ -295,21 +247,18 @@ public class Archon extends Building{
 
     private int transforms = 0;
     public boolean freeToTransform() throws GameActionException{
-        if (rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent()).length>0){
+        if (rc.senseNearbyRobots(34, rc.getTeam().opponent()).length>0){
             return false;
         }
         if (rc.getArchonCount()==1){
             return true;
         }
         int currentStatus = rc.readSharedArray(17);
-        indicatorString+= " transformStatus: "+Integer.toBinaryString(currentStatus);
         int transformed = 0;
         for (int i=0;i<rc.getArchonCount();i++){
             int value = (int)Math.pow(2,i);
             transformed += (currentStatus%(value*2))/value;
         }
-        //System.out.println(" transformStatus: "+Integer.toBinaryString(currentStatus)+" transformed: "+transformed);
-        indicatorString+=" transformed: "+transformed;
         transforms = transformed;
         if (transformed>=rc.getArchonCount()-1){
             return false;
@@ -320,20 +269,25 @@ public class Archon extends Building{
     private boolean nearEnemyArchon = false;
     public boolean defense() throws GameActionException {
         nearEnemyArchon = false;
-        RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().visionRadiusSquared, rc.getTeam().opponent());
+        RobotInfo[] enemies = rc.senseNearbyRobots(34, myTeam.opponent());
         int current = rc.readSharedArray(56);
         int myValue = (current % (power*16))/power;
         boolean isEnemy = false;
-        boolean isSupport = false;
+        int counter = 0;
         loop1: for (RobotInfo r:enemies){
             switch(r.getType()){
                 case SOLDIER:
                 case SAGE:
                 case WATCHTOWER:
-                    isEnemy = true; break loop1;
+                    isEnemy = true; counter++; break;
                 case ARCHON:
                     nearEnemyArchon = true;
             }
+        }
+        if(counter > 3 && rc.readSharedArray(45) == 0 && rc.getHealth() > 60){
+            rc.writeSharedArray(45,64*myLocation.x+myLocation.y);
+        }else if(rc.readSharedArray(45)== 64*myLocation.x+myLocation.y){
+            rc.writeSharedArray(45,0);
         }
         if (isEnemy){
             rc.writeSharedArray(56, current - myValue*power + power);
@@ -373,15 +327,6 @@ public class Archon extends Building{
         return true;
     }
 
-    public void buildWatchtower() throws GameActionException {
-        int temp = (int)Math.pow(4,archonOrder);
-        int currentValue = rc.readSharedArray(58);
-        int previousBuildCommand = (currentValue % (temp * 4))/temp;
-        int buildCommand = currentValue - previousBuildCommand * temp + temp * 2;
-        watchtowerCount++;
-        rc.writeSharedArray(58, buildCommand);
-    }
-
     // Checks is all archons are alive; if not, refactor information in shared arrays
     public void checkArchonsAlive() throws GameActionException{
         if (rc.getArchonCount()<initialArchons){
@@ -414,7 +359,7 @@ public class Archon extends Building{
 
     // update troop count variables from shared array
     public void updateTroopCount() throws GameActionException{
-        if (rc.getRoundNum()%3!=2){
+        if (roundNum%3!=2){
             /*
             if (archonOrder<=1){
                 minerCount = (rc.readSharedArray(0)%((int)Math.pow(256,archonOrder+1)))/(int)Math.pow(256,archonOrder);
@@ -430,9 +375,7 @@ public class Archon extends Building{
             globalMinerCount = rc.readSharedArray(44);
             peakMiner = Math.max(globalMinerCount, peakMiner);
             globalSoldierCount = rc.readSharedArray(3);
-            globalWatchtowerCount = rc.readSharedArray(5) + rc.readSharedArray(6) + rc.readSharedArray(7) + rc.readSharedArray(8);
             globalLabCount = rc.readSharedArray(4);
-            watchtowerCount = rc.readSharedArray(archonOrder+5);
             labCount = (rc.readSharedArray(4) % (power*16))/power;
         }
         if (roundNum%3==1 && archonOrder==rc.getArchonCount()-1){ //Reset Troop Counts only if is last archon
@@ -449,14 +392,12 @@ public class Archon extends Building{
         // next archon to spawn, otherwise don't spawn anything (return false).
         if (diff<0){
             if (rc.getTeamLeadAmount(rc.getTeam())-cost*-1*diff<cost){
-                rc.setIndicatorString(indicatorString);
                 return false;
             }
         }
         if (diff>0){
             int space = rc.getArchonCount()-diff;
             if (rc.getTeamLeadAmount(rc.getTeam())-cost*space<cost){
-                rc.setIndicatorString(indicatorString);
                 return false;
             }
         }
@@ -469,14 +410,12 @@ public class Archon extends Building{
         // next archon to spawn, otherwise don't spawn anything (return false).
         if (diff<0){
             if (rc.getTeamGoldAmount(rc.getTeam())-cost*-1*diff<cost){
-                rc.setIndicatorString(indicatorString);
                 return false;
             }
         }
         if (diff>0){
             int space = rc.getArchonCount()-diff;
             if (rc.getTeamGoldAmount(rc.getTeam())-cost*space<cost){
-                rc.setIndicatorString(indicatorString);
                 return false;
             }
         }
@@ -534,66 +473,38 @@ public class Archon extends Building{
         }
         nearbyTroopHealth = newTroopHealth;
         if (attackedLocation!=null && rc.canRepair(attackedLocation)){
-            //indicatorString+=" healing attacked soldier";
             //repair soldier being attacked
             rc.repair(attackedLocation);
             return;
         }
         if (continueHealLocation!=null && rc.canRepair(continueHealLocation)){
-            //indicatorString+=" continue to heal soldier";
             rc.repair(continueHealLocation);
             return;
         }
         if (troopLocation!=null && rc.canRepair(troopLocation)){
-            //indicatorString+=" healing soldier";
             soldierToHeal = troopID;
             rc.repair(troopLocation);
             return;
         }
         if (supportLocation!=null && rc.canRepair(supportLocation)){
-            //indicatorString+=" healing miner";
             rc.repair(supportLocation);
-        }
-        //indicatorString+=" healing none";
-    }
-
-    private void checkEnemies() throws GameActionException{
-        RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(34,myTeam.opponent());
-        int counter = 0;
-        for(int i = nearbyEnemies.length; --i>=0;){
-            switch (nearbyEnemies[i].getType()){
-                case SAGE:
-                case SOLDIER:
-                case WATCHTOWER:
-                    counter++;
-            }
-        }
-        if(counter > 3 && rc.readSharedArray(45) == 0 && rc.getHealth() > 60){
-            rc.writeSharedArray(45,64*myLocation.x+myLocation.y);
-        }else if(rc.readSharedArray(45)== 64*myLocation.x+myLocation.y){
-            rc.writeSharedArray(45,0);
         }
     }
 
     @Override
     public void run() throws GameActionException {
         roundNum = rc.getRoundNum();
-        indicatorString = "";
-        checkEnemies();
         checkArchonsAlive();
         checkEdge(); //TODO: to optimize bytecode move this to init() and checkarchonsalive only
         updateTroopCount();
         if (defense()){
             repair();
-            indicatorString += " defense";
-            rc.setIndicatorString(indicatorString);
             return;
         }
         //minerThreshold = Math.max(200, 200+(globalMinerCount-3)/rc.getArchonCount()*90); //TODO: experiment with factor 
         //don't move unless labs are built
         if (globalLabCount>0){ 
             setOffensiveTarget();
-            //setTargetLocation();
             move();
         } 
         else if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
@@ -625,23 +536,12 @@ public class Archon extends Building{
                     rc.writeSharedArray(10,goldBuildStatus+1);
                 }
             }
-            System.out.println("3: "+Clock.getBytecodesLeft());
             return;
         }
 
-        indicatorString+="gd: "+goldDiff+" gs: "+goldBuildStatus;
-        int mod = 4;
-        /*
-        if(rc.readSharedArray(40)!=0){
-            mod = 1;
-        }else if (rc.readSharedArray(42)!= 0){ // if a miner has been sighted
-            mod = 2;
-        }
-        */
-        if (/*!(rc.readSharedArray(47)>=3 && rc.getRoundNum()<5) && */globalMinerCount < 3/*minerMin*/ && !nearEnemyArchon){
+        if (globalMinerCount < 3 && !nearEnemyArchon){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
-            indicatorString += " miners";
             if (!checkLeadBuildStatus(leadDiff, cost)){
                 repair();
                 return;
@@ -667,13 +567,13 @@ public class Archon extends Building{
                     rc.writeSharedArray(47,rc.readSharedArray(47)+1);
                     peakMiner = Math.max(globalMinerCount, peakMiner);
                     count++;
+                    return;
                 }
             }
         }
         else if (globalBuilderCount < 1 && !nearEnemyArchon){
             int cost = RobotType.BUILDER.buildCostLead;
             RobotType type = RobotType.BUILDER;
-            indicatorString += " builders";
             if (!isEdge){ // pass the turn and make the archon closest to the edge build a builder
                 if (leadDiff==0){
                     if (leadBuildStatus == rc.getArchonCount()-1){
@@ -703,6 +603,7 @@ public class Archon extends Building{
                     globalBuilderCount++;
                     builderCount++;
                     count++;
+                    return;
                 }
             }
         }
@@ -710,7 +611,6 @@ public class Archon extends Building{
         if (rc.getTeamGoldAmount(rc.getTeam())>RobotType.SAGE.buildCostGold) {
             int cost = RobotType.SAGE.buildCostGold;
             RobotType type = RobotType.SAGE;
-            indicatorString += " sages";
             if (!checkGoldBuildStatus(goldDiff, cost)){
                 repair();
                 return;
@@ -732,13 +632,13 @@ public class Archon extends Building{
                     rc.buildRobot(type,passableDirections.get(i));
                     sageCount++;
                     count++;
+                    return;
                 }
             }
         }
-        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && (globalMinerCount<targetMinerCount || peakMiner<targetMinerCount*4/3)/*minerMax*/){
+        else if (globalLabCount>0 && rc.getTeamLeadAmount(rc.getTeam())>RobotType.MINER.buildCostLead && !nearEnemyArchon && (globalMinerCount<targetMinerCount || peakMiner<targetMinerCount*4/3)){
             int cost = RobotType.MINER.buildCostLead;
             RobotType type = RobotType.MINER;
-            indicatorString += " miners";
             if (!checkLeadBuildStatus(leadDiff, cost)){
                 repair();
                 return;
@@ -763,12 +663,12 @@ public class Archon extends Building{
                     rc.writeSharedArray(44,rc.readSharedArray(44)+1);
                     peakMiner = Math.max(globalMinerCount, peakMiner);
                     count++;
+                    return;
                 }
             }
         }else if(nearEnemyArchon){
             int cost = RobotType.SOLDIER.buildCostLead;
             RobotType type = RobotType.SOLDIER;
-            indicatorString += " soldiers";
             if (!checkLeadBuildStatus(leadDiff, cost)){
                 repair();
                 return;
@@ -790,6 +690,7 @@ public class Archon extends Building{
                     rc.buildRobot(type,passableDirections.get(i));
                     soldierCount++;
                     count++;
+                    return;
                 }
             }
         }else if (rc.getHealth()<RobotType.ARCHON.health){
@@ -804,7 +705,6 @@ public class Archon extends Building{
             if (!builder){
                 int cost = RobotType.BUILDER.buildCostLead;
                 RobotType type = RobotType.BUILDER;
-                indicatorString += " builders";
                 if (rc.getTeamLeadAmount(rc.getTeam())>=cost){
                     int i=0;
                     while (i<passableDirections.size()-1 && !rc.canBuildRobot(type,passableDirections.get(i))){
@@ -816,47 +716,21 @@ public class Archon extends Building{
                         globalBuilderCount++;
                         builderCount++;
                         count++;
+                        return;
                     }
                 }
             }
         }
         repair();
-        rc.setIndicatorString(indicatorString);
     }
 
-    public boolean archonMove(MapLocation target) throws GameActionException{
-        if (!rc.isMovementReady()){
-            return false;
-        }
-        MapLocation lowest = rc.getLocation();
-        int lowest_rubble = 99;
-        myLocation = rc.getLocation();
-        for (Direction d: Direction.allDirections()){
-            if (d==Direction.CENTER)continue;
-            MapLocation adjacent=rc.adjacentLocation(d);
-            if (!rc.onTheMap(adjacent) || rc.canSenseRobotAtLocation(adjacent) && rc.senseRobotAtLocation(adjacent).getMode()!=RobotMode.DROID) continue;
-            int rubbleAtLoc = rc.senseRubble(adjacent);
-            if (adjacent.distanceSquaredTo(target) >= myLocation.distanceSquaredTo(target))continue;
-            if(rubbleAtLoc < lowest_rubble || rubbleAtLoc == lowest_rubble && adjacent.distanceSquaredTo(target) < lowest.distanceSquaredTo(target)){
-                lowest = adjacent;
-                lowest_rubble = rubbleAtLoc;
-            }
-        }
-        Direction direction = rc.getLocation().directionTo(lowest);
-        indicatorString+=direction.toString();
-        if(rc.canMove(direction)){
-            rc.move(direction);
-            myLocation = rc.getLocation();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isEdge = false;
+    private boolean isEdge;
     private void checkEdge() throws GameActionException {
         MapLocation[] archons = getArchonLocs();
-        if(archons.length == 0)return;
-        myLocation = rc.getLocation();
+        if(rc.getArchonCount() == 1 || archons.length == 0){
+            isEdge = true;
+            return;
+        }
         MapLocation targetArchon = archons[0]; // if both archons are same distance apart, make sure the first archon always builds
         int xCheck = Math.min(Math.abs(-targetArchon.x),Math.abs(mapWidth-1-targetArchon.x));
         int yCheck = Math.min(Math.abs(-targetArchon.y),Math.abs(mapHeight-1-targetArchon.y));

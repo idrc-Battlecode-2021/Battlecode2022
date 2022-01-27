@@ -16,13 +16,6 @@ public class Lab extends Building{
     @Override
     public void init() throws GameActionException {
         targetMinerCount = 3+(Math.min(mapHeight, mapWidth)-20)/3;
-        /*
-        parseAnomalies();
-		readConstraints();
-		if (canMakeGold()){
-            rc.transmute();
-        }
-        */
     }
 
     @Override

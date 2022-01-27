@@ -30,8 +30,8 @@ public class Watchtower extends Building {
     }
     @Override
     public void run() throws GameActionException {
-        avoidFury();
-        retransform();
+        //avoidFury();
+        //retransform();
         if(isDefensive){
             rc.setIndicatorString(Integer.toBinaryString(rc.readSharedArray(57)));
             if (rc.getLocation().isWithinDistanceSquared(archon,2)){

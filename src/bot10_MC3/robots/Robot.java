@@ -11,13 +11,13 @@ import java.util.Set;
 
 public abstract class Robot {
     protected RobotController rc;
-    protected Team myTeam;
-    protected RobotType myType;
-    protected MapLocation myLocation;
+    protected static Team myTeam;
+    protected static RobotType myType;
+    protected static MapLocation myLocation;
     protected int myArchonID;
     protected int myArchonOrder;
-    protected int mapWidth,mapHeight;
-    protected int initialArchons;
+    protected static int mapWidth,mapHeight;
+    protected static int initialArchons;
     protected boolean archonWait = false;
     protected ArrayList <MapLocation> enemyArchons = new ArrayList<MapLocation>();
     protected ArrayList <MapLocation> myArchons = new ArrayList<MapLocation>();
@@ -27,7 +27,7 @@ public abstract class Robot {
     protected int[][] internalMap;
     protected HashSet<MapLocation> prevLocs = new HashSet<>();
     protected ArrayList<MapLocation> myPath = new ArrayList<>();
-    protected MapLocation center;
+    protected static MapLocation center;
     // -1 = unknown, otherwise amount of rubble
 
     public Robot( RobotController rc){
@@ -40,13 +40,6 @@ public abstract class Robot {
         initialArchons = rc.getArchonCount();
         center = new MapLocation(mapWidth/2,mapHeight/2);
         updateDirection(myLocation.directionTo(center));
-        //Too Much Bytecode, 5000
-        /*for(int i = mapWidth; --i>=0;){
-            for(int j = mapHeight; --j>=0;){
-                internalMap[i][j] = -1;
-            }
-        }*/
-        //updateInternalMap();
     }
     
     public abstract void init() throws GameActionException;

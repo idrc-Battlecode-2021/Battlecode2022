@@ -13,7 +13,7 @@ public abstract class Building extends Robot {
         super(rc);
     }
 
-    public void parseAnomalies() {
+    /*public void parseAnomalies() {
         for (AnomalyScheduleEntry a : anomaly) {
             if (a.anomalyType == AnomalyType.FURY) {
                 relevantAnomalies.add(a);
@@ -43,6 +43,6 @@ public abstract class Building extends Robot {
             }
         }
 
-    }
+    }*/
 
 }
