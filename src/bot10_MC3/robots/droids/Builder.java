@@ -16,7 +16,7 @@ public class Builder extends Droid{
     private static int labThreshold = 180;
     private String indicatorString = "";
     private MapLocation healLocation = null;
-    private boolean farthestBuilder = true;
+    private boolean farthestBuilder = false;
     
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
