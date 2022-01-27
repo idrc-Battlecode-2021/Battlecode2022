@@ -201,9 +201,10 @@ public class Archon extends Building{
                 }
                 return;
             }
-            if (otherX+otherY>xCheck+yCheck && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
+            if (otherX+otherY>xCheck+yCheck && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2) && rubble<rc.readSharedArray(30)){
                 comparedToBest = false;
                 rc.writeSharedArray(29,rc.getLocation().x+rc.getLocation().y*256);
+                rc.writeSharedArray(30, rubble);
             }
         }
         if(!bestTargetLocation.equals(rc.getLocation())){
@@ -256,10 +257,6 @@ public class Archon extends Building{
             }
         }
         else{
-            int arrLocation = rc.readSharedArray(29);
-            MapLocation otherTarget = new MapLocation(arrLocation%256,arrLocation/256);
-            //if(rc.getLocation().equals(bestTargetLocation) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
-            rc.writeSharedArray(29,rc.getLocation().x+rc.getLocation().y*256);
             if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
                 rc.transform();
                 pastLocations.clear();
