@@ -416,6 +416,7 @@ public class Archon extends Building{
             for (int i=0;i<5;i++){
                 rc.writeSharedArray(i, 0);
             }
+            rc.writeSharedArray(28, 0);
             rc.writeSharedArray(44,0);
         }
     }
