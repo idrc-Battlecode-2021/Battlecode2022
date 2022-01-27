@@ -11,7 +11,7 @@ public class Builder extends Droid{
     private MapLocation finishPrototype = null;
     private MapLocation bestBuildSpot = null;
     private MapLocation bestLabSpot = null;
-    private int builderCount = 0;
+    private int builderCount = 1;
     private int globalLabCount = 0;
     private static int labThreshold = 180;
     private String indicatorString = "";
