@@ -89,6 +89,7 @@ public class Archon extends Building{
         bestTargetLocation = myLocation;
     }
     public void setPassableDirections() throws GameActionException{
+        int bytecode = Clock.getBytecodeNum();
         for (int j = 0; j < directions.length; j++){
             if (!rc.onTheMap(rc.getLocation().add(directions[j])) || directions[j]==Direction.CENTER){
                 continue;
@@ -113,6 +114,7 @@ public class Archon extends Building{
     }
 
     public void setOffensiveTarget() throws GameActionException{
+        int bytecode = Clock.getBytecodeNum();
         int rubble = rc.senseRubble(rc.getLocation());
         if (bestTargetLocation==null){
             bestTargetLocation = rc.getLocation();
@@ -130,7 +132,7 @@ public class Archon extends Building{
         int count = 0;
         for (Direction d: Constants.DIRECTIONS ){
             MapLocation thisLocation = rc.adjacentLocation(d);
-            if (!rc.onTheMap(thisLocation) || !rc.canSenseLocation(thisLocation))continue;
+            if (!rc.onTheMap(thisLocation))continue;
             count++;
             averageSurroundingRubble+=rc.senseRubble(thisLocation);
         }
@@ -144,8 +146,8 @@ public class Archon extends Building{
             if (rc.canSenseRobotAtLocation(m) && rc.senseRobotAtLocation(m).getMode()!=RobotMode.DROID)continue;
             int tempRubble = 0;
             int tempCount = 0;
-            for (Direction d: Constants.DIRECTIONS ){
-                MapLocation thisLocation = m.add(d);
+            for(int i = directions.length; --i>=0;){
+                MapLocation thisLocation = m.add(directions[i]);
                 if (!rc.canSenseLocation(thisLocation))continue;
                 tempCount++;
                 tempRubble+=rc.senseRubble(thisLocation);
@@ -183,6 +185,7 @@ public class Archon extends Building{
                 setTransformStatus();
             }
         }
+        System.out.println("sot: "+(Clock.getBytecodeNum()-bytecode));
     }
     public void writeLocationToArray() throws GameActionException{
         //write archon location to array
@@ -441,9 +444,11 @@ public class Archon extends Building{
         int greatestSupportHealthDifference = 0; // miner/builder health
         MapLocation supportLocation = null;
 
+        int bytecode = Clock.getBytecodeNum();
         HashMap<Integer, Integer> newTroopHealth = new HashMap<Integer, Integer>();
 
         RobotInfo[] robots = rc.senseNearbyRobots(RobotType.ARCHON.actionRadiusSquared,rc.getTeam());
+
         loop1: for (RobotInfo robot: robots){
             MapLocation thisLocation = robot.getLocation();
             switch (robot.getType()){
@@ -490,6 +495,7 @@ public class Archon extends Building{
         if (supportLocation!=null && rc.canRepair(supportLocation)){
             rc.repair(supportLocation);
         }
+        //System.out.println(Clock.getBytecodeNum()-bytecode);
     }
 
     @Override
