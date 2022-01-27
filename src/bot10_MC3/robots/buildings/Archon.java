@@ -185,7 +185,7 @@ public class Archon extends Building{
                 setTransformStatus();
             }
         }
-        System.out.println("sot: "+(Clock.getBytecodeNum()-bytecode));
+        //System.out.println("sot: "+(Clock.getBytecodeNum()-bytecode));
     }
     public void writeLocationToArray() throws GameActionException{
         //write archon location to array
