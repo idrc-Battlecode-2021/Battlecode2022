@@ -3,6 +3,7 @@ package bot10_MC3.robots.buildings;
 import battlecode.common.*;
 import bot10_MC3.util.Constants;
 import bot10_MC3.util.PathFinding30;
+import bot10_MC3.util.PathFindingSoldier;
 
 import java.util.*;
 
@@ -260,10 +261,12 @@ public class Archon extends Building{
             }
             if (rc.isMovementReady()){
                 //archonMove(target);
-                System.out.println("1: "+Clock.getBytecodesLeft());
                 //TODO: Check if Bytecode Permits
-                soldierMove(bestTargetLocation);
-                System.out.println("2: "+Clock.getBytecodesLeft());
+                if(Clock.getBytecodesLeft() > 9600){
+                    soldierMove(bestTargetLocation);
+                }else{
+                    soldierMoveLite(bestTargetLocation);
+                }
                 passableDirections.clear();
                 setPassableDirections();
                 writeLocationToArray();
@@ -873,6 +876,18 @@ public class Archon extends Building{
     private HashSet<MapLocation> pastLocations = new HashSet<>();
     private void soldierMove(MapLocation target) throws GameActionException {
         Direction dir = pfs.getBestDir(target);
+        MapLocation temp = myLocation;
+        if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
+            if(tryMoveMultiple(dir)){
+                pastLocations.add(temp);
+            }
+        }else{
+            intermediateMove(target);
+            pastLocations.add(temp);
+        }
+    }
+    private void soldierMoveLite(MapLocation target) throws GameActionException {
+        Direction dir = pfs.getBestDirLite(target);
         MapLocation temp = myLocation;
         if(dir != null && rc.canMove(dir) && !pastLocations.contains(myLocation.add(dir))){
             if(tryMoveMultiple(dir)){
