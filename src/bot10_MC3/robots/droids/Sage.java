@@ -1,6 +1,7 @@
 package bot10_MC3.robots.droids;
 import battlecode.common.*;
 import bot10_MC3.util.PathFinding30;
+import bot10_MC3.util.PathFinding30Lesser;
 
 import java.util.HashSet;
 
@@ -12,7 +13,7 @@ public class Sage extends Droid{
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
-    private PathFinding30 pfs;
+    private PathFinding30Lesser pfs;
     private boolean reachedArchon;
     private boolean addedToHeal = false;
     public Sage(RobotController rc) {super(rc);}
@@ -23,8 +24,8 @@ public class Sage extends Droid{
 
     @Override
     public void init() throws GameActionException {
-        pfs=new PathFinding30(rc);
-        possibleArchonLocs();
+        pfs=new PathFinding30Lesser(rc);
+        //possibleArchonLocs();
         parseAnomalies();
         detectArchon();
         int archonCount = rc.getArchonCount();
@@ -94,7 +95,7 @@ public class Sage extends Droid{
             //New targetting
             if (!rc.isActionReady()){
                 //rc.setIndicatorString("action retreat");
-                if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 9)){
+                if (!myLocation.isWithinDistanceSquared(archonLoc, 9)){
                     soldierMove(archonLoc);
                 }
                 else{
@@ -124,8 +125,8 @@ public class Sage extends Droid{
             }
             return;
         }
-        RobotInfo[] enemyRobotsInVision = rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam().opponent());
-        RobotInfo[] allyRobotsInVision = rc.senseNearbyRobots(RobotType.SAGE.visionRadiusSquared, rc.getTeam());
+        RobotInfo[] enemyRobotsInVision = rc.senseNearbyRobots(34, rc.getTeam().opponent());
+        RobotInfo[] allyRobotsInVision = rc.senseNearbyRobots(34, rc.getTeam());
         if (enemyRobotsInVision.length>0 && !rc.isActionReady()){
             //rc.setIndicatorString("vision retreat");
             if (!rc.getLocation().isWithinDistanceSquared(archonLoc, 9)){
@@ -323,12 +324,6 @@ public class Sage extends Droid{
                     }
                     if (!containsBuilding && enemy.getMode()==RobotMode.TURRET){
                         furyPotentialDamage+=Math.min(enemy.getHealth(),enemy.getType().health/10);
-                        /*
-                        for (RobotInfo ally: myRobots){
-                            if (ally.getType()!=RobotType.SAGE) continue;
-                            if (ally.getLocation().distanceSquaredTo(enemy.getLocation())<=ally.getType().actionRadiusSquared) fury+=10;
-                        }
-                        */
                         if ((enemy.getType().health-enemy.getHealth())*100/enemy.getType().health+fury>=100) furyPotentialKills++;
                     }
                     break;
