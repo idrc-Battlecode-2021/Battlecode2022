@@ -8,7 +8,7 @@ public class Soldier extends Droid{
     private MapLocation target = null;
     private MapLocation archonLoc;
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-    private int globalSoldierCount = 0;
+    private int globalSoldierCount = 0, globalSageCount = 0;
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
@@ -75,6 +75,7 @@ public class Soldier extends Droid{
             rc.writeSharedArray(3, rc.readSharedArray(3)+1);
         }else if(rc.getRoundNum()%3 == 0){
             globalSoldierCount = rc.readSharedArray(3);
+            globalSageCount = rc.readSharedArray(2);
         }
         broadcast();
         //target = null;
@@ -114,7 +115,7 @@ public class Soldier extends Droid{
             }*/
             soldierMove(target);
         }
-        else if(hasMapLocation(43) && globalSoldierCount > 5){
+        else if(hasMapLocation(43) && globalSageCount+globalSoldierCount > 5){
             MapLocation temp = decode(43);
             if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 2){
                 target = temp;

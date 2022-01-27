@@ -17,6 +17,7 @@ public class Builder extends Droid{
     private String indicatorString = "";
     private MapLocation healLocation = null;
     private boolean farthestBuilder = false;
+    private boolean checkedFarthest = false;
     
     public Builder(RobotController rc) throws GameActionException {
         super(rc);
@@ -78,7 +79,10 @@ public class Builder extends Droid{
                 best_location = loc;
             }
         }
-        if (rc.isMovementReady() && !rc.getLocation().equals(best_location)){
+        if (best_location==null){
+            builderMove(target);
+        }
+        else if (rc.isMovementReady() && !rc.getLocation().equals(best_location)){
             builderMove(best_location);
         }
         else{
@@ -100,7 +104,7 @@ public class Builder extends Droid{
 
         // update shared array
         if (rc.getRoundNum()%3==2){
-            farthestBuilder = builderCount<2;
+            farthestBuilder = false;
             if (builderLoc.equals(new MapLocation(0,0)) || movementTileDistance(builderLoc,center)<movementTileDistance(rc.getLocation(), center)) {
                 rc.writeSharedArray(28, rc.getLocation().x+rc.getLocation().y*256);
             }
@@ -112,6 +116,8 @@ public class Builder extends Droid{
             if (builderLoc.equals(rc.getLocation()) || builderCount==1){
                 farthestBuilder = true;
             }
+            checkedFarthest = true;
+            rc.setIndicatorString(builderLoc+" "+farthestBuilder);
         }
         //TODO: change lab threshold based on income
         labThreshold = Math.min(180,(globalLabCount+1)*180);
@@ -133,7 +139,7 @@ public class Builder extends Droid{
         }
         if (finishPrototype!=null && rc.canSenseRobotAtLocation(finishPrototype)){
             if (repair(finishPrototype)){
-                rc.setIndicatorString(indicatorString);
+                //rc.setIndicatorString(indicatorString);
                 return;
             }
             else{
@@ -145,7 +151,7 @@ public class Builder extends Droid{
         if (healLocation!=null){
             //TODO: heal as far as possible in case archon needs to spawn (still prioritize low rubble)
             if (repair(healLocation)){
-                rc.setIndicatorString(indicatorString);
+                //rc.setIndicatorString(indicatorString);
                 return;
             }
             else{
@@ -170,7 +176,7 @@ public class Builder extends Droid{
         if (healLocation!=null){
             //TODO: heal as far as possible in case archon needs to spawn (still prioritize low rubble)
             if (repair(healLocation)){
-                rc.setIndicatorString(indicatorString);
+                //rc.setIndicatorString(indicatorString);
                 return;
             }
             else{
@@ -185,23 +191,24 @@ public class Builder extends Droid{
             }
         }
         // prepare for building lab by going to the best lab spot
-        indicatorString="finding ";
+        rc.setIndicatorString("here");
         bestLabSpot = findBestLabSpot();
         if (bestLabSpot==null){
             //builder has wandered away and is coming back
-            rc.setIndicatorString(indicatorString);
+            //rc.setIndicatorString(indicatorString);
             return;
         }
         bestBuildSpot = goToLabSpot(bestLabSpot);
         if (bestBuildSpot==bestLabSpot){
             //going toward bestlabspot
-            rc.setIndicatorString(indicatorString);
+            //rc.setIndicatorString(indicatorString);
             return;
         }
-        if (farthestBuilder && rc.getTeamLeadAmount(rc.getTeam())>=labThreshold){
+        rc.setIndicatorString("here");
+        if (checkedFarthest && farthestBuilder && rc.getTeamLeadAmount(rc.getTeam())>=labThreshold){
             buildLab();
         }
-        rc.setIndicatorString(indicatorString);
+        //rc.setIndicatorString(indicatorString);
 
     }
 

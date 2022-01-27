@@ -78,7 +78,10 @@ public class Builder extends Droid{
                 best_location = loc;
             }
         }
-        if (rc.isMovementReady() && !rc.getLocation().equals(best_location)){
+        if (best_location==null){
+            builderMove(target);
+        }
+        else if (rc.isMovementReady() && !rc.getLocation().equals(best_location)){
             builderMove(best_location);
         }
         else{

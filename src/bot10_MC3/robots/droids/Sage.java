@@ -9,7 +9,7 @@ public class Sage extends Droid{
     private MapLocation target = null;
 
     private MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-    private int globalSageCount = 0;
+    private int globalSoldierCount = 0, globalSageCount = 0;
     private boolean shouldHeal = false;
     private MapLocation[] archonLocs;
     private MapLocation centralArchon;
@@ -73,6 +73,7 @@ public class Sage extends Droid{
             rc.writeSharedArray(2, rc.readSharedArray(2)+1);
         }else if(rc.getRoundNum()%3 == 0){
             globalSageCount = rc.readSharedArray(2);
+            globalSoldierCount = rc.readSharedArray(3);
         }
         broadcast();
         //target = null;
@@ -148,7 +149,7 @@ public class Sage extends Droid{
                 kite();
             }
         }
-        else if(hasMapLocation(43) && globalSageCount > 5){
+        else if(hasMapLocation(43) && globalSageCount+globalSoldierCount > 5){
             //rc.setIndicatorString("43");
             MapLocation temp = decode(43);
             if((target == null || myLocation.distanceSquaredTo(temp)<=myLocation.distanceSquaredTo(target)) && targetType <= 2){
