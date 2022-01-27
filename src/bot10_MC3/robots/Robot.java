@@ -75,6 +75,7 @@ public abstract class Robot {
         for (int i = robots.length; --i>=0;){
             if (robots[i].getType() == RobotType.ARCHON){
                 myArchonID = robots[i].getID();
+                archonLoc = robots[i].getLocation();
                 break;
             }
         }
