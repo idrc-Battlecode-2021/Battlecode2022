@@ -26,7 +26,7 @@ public class Sage extends Droid{
     public void init() throws GameActionException {
         pfs=new PathFinding30Lesser(rc);
         //possibleArchonLocs();
-        parseAnomalies();
+        //parseAnomalies();
         detectArchon();
     }
     public void setCentralArchon() throws GameActionException {

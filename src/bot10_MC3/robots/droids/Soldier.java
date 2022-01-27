@@ -26,7 +26,7 @@ public class Soldier extends Droid{
     public void init() throws GameActionException {
         pfs=new PathFindingSoldier(rc);
         possibleArchonLocs();
-        parseAnomalies();
+        //parseAnomalies();
         detectArchon();
 
     }

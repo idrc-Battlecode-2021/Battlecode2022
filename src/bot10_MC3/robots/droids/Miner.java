@@ -25,7 +25,7 @@ public class Miner extends Droid{
     @Override
     public void init() throws GameActionException {
         pfs=new PathFindingSoldier(rc);
-        parseAnomalies();
+        //parseAnomalies();
         RobotInfo [] r = rc.senseNearbyRobots(2,myTeam);
         for (RobotInfo ro : r){
             if(ro.getTeam()==myTeam && ro.getType()==RobotType.ARCHON){
@@ -44,7 +44,7 @@ public class Miner extends Droid{
     public void run() throws GameActionException {
         broadcast();
         reassignArchon();
-        avoidCharge();
+        //avoidCharge();
         // update shared array
         MapLocation prev = myLocation;
         if (rc.getRoundNum() % 3 == 2) {
