@@ -246,6 +246,12 @@ public class Builder extends Droid{
         int rubble = rc.senseRubble(target);
         int xCheck = Math.min(Math.abs(-target.x),Math.abs(mapWidth-1-target.x));
         int yCheck = Math.min(Math.abs(-target.y),Math.abs(mapHeight-1-target.y));
+        boolean isFirstLab = globalLabCount==0;
+        int minRubble = 99;
+        Direction toArchon = target.directionTo(archonLoc);
+        if (rc.canSenseLocation(target.add(toArchon))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon)));
+        if (rc.canSenseLocation(target.add(toArchon.rotateLeft()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateLeft())));
+        if (rc.canSenseLocation(target.add(toArchon.rotateRight()))) minRubble = Math.min(minRubble, rc.senseRubble(target.add(toArchon.rotateRight())));
         //if builder isn't within archon radius come back
         if (bestLabSpot==null && !rc.getLocation().isWithinDistanceSquared(archonLoc, RobotType.ARCHON.visionRadiusSquared)){
             builderMove(archonLoc);
@@ -257,17 +263,46 @@ public class Builder extends Droid{
                 continue;
             }
             int r=rc.senseRubble(m);
+            if (r>rubble)continue;
+            int tempMin = 99;
+            int xTemp = Math.min(Math.abs(-m.x),Math.abs(mapWidth-1-m.x));
+            int yTemp = Math.min(Math.abs(-m.y),Math.abs(mapHeight-1-m.y));
+            if (isFirstLab){
+                toArchon = m.directionTo(archonLoc);
+                if (rc.canSenseLocation(m.add(toArchon))) tempMin = Math.min(tempMin, rc.senseRubble(m.add(toArchon)));
+                if (rc.canSenseLocation(m.add(toArchon.rotateLeft()))) tempMin = Math.min(tempMin, rc.senseRubble(m.add(toArchon.rotateLeft())));
+                if (rc.canSenseLocation(m.add(toArchon.rotateRight()))) tempMin = Math.min(tempMin, rc.senseRubble(m.add(toArchon.rotateRight())));
+                if (tempMin>minRubble)continue;
+            }
             if(r<rubble){
                 rubble=r;
                 target=m;
+                xCheck = xTemp;
+                yCheck = yTemp;
             }
-            else if (r==rubble){
-                int xTemp = Math.min(Math.abs(-m.x),Math.abs(mapWidth-1-m.x));
-                int yTemp = Math.min(Math.abs(-m.y),Math.abs(mapHeight-1-m.y));
-                if(xTemp+yTemp < xCheck+yCheck){
-                    target = m;
-                    xCheck = xTemp;
-                    yCheck = yTemp;
+            else {
+                if (isFirstLab){
+                    if (tempMin<minRubble){
+                        rubble=r;
+                        target=m;
+                        xCheck = xTemp;
+                        yCheck = yTemp;
+                        minRubble = tempMin;
+                    }
+                    if(xTemp+yTemp < xCheck+yCheck){
+                        rubble=r;
+                        target=m;
+                        xCheck = xTemp;
+                        yCheck = yTemp;
+                    }
+                }
+                else{
+                    if(xTemp+yTemp < xCheck+yCheck){
+                        rubble=r;
+                        target=m;
+                        xCheck = xTemp;
+                        yCheck = yTemp;
+                    }
                 }
             }
         }

@@ -127,7 +127,23 @@ public class Archon extends Building{
         }
         int xCheck = Math.abs(center.x-bestTargetLocation.x);
         int yCheck = Math.abs(center.y-bestTargetLocation.y);
-        //TODO: prioritize number of tiles on the map around it
+
+        int arrLocation = rc.readSharedArray(29);
+        MapLocation otherTarget = new MapLocation(arrLocation%256,arrLocation/256);
+        if (!otherTarget.equals(new MapLocation(0,0)) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
+            //it's within and should run other functions to find the closest location next to the archon
+            int otherX = Math.abs(center.x-otherTarget.x);
+            int otherY = Math.abs(center.y-otherTarget.y);
+            if (otherX+otherY<xCheck+yCheck){
+                bestTargetLocation = otherTarget;
+                if(rc.getMode()==RobotMode.TURRET && rc.canTransform() && freeToTransform()){
+                    rc.transform();
+                    pastLocations.clear();
+                    setTransformStatus();
+                }
+            }
+        }
+
         int averageSurroundingRubble = 0;
         int count = 0;
         for (Direction d: Constants.DIRECTIONS ){
@@ -137,7 +153,11 @@ public class Archon extends Building{
             averageSurroundingRubble+=rc.senseRubble(thisLocation);
         }
         averageSurroundingRubble/=count;
-        for (MapLocation m: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 32)){
+        MapLocation[] locations = rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 32);
+        if (rc.getLocation().isWithinDistanceSquared(otherTarget,2)){ // want archon to stay
+            locations = rc.getAllLocationsWithinRadiusSquared(otherTarget, 2);
+        }
+        for (MapLocation m: locations){
             int r=rc.senseRubble(m);
             if (r>rubble)continue;
             int xTemp = Math.abs(center.x-m.x);
@@ -228,10 +248,15 @@ public class Archon extends Building{
             }
         }
         else{
-            if(rc.getLocation().equals(bestTargetLocation) && rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
-                rc.transform();
-                pastLocations.clear();
-                setTransformStatus();
+            int arrLocation = rc.readSharedArray(29);
+            MapLocation otherTarget = new MapLocation(arrLocation%256,arrLocation/256);
+            if(rc.getLocation().equals(bestTargetLocation) && !rc.getLocation().isWithinDistanceSquared(otherTarget, 2)){
+                rc.writeSharedArray(29,rc.getLocation().x+rc.getLocation().y*256);
+                if (rc.getMode()==RobotMode.PORTABLE && rc.canTransform()){
+                    rc.transform();
+                    pastLocations.clear();
+                    setTransformStatus();
+                }
             }
         }
     }
