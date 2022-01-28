@@ -163,7 +163,7 @@ public class Miner extends Droid{
                                     break checkTargetBlock;
                                 }
                                 RobotInfo robot;
-                                if(!myLocation.equals(target) && rc.canSenseRobotAtLocation(target) && (robot = rc.senseRobotAtLocation(target))!=null){
+                                if(!myLocation.equals(target) && rc.canSenseRobotAtLocation(target) && (robot = rc.senseRobotAtLocation(target))!=null){//see If this can be removed as well
                                     if(robot.getTeam() == myTeam && robot.getType() == myType){
                                         lead.remove(target);
                                         if(lead.isEmpty()) target = null;
