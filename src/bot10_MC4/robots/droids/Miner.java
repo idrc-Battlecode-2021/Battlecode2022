@@ -306,6 +306,12 @@ public class Miner extends Droid{
                         }
                     }
                 }*/
+                RobotInfo robot;
+                if(!myLocation.equals(nearbyLead[i]) && rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
+                    if(robot.getTeam() == myTeam && robot.getType() == myType){
+                        continue loop1;
+                    }
+                }
                 int amount = rc.senseLead(nearbyLead[i]);
                 if(amount > 5){
                     lead.put(nearbyLead[i],amount);
@@ -337,6 +343,12 @@ public class Miner extends Droid{
                         }
                     }
                 }*/
+                RobotInfo robot;
+                if(!myLocation.equals(nearbyLead[i]) && rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
+                    if(robot.getTeam() == myTeam && robot.getType() == myType){
+                        continue loop1;
+                    }
+                }
                 int amount = rc.senseLead(nearbyLead[i]);
                 if(amount > 5){
                     lead.put(nearbyLead[i],amount);
@@ -370,6 +382,13 @@ public class Miner extends Droid{
                         }
                     }
                 }*/
+                RobotInfo robot;
+                if(!myLocation.equals(location) && rc.canSenseRobotAtLocation(location) && (robot = rc.senseRobotAtLocation(location))!=null){
+                    if(robot.getTeam() == myTeam && robot.getType() == myType){
+                        lead.remove(location);
+                        continue loop1;
+                    }
+                }
                 if(rc.senseLead(location) < 2){
                     lead.remove(location);
                     continue loop1;
