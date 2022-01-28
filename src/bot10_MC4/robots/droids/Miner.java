@@ -278,10 +278,12 @@ public class Miner extends Droid{
 
                 if(!prev.equals(myLocation)) viewResources();
             }else{
-                if(Clock.getBytecodesLeft() > 5200){
-                    soldierMove(target);
-                }else{
-                    intermediateMove(target);
+                if(rc.isMovementReady()){ //TODO: See if this is a good change.
+                    if(Clock.getBytecodesLeft() > 5200){
+                        soldierMove(target);
+                    }else {
+                        intermediateMove(target);
+                    }
                 }
                 if(!prev.equals(myLocation)) viewResourcesLite();
             }
