@@ -299,7 +299,7 @@ public class Miner extends Droid{
             loop1: for(int i = nearbyLead.length; --i>=0 && Clock.getBytecodesLeft() > 400;){
                 if(lead.containsKey(nearbyLead[i]))continue;
                 //TODO: See if commenting out this code improves bot
-                /*RobotInfo robot;
+                RobotInfo robot;
                 MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
                 for(int j = nearbyLocs.length; --j>=0;){
                     if(!myLocation.equals(nearbyLocs[j]) && rc.canSenseRobotAtLocation(nearbyLocs[j]) && (robot = rc.senseRobotAtLocation(nearbyLocs[j]))!=null){
@@ -307,13 +307,13 @@ public class Miner extends Droid{
                             continue loop1;
                         }
                     }
-                }*/
-                RobotInfo robot;
+                }
+                /*RobotInfo robot;
                 if(!myLocation.equals(nearbyLead[i]) && rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
                     if(robot.getTeam() == myTeam && robot.getType() == myType){
                         continue loop1;
                     }
-                }
+                }*/
                 int amount = rc.senseLead(nearbyLead[i]);
                 if(amount > 5){
                     lead.put(nearbyLead[i],amount);
@@ -336,7 +336,7 @@ public class Miner extends Droid{
             loop1: for(int i = nearbyLead.length; --i>=0 && Clock.getBytecodesLeft() > 400;){
                 if(lead.containsKey(nearbyLead[i]))continue;
                 //TODO: See if commenting out this code improves bot
-                /*RobotInfo robot;
+                RobotInfo robot;
                 MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(nearbyLead[i],1);
                 for(int j = nearbyLocs.length; --j>=0;){
                     if(!myLocation.equals(nearbyLocs[j]) && rc.canSenseRobotAtLocation(nearbyLocs[j]) && (robot = rc.senseRobotAtLocation(nearbyLocs[j]))!=null){
@@ -344,13 +344,13 @@ public class Miner extends Droid{
                             continue loop1;
                         }
                     }
-                }*/
-                RobotInfo robot;
+                }
+                /*RobotInfo robot;
                 if(!myLocation.equals(nearbyLead[i]) && rc.canSenseRobotAtLocation(nearbyLead[i]) && (robot = rc.senseRobotAtLocation(nearbyLead[i]))!=null){
                     if(robot.getTeam() == myTeam && robot.getType() == myType){
                         continue loop1;
                     }
-                }
+                }*/
                 int amount = rc.senseLead(nearbyLead[i]);
                 if(amount > 5){
                     lead.put(nearbyLead[i],amount);
@@ -374,7 +374,7 @@ public class Miner extends Droid{
             MapLocation location = entry.getKey();
             if(rc.canSenseLocation(location)){
                 //TODO: See if commenting out this code improves bot
-                /*RobotInfo robot;
+                RobotInfo robot;
                 MapLocation[] nearbyLocs = rc.getAllLocationsWithinRadiusSquared(location,1);
                 for(int j = nearbyLocs.length; --j>=0;){
                     if(!myLocation.equals(nearbyLocs[j]) && rc.canSenseRobotAtLocation(nearbyLocs[j]) && (robot = rc.senseRobotAtLocation(nearbyLocs[j]))!=null){
@@ -383,14 +383,14 @@ public class Miner extends Droid{
                             continue loop1;
                         }
                     }
-                }*/
-                RobotInfo robot;
+                }
+                /*RobotInfo robot;
                 if(!myLocation.equals(location) && rc.canSenseRobotAtLocation(location) && (robot = rc.senseRobotAtLocation(location))!=null){
                     if(robot.getTeam() == myTeam && robot.getType() == myType){
                         lead.remove(location);
                         continue loop1;
                     }
-                }
+                }*/
                 if(rc.senseLead(location) < 2){
                     lead.remove(location);
                     continue loop1;
