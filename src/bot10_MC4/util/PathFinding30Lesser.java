@@ -4,7 +4,7 @@ import battlecode.common.*;
 
 import java.util.HashSet;
 
-public class PathFinding30Lesser {
+public class PathFinding30Lesser { //Code adopted from Malott Fat Cats
     private final RobotController rc;
     private static int width,height;
     private MapLocation exploreTarget;
